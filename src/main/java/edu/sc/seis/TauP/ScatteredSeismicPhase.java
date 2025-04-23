@@ -257,6 +257,13 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 isBackscatter());
     }
 
+    /**
+     * Calculates the distance from the scatterer to the receiver.
+     * @param deg source to receiver distance
+     * @param scattererDeg scatterer distance, may be negative
+     * @param backscatter if the phase is backscattered
+     * @return scatterer to receiver distance in range -180 to 180
+     */
     public static double calcScatterDistDeg(double deg, double scattererDeg, boolean backscatter) {
         double scatDist;
         double calcDeg = deg % 360;
@@ -288,6 +295,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 throw new RuntimeException("Should never happen "+deg+" "+scattererDeg);
             }
         }
+        scatDist = (180+scatDist) % 360 -180;
         return scatDist;
     }
 

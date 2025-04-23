@@ -155,29 +155,29 @@ public class ScatterTest {
         // case a
         double scatterer = 5.0;
         double deg = 15;
-        boolean backscatter = true;
-        boolean forwardscatter = false;
+        boolean isBackscatter = true;
+        boolean isForwardscatter = false;
         // case A
-        assertEquals(10, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        assertEquals(10, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isForwardscatter), 1e-6);
         // backscatter
-        assertEquals(350, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        assertEquals(-10, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isBackscatter), 1e-6);
         // case B
         scatterer = 20;
-        assertEquals(355, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        assertEquals(-5, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isForwardscatter), 1e-6);
         // backscatter
-        assertEquals(5, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        assertEquals(5, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isBackscatter), 1e-6);
         // case C
         scatterer = -5;
-        assertEquals(340, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        assertEquals(-20, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isForwardscatter), 1e-6);
         // backscatter
-        assertEquals(20, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        assertEquals(20, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isBackscatter), 1e-6);
 
         // repeat other depth/dist
         scatterer = 170;
         deg = 170;
-        assertEquals(0, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        assertEquals(0, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isForwardscatter), 1e-6);
         // backscatter
-        assertEquals(360, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        assertEquals(0, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, isBackscatter), 1e-6);
 
     }
 
@@ -299,9 +299,68 @@ public class ScatterTest {
         Scatterer scat = new Scatterer(400, DistanceRay.ofFixedHemisphereDegrees(-5));
         List<SeismicPhase> phaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, scat, false);
         ScatteredSeismicPhase phase = (ScatteredSeismicPhase) phaseList.get(0);
-        DistanceRay distRay = DistanceRay.ofDegrees(10);
+        double calcDeg = 10;
+        DistanceRay distRay = DistanceRay.ofDegrees(calcDeg);
         List<Arrival> arrivals = distRay.calculate(phase);
-        assertTrue(arrivals.size()> 0);
-        assertTrue(arrivals.get(0) instanceof ScatteredArrival);
+        assertTrue(arrivals.size() > 0);
+        Arrival a = arrivals.get(0);
+        assertInstanceOf(ScatteredArrival.class, a);
+        ScatteredArrival scatArr = (ScatteredArrival) a;
+        assertEquals(calcDeg, scatArr.getDistDeg(), 0.001);
+    }
+
+    @Test
+    public void pathNegBackscatterPedOPTime() throws TauPException {
+        String modelname = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelname);
+        String phaseName = "PedOP";
+        Scatterer posScat = new Scatterer(400, DistanceRay.ofFixedHemisphereDegrees(5));
+        List<SeismicPhase> posPhaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, posScat, false);
+        ScatteredSeismicPhase posPhase = (ScatteredSeismicPhase) posPhaseList.get(0);
+        double calcDeg = -10;
+        DistanceRay distRay = DistanceRay.ofDegrees(calcDeg);
+        List<Arrival> arrivals = distRay.calculate(posPhase);
+        assertTrue(arrivals.size() > 0);
+        Arrival a = arrivals.get(0);
+        assertInstanceOf(ScatteredArrival.class, a);
+        ScatteredArrival scatArr = (ScatteredArrival) a;
+        assertEquals(calcDeg, scatArr.getDistDeg(), 0.001);
+    }
+
+
+    @Test
+    public void pathForwardScatterPedoPTime() throws TauPException {
+        String modelname = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelname);
+        String phaseName = "PedoP";
+        Scatterer scat = new Scatterer(400, DistanceRay.ofFixedHemisphereDegrees(5));
+        List<SeismicPhase> phaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, scat, false);
+        ScatteredSeismicPhase phase = (ScatteredSeismicPhase) phaseList.get(0);
+        double calcDeg = 15;
+        DistanceRay distRay = DistanceRay.ofDegrees(calcDeg);
+        List<Arrival> arrivals = distRay.calculate(phase);
+        assertTrue(arrivals.size() > 0);
+        Arrival a = arrivals.get(0);
+        assertInstanceOf(ScatteredArrival.class, a);
+        ScatteredArrival scatArr = (ScatteredArrival) a;
+        assertEquals(calcDeg, scatArr.getDistDeg(), 0.001);
+    }
+
+    @Test
+    public void pathNegForwardscatterPedoPTime() throws TauPException {
+        String modelname = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelname);
+        String phaseName = "PedoP";
+        Scatterer posScat = new Scatterer(400, DistanceRay.ofFixedHemisphereDegrees(-5));
+        List<SeismicPhase> posPhaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, posScat, false);
+        ScatteredSeismicPhase posPhase = (ScatteredSeismicPhase) posPhaseList.get(0);
+        double calcDeg = -15;
+        DistanceRay distRay = DistanceRay.ofDegrees(calcDeg);
+        List<Arrival> arrivals = distRay.calculate(posPhase);
+        assertTrue(arrivals.size() > 0);
+        Arrival a = arrivals.get(0);
+        assertInstanceOf(ScatteredArrival.class, a);
+        ScatteredArrival scatArr = (ScatteredArrival) a;
+        assertEquals(calcDeg, scatArr.getDistDeg(), 0.001);
     }
 }

@@ -23,7 +23,7 @@ public class ScatteredArrival extends Arrival {
         super(phase,
                 null,
                 inboundArrival.getTime()+scatteredArrival.getTime(),
-                inboundArrival.getDist()+scatteredArrival.getDist(),
+                calcScatteredArrivalDist(inboundArrival, scatteredArrival, isBackscatter),
                 scatteredArrival.getRayParam(),
                 scatteredArrival.getRayParamIndex(),
                 searchVal,
@@ -66,6 +66,33 @@ public class ScatteredArrival extends Arrival {
     public boolean isScatterNegativeDirection() {
         double scatDist = getScatteredSeismicPhase().getScattererDistanceDeg();
         return (scatDist >= 0 && isBackscatter()) || (scatDist < 0 && !isBackscatter());
+    }
+
+    public static int calcScatterNegDistFactor(double scatDist, boolean isBackscatter) {
+        if ((scatDist >= 0 && isBackscatter) || (scatDist < 0 && !isBackscatter)) {
+            return -1;
+        }
+        return 1;
+    }
+
+    public static double calcScatteredArrivalDist(Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
+        double outDist;
+        if (isBackscatter) {
+            // opposite sign for inbound and scattered
+            if (inboundArrival.getDist() < 0) {
+                outDist = inboundArrival.getDist() + scatteredArrival.getDist();
+            } else {
+                outDist = inboundArrival.getDist() - scatteredArrival.getDist();
+            }
+        } else {
+            // same sign for inbound and scattered
+            if (inboundArrival.getDist() < 0) {
+                outDist = inboundArrival.getDist() - scatteredArrival.getDist();
+            } else {
+                outDist = inboundArrival.getDist() + scatteredArrival.getDist();
+            }
+        }
+        return outDist;
     }
 
     @Override

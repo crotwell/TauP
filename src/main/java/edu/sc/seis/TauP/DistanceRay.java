@@ -115,10 +115,12 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         double deg = getDegrees(phase.getTauModel().getRadiusOfEarth());
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
-        FixedHemisphereDistanceRay scatRay = ofFixedHemisphereDegrees(scatDistDeg);
+        ExactDistanceRay scatRay = ofExactDegrees(Math.abs(scatDistDeg));
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
-        List<Double> arrivalDistList = scatRay.calcRadiansInRange(scatteredPhase.getMinDistance(), scatteredPhase.getMaxDistance(),
+        List<Double> arrivalDistList = scatRay.calcRadiansInRange(
+                scatteredPhase.getMinDistance(),
+                scatteredPhase.getMaxDistance(),
                 phase.getTauModel().getRadiusOfEarth(), false);
         List<Arrival> arrivals = new ArrayList<>();
         for (Double distRadian : arrivalDistList) {
@@ -127,6 +129,9 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         List<Arrival> scatArrivals = new ArrayList<>();
         for (Arrival a : arrivals) {
             a.setSearchValue(scatRay);
+            if (scatDistDeg < 0) {
+                a.negateDistance();
+            }
             scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
         }
         return Arrival.sortArrivals(scatArrivals);
