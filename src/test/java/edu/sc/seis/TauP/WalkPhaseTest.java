@@ -13,6 +13,15 @@ public class WalkPhaseTest {
 
 
     @Test
+    public void findEndDisconTest() throws TauModelException {
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        tMod = tMod.splitBranch(6);
+        boolean isDowngoing = false;
+        int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, 2, true, isDowngoing);
+        assertEquals(0, endBranchNum);
+    }
+
+    @Test
     public void phasePturn() throws TauModelException {
         TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
@@ -31,6 +40,7 @@ public class WalkPhaseTest {
         assertEquals(1, transDProto.endSegment().endBranch);
         assertEquals(TURN, transDProto.endSegment().endAction);
         outTree = walker.nextLegs(tMod, transDProto, true);
+        assertEquals(2, outTree.size());
         ProtoSeismicPhase Pedp = null;
         for (ProtoSeismicPhase p : outTree) {
             // only keep transup after turn
