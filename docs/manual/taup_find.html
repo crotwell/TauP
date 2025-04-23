@@ -183,13 +183,13 @@ to be an arrival at roughly 410 seconds, this would give some possible phases
 that may explain it.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
-                 [--showrayparam] [--verbose]
+                 [--showrayparam] [--swaveonly] [--verbose]
                  [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
                  [--deltatime=dt] --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;]
                  [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--deg=d[,d...]]...
-                 [--strikediprake=strike dip rake]... [--rayparamdeg=s/deg
-                 [s/deg]]... [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
+                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
+                 [--time=t [t]]... [--strikediprake=strike dip rake]...
                  [--exclude=depth[,depth...]...]... [[--mod=&lt;modelName&gt;]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                  [--scat=depth deg]...] [[-p=phase[,phase...]]...
@@ -237,6 +237,7 @@ Options:
                            fault strike, dip and rake for amplitude
                              calculations. If not given radiation pattern is
                              unity in all directions.
+      --swaveonly          only S wave legs, no P
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args
