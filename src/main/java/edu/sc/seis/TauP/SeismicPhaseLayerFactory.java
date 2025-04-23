@@ -436,11 +436,15 @@ public class SeismicPhaseLayerFactory {
                                        String prevLeg, String currLeg, String nextLeg, String nextNextLeg,
                                        boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
-        PhaseInteraction endAction;
+        PhaseInteraction endAction = null;
         PhaseInteraction prevEndAction = proto.getEndAction();
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
         if(nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg
-                || nextLeg.equals(END_CODE)) {
+                || is(nextLeg, END_CODE)) {
+            boolean isDowngoing = true;
+            if (prevEndAction != START) {
+                isDowngoing = isDowngoingActionAfter(prevEndAction);
+            }
             if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                 // was downgoing, so must first turn in layers
                 endAction = TURN;
@@ -450,10 +454,15 @@ public class SeismicPhaseLayerFactory {
                         isPWave, //next same as curr for turn
                         endAction,
                         currLeg);
+                isDowngoing = false;
             }
-            if (nextLeg.equals(END_CODE) && possibleToEnd(nextLeg)) {
+            if (is(nextLeg, END_CODE) && possibleToEnd(isDowngoing)) {
                 endAction = END;
-                proto.addToBranch(baseFactory.upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                if (isDowngoing) {
+                    proto.addToBranch(baseFactory.downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                } else {
+                    proto.addToBranch(baseFactory.upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                }
             } else {
                 endAction = REFLECT_UNDERSIDE;
                 proto.addToBranch(topBranchNum, isPWave, nextIsPWave, endAction, currLeg);
@@ -1077,11 +1086,11 @@ public class SeismicPhaseLayerFactory {
         return c == p_leg || c == s_leg || c == up_p_leg || c == up_s_leg;
     }
 
-    public boolean possibleToEnd(String endLeg) {
-        if (endLeg.equals(END_CODE) && baseFactory.upgoingRecBranch >= topBranchNum) {
+    public boolean possibleToEnd(boolean isDowngoing) {
+        if (isDowngoing && baseFactory.upgoingRecBranch >= topBranchNum) {
             return true;
         }
-        if (endLeg.equals(END_DOWN) && baseFactory.downgoingRecBranch <= botBranchNum) {
+        if (! isDowngoing && baseFactory.downgoingRecBranch <= botBranchNum) {
             return true;
         }
         return false;
