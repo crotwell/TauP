@@ -95,6 +95,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
             throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: " + modelArgs.getSourceDepths().size());
         }
         sourceArgs.validateArguments();
+        sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs());
     }
 
     @Override

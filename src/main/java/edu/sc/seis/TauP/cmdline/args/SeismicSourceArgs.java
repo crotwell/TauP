@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP.cmdline.args;
 
-import edu.sc.seis.TauP.Arrival;
-import edu.sc.seis.TauP.MomentMagnitude;
+import edu.sc.seis.TauP.*;
 import picocli.CommandLine;
 
 import java.util.List;
@@ -148,6 +147,22 @@ public class SeismicSourceArgs {
     public void validateArguments() {
         if (strikeDipRake != null && strikeDipRake.size() != 3) {
             throw new IllegalArgumentException("StrikeDipRake must have 3 values, but was: "+strikeDipRake.size());
+        }
+    }
+
+    public void validateArgumentsForAmplitude(ModelArgs modelArgs, DistanceArgs distanceArgs) throws TauPException {
+        if (modelArgs.getTauModel().getVelocityModel().densityIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
+        }
+        if (modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+        }
+        if (getStrikeDipRake() != null) {
+            for (RayCalculateable rc : distanceArgs.getRayCalculatables(this)) {
+                if (!rc.hasAzimuth()) {
+                    throw new IllegalArgumentException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);
+                }
+            }
         }
     }
 
