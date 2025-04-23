@@ -45383,6 +45383,7 @@ __export(stationxml_exports, {
   Response: () => Response2,
   STAML_NS: () => STAML_NS,
   STATION_CLICK_EVENT: () => STATION_CLICK_EVENT,
+  STAXML_MIME: () => STAXML_MIME,
   Span: () => Span,
   Stage: () => Stage,
   Station: () => Station,
@@ -45516,6 +45517,7 @@ function createComplex(real, imag) {
 }
 
 // src/stationxml.ts
+var STAXML_MIME = "application/vnd.fdsn.stationxml+xml";
 var STAML_NS = "http://www.fdsn.org/xml/station/1";
 var COUNT_UNIT_NAME = "count";
 var FIX_INVALID_STAXML = true;
@@ -50452,7 +50454,6 @@ function ehToChannel(exHead, sid) {
   if (ch != null) {
     const net = new Network(sid.networkCode);
     const sta = new Station(net, sid.stationCode);
-    console.log(`eh ch: ${JSON.stringify(ch)}`);
     sta.latitude = ch.la;
     sta.longitude = ch.lo;
     if (ch.el != null) {
@@ -50473,9 +50474,6 @@ function ehToChannel(exHead, sid) {
     if (ch.dip != null) {
       channel.dip = ch.dip;
     }
-    console.log(`chan: ${channel.latitude} ${channel.longitude}`);
-  } else {
-    console.log("no ch in bag");
   }
   return channel;
 }
@@ -51363,8 +51361,6 @@ function sddPerChannel(drList) {
       const c = ehToChannel(seg.extraHeaders, seg.getSourceId());
       if (c != null) {
         sdd.channel = c;
-      } else {
-        console.log(`Chan is null: ${seg.extraHeaders}`);
       }
       const marks = ehToMarkers(seg.extraHeaders);
       marks.forEach((mark) => sdd.addMarker(mark));
@@ -58487,6 +58483,8 @@ __export(axisutil_exports, {
   drawYLabel: () => drawYLabel,
   drawYSublabel: () => drawYSublabel,
   removeTitle: () => removeTitle,
+  removeXLabel: () => removeXLabel,
+  removeXSublabel: () => removeXSublabel,
   removeYLabel: () => removeYLabel,
   removeYSublabel: () => removeYSublabel
 });
@@ -58520,6 +58518,10 @@ var LuxonTimeScale = class {
     return this.interval.length("milliseconds") / (this.range[1] - this.range[0]);
   }
 };
+function removeXLabel(svgEl) {
+  const svg = select_default2(svgEl);
+  svg.selectAll("g.xLabel").remove();
+}
 function drawXLabel(svgEl, seismographConfig, height, width, handlebarsInput = {}) {
   const svg = select_default2(svgEl);
   svg.selectAll("g.xLabel").remove();
@@ -58534,6 +58536,10 @@ function drawXLabel(svgEl, seismographConfig, height, width, handlebarsInput = {
     });
     svgText.html(handlebarOut);
   }
+}
+function removeXSublabel(svgEl) {
+  const svg = select_default2(svgEl);
+  svg.selectAll("g.xSublabel").remove();
 }
 function drawXSublabel(svgEl, seismographConfig, height, width, handlebarsInput = {}) {
   const svg = select_default2(svgEl);
@@ -60051,20 +60057,38 @@ div.wrapper {
   height: 100%;
 }
 
+@property --sp-seismograph-is-xlabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --sp-seismograph-is-xsublabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
 @property --sp-seismograph-is-ylabel {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
+
 @property --sp-seismograph-is-ysublabel {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
+
 @property --sp-seismograph-display-title {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
+}
+
+.marker {
+  opacity: 0.4;
 }
 
 .marker .markerpath {
@@ -60948,36 +60972,51 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
   }
   drawTitle() {
     const wrapper = this.getShadowRoot().querySelector("div");
+    const isTitleCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-title");
     const svgEl = wrapper.querySelector("svg");
-    drawTitle(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput()
-    );
+    if (isTitleCSS === "0") {
+      removeTitle(svgEl);
+    } else {
+      drawTitle(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
   }
   drawXLabel() {
     const wrapper = this.getShadowRoot().querySelector("div");
+    const isXLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xlabel");
     const svgEl = wrapper.querySelector("svg");
-    drawXLabel(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput()
-    );
+    if (isXLabelCSS === "0") {
+      removeXLabel(svgEl);
+    } else {
+      drawXLabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
   }
   drawXSublabel() {
     const wrapper = this.getShadowRoot().querySelector("div");
+    const isXSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xsublabel");
     const svgEl = wrapper.querySelector("svg");
-    drawXSublabel(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput()
-    );
+    if (isXSublabelCSS === "0") {
+      removeXSublabel(svgEl);
+    } else {
+      drawXSublabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
   }
   drawYLabel() {
     const wrapper = this.getShadowRoot().querySelector("div");
@@ -60999,7 +61038,6 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
     const wrapper = this.getShadowRoot().querySelector("div");
     const isYSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ysublabel");
     const svgEl = wrapper.querySelector("svg");
-    console.log(`drawYSublabel "${isYSublabelCSS}"`);
     if (isYSublabelCSS === "0") {
       removeYSublabel(svgEl);
     } else {
