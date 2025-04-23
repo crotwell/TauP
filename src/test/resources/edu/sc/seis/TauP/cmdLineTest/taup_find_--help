@@ -1,11 +1,11 @@
 Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
-                 [--showrayparam] [--verbose]
+                 [--showrayparam] [--swaveonly] [--verbose]
                  [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                  [--deltatime=dt] --max=<maxActions> [--mw=<mw>]
                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
-                 [--strikediprake=strike dip rake]... [--rayparamdeg=s/deg
-                 [s/deg]]... [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
+                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
+                 [--time=t [t]]... [--strikediprake=strike dip rake]...
                  [--exclude=depth[,depth...]...]... [[--mod=<modelName>]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                  [--scat=depth deg]...] [[-p=phase[,phase...]]...
@@ -53,6 +53,7 @@ Options:
                            fault strike, dip and rake for amplitude
                              calculations. If not given radiation pattern is
                              unity in all directions.
+      --swaveonly          only S wave legs, no P
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args
