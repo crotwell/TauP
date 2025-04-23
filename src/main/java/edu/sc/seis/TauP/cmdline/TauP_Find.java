@@ -55,6 +55,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 tMod.findBranch(receiverDepth));
         if (onlyPWave) {
             walker.setAllowSWave(false);
+        } else if (onlySWave) {
+            walker.setAllowPWave(false);
         }
         walker.excludeBoundaries(excludeDepths);
         if (isVerbose() && !getExcludedDepths(tMod).isEmpty()) {
@@ -331,6 +333,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
+        if (onlyPWave && onlySWave) {
+            throw new CommandLine.ParameterException(spec.commandLine(),
+                    "Only one of --pwaveonly and --swaveonly may be used");
+        }
         TauModel tMod = modelArgs.getTauModel();
         List<Double> excludeDepths = getExcludedDepths(tMod);
         // throws if cant find depth near discon
@@ -473,6 +479,9 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @CommandLine.Option(names = "--pwaveonly", description = "only P wave legs, no S")
     boolean onlyPWave = false;
+
+    @CommandLine.Option(names = "--swaveonly", description = "only S wave legs, no P")
+    boolean onlySWave = false;
 
     @CommandLine.Option(names = "--time",
             arity = "1..2",
