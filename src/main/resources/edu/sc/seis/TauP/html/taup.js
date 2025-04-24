@@ -511,6 +511,7 @@ export function form_url() {
     }
     url += distparam;
   }
+  console.log(`isazimuth: ${toolname} ${isazimuth}  ${document.querySelector('input[name="az"]').value}`)
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find") {
@@ -622,7 +623,7 @@ export function form_url() {
       let rake = document.querySelector('input[name="rake"]').value;
       let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
       url += `&strikediprake=${strike},${dip},${rake}`;
-      if (toolname === 'curve' || toolname === 'find') {
+      if (toolname === 'curve' || toolname === 'find' ) {
         // spikes uses distance az field
         let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
         url += `&az=${curveazimuth}`;

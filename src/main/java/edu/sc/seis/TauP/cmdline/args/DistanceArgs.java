@@ -388,6 +388,11 @@ public class DistanceArgs {
         if (step == 0.0) {
             throw new IllegalArgumentException("Step cannot be zero");
         }
+        if ((step<0 && (start<stop)) || (step>0 && (start>stop))){
+            double tmp = start;
+            start = stop;
+            stop = tmp;
+        }
         double d = start;
         List<Double> out = new ArrayList<>();
         while (d<= stop) {

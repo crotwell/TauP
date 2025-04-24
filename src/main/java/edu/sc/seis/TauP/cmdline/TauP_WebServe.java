@@ -443,7 +443,7 @@ public class TauP_WebServe extends TauP_Tool {
                 List<MSeed3Record> allRecords = new ArrayList<>();
                 //List<MSeed3Record> wkbjRecords = wkbj.calcWKBJ(wkbj.getDistances());
                 //allRecords.addAll(wkbjRecords);
-                List<MSeed3Record> spikeRecords = taup_spikes.calcSpikes(taup_spikes.getRayCalcs());
+                List<MSeed3Record> spikeRecords = taup_spikes.calcSpikes(taup_spikes.getRayCalculatables());
                 allRecords.addAll(spikeRecords);
 
                 List<ByteBuffer> bufList = new ArrayList<>();

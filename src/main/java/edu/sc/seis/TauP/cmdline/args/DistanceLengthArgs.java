@@ -1,11 +1,55 @@
 package edu.sc.seis.TauP.cmdline.args;
 
+import edu.sc.seis.TauP.DistanceRay;
+import edu.sc.seis.TauP.RayCalculateable;
+import edu.sc.seis.TauP.TauPException;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeDeg;
+import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeKm;
+
 public class DistanceLengthArgs {
+
+    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) throws TauPException {
+        List<RayCalculateable> out = new ArrayList<>();
+        out.addAll(getLengthDistances());
+        if (sourceArgs != null) {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasSourceArgs()) {
+                    rc.setSourceArgs(sourceArgs);
+                }
+            }
+        }
+        return out;
+    }
+
+
+    public List<DistanceRay> getLengthDistances() throws TauPException {
+        List<DistanceRay> out = new ArrayList<>();
+        List<DistanceRay> simpleDistanceList = new ArrayList<>();
+        for (Double d : degreesList) {
+            simpleDistanceList.add(DistanceRay.ofDegrees(d));
+        }
+
+        if (!degreeRange.isEmpty()) {
+            for (Double d : createListFromRangeDeg(degreeRange)) {
+                simpleDistanceList.add(DistanceRay.ofDegrees(d));
+            }
+        }
+        for (Double d : distKilometersList) {
+            simpleDistanceList.add(DistanceRay.ofKilometers(d));
+        }
+
+        if (!kilometerRange.isEmpty()) {
+            for (Double d : createListFromRangeKm(kilometerRange)) {
+                simpleDistanceList.add(DistanceRay.ofKilometers(d));
+            }
+        }
+        return simpleDistanceList;
+    }
 
     @CommandLine.Option(names = {"--deg", "--degree"},
             paramLabel = "d",

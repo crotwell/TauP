@@ -17,6 +17,8 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
                  [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
                  deg...]]... [--degreerange=[step][min max][min max step]]...
+                 [--exactdegreerange=[step][min max][min max step]]...
+                 [--exactkilometerrange=[step][min max][min max step]]...
                  [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--json
@@ -97,8 +99,16 @@ Distance is given by:
                                min max or min max step. Default min is 0, max
                                is 180 and step is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
+      --exactdegreerange=[step][min max][min max step]
+                             regular distance range in exact degrees, not
+                               360-deg, one of step; min max or min max step.
+                               Default min is 0, max is 180 and step is 10.
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
+      --exactkilometerrange=[step][min max][min max step]
+                             regular distance range in kilometers, not 360-k,
+                               one of step; min max or min max step. Default
+                               min is 0, max is 1000 and step is 100.
       --incident=deg[,deg...]
                              incident angle in degrees at the receiver, zero is
                                down, 90 horizontal, 180 is up.

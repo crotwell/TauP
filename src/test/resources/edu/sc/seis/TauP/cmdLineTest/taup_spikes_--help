@@ -1,27 +1,18 @@
 Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
                    [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                   [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                   [--geodeticflattening=f] [--mw=<mw>]
+                   [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
                    [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                    [--otime=<origintime>] [--prop=<toolPropsFilename>]
                    [--pulsewidth=<pulseWidth>] [--qml=<quakemlFilename>]
-                   [sps=<sps>] [--staxml=<stationxmlFilename>] [--eid=evt[,
-                   evt...]]... [--sid=sta[,sta...]]... [--evt=lat lon]...
-                   [--evt=lat lon]... [--sta=lat lon]... [--sta=lat lon]...
+                   [sps=<sps>] [--staxml=<stationxmlFilename>] [--deg=d[,
+                   d...]]... [--eid=evt[,evt...]]... [--km=km[,km...]]...
+                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
+                   lon]... [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...
                    [--strikediprake=strike dip rake]... [[--mod=<modelName>]
                    [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                    [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                   [--phasefile=<phaseFiles>]...] [[--allindex] [--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]... [--degreerange=[step][min max][min max step]]...
-                   [--incidentrange=[step][min max][min max step]]...
-                   [--kilometerrange=[step][min max][min max step]]...
-                   [--takeoffrange=[step][min max][min max step]]...]... [--ms3
-                   | --sac]
+                   [--phasefile=<phaseFiles>]...] [--ms3 | --sac]
 Calculate spike seismograms
 
 Options:
@@ -30,6 +21,12 @@ Options:
                              attenuation frequency for amplitude calculations,
                                default is 1.0
       --debug                enable debugging output
+      --deg, --degree=d[,d...]
+                             distance in degrees
+      --degreerange=[step][min max][min max step]
+                             regular distance range in degrees, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 180 and step is 10.
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
@@ -43,6 +40,12 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
+      --kilometerrange=[step][min max][min max step]
+                             regular distance range in kilometers, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 1000 and step is 100.
+      --km, --kilometer=km[,km...]
+                             distance in kilometers along surface.
       --mw=<mw>              scale amplitude by source moment magnitude,
                                default is 4.0
       --numattenuationfreq=<numFrequencies>
@@ -89,47 +92,9 @@ Phase Names
                              seismic phase names
       --phasefile=<phaseFiles>
                              read list of phase names from file
-Distance is given by:
-      --allindex             all arrivals at sampling of model
-      --deg, --degree=d[,d...]
-                             distance in degrees
-      --degreerange=[step][min max][min max step]
-                             regular distance range in degrees, one of step;
-                               min max or min max step. Default min is 0, max
-                               is 180 and step is 10.
-      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
-      --exactkilometer=km[,km...]
-                             exact distance traveled in kilometers, not 360-k
-      --incident=deg[,deg...]
-                             incident angle in degrees at the receiver, zero is
-                               down, 90 horizontal, 180 is up.
-      --incidentrange=[step][min max][min max step]
-                             regular range in incident angle in degrees, one of
-                               step; min max or min max step. Default min is 0
-                               and step is 10.
-      --kilometerrange=[step][min max][min max step]
-                             regular distance range in kilometers, one of step;
-                               min max or min max step. Default min is 0, max
-                               is 1000 and step is 100.
-      --km, --kilometer=km[,km...]
-                             distance in kilometers along surface.
-      --rayparamdeg=s/deg[,s/deg...]
-                             ray parameter from the source in s/deg, up or down
-                               is determined by the phase
-      --rayparamidx=i[,i...] ray parameter from the source as index into model
-                               sampling, up or down is determined by the phase
-      --rayparamkm=s/km[,s/km...]
-                             ray parameter from the source in s/km, up or down
-                               is determined by the phase
-      --rayparamrad=s/rad[,s/rad...]
-                             ray parameter from the source in s/rad, up or down
-                               is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
-                               down, 90 horizontal, 180 is up.
-      --takeoffrange=[step][min max][min max step]
-                             regular range in takeoff angle in degrees, one of
-                               step; min,max or min,max,step. Default min is 0
-                               and step is 10.
+Output Type
+      --ms3                  outputs as mseed3
+      --sac                  outputs as SAC
 Lat,Lon influenced by:
       --az=<azimuth>         azimuth in degrees, source to receiver
       --baz=<backAzimuth>    backazimuth in degrees, receiver to source
@@ -138,6 +103,3 @@ Lat,Lon influenced by:
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
-Output Type
-      --ms3                  outputs as mseed3
-      --sac                  outputs as SAC

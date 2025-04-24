@@ -395,7 +395,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         super.validateArguments();
         sourceArgs.validateArguments();
         if (isWithAmplitude()) {
-            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs());
+            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs));
         }
     }
 

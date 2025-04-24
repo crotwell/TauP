@@ -150,7 +150,7 @@ public class SeismicSourceArgs {
         }
     }
 
-    public void validateArgumentsForAmplitude(ModelArgs modelArgs, DistanceArgs distanceArgs) throws TauPException {
+    public void validateArgumentsForAmplitude(ModelArgs modelArgs,  List<RayCalculateable> rayList) throws TauPException {
         if (modelArgs.getTauModel().getVelocityModel().densityIsDefault()) {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
         }
@@ -158,7 +158,7 @@ public class SeismicSourceArgs {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
         }
         if (getStrikeDipRake() != null) {
-            for (RayCalculateable rc : distanceArgs.getRayCalculatables(this)) {
+            for (RayCalculateable rc : rayList) {
                 if (!rc.hasAzimuth()) {
                     throw new IllegalArgumentException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);
                 }
