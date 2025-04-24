@@ -32,6 +32,7 @@ import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
+import edu.sc.seis.seisFile.fdsnws.stationxml.Network;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
 import edu.sc.seis.seisFile.mseed3.MSeed3EH;
@@ -215,49 +216,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             componentRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
             componentRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
             for (MSeed3Record ms3 : componentRecords) {
-                MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
+                MSeed3EH eh = createEH(dr, getOriginTime(), allArrivals, ms3.getSourceId());
                 ms3.setStartDateTime(getOriginTime());
-
-                Location evtLoc;
-                if ( dr.hasSource()) {
-                    evtLoc = dr.getSource();
-                } else {
-                    // put earthquake at 0,0
-                    evtLoc = new Location(0, 0);
-                }
-                Origin origin = new Origin();
-                origin.setTime(new Time(getOriginTime().toInstant()));
-                origin.setDepth(new RealQuantity((float) (1000*sourceDepth)));
-                origin.setLatitude(new RealQuantity((float) evtLoc.getLatitude()));
-                origin.setLongitude(new RealQuantity((float) evtLoc.getLongitude()));
-                Event event = new Event(origin);
-                Magnitude mag = new Magnitude();
-                mag.setType("Mw");
-                mag.setMag(new RealQuantity(sourceArgs.getMw()));
-                event.setMagnitudeList(List.of(mag));
-                event.setPreferredMagnitudeID(event.getMagnitudeList().get(0).getPublicId());
-                eh.addToBag(event);
-
-                Station sta = null;
-
-                // only add chan if we can get lat,lon
-                if (dr.hasReceiver()) {
-                    sta = new Station();
-                    sta.setLatitude((float) dr.getReceiver().getLatitude());
-                    sta.setLongitude((float) dr.getReceiver().getLongitude());
-                } else if (dr.hasAzimuth()  && !dr.isGeodetic()) {
-                    sta = new Station();
-                    sta.setLatitude((float) SphericalCoords.latFor(evtLoc, dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
-                    sta.setLongitude((float) SphericalCoords.lonFor(evtLoc, dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
-                }
-                if (sta != null ) {
-                    Channel chan = new Channel(sta, ms3.getSourceId().getChannelCode(), ms3.getSourceId().getChannelCode());
-                    sta.setStationCode(staCode);
-                    chan.setDepth((float) (1000*receiverDepth));
-                    chan.setSourceId(ms3.getSourceIdStr());
-                    eh.addToBag(chan);
-
-                }
                 ms3.setExtraHeaders(eh.getEH());
             }
             spikeRecords.addAll(componentRecords);
@@ -265,14 +225,14 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return spikeRecords;
     }
 
-    public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) throws TauPException {
+    public MSeed3EH createEH(DistanceRay dr, ZonedDateTime startDateTime, List<Arrival> allArrivals, FDSNSourceId sourceId) throws TauPException {
         MSeed3EH eh = new MSeed3EH();
 
         // assume single source
         double sourceDepth = modelArgs.getSourceDepths().isEmpty() ? 0 : modelArgs.getSourceDepths().get(0);
-        Float deg = (float) degrees;
-        Float az = latLonArgs.hasAzimuth() ? latLonArgs.getAzimuth().floatValue() : null;
-        Float baz = latLonArgs.hasBackAzimuth() ? latLonArgs.getBackAzimuth().floatValue() : null;
+        Float deg = (float) dr.getDegrees(getRadiusOfEarth());
+        Float az = dr.hasAzimuth() ? dr.getAzimuth().floatValue() : null;
+        Float baz = dr.hasBackAzimuth() ? dr.getBackAzimuth().floatValue() : null;
         Path path = new Path(deg, az, baz);
         eh.addToBag(path);
 
@@ -282,9 +242,10 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
 
         float olat = 0;
         float olon = 0;
-        if (hasEventLatLon()) {
-            olat = (float) getEventLatLon().get(0).getLatitude();
-            olon = (float) getEventLatLon().get(0).getLongitude();
+        if (dr.hasSource()) {
+            Location loc = dr.getSource();
+            olat = (float) loc.getLatitude();
+            olon = (float) loc.getLongitude();
         }
         origin.setLatitude(new RealQuantity(olat));
         origin.setLongitude(new RealQuantity(olon));
@@ -303,6 +264,26 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             Marker m = new Marker(a.getName(), arrTime, MSeed3EHKeys.MARKER_MODELED, desc);
             eh.addToBag(m);
         }
+        Marker oMarker = new Marker("origin", startDateTime, MSeed3EHKeys.MARKER_MODELED, "");
+        eh.addToBag(oMarker);
+
+        // only add chan if we can get lat,lon
+        Station sta = new Station(new Network(sourceId.getNetworkCode()), sourceId.getStationCode());
+        if (dr.hasReceiver()) {
+            sta.setLatitude((float) dr.getReceiver().getLatitude());
+            sta.setLongitude((float) dr.getReceiver().getLongitude());
+        } else if (dr.hasSource() && dr.hasAzimuth()  && !dr.isGeodetic()) {
+            sta.setLatitude((float) SphericalCoords.latFor(dr.getSource(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+            sta.setLongitude((float) SphericalCoords.lonFor(dr.getSource(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+        }
+        Channel chan = new Channel(sta, sourceId.getLocationCode(), sourceId.getChannelCode());
+        chan.setSourceId(sourceId.toString());
+        if (dr.getReceiver().hasDepth()) {
+            chan.setDepth(dr.getReceiver().getDepthMeter().floatValue());
+            chan.setElevation(-1*dr.getReceiver().getDepthMeter().floatValue());
+        }
+        eh.addToBag(chan);
+
         return eh;
     }
 
@@ -345,11 +326,11 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         List<MSeed3Record> spikeRecords = new ArrayList<>();
         float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float)( 1/sps),  1000);
         Instant sourceTime = new MSeed3Record().getStartInstant();
-        for (DistanceRay distVal : degreesList) {
-            double degrees = distVal.getDegrees(getRadiusOfEarth());
+        for (DistanceRay dr : degreesList) {
+            double degrees = dr.getDegrees(getRadiusOfEarth());
             List<Arrival> allArrivals = new ArrayList<>();
             for (SeismicPhase phase : phaseList) {
-                List<Arrival> phaseArrivals = distVal.calculate(phase);
+                List<Arrival> phaseArrivals = dr.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
 
@@ -370,11 +351,10 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             //startTime += (int) (Math.round(sourceTerm[VERT_IDX].length*getDeltaT()));
             String staCode = "S"+Math.round(degrees);
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
-            MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
-            eh.setTimeseriesUnit("m");
             spikeRecords.addAll(packageMSeed3(rtz[VERT_IDX], rtz[RAD_IDX], rtz[TRANS_IDX], staCode, startTime));
             spikeRecords.add(packageMSeed3(theta_rtz[VERT_IDX], staCode, "THETA", "Z", startTime));
             for(MSeed3Record msr: spikeRecords) {
+                MSeed3EH eh = createEH(dr, getOriginTime(), allArrivals, msr.getSourceId());
                 msr.setExtraHeaders(eh.getEH());
                 msr.setStartDateTime(getOriginTime());
             }
