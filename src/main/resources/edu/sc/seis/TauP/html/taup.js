@@ -1,4 +1,4 @@
-import { startAnimation } from './wavefront_animation.js';
+import { setupAnimation, startAnimation } from './wavefront_animation.js';
 
 import * as sp from './seisplotjs_3.1.5-SNAPSHOT_standalone.mjs';
 
@@ -778,10 +778,11 @@ export function form_url() {
 }
 
 export function setupListeners() {
+  let excludeInItems = ["wavefronttime", "knownPlanetEllip"];
   let in_items = Array.from(document.querySelectorAll("input"));
   let sel_items = Array.from(document.querySelectorAll("select"));
   let all_input_items = in_items.concat(sel_items);
-  all_input_items = all_input_items.filter( inEl => inEl.getAttribute("id") !== "knownPlanetEllip");
+  all_input_items = all_input_items.filter( inEl => excludeInItems.indexOf(inEl.getAttribute("id")) === -1);
   for (let inEl of all_input_items) {
     inEl.addEventListener("change", (event) => {
       process();
@@ -792,11 +793,8 @@ export function setupListeners() {
       })
     }
   }
-  let animateBtn = document.querySelector("button#animate");
-  if (!animateBtn) {console.log("animate button missing");}
-  animateBtn.addEventListener("click", (event) => {
-    startAnimation();
-  });
+  // setup animate button listeners
+  setupAnimation();
   // ellipticity choice
   document.querySelector("#knownPlanetEllip").addEventListener("change", (event) => {
     document.querySelector("#geodeticflattening").value = event.target.value;
