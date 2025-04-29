@@ -28,6 +28,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.Arrival;
+import edu.sc.seis.TauP.BuildVersion;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
@@ -40,6 +41,7 @@ import edu.sc.seis.seisFile.mseed3.MSeed3EHKeys;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
 import edu.sc.seis.seisFile.mseed3.ehbag.Path;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -233,8 +235,6 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         Float deg = (float) dr.getDegrees(getRadiusOfEarth());
         Float az = dr.hasAzimuth() ? dr.getAzimuth().floatValue() : null;
         Float baz = dr.hasBackAzimuth() ? dr.getBackAzimuth().floatValue() : null;
-        Path path = new Path(deg, az, baz);
-        eh.addToBag(path);
 
         Origin origin = new Origin();
         origin.setDepth(new RealQuantity((float) sourceDepth));
@@ -272,18 +272,60 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         if (dr.hasReceiver()) {
             sta.setLatitude((float) dr.getReceiver().getLatitude());
             sta.setLongitude((float) dr.getReceiver().getLongitude());
-        } else if (dr.hasSource() && dr.hasAzimuth()  && !dr.isGeodetic()) {
-            sta.setLatitude((float) SphericalCoords.latFor(dr.getSource(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
-            sta.setLongitude((float) SphericalCoords.lonFor(dr.getSource(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+        } else if (dr.hasAzimuth()  && !dr.isGeodetic()) {
+            sta.setLatitude((float) SphericalCoords.latFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+            sta.setLongitude((float) SphericalCoords.lonFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+        } else {
+            //System.err.println("cannot calc station loc: rec: "+dr.hasReceiver()+" az: "+dr.hasAzimuth()+" geod: "+dr.isGeodetic());
         }
         Channel chan = new Channel(sta, sourceId.getLocationCode(), sourceId.getChannelCode());
         chan.setSourceId(sourceId.toString());
-        if (dr.getReceiver().hasDepth()) {
+        if (dr.hasReceiver() && dr.getReceiver().hasDepth()) {
             chan.setDepth(dr.getReceiver().getDepthMeter().floatValue());
             chan.setElevation(-1*dr.getReceiver().getDepthMeter().floatValue());
+        } else {
+            chan.setDepth(0);
+            chan.setElevation(0);
+        }
+
+        if (origin != null && chan.asLocation()!= null) {
+            if (az == null && !dr.isGeodetic()) {
+                az = (float) SphericalCoords.azimuth(origin.asLocation(), chan.asLocation());
+            }
+            if (baz == null && !dr.isGeodetic()) {
+                baz = (float) SphericalCoords.azimuth(chan.asLocation(), origin.asLocation());
+            }
+        }
+        Path path = new Path(deg, az, baz);
+        eh.addToBag(path);
+
+        if (sourceId.getSubsourceCode().charAt(0) == 'Z') {
+            chan.setAzimuth(0);
+            chan.setDip(-90);
+        } else if (sourceId.getSubsourceCode().charAt(0) == 'R') {
+            if (baz != null) {
+                chan.setAzimuth((baz + 180) % 360);
+            }
+            chan.setDip(0);
+        } else if (sourceId.getSubsourceCode().charAt(0) == 'T') {
+            if (baz != null) {
+                chan.setAzimuth((baz + 180 + 90) % 360);
+            }
+            chan.setDip(0);
         }
         eh.addToBag(chan);
-
+        eh.setTimeseriesUnit("m");
+        JSONObject bagEh = eh.getBagEH();
+        if (! bagEh.has(MSeed3EHKeys.Y)) {
+            bagEh.put(MSeed3EHKeys.Y, new JSONObject());
+        }
+        JSONObject y = bagEh.getJSONObject(MSeed3EHKeys.Y);
+        y.put(MSeed3EHKeys.PROC, "synth");
+        if (! y.has(MSeed3EHKeys.REQUEST)) {
+            y.put(MSeed3EHKeys.REQUEST, new JSONObject());
+        }
+        JSONObject req = y.getJSONObject(MSeed3EHKeys.REQUEST);
+        req.put(MSeed3EHKeys.DATACENTER, "TauP"+ BuildVersion.getVersion());
         return eh;
     }
 
