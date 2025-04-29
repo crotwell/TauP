@@ -450,7 +450,7 @@ export function form_url() {
     if (islistdegdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
       let degarg = "degree";
-      if (isexactdegree) {
+      if (isexactdegree && toolname !== "spikes") {
         degarg = "exact"+degarg;
       }
       distparam += `&${degarg}=${distdeg}`;
@@ -460,7 +460,7 @@ export function form_url() {
       let distdegstep = document.querySelector('input[name="distdegstep"]').value;
       let distdegmax = document.querySelector('input[name="distdegmax"]').value;
       let degarg = "degreerange";
-      if (isexactdegree) {
+      if (isexactdegree && toolname !== "spikes") {
         degarg = "exact"+degarg;
       }
       distparam += `&${degarg}=${distdegmin},${distdegmax},${distdegstep}`;
