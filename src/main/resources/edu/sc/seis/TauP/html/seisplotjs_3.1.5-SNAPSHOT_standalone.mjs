@@ -43762,11 +43762,15 @@ __export(fdsnsourceid_exports, {
   SEP: () => SEP,
   SourceIdSorter: () => SourceIdSorter,
   StationSourceId: () => StationSourceId,
+  TESTING_NETWORK: () => TESTING_NETWORK,
+  TESTING_STATION: () => TESTING_STATION,
   bandCodeForRate: () => bandCodeForRate,
   parseSourceId: () => parseSourceId
 });
 var FDSN_PREFIX = "FDSN:";
 var SEP = "_";
+var TESTING_NETWORK = "XX";
+var TESTING_STATION = "ABC";
 var FDSNSourceId = class _FDSNSourceId {
   constructor(networkCode, stationCode, locationCode, bandCode, sourceCode, subsourceCode) {
     __publicField(this, "networkCode");
@@ -43785,7 +43789,7 @@ var FDSNSourceId = class _FDSNSourceId {
   static createUnknown(sampRate, source, subsource) {
     const s2 = source ? source : "Y";
     const ss = subsource ? subsource : "X";
-    return new _FDSNSourceId("XX", "ABC", "", bandCodeForRate(sampRate), s2, ss);
+    return new _FDSNSourceId(TESTING_NETWORK, TESTING_STATION, "", bandCodeForRate(sampRate), s2, ss);
   }
   static parse(id2) {
     if (!id2.startsWith(FDSN_PREFIX)) {
@@ -50649,7 +50653,7 @@ function toMSeed3(seis, extraHeaders) {
         if (!encoding) {
           throw new Error(`encoding is undefined`);
         }
-        if (INTEGER || FLOAT || DOUBLE) {
+        if (encoding === INTEGER || encoding === FLOAT || encoding === DOUBLE || encoding === STEIM1 || encoding === STEIM2) {
           const totSize = encoded.reduce(
             (acc, cur) => acc + cur.dataView.byteLength,
             0
@@ -51390,7 +51394,8 @@ function convertMS2Record(ms2record) {
   xHeader.encoding = ms2record.header.encoding;
   xHeader.publicationVersion = UNKNOWN_DATA_VERSION;
   xHeader.dataLength = ms2record.data.byteLength;
-  xHeader.identifier = FDSN_PREFIX2 + ":" + ms2H.netCode + SEP2 + ms2H.staCode + SEP2 + (ms2H.locCode ? ms2H.locCode : "") + SEP2 + ms2H.chanCode;
+  const sid = FDSNSourceId.fromNslc(ms2H.netCode, ms2H.staCode, ms2H.locCode ? ms2H.locCode : "", ms2H.chanCode);
+  xHeader.identifier = sid.toString();
   xHeader.identifierLength = xHeader.identifier.length;
   xHeader.numSamples = ms2H.numSamples;
   xHeader.crc = 0;
@@ -51429,10 +51434,22 @@ function convertMS2Record(ms2record) {
     }
   }
   xHeader.extraHeadersLength = JSON.stringify(xExtras).length;
-  const out = new MSeed3Record(xHeader, xExtras, ms2record.data);
+  let data;
+  if (ms2record.header.encoding == 11 || ms2record.header.encoding == 12 || ms2record.header.encoding <= 5 && ms2record.header.littleEndian) {
+    data = ms2record.data;
+  } else {
+    data = ms2record.decompress();
+    if (data instanceof Float32Array) {
+      xHeader.encoding = FLOAT;
+    } else if (data instanceof Int32Array) {
+      xHeader.encoding = INTEGER;
+    } else {
+      xHeader.encoding = DOUBLE;
+    }
+  }
+  const out = new MSeed3Record(xHeader, xExtras, new DataView(data.buffer));
   return out;
 }
-var SEP2 = "_";
 var kCRCTable = new Int32Array([
   0,
   4067132163,
@@ -53527,6 +53544,7 @@ __export(organizeddisplay_exports, {
   OVERLAY_INDIVIDUAL: () => OVERLAY_INDIVIDUAL,
   OVERLAY_NONE: () => OVERLAY_NONE,
   OVERLAY_STATION: () => OVERLAY_STATION,
+  OVERLAY_STATION_COMPONENT: () => OVERLAY_STATION_COMPONENT,
   OVERLAY_VECTOR: () => OVERLAY_VECTOR,
   OrganizedDisplay: () => OrganizedDisplay,
   OrganizedDisplayItem: () => OrganizedDisplayItem,
@@ -53552,6 +53570,7 @@ __export(organizeddisplay_exports, {
   overlayByComponent: () => overlayByComponent,
   overlayBySDDFunction: () => overlayBySDDFunction,
   overlayByStation: () => overlayByStation,
+  overlayByStationComponent: () => overlayByStationComponent,
   sortByKey: () => sortByKey
 });
 
@@ -64884,6 +64903,7 @@ var OVERLAY_INDIVIDUAL = "individual";
 var OVERLAY_VECTOR = "vector";
 var OVERLAY_COMPONENT = "component";
 var OVERLAY_STATION = "station";
+var OVERLAY_STATION_COMPONENT = "stationcomponent";
 var OVERLAY_ALL = "all";
 var OVERLAY_FUNCTION = "function";
 var TOOLS_HTML = `
@@ -64914,6 +64934,10 @@ var TOOLS_HTML = `
     <span>
       <input type="radio" name="overlay" id="overlay_component" value="component">
       <label for="overlay_component">component</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_station_component" value="stationcomponent">
+      <label for="overlay_station_component">station component</label>
     </span>
     <span>
       <input type="radio" name="overlay" id="overlay_station" value="station">
@@ -65190,6 +65214,9 @@ var OrganizedDisplay = class extends SeisPlotElement {
     } else if (this.overlayby === OVERLAY_COMPONENT) {
       const oitems = overlayByComponent(sortedData, this.seismographConfig);
       seisDispItems = allOrgDispItems.concat(oitems);
+    } else if (this.overlayby === OVERLAY_STATION_COMPONENT) {
+      const oitems = overlayByStationComponent(sortedData, this.seismographConfig);
+      seisDispItems = allOrgDispItems.concat(oitems);
     } else if (this.overlayby === OVERLAY_STATION) {
       const oitems = overlayByStation(sortedData, this.seismographConfig);
       seisDispItems = allOrgDispItems.concat(oitems);
@@ -65398,6 +65425,14 @@ function overlayByComponent(sddList, seisConfig) {
     sddList,
     "component",
     (sdd) => sdd.sourceId.subsourceCode,
+    seisConfig
+  );
+}
+function overlayByStationComponent(sddList, seisConfig) {
+  return overlayBySDDFunction(
+    sddList,
+    "stationcomponent",
+    (sdd) => `${sdd.sourceId.stationSourceId().toStringNoPrefix()} ${sdd.sourceId.subsourceCode}`,
     seisConfig
   );
 }
@@ -69264,9 +69299,9 @@ var DataSelectQuery = class _DataSelectQuery extends FDSNCommon {
   }
   /**
    * queries the web service using the configured parameters, parsing the response
-   * into miniseed data records.
+   * into miniseed3 data records.
    *
-   * @returns Promise to Array of miniseed.DataRecords
+   * @returns Promise to Array of mseed3.MSeed3Record
    */
   queryMS3Records() {
     this.format(FORMAT_MINISEED_THREE);
@@ -75375,6 +75410,744 @@ if (document) {
   insertCSS(configEditor_css, "configeditor");
 }
 
+// src/syngine.ts
+var syngine_exports = {};
+__export(syngine_exports, {
+  SERVICE_NAME: () => SERVICE_NAME6,
+  SERVICE_VERSION: () => SERVICE_VERSION6,
+  SyngineQuery: () => SyngineQuery,
+  calcMoment: () => calcMoment
+});
+var SERVICE_VERSION6 = 1;
+var SERVICE_NAME6 = `irisws-syngine-${SERVICE_VERSION6}`;
+function calcMoment(Mw) {
+  return 10 ** (Mw / 2 * 3 + 9.1);
+}
+var SyngineQuery = class extends FDSNCommon {
+  constructor(host) {
+    if (!isNonEmptyStringArg(host)) {
+      host = IRIS_HOST;
+    }
+    super(host);
+    /** @private */
+    __publicField(this, "_model");
+    /** @private */
+    __publicField(this, "_label");
+    /** @private */
+    __publicField(this, "_components");
+    /** @private */
+    __publicField(this, "_units");
+    /** @private */
+    __publicField(this, "_dt");
+    /** @private */
+    __publicField(this, "_scale");
+    /** @private */
+    __publicField(this, "_kernelwidth");
+    /** @private */
+    __publicField(this, "_sourcewidth");
+    /** @private */
+    __publicField(this, "_originTime");
+    /** @private */
+    __publicField(this, "_startTime");
+    /** @private */
+    __publicField(this, "_endTime");
+    /** @private */
+    __publicField(this, "_receiverlatitude");
+    /** @private */
+    __publicField(this, "_receiverlongitude");
+    /** @private */
+    __publicField(this, "_network");
+    /** @private */
+    __publicField(this, "_station");
+    /** @private */
+    __publicField(this, "_networkCode");
+    /** @private */
+    __publicField(this, "_stationCode");
+    /** @private */
+    __publicField(this, "_locationCode");
+    __publicField(this, "_channel");
+    // source-options
+    /** @private */
+    __publicField(this, "_eventid");
+    /** @private */
+    __publicField(this, "_quake");
+    /** @private */
+    __publicField(this, "_sourcelatitude");
+    /** @private */
+    __publicField(this, "_sourcelongitude");
+    /** @private */
+    __publicField(this, "_sourcedepthinmeters");
+    /** @private */
+    __publicField(this, "_sourcedistanceindegrees");
+    /** @private */
+    __publicField(this, "_greensfunction");
+    /** @private */
+    __publicField(this, "_sourcemomenttensor");
+    /** @private */
+    __publicField(this, "_sourcedoublecouple");
+    /** @private */
+    __publicField(this, "_sourceforce");
+    // USGS Finite Fault Model
+    // Todo
+    // Custom Source Time Function
+    // Todo
+    /** @private */
+    __publicField(this, "_format");
+  }
+  /**
+   * Gets/Sets the version of the syngine spec, 1 is currently the only value.
+   *  Setting this is probably a bad idea as the code may not be compatible with
+   *  the web service.
+   *
+   * @param value spec version, usually 1
+   * @returns new value if getting, this if setting
+   */
+  specVersion(value) {
+    doStringGetterSetter(this, "specVersion", value);
+    return this;
+  }
+  getSpecVersion() {
+    return this._specVersion;
+  }
+  /**
+   * Gets/Sets the protocol, http or https. This should match the protocol
+   *  of the page loaded, but is autocalculated and generally need not be set.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  protocol(value) {
+    doStringGetterSetter(this, "protocol", value);
+    return this;
+  }
+  getProtocol() {
+    return this._protocol;
+  }
+  /**
+   * Gets/Sets the remote host to connect to.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  host(value) {
+    doStringGetterSetter(this, "host", value);
+    return this;
+  }
+  getHost() {
+    return this._host;
+  }
+  /**
+   * Gets/Sets the nodata parameter, usually 404 or 204 (default), controlling
+   * the status code when no matching data is found by the service.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  nodata(value) {
+    doIntGetterSetter(this, "nodata", value);
+    return this;
+  }
+  getNodata() {
+    return this._nodata;
+  }
+  /**
+   * Gets/Sets the remote port to connect to.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  port(value) {
+    doIntGetterSetter(this, "port", value);
+    return this;
+  }
+  getPort() {
+    return this._port;
+  }
+  format(value) {
+    doStringGetterSetter(this, "format", value);
+    return this;
+  }
+  getFormat() {
+    return this._label;
+  }
+  /**
+   * Get/Set the model query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  model(value) {
+    doStringGetterSetter(this, "model", value);
+    return this;
+  }
+  getModel() {
+    return this._model;
+  }
+  /**
+   * Get/Set the label query parameter, used for file names.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  label(value) {
+    doStringGetterSetter(this, "label", value);
+    return this;
+  }
+  getLabel() {
+    return this._label;
+  }
+  /**
+   * Get/Set the components query parameter, used for file names.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  components(value) {
+    doStringGetterSetter(this, "components", value);
+    return this;
+  }
+  getComponents() {
+    return this._components;
+  }
+  /**
+   * Get/Set the units query parameter, displacement, velocity or acceleration.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  units(value) {
+    doStringGetterSetter(this, "units", value);
+    return this;
+  }
+  getUnits() {
+    return this._units;
+  }
+  /**
+   * Gets/Sets the dt query parameter, for upsampling.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  dt(value) {
+    doIntGetterSetter(this, "dt", value);
+    return this;
+  }
+  getDt() {
+    return this._dt;
+  }
+  /**
+   * Gets/Sets the scale query parameter, for upsampling.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  scale(value) {
+    doFloatGetterSetter(this, "scale", value);
+    return this;
+  }
+  getscale() {
+    return this._scale;
+  }
+  /**
+   * Gets/Sets the kernelwidth query parameter, for upsampling.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  kernelWidth(value) {
+    doFloatGetterSetter(this, "kernelwidth", value);
+    return this;
+  }
+  getKernelWidth() {
+    return this._kernelwidth;
+  }
+  /**
+   * Gets/Sets the sourcewidth query parameter, for upsampling.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceWidth(value) {
+    doFloatGetterSetter(this, "sourcewidth", value);
+    return this;
+  }
+  getSourceWidth() {
+    return this._sourcewidth;
+  }
+  /**
+   * Get/Set the origintime query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  originTime(value) {
+    doMomentGetterSetter(this, "originTime", value);
+    return this;
+  }
+  getOriginTime() {
+    return this._originTime;
+  }
+  /**
+   * Get/Set the starttime query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  startTime(value) {
+    doMomentGetterSetter(this, "startTime", value);
+    return this;
+  }
+  getStartTime() {
+    return this._startTime;
+  }
+  /**
+   * Get/Set the endtime query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  endTime(value) {
+    doMomentGetterSetter(this, "endTime", value);
+    return this;
+  }
+  getEndTime() {
+    return this._endTime;
+  }
+  /**
+   * Get/Set the network query parameter, used for receiver location.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  network(value) {
+    doStringGetterSetter(this, "network", value);
+    return this;
+  }
+  getNetwork() {
+    return this._network;
+  }
+  /**
+   * Get/Set the station query parameter, used for receiver location.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  station(value) {
+    doStringGetterSetter(this, "station", value);
+    return this;
+  }
+  getStation() {
+    return this._station;
+  }
+  /**
+   * Get/Set the network query parameter, code used for synthetics.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  networkCode(value) {
+    doStringGetterSetter(this, "networkCode", value);
+    return this;
+  }
+  getNetworkCode() {
+    return this._networkCode;
+  }
+  /**
+   * Get/Set the station query parameter, code used for synthetics.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  stationCode(value) {
+    doStringGetterSetter(this, "stationCode", value);
+    return this;
+  }
+  getStationCode() {
+    return this._stationCode;
+  }
+  /**
+   * Get/Set the location code query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  locationCode(value) {
+    doStringGetterSetter(this, "locationCode", value);
+    return this;
+  }
+  getLocationCode() {
+    return this._locationCode;
+  }
+  /**
+   * Get/Set the receiverlatitude query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  receiverLatitude(value) {
+    doFloatGetterSetter(this, "receiverlatitude", value);
+    return this;
+  }
+  getReceiverLatitude() {
+    return this._receiverlatitude;
+  }
+  /**
+   * Get/Set the receiverlongitude query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  receiverLongitude(value) {
+    doFloatGetterSetter(this, "receiverlongitude", value);
+    return this;
+  }
+  getReceiverLongitude() {
+    return this._receiverlongitude;
+  }
+  channel(chan) {
+    this._channel = chan;
+    return this;
+  }
+  getChannel() {
+    return this._channel;
+  }
+  /**
+   * Get/Set the eventid query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  eventId(value) {
+    doStringGetterSetter(this, "eventid", value);
+    return this;
+  }
+  getEventId() {
+    return this._eventid;
+  }
+  quake(quake) {
+    this._quake = quake;
+    return this;
+  }
+  getQuake() {
+    return this._quake;
+  }
+  /**
+   * Get/Set the sourcelatitude query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceLatitude(value) {
+    doFloatGetterSetter(this, "sourcelatitude", value);
+    return this;
+  }
+  getSourceLatitude() {
+    return this._sourcelatitude;
+  }
+  /**
+   * Get/Set the longitude query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceLongitude(value) {
+    doFloatGetterSetter(this, "sourcelongitude", value);
+    return this;
+  }
+  getSourceLongitude() {
+    return this._sourcelongitude;
+  }
+  /**
+   * Get/Set the sourcedepthinmeters query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceDepthInMeters(value) {
+    doFloatGetterSetter(this, "sourcedepthinmeters", value);
+    return this;
+  }
+  getSourceDepthInMeters() {
+    return this._sourcedepthinmeters;
+  }
+  /**
+   * Get/Set the sourcedistanceindegrees query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceDistanceInDegrees(value) {
+    doFloatGetterSetter(this, "sourcedistanceindegrees", value);
+    return this;
+  }
+  getSourceDistanceInDegrees() {
+    return this._sourcedistanceindegrees;
+  }
+  /**
+   * Get/Set the sourcemomenttensorb query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceMomentTensor(value) {
+    if (value && value.length != 6) {
+      throw new Error(`Moment tensor must be 6 numbers, but given ${value.length}`);
+    }
+    this._sourcemomenttensor = value;
+    return this;
+  }
+  getSourceMomentTensor() {
+    return this._sourcemomenttensor;
+  }
+  /**
+   * Get/Set the sourcedoublecouple query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceDoubleCouple(value) {
+    if (value && (value.length != 3 && value.length != 4)) {
+      throw new Error(`Moment tensor must be 3-4 numbers, but given ${value.length}`);
+    }
+    this._sourcedoublecouple = value;
+    return this;
+  }
+  getSourceDoubleCouple() {
+    return this._sourcedoublecouple;
+  }
+  /**
+   * Get/Set the sourceforce query parameter.
+   *
+   * @param value optional new value if setting
+   * @returns new value if getting, this if setting
+   */
+  sourceForce(value) {
+    if (value && value.length != 3) {
+      throw new Error(`sourceforce must be 3 numbers, but given ${value.length}`);
+    }
+    this._sourceforce = value;
+    return this;
+  }
+  getSsourceForce() {
+    return this._sourceforce;
+  }
+  // USGS Finite Fault
+  // Todo
+  // Custom Source Time Function
+  // Todo
+  /**
+   * queries the web service using the configured parameters, parsing the response
+   * into miniseed data records.
+   *
+   * @returns Promise to Array of miniseed.DataRecords
+   */
+  queryDataRecords() {
+    this.format(FORMAT_MINISEED);
+    const url = this.formURL();
+    const fetchInit = defaultFetchInitObj(MINISEED_MIME);
+    return doFetchWithTimeout(url, fetchInit, this._timeoutSec * 1e3).then((response) => {
+      if (response.status === 204 || isDef(this._nodata) && response.status === this.getNodata()) {
+        return new ArrayBuffer(0);
+      } else {
+        return response.arrayBuffer();
+      }
+    }).then(function(rawBuffer) {
+      const dataRecords = parseDataRecords(rawBuffer);
+      for (const dr of dataRecords) {
+        const ms2Data = dr.decompress();
+        let max = 0;
+        for (let i = 0; i < ms2Data.length; i++) {
+          if (ms2Data[i] > max) {
+            max = ms2Data[i];
+          }
+        }
+        console.log(`syngine dr ${dr.header.encoding} ${dr.header.startTime} to ${dr.header.endTime} ${dr.header.numSamples} max: ${max}`);
+        console.log(dr.toString());
+      }
+      return dataRecords;
+    });
+  }
+  /**
+   * queries the web service using the configured parameters, parsing the response
+   * into miniseed2 data records, then convert to MSeed3Records populating
+   * extra headers.
+   *
+   * @returns Promise to Array of mseed3.MSeed3Record
+   */
+  queryMS3Records() {
+    return this.queryDataRecords().then((msList) => {
+      const ms3List = convertMS2toMSeed3(msList);
+      if (msList.length > 0) {
+        const ms3 = ms3List[0];
+        console.log(`first ms3: ${ms3.header.start} ${ms3.header.end}`);
+      }
+      return ms3List;
+    });
+  }
+  /**
+   * queries the web service using the configured parameters, parsing the response
+   * into miniseed data records and then combining the data records into
+   * SeismogramDisplayData objects.
+   *
+   * @returns Promise to Array of SeismogramDisplayData objects
+   */
+  querySeismograms() {
+    return this.queryMS3Records().then((dataRecords) => {
+      const sddList = sddPerChannel(dataRecords);
+      const quake = this.getQuake();
+      let yunit = "count";
+      const queryUnits = this.getUnits();
+      if (queryUnits === "displacement") {
+        yunit = "m";
+      } else if (queryUnits === "velocity") {
+        yunit = "m/s";
+      } else if (queryUnits === "acceleration") {
+        yunit = "m/s2";
+      }
+      for (const sdd of sddList) {
+        if (quake) {
+          sdd.addQuake(quake);
+        }
+        const segments = sdd.seismogram ? sdd.seismogram.segments : [];
+        for (const seg of segments) {
+          seg.yUnit = yunit;
+        }
+      }
+      return sddList;
+    });
+  }
+  formBaseURL() {
+    let colon = ":";
+    if (this._protocol.endsWith(colon)) {
+      colon = "";
+    }
+    return this._protocol + colon + "//" + this._host + (this._port === 80 ? "" : ":" + String(this._port)) + "/irisws/syngine/" + this._specVersion;
+  }
+  formVersionURL() {
+    return this.formBaseURL() + "/version";
+  }
+  /**
+   * Queries the remote web service to get its version
+   *
+   * @returns Promise to version string
+   */
+  queryVersion() {
+    const url = this.formVersionURL();
+    const fetchInit = defaultFetchInitObj(TEXT_MIME);
+    return doFetchWithTimeout(url, fetchInit, this._timeoutSec * 1e3).then(
+      (response) => {
+        if (response.status === 200) {
+          return response.text();
+        } else {
+          throw new Error(`Status not 200: ${response.status}`);
+        }
+      }
+    );
+  }
+  formURL() {
+    let url = this.formBaseURL() + "/query?";
+    if (isStringArg(this._model) && this._model.length > 0) {
+      url = url + makeParam("model", this._model);
+    }
+    if (isStringArg(this._label) && this._label.length > 0) {
+      url = url + makeParam("label", this._label);
+    }
+    if (isStringArg(this._components) && this._components.length > 0) {
+      url = url + makeParam("components", this._components);
+    }
+    if (isStringArg(this._units) && this._units.length > 0) {
+      url = url + makeParam("units", this._units);
+    }
+    if (isNumArg(this._dt)) {
+      url = url + makeParam("dt", this._dt);
+    }
+    if (isNumArg(this._scale)) {
+      url = url + makeParam("scale", this._scale);
+    }
+    if (isNumArg(this._kernelwidth)) {
+      url = url + makeParam("kernelwidth", this._kernelwidth);
+    }
+    if (isNumArg(this._sourcewidth)) {
+      url = url + makeParam("sourcewidth", this._sourcewidth);
+    }
+    if (isObject(this._startTime)) {
+      url = url + makeParam("starttime", toIsoWoZ(this._startTime));
+    }
+    if (isObject(this._endTime)) {
+      url = url + makeParam("endtime", toIsoWoZ(this._endTime));
+    }
+    if (this._channel && this._channel.networkCode != TESTING_NETWORK) {
+      url = url + makeParam("network", this._channel.networkCode) + makeParam("station", this._channel.stationCode);
+    } else if (isNumArg(this._receiverlatitude) && isNumArg(this._receiverlongitude)) {
+      url = url + makeParam("receiverlatitude", this._receiverlatitude) + makeParam("receiverlongitude", this._receiverlongitude);
+    } else if (isStringArg(this._network) && this._network.length > 0 && isStringArg(this._station) && this._station.length > 0) {
+      url = url + makeParam("network", this._network) + makeParam("station", this._station);
+    } else {
+      if (isStringArg(this._networkCode) && this._networkCode.length > 0 && this._networkCode !== "*") {
+        url = url + makeParam("networkcode", this._networkCode);
+      }
+      if (isStringArg(this._stationCode) && this._stationCode.length > 0 && this._stationCode !== "*") {
+        url = url + makeParam("stationcode", this._stationCode);
+      }
+    }
+    if (isStringArg(this._locationCode) && this._locationCode.length > 0 && this._locationCode !== "*") {
+      url = url + makeParam("loc", this._locationCode);
+    }
+    if (this._quake) {
+      url = url + makeParam("origintime", this._quake.time);
+      url = url + makeParam("sourcelatitude", this._quake.latitude) + makeParam("sourcelongitude", this._quake.longitude);
+      url = url + makeParam("sourcedepthinmeters", this._quake.depth);
+    } else if (isStringArg(this._eventid)) {
+      url = url + makeParam("eventid", this._eventid);
+    } else {
+      if (isObject(this._originTime)) {
+        url = url + makeParam("origintime", toIsoWoZ(this._originTime));
+      }
+      if (isNumArg(this._sourcelatitude) && isNumArg(this._sourcelongitude)) {
+        url = url + makeParam("sourcelatitude", this._sourcelatitude) + makeParam("sourcelongitude", this._sourcelongitude);
+      } else if (isNumArg(this._sourcedistanceindegrees)) {
+        url = url + makeParam("sourcedistanceindegrees", this._sourcedistanceindegrees);
+      }
+      if (isNumArg(this._sourcedepthinmeters)) {
+        url = url + makeParam("sourcedepthinmeters", this._sourcedepthinmeters);
+      }
+    }
+    if (isDef(this._sourcemomenttensor)) {
+      url = url + makeParam("sourcemomenttensor", this._sourcemomenttensor.join(","));
+    } else if (isDef(this._sourcedoublecouple)) {
+      url = url + makeParam("sourcedoublecouple", this._sourcedoublecouple.join(","));
+    } else if (isDef(this._sourceforce)) {
+      url = url + makeParam("sourceforce", this._sourceforce.join(","));
+    } else if (isDef(this._quake)) {
+      if (isDef(this._quake.preferredFocalMechanism?.momentTensorList) && this._quake.preferredFocalMechanism.momentTensorList.length > 0) {
+        const focMech = this._quake.preferredFocalMechanism;
+        const mt = focMech.momentTensorList[0];
+        if (isDef(mt.tensor)) {
+          const t = mt.tensor;
+          url = url + makeParam("sourcemomenttensor", `${t.Mrr},${t.Mtt},${t.Mpp},${t.Mrt},${t.Mrp},${t.Mtp}`);
+        }
+      } else if (isDef(this._quake?.preferredFocalMechanism?.nodalPlanes)) {
+        const np = this._quake?.preferredFocalMechanism?.nodalPlanes.nodalPlane1;
+        const magVal = this._quake?.preferredMagnitude?.magQuantity?.value;
+        const momentArg = isDef(magVal) ? `,${calcMoment(magVal)}` : "";
+        if (isDef(np)) {
+          url = url + makeParam("sourcedoublecouple", `${np.strike},${np.dip},${np.rake}${momentArg}`);
+        }
+      }
+    }
+    if (this._format) {
+      url = url + makeParam("format", this._format);
+    }
+    if (this._nodata) {
+      url = url + makeParam("nodata", this._nodata);
+    }
+    if (url.endsWith("&") || url.endsWith("?")) {
+      url = url.substr(0, url.length - 1);
+    }
+    return url;
+  }
+};
+
 // src/taper.ts
 var taper_exports = {};
 __export(taper_exports, {
@@ -78880,6 +79653,7 @@ export {
   sorting_exports as sorting,
   spectraplot_exports as spectraplot,
   stationxml_exports as stationxml,
+  syngine_exports as syngine,
   taper_exports as taper,
   transfer_exports as transfer,
   traveltime_exports as traveltime,
