@@ -78,7 +78,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
             if (layerParams == null) {
-                xypList = calculate(vMod, depth, isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
+                xypList = calculate(vMod, getDepth(), isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
                 xypList = calculate(
                         layerParams.inVp, layerParams.inVs, layerParams.inRho,
@@ -105,10 +105,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.setTitle(layerParams.asName());
         } else {
             String title = modelArgs.getModelName() +" at ";
-            if (fsrf || depth == 0) {
+            if (fsrf || depth == 0 || NamedVelocityDiscon.SURFACE.equalsIgnoreCase(depthName)) {
                 title += " surface";
             } else {
-                title += depth+" km";
+                if (depthName != null ) {
+                    title += depthName;
+                } else {
+                    title += depth + " km";
+                }
             }
             xyOut.setTitle(title);
         }
@@ -167,7 +171,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (layerParams == null && depth == -1 && ! fsrf) {
+        if (layerParams == null && (depth == -1 && depthName == null) && ! fsrf) {
             throw new TauPException(
                     "Either --layer, or --mod and --depth must be given to specify layer parameters");
         }
@@ -698,11 +702,30 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return xyp;
     }
 
-    public double getDepth() {
+    public double getDepth() throws TauModelException {
+        if (depthName != null ) {
+            VelocityModel vMod = getModelArgs().getTauModel().getVelocityModel();
+            for (NamedVelocityDiscon nd : vMod.getNamedDiscons()) {
+                if (depthName.equalsIgnoreCase(nd.getPreferredName()) || depthName.equalsIgnoreCase(nd.getName())) {
+                    return nd.getDepth();
+                }
+            }
+        }
         return depth;
     }
 
-    @CommandLine.Option(names = "--depth", description = "Depth in model to get boundary parameters")
+    @CommandLine.Option(names = "--depth",
+            description = "Depth in model to get boundary parameters, may be number or name like moho.")
+    public void setDepth(String depthOrName) {
+        try {
+            Double d = Double.parseDouble(depthOrName);
+            setDepth(d);
+        } catch (NumberFormatException e ) {
+            // try to find by name later?
+            depthName = depthOrName;
+        }
+    }
+
     public void setDepth(double depth) {
         this.depth = depth;
     }
@@ -878,6 +901,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     String modelType;
 
+    protected String depthName = null;
     protected double depth = -1.0;
 
     protected double angleStep = 1.0;

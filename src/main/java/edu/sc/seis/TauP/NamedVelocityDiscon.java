@@ -8,6 +8,7 @@ import java.io.Serializable;
  * Allows the naming of velocity discontinuities in a model, like moho or cmb.
  */
 public class NamedVelocityDiscon implements Cloneable, Serializable {
+
     public NamedVelocityDiscon(double depth) {
         // unnamed discon
         this.name = null;
@@ -86,6 +87,7 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
     double depth;
 
     // common names
+    public static final String SURFACE = "surface";
     public static final String ICE = "ice";
     public static final String ICEBED = "ice-ocean";
     public static final String ICECRUST = "ice-crust";
@@ -101,7 +103,7 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
     public static final String IOCB = "iocb";
 
     public static final String[] knownDisconNames = {
-            ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB, IOCB
+            SURFACE, ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB, IOCB
     };
 
     public static boolean isIceBed(String name) {

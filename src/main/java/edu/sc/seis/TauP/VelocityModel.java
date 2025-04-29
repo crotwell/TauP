@@ -1184,7 +1184,7 @@ public class VelocityModel implements Cloneable, Serializable {
         if (vMod.namedDiscon.isEmpty()) {
             vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.MOHO, vMod.getMohoDepth()));
             vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.CMB, vMod.getCmbDepth()));
-            vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.ICOCB, vMod.getIocbDepth()));
+            vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.IOCB, vMod.getIocbDepth()));
         }
         return vMod;
     }

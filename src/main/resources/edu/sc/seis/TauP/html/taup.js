@@ -34,8 +34,9 @@ export function setup() {
     }
     return tool;
   }).then( (tool) => {
-    enableToolHelp(tool);
-    createModelDisconRadio();
+    return createModelDisconRadio().then( () => { return tool;});
+  }).then( (tool) => {
+    return enableToolHelp(tool);
   });
 }
 
@@ -71,7 +72,7 @@ export function createModelDisconRadio() {
   let model = modelSel ? modelSel.value : "";
   if (model.length == 0) { return;}
   const disconUrl = `velplot?mod=${model}&listdiscon=true&format=json`;
-  doSimpleFetch(disconUrl).then(res => {
+  return doSimpleFetch(disconUrl).then(res => {
     if (res.ok) {
       return res.json();
     } else {
@@ -79,6 +80,8 @@ export function createModelDisconRadio() {
     }
   }).then(json => {
     const m = json.models[0];
+
+    const disconOptList = [];
     m.discontinuities.forEach( dobj => {
       const depthName = dobj?.name!=null?dobj.name:dobj.depth;
       const input = document.createElement("input");
@@ -95,8 +98,55 @@ export function createModelDisconRadio() {
       label.textContent = depthName;
       disconDiv.appendChild(input);
       disconDiv.appendChild(label);
+
+
+      const opt = document.createElement("option");
+      opt.value = depthName;
+      opt.textContent = depthName;
+      disconOptList.push(opt);
     });
+    const disconSelect = document.querySelector('#depth');
+    const prevSelection = disconSelect.selectedOptions.item(0);
+    let foundPrevSelection = false;
+    if (prevSelection != null && prevSelection?.getAttribute("value") !== "") {
+      const prevValue = prevSelection?.getAttribute("value");
+      for (const opt of disconOptList) {
+        if (isSameDiscon(opt.getAttribute("value"), prevValue)) {
+          opt.setAttribute("selected", "");
+          foundPrevSelection=true;
+        }
+      }
+    } else {
+      for (const opt of disconOptList) {
+        if (isMoho(opt.getAttribute("value"))) {
+          opt.setAttribute("selected", "");
+          foundPrevSelection=true;
+        }
+      }
+    }
+    if (!foundPrevSelection && disconOptList.length > 0) {
+      disconOptList[1].setAttribute("selected", ""); // avoid free surface
+    }
+    disconSelect.replaceChildren(...disconOptList);
   });
+}
+
+function isSameDiscon(disconA, disconB) {
+  if (disconA === disconB) { return true;}
+  if (isMoho(disconA) && isMoho(disconB)) {return true;}
+  if (isCMB(disconA) && isCMB(disconB)) {return true;}
+  if (isIOCB(disconA) && isIOCB(disconB)) {return true;}
+  return disconA === disconB;
+}
+
+function isMoho(name) {
+  return "moho" === name || "mantle" === name;
+}
+function isCMB(name) {
+  return "outer-core" === name || "cmb" === name;
+}
+function isIOCB(name) {
+  return "inner-core" === name || "iocb" === name || "icocb" === name;
 }
 
 /**
@@ -710,8 +760,8 @@ export function form_url() {
     let fsrf = document.querySelector('input[name="fsrf"]').checked;
     // fsrf forces depth to be 0
     if (isrefltranmodel === "refltrandepth") {
-      let depth = document.querySelector('input[name="depth"]').value;
-      if ( ! fsrf) {
+      let depth = document.querySelector('select[name="depth"]').value;
+      if ( ! fsrf && depth != null && depth != "") {
         url += `&depth=${depth}`;
       }
     } else {
@@ -784,13 +834,14 @@ export function setupListeners() {
   let all_input_items = in_items.concat(sel_items);
   all_input_items = all_input_items.filter( inEl => excludeInItems.indexOf(inEl.getAttribute("id")) === -1);
   for (let inEl of all_input_items) {
-    inEl.addEventListener("change", (event) => {
-      process();
-    });
     if (inEl.hasAttribute("name") && inEl.getAttribute("name") === "model") {
       inEl.addEventListener("change", (evetn)=> {
-        createModelDisconRadio();
-      })
+        createModelDisconRadio().then( () => process());
+      });
+    } else {
+      inEl.addEventListener("change", (event) => {
+        process();
+      });
     }
   }
   // setup animate button listeners
@@ -838,6 +889,9 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
+  }
+  if ( tool === "refltrans") {
+    createModelDisconRadio();
   }
   if ( tool === "time" || tool === "pierce" || tool == "phase"
       || tool == "find" || tool == "distaz" || tool == "version") {

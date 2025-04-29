@@ -15,7 +15,8 @@ Options:
       --abs                absolute value of amplitude factor
       --anglestep=deg      step in degrees when x is degrees
       --debug              enable debugging output
-      --depth=<depth>      Depth in model to get boundary parameters
+      --depth=<depth>      Depth in model to get boundary parameters, may be
+                             number or name like moho.
       --down               incident is downgoing
       --energyflux         all energy flux coefficients, like TppEnergy
       --fsrf               all free surface receiver functions, like
