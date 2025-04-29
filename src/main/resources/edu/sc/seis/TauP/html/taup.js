@@ -467,9 +467,9 @@ export function form_url() {
     }
     if (islistkmdist) {
       let distdeg = document.querySelector('input[name="kilometer"]').value;
-      let kmearg = "kilometer";
-      if (isexactkilometer) {
-        kmearg = "exact"+kmearg;
+      let kmarg = "kilometer";
+      if (isexactkilometer && toolname !== "spikes") {
+        kmarg = `exact${kmarg}`;
       }
       distparam += `&${kmarg}=${distdeg}`;
     }
