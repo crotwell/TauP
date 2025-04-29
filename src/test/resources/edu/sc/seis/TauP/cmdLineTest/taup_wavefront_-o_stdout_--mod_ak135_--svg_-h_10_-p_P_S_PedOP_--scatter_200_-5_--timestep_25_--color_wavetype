@@ -17,6 +17,13 @@
             font-size: 224px;
         }
 
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
         polyline.swave {
             stroke: red;
         }
@@ -36,6 +43,13 @@
           fill: red;
           stroke: transparent;
         }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -54,6 +68,13 @@
         .legend .pwave text {
           fill: blue;
           stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
         }
         polyline.both_p_swave {
             stroke: green;

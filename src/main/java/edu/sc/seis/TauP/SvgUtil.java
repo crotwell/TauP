@@ -431,6 +431,13 @@ public class SvgUtil {
         HashMap<String, String> colors = coloringArgs.getWavetypeColors();
         for (String wavetype : colors.keySet()) {
             String color = colors.get(wavetype);
+            extrtaCSS.append("        g."+wavetype+" polyline {\n");
+            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        g."+wavetype+" circle {\n");
+            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("            fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
             extrtaCSS.append("        polyline."+wavetype+" {\n");
             extrtaCSS.append("            stroke: "+color+";\n");
             extrtaCSS.append("        }\n");
