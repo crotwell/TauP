@@ -340,7 +340,7 @@ export async function display_results(taup_url) {
             moment = Number.parseFloat(moment).toExponential(2);
             syngineSeisProm = loadSyngine(sddList, modelName, strike, dip, rake, moment);
           } else {
-            const errMsg = `Cannot get syngine for ${modelName}`;
+            const errMsg = `Cannot get syngine for ${modelName}, please disable Overlay or change model.`;
             displayErrorMessage(errMsg, taup_url, new Error(errMsg));
           }
         }
