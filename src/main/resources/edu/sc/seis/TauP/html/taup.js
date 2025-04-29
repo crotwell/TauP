@@ -194,7 +194,6 @@ export function getToolName() {
 }
 
 export async function doSimpleFetch(url) {
-  console.log(url);
   let timeoutSec = 10;
   const controller = new AbortController();
   const signal = controller.signal;
@@ -216,7 +215,6 @@ export async function display_cmdline(taup_url) {
     while(container_el.firstChild) {
       container_el.removeChild(container_el.firstChild);
     }
-    console.log(`cmdline response: ${response.ok} ${response.ok === true}`)
     if (!response.ok) {
       return response.text().then( errMsg => {
         let message = `Command line server response not ok: ${response.statusText}`;
@@ -225,7 +223,6 @@ export async function display_cmdline(taup_url) {
     } else {
       const cmdEl = document.querySelector("#cmdlinetext");
       response.text().then( c => {
-        console.log(`cmdline response ok:  ${c}`)
         cmdEl.innerText = c;
       });
     }
@@ -233,7 +230,6 @@ export async function display_cmdline(taup_url) {
 }
 
 export async function display_results(taup_url) {
-  console.log(`Load: ${taup_url}`);
   let toolname = getToolName();
   const format = valid_format(toolname);
   let timeoutSec = 30;
@@ -299,12 +295,9 @@ export async function display_results(taup_url) {
         }
       });
     } else if (format === "ms3") {
-      //console.log("miniseed3 format disabled");
 
       return response.arrayBuffer().then(rawBuffer => {
-        const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
-        console.log(`ms3 eh: ${JSON.stringify(dataRecords[0].extraHeaders)}`)
-        return dataRecords;
+        return sp.mseed3.parseMSeed3Records(rawBuffer);
       }).then(dataRecords => {
         return sp.mseed3.sddPerChannel(dataRecords);
       }).then(sddList => {
@@ -350,7 +343,6 @@ export async function display_results(taup_url) {
       });
     } else {
       let message = `Unknown output format: ${format}`;
-      console.log(message);
       return response.text().then( errMsg => {
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
@@ -359,6 +351,7 @@ export async function display_results(taup_url) {
 }
 
 export function displayErrorMessage(title, the_url, exception) {
+  console.log(title);
   const container_el = document.querySelector("#results");
   while(container_el.firstChild) {
     container_el.removeChild(container_el.firstChild);
@@ -590,7 +583,6 @@ export function form_url() {
     }
     url += distparam;
   }
-  console.log(`isazimuth: ${toolname} ${isazimuth}  ${document.querySelector('input[name="az"]').value}`)
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find") {

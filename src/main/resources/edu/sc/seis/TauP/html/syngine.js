@@ -20,7 +20,6 @@ export function loadSyngine(sddList, modelName, strike, dip, rake, moment) {
     if (sdd.sourceId.subsourceCode !== "R") {continue;}
     const syngineQuery = new sp.syngine.SyngineQuery();
 
-    console.log(`sdd chan: ${sdd.channel.latitude}`)
     syngineQuery.units("displacement")
       .components("ZRT")
       .model(syngineModelName(modelName));
@@ -44,11 +43,9 @@ export function loadSyngine(sddList, modelName, strike, dip, rake, moment) {
         .receiverLatitude(sdd.channel.latitude)
         .receiverLongitude(sdd.channel.longitude)
     }
-    console.log(syngineQuery.formURL());
     syngineSeis.push(syngineQuery.querySeismograms().then(synsddList => {
       synsddList.forEach(synsdd => {
 
-        console.log(synsdd.constructor.name);
         synsdd.addQuake( sdd.quake);
         let synchan = new sp.stationxml.Channel(sdd.channel.station, synsdd.channelCode, synsdd.locationCode);
         if (synsdd.channelCode.endsWith("Z")) {
@@ -63,7 +60,6 @@ export function loadSyngine(sddList, modelName, strike, dip, rake, moment) {
           }
         }
         synsdd.channel= synchan;
-        console.log(`synsdd min: ${synsdd.min}  max: ${synsdd.max}`)
       });
       return synsddList;
     }));
