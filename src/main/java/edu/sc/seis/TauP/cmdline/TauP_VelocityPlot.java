@@ -335,6 +335,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case velocity_density:
             case Vp:
             case Vs:
+            case Q:
             case Qp:
             case Qs:
             case vpvs:
@@ -346,12 +347,16 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case bulkmodulus:
             case youngsmodulus:
                 return calculateAtDepth(tMod.getVelocityModel(), axisType, depth, above);
+            case slownessrad_s:
+            case slownessdeg_s:
+                if (calculateAtDepth(tMod.getVelocityModel(), ModelAxisType.Vs, depth, above) == 0) {
+                    // fluid
+                    return Double.NaN;
+                }
             case slownessrad:
             case slownessrad_p:
-            case slownessrad_s:
             case slownessdeg:
             case slownessdeg_p:
-            case slownessdeg_s:
                 boolean isPWave = axisType != ModelAxisType.slownessrad_s && axisType != ModelAxisType.slownessdeg_s;
                 SlownessLayer slayer;
                 if (above) {
