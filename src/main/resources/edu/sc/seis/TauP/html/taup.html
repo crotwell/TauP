@@ -126,7 +126,7 @@
           </label>
           <input id="stadepth" name="stadepth" value="0"  />
       </fieldset>
-      <fieldset class="tool_time tool_pierce tool_path tool_spikes">
+      <fieldset class="tool_time tool_pierce tool_path tool_spikes tool_distaz">
           <legend>Distance:</legend>
           <div class="degree">
             <input type="checkbox" id="islistdegdist" name="islistdegdist" checked />
@@ -153,7 +153,7 @@
             <input type="checkbox" id="isexactdegree" name="isexactdegree" />
             <label>Exact</label>
           </div>
-          <div class=kilometer>
+          <div class="kilometer">
             <input type="checkbox" id="iskilometerdist" name="iskilometerdist" />
             <label for="kilometer">
                 <span>Distance (km): </span>
@@ -178,6 +178,9 @@
             <input type="checkbox" id="isexactkilometer" name="isexactkilometer" />
             <label>Exact</label>
           </div>
+      </fieldset>
+      <fieldset class="tool_time tool_pierce tool_path">
+          <legend>Rays:</legend>
           <div class=takeoff>
             <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
             <label for="takeoffangle">
@@ -223,6 +226,7 @@
           </div>
       </fieldset>
       <fieldset class="tool_time tool_pierce tool_path tool_spikes tool_distaz">
+          <legend>Location:</legend>
           <div>
             <input type="checkbox" id="isevent" name="isevent" />
             <label for="eventlat">

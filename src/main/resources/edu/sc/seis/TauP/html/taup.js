@@ -445,7 +445,7 @@ export function form_url() {
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find"
-     && toolname !== "distaz") {
+     ) {
     let distparam = "";
     if (islistdegdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
@@ -478,22 +478,22 @@ export function form_url() {
       let distdegstep = document.querySelector('input[name="kilometerrangestep"]').value;
       let distdegmax = document.querySelector('input[name="kilometerrangemax"]').value;
       let kmearg = "kilometerrange";
-      if (isexactkilometer) {
+      if (isexactkilometer && toolname !== "spikes") {
         kmearg = "exact"+kmearg;
       }
       distparam += `&${kmearg}=${distdegmin},${distdegmax},${distdegstep}`;
     }
-    if (istakeoffdist) {
+    if (istakeoffdist && toolname !== "spikes" && toolname !== "distaz") {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam += `&takeoff=${takeoffangle}`;
     }
-    if (istakeoffrange) {
+    if (istakeoffrange && toolname !== "spikes" && toolname !== "distaz") {
       let distdegmin = document.querySelector('input[name="takeoffrangemin"]').value;
       let distdegstep = document.querySelector('input[name="takeoffrangestep"]').value;
       let distdegmax = document.querySelector('input[name="takeoffrangemax"]').value;
       distparam += `&takeoffrange=${distdegmin},${distdegmax},${distdegstep}`;
     }
-    if (israyparamdist) {
+    if (israyparamdist && toolname !== "spikes" && toolname !== "distaz") {
       let rayparam = document.querySelector('input[name="rayparam"]').value;
       const rayparamunitSel = document.querySelector('input[name="rayparamunit"]:checked');
       let rayparamunit = rayparamunitSel ? rayparamunitSel.value : "israyparamdeg";
