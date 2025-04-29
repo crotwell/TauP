@@ -113,14 +113,14 @@ public abstract class RayCalculateable {
      * @return back azimuth
      */
     public Double getNormalizedBackAzimuth() {
-        Double az = getBackAzimuth();
-        if (az != null ) {
-            az = az % 360;
-            if (az > 180) {
-                az = az - 360;
+        Double baz = getBackAzimuth();
+        if (baz != null ) {
+            baz = baz % 360;
+            if (baz > 180) {
+                baz = baz - 360;
             }
         }
-        return az;
+        return baz;
     }
     /**
      * Gets azimuth if available, null otherwise.
