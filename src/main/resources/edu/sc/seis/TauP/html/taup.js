@@ -1,4 +1,5 @@
 import { setupAnimation, startAnimation } from './wavefront_animation.js';
+import {loadSyngine, syngineModelName} from './syngine.js';
 
 import * as sp from './seisplotjs_3.1.5-SNAPSHOT_standalone.mjs';
 
@@ -302,6 +303,7 @@ export async function display_results(taup_url) {
 
       return response.arrayBuffer().then(rawBuffer => {
         const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
+        console.log(`ms3 eh: ${JSON.stringify(dataRecords[0].extraHeaders)}`)
         return dataRecords;
       }).then(dataRecords => {
         return sp.mseed3.sddPerChannel(dataRecords);
@@ -314,6 +316,7 @@ export async function display_results(taup_url) {
 
         const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
         seismograph.sortby = sp.sorting.SORT_DISTANCE;
+        seismograph.overlayby = sp.organizeddisplay.OVERLAY_STATION_COMPONENT;
         //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
         seismograph.addStyle(`
           sp-seismograph {
@@ -323,6 +326,27 @@ export async function display_results(taup_url) {
         container_el.appendChild(seismograph);
         seismograph.draw();
 
+        // load syngine
+        let isSyngine = document.querySelector('input[name="issyngine"]').checked;
+        let syngineSeisProm = [];
+        if (isSyngine) {
+          let modelName = getModelName();
+          if (syngineModelName(modelName) != "unknown") {
+            let strike = document.querySelector('input[name="strike"]').value;
+            let dip = document.querySelector('input[name="dip"]').value;
+            let rake = document.querySelector('input[name="rake"]').value;
+            let mw = document.querySelector('input[name="mw"]').value;
+            let moment = sp.syngine.calcMoment(mw);
+            moment = Number.parseFloat(moment).toExponential(2);
+            syngineSeisProm = loadSyngine(sddList, modelName, strike, dip, rake, moment);
+          } else {
+            const errMsg = `Cannot get syngine for ${modelName}`;
+            displayErrorMessage(errMsg, taup_url, new Error(errMsg));
+          }
+        }
+        return Promise.all([seismograph, sddList, syngineSeisProm]);
+      }).then(([seismograph, sddList, syngineSddList]) => {
+        seismograph.seisData = sddList.concat(syngineSddList);
       });
     } else {
       let message = `Unknown output format: ${format}`;
@@ -388,10 +412,15 @@ export function defaultFetchInitObj(mimeType) {
   };
 }
 
-export function form_url() {
-  let toolname = getToolName();
+export function getModelName() {
   const modelSel = document.querySelector('input[name="model"]:checked');
   let model = modelSel ? modelSel.value : "";
+  return model;
+}
+
+export function form_url() {
+  let toolname = getToolName();
+  let model = getModelName();
   let phase = document.querySelector('input[name="phase"]').value;
   let evdepth = document.querySelector('input[name="evdepth"]').value;
   let stadepth = document.querySelector('input[name="stadepth"]').value;
