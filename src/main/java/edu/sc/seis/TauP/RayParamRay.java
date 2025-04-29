@@ -13,10 +13,14 @@ public class RayParamRay extends ShootableRay {
     }
 
     public static RayParamRay ofRayParamSRadian(double d) {
-        return new RayParamRay(d);
+        RayParamRay rp = new RayParamRay(d);
+        rp.setDescription(d+" s/rad");
+        return rp;
     }
     public static RayParamRay ofRayParamSDegree(double d) {
-        return RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor);
+        RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor);
+        rp.setDescription(d+" s/deg");
+        return rp;
     }
 
     @Override

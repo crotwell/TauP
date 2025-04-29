@@ -9,6 +9,7 @@ public class RayParamKmRay extends ShootableRay {
 
     public RayParamKmRay(Double rpSecKm) {
         this.rpSecKm = rpSecKm;
+        setDescription(rpSecKm+" s/km");
     }
 
     @Override
