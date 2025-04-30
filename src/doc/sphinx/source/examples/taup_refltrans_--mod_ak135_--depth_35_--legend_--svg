@@ -386,6 +386,66 @@
           fill: red;
           stroke: transparent;
         }
+        .RpAngle {
+          stroke: blue;
+        }
+        .RpAngle.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .RsAngle {
+          stroke: firebrick;
+        }
+        .RsAngle.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .TpAngle {
+          stroke: darkblue;
+        }
+        .TpAngle.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .TsAngle {
+          stroke: magenta;
+        }
+        .TsAngle.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle text {
+          fill: magenta;
+          stroke: transparent;
+        }
 
 
 text.title {

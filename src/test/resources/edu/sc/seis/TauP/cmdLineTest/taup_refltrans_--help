@@ -1,18 +1,19 @@
-Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
-                      [--help] [--legend] [--pwave] [--shwave] [--swave] [--up]
-                      [--verbose] [--anglestep=deg] [--depth=<depth>]
-                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                      [-o=<outFile>] [--prop=<toolPropsFilename>]
-                      [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
-                      y]... [--layer=vp vs rho vp vs rho]... [-y=type...]...
-                      [--gmt | --json | --svg | --text] [[--mod=<modelName>]
-                      [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                      [--scat=depth deg]...]
+Usage: taup refltrans [--abs] [--angles] [--debug] [--down] [--energyflux]
+                      [--fsrf] [--help] [--legend] [--pwave] [--shwave]
+                      [--swave] [--up] [--verbose] [--anglestep=deg]
+                      [--depth=<depth>] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                      [--prop=<toolPropsFilename>] [--rpstep=s/km] [-x=type]
+                      [--xminmax=x x]... [--yminmax=y y]... [--layer=vp vs rho
+                      vp vs rho]... [-y=type...]... [--gmt | --json | --svg |
+                      --text] [[--mod=<modelName>] [-h=depth[,depth...]]...
+                      [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
 Options:
 
       --abs                absolute value of amplitude factor
+      --angles             all angle coefficients, like TpAngle
       --anglestep=deg      step in degrees when x is degrees
       --debug              enable debugging output
       --depth=<depth>      Depth in model to get boundary parameters, may be
