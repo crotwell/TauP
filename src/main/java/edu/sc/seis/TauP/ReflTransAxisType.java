@@ -15,8 +15,8 @@ public enum ReflTransAxisType {
     Tshsh,
     RppEnergy, TppEnergy, RpsEnergy, TpsEnergy,
     RspEnergy, TspEnergy, RssEnergy, TssEnergy,
-    RshshEnergy, TshshEnergy, RpAngle,
-    RsAngle, TpAngle, TsAngle,
+    RshshEnergy, TshshEnergy,
+    RpAngle, RsAngle, TpAngle, TsAngle,
     FreeRecFuncPr, FreeRecFuncSvr, FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh;
 
     public static final List<ReflTransAxisType> inpwave = List.of(Rpp, Rps, Tpp, Tps);
@@ -27,7 +27,7 @@ public enum ReflTransAxisType {
     public static final List<ReflTransAxisType> allDisplacement = List.of(Rpp, Rps, Tpp, Tps, Rsp, Rss, Tsp, Tss, Rshsh, Tshsh);
     public static final List<ReflTransAxisType> allFreeRF = List.of(FreeRecFuncPr, FreeRecFuncSvr,
             FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh);
-
+    public static final List<ReflTransAxisType> allAngle = List.of(RpAngle, RsAngle, TpAngle, TsAngle);
 
     public static final List<ReflTransAxisType> allEnergy = List.of(
             RppEnergy, TppEnergy, RpsEnergy, TpsEnergy,

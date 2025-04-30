@@ -250,11 +250,16 @@ public class SvgUtil {
         colors.put(ReflTransAxisType.FreeRecFuncPz, "cyan");
         colors.put(ReflTransAxisType.FreeRecFuncSvz, "magenta");
         colors.put(ReflTransAxisType.FreeRecFuncSh, "red");
+        colors.put(ReflTransAxisType.RpAngle, "blue");
+        colors.put(ReflTransAxisType.RsAngle, "firebrick");
+        colors.put(ReflTransAxisType.TpAngle, "darkblue");
+        colors.put(ReflTransAxisType.TsAngle, "magenta");
 
         List<ReflTransAxisType> allCoeff = new ArrayList<>();
         allCoeff.addAll(ReflTransAxisType.allDisplacement);
         allCoeff.addAll(ReflTransAxisType.allEnergy);
         allCoeff.addAll(ReflTransAxisType.allFreeRF);
+        allCoeff.addAll(ReflTransAxisType.allAngle);
         for (ReflTransAxisType rt : allCoeff) {
             out.append("        ."+rt.name()+" {\n");
             out.append("          stroke: "+colors.get(rt)+";\n");

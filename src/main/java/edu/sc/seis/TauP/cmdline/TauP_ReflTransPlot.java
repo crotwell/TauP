@@ -72,7 +72,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 }
             }
         } else {
-            if (isEnergyFlux()) {
+            if (isAngles() ) {
+                yAxisType.addAll(ReflTransAxisType.allAngle);
+            } else if (isEnergyFlux()) {
                 yAxisType.addAll(ReflTransAxisType.allEnergy);
             } else {
                 yAxisType.addAll(ReflTransAxisType.allDisplacement);
@@ -118,6 +120,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         }
         String yAxisActual = "";
         boolean hasDisplacement = false;
+        boolean hasAngle = false;
         boolean hasEnergy = false;
         boolean hasFreeSurface = false;
         for (XYPlottingData xyp : xyPlots) {
@@ -125,6 +128,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 ReflTransAxisType axisType = ReflTransAxisType.valueOf(xyp.yAxisType);
                 if (ReflTransAxisType.allDisplacement.contains(axisType)) {
                     hasDisplacement = true;
+                } else if (ReflTransAxisType.allAngle.contains(axisType)) {
+                    hasAngle = true;
                 } else if (ReflTransAxisType.allEnergy.contains(axisType)) {
                     hasEnergy = true;
                 } else if (ReflTransAxisType.allFreeRF.contains(axisType)) {
@@ -139,6 +144,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         }
         if (hasDisplacement) {
             yAxisActual += " Displacement,";
+        }
+        if (hasAngle) {
+            yAxisActual += " Angle,";
         }
         if (hasEnergy) {
             yAxisActual += " Energy,";
@@ -375,7 +383,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             // angle calculations
 
             if (yAxisType.contains(ReflTransAxisType.RpAngle)) {
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.RpAngle,
                         reflTranCoef::getAngleR_p
                 );
@@ -391,7 +399,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
 
             if (yAxisType.contains(ReflTransAxisType.TpAngle)) {
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TpAngle,
                         reflTranCoef::getAngleT_p
                 );
@@ -801,6 +809,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
     public boolean isFreeSurfRF() { return fsrf;}
 
+    @CommandLine.Option(names = "--angles",
+            description = "all angle coefficients, like TpAngle")
+    public void setAngles(boolean angles) {
+        this.angles = angles;
+    }
+    public boolean isAngles() { return angles;}
+
     public boolean isAbsolute() {
         return absolute;
     }
@@ -934,6 +949,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     protected boolean inswave = false;
     protected boolean inshwave = false;
     protected boolean absolute = false;
+    protected boolean angles = false;
     protected boolean energyflux = false;
     protected boolean fsrf = false;
 

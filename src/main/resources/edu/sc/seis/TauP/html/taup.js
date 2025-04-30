@@ -831,6 +831,10 @@ export function form_url() {
     if (fsrf) {
       url += `&fsrf=true`;
     }
+    let angles = document.querySelector('input[name="angles"]').checked;
+    if (angles) {
+      url += `&angles=true`;
+    }
     let energyflux = document.querySelector('input[name="energyflux"]').checked;
     if (energyflux) {
       url += `&energyflux=true`;
