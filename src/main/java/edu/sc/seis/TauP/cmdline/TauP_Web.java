@@ -37,12 +37,14 @@ public class TauP_Web implements Callable<Integer> {
             tool.port = port;
             tool.host = host;
             for (String modName : extraModelNames) {
-                VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
-                if (vMod == null) {
-                    // were not able to find it
-                    throw new VelocityModelException("Unable to load model: "+modName);
+                if (! TauModelLoader.defaultModelList.contains(modName)) {
+                    VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
+                    if (vMod == null) {
+                        // were not able to find it
+                        throw new VelocityModelException("Unable to load model: " + modName);
+                    }
+                    TauModelLoader.otherVelocityModels.put(vMod.getModelName(), vMod);
                 }
-                TauModelLoader.otherVelocityModels.put(vMod.getModelName(), vMod);
             }
 
             tool.init();
@@ -75,6 +77,12 @@ public class TauP_Web implements Callable<Integer> {
             description = "List of additional models to use"
     )
     List<String> extraModelNames = new ArrayList<>();
+
+    @CommandLine.Option(names = {"--nodefaultmodels"},
+            defaultValue = "false",
+            description = "Do not include standard models at startup, requires --models"
+    )
+    boolean noDefaultModels = false;
 
     @CommandLine.Option(names="--open", defaultValue="false", description = "autoopen web page")
     Boolean autoopen = false;
