@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
@@ -38,45 +37,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
     
     @Override
     public void start() throws TauPException, IOException {
-        List<VelocityModel> vModList = getVelocityModels();
+        List<VelocityModel> vModList = getVelModelArgs().getVelocityModels();
 
-        if (listDiscon) {
-            if (outputTypeArgs.isJSON()) {
-                if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
-                    outputTypeArgs.setOutFileBase("-");
-                }
-                List<ModelDiscontinuites> outList = new ArrayList<>();
-                for (VelocityModel vMod : vModList) {
-                    outList.add(new ModelDiscontinuites(vMod));
-                }
-                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                Gson gson = GsonUtil.createGsonBuilder().create();
-
-                JsonObject out = new JsonObject();
-                out.add(JSONLabels.MODEL_LIST, gson.toJsonTree(outList));
-                writer.println(gson.toJson(out));
-                writer.flush();
-            } else {
-                outputTypeArgs.setOutputFormat(TEXT);
-                if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
-                    outputTypeArgs.setOutFileBase("-");
-                }
-                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                for (VelocityModel vMod : vModList) {
-                    writer.println("# " + vMod.getModelName());
-                    for (double d : vMod.getDisconDepths()) {
-                        NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
-                        String disconName = discon == null ? "" : "   " + discon.getPreferredName();
-                        VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
-                        VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
-                        writer.println(d + disconName);
-                        writer.println("      " + Outputs.formatRayParam(above.getBotPVelocity()) + " " + Outputs.formatRayParam(above.getBotSVelocity()) + " " + Outputs.formatRayParam(above.getBotDensity()));
-                        writer.println("      " + Outputs.formatRayParam(below.getTopPVelocity()) + " " + Outputs.formatRayParam(below.getTopSVelocity()) + " " + Outputs.formatRayParam(below.getTopDensity()));
-                    }
-                }
-                writer.flush();
-            }
-        } else if (outputTypeArgs.isCSV()) {
+        if (outputTypeArgs.isCSV()) {
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.getModelName());
@@ -541,17 +504,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 && (xAxisType != ModelAxisType.velocity || yAxisType != ModelAxisType.depth)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "cannot specify axis type for --nd output");
         }
-        if ( ! (listDiscon || outputTypeArgs.isCSV() || outputTypeArgs.isND())) {
+        if ( ! (outputTypeArgs.isCSV() || outputTypeArgs.isND())) {
             try {
                 if ((ModelAxisType.needsDensity(xAxisType) || ModelAxisType.needsDensity(yAxisType))) {
-                    for (VelocityModel vMod : getVelocityModels()) {
+                    for (VelocityModel vMod : getVelModelArgs().getVelocityModels()) {
                         if (vMod.densityIsDefault()) {
                             throw new TauModelException("model " + vMod.getModelName() + " does not include density, but " + xAxisType + "/" + yAxisType + " requires density.");
                         }
                     }
                 }
                 if ((ModelAxisType.needsQ(xAxisType) || ModelAxisType.needsQ(yAxisType))) {
-                    for (VelocityModel vMod : getVelocityModels()) {
+                    for (VelocityModel vMod : getVelModelArgs().getVelocityModels()) {
                         if (vMod.QIsDefault()) {
                             throw new TauModelException("model " + vMod.getModelName() + " does not include Q, but " + xAxisType + "/" + yAxisType + " requires Q.");
                         }
@@ -581,24 +544,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return velModelArgs;
     }
 
-    public List<VelocityModel> getVelocityModels() throws VelocityModelException, IOException {
-        if (vModList == null) {
-            vModList = new ArrayList<>();
-            for (VelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
-                VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
-                if (vMod == null) {
-                    throw new VelocityModelException("Velocity model file not found: " + vmodArg.getModelFilename() + ", tried internally and from file");
-                }
-                vModList.add(vMod);
-            }
-        }
-        return vModList;
-    }
-
     @CommandLine.ArgGroup(heading = "Velocity Model %n")
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
-
-    List<VelocityModel> vModList = null;
 
     @CommandLine.Mixin
     VelPlotOutputTypeArgs outputTypeArgs;
@@ -660,9 +607,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void setyAxisMinMax(double[] yAxisMinMax) {
         this.yAxisMinMax = yAxisMinMax;
     }
-
-    @CommandLine.Option(names = "--listdiscon", description = "List the discontinuities in the velocity model")
-    public boolean listDiscon = false;
 
     ColoringArgs coloringArgs = new ColoringArgs();
 

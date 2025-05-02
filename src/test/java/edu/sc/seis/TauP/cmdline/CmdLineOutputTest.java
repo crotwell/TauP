@@ -106,6 +106,10 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --svg -x poisson",
     };
 
+    String[] disconTestCmds = new String[] {
+            "taup discon --mod ak135fcont",
+
+    };
     String[] reflTransPlotTestCmds = new String[] {
             "taup refltrans -o stdout --mod ak135 --depth 35 --svg",
             "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135fcont --pwave --swave -x rayparam",
@@ -167,7 +171,8 @@ public class CmdLineOutputTest {
             "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg",
             "taup distaz --sta -11 21 --baz -135 --deg 30",
             "taup distaz --evt -11 21 --az 35 --km 3000",
-            "taup distaz --sta 31 -80 --evt -11 21"
+            "taup distaz --sta 31 -80 --evt -11 21",
+            "taup discon --mod ak135fcont",
     };
 
     String[] setInFileCmds = new String[] {
@@ -208,6 +213,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(curveTestCmds));
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
+        allList.addAll(Arrays.asList(disconTestCmds));
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
         allList.addAll(Arrays.asList(findTestCmds));
         allList.addAll(Arrays.asList(distazTestCmds));
@@ -240,6 +246,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(curveTestCmds));
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
+        allList.addAll(Arrays.asList(disconTestCmds));
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
         allList.addAll(Arrays.asList(findTestCmds));
         allList.addAll(Arrays.asList(distazTestCmds));
@@ -586,6 +593,12 @@ public class CmdLineOutputTest {
     public void testTauPVelplot() throws Exception {
         runTests(velplotTestCmds);
     }
+
+    @Test
+    public void testTauPDiscon() throws Exception {
+        runTests(disconTestCmds);
+    }
+
 
     @Test
     public void testTauPReflTransplot() throws Exception {

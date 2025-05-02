@@ -72,7 +72,7 @@ export function createModelDisconRadio() {
   }
   let model = modelSel ? modelSel.value : "";
   if (model.length == 0) { return;}
-  const disconUrl = `velplot?mod=${model}&listdiscon=true&format=json`;
+  const disconUrl = `discon?mod=${model}&format=json`;
   return doSimpleFetch(disconUrl).then(res => {
     if (res.ok) {
       return res.json();
@@ -177,6 +177,7 @@ export function valid_format(tool) {
   }
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce"
+        || tool === "discon"
         || tool === "find" || tool === "distaz"|| tool === "version") {
       format = "text";
     }
@@ -474,7 +475,7 @@ export function form_url() {
   }
   if (toolname === "distaz") {
     url = `${toolname}?`;
-  } else if (toolname !== "velplot" && toolname !== "refltrans") {
+  } else if (toolname !== "velplot" && toolname !== "discon" && toolname !== "refltrans") {
     url = `${toolname}?`;
     if (model.length > 0) {
       url += `model=${model}`;
@@ -482,7 +483,7 @@ export function form_url() {
     if (evdepth !== "0") {
       url += `&evdepth=${evdepth}`;
     }
-  } else if (toolname === "velplot" || isrefltranmodel === "refltrandepth") {
+  } else if (toolname === "velplot" || toolname === "discon" || isrefltranmodel === "refltrandepth") {
     url = `${toolname}?model=${model}`;
   } else {
     url = `${toolname}?`;
@@ -511,10 +512,10 @@ export function form_url() {
     }
 
   }
-  if (toolname !== "distaz" && toolname !== "velplot" && toolname !== "refltrans") {
+  if (toolname !== "distaz" && toolname !== "velplot" && toolname !== "discon" && toolname !== "refltrans") {
     url += `&phase=${phase}`;
   }
-  if (toolname !== "velplot" && toolname !== "curve"
+  if (toolname !== "velplot" && toolname !== "discon" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find"
      ) {
@@ -583,7 +584,7 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (toolname !== "velplot" && toolname !== "curve"
+  if (toolname !== "velplot" && toolname !== "discon" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find") {
     let distazEnsureLatLon = false;
@@ -622,7 +623,7 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (toolname !== "velplot" && toolname !== "refltrans"){
+  if (toolname !== "velplot" && toolname !== "discon" && toolname !== "refltrans"){
     if (stadepth !== "0") {
       url += `&stadepth=${stadepth}`;
     }
@@ -918,7 +919,7 @@ export function enableParams(tool) {
   if ( tool === "refltrans") {
     createModelDisconRadio();
   }
-  if ( tool === "time" || tool === "pierce" || tool == "phase"
+  if ( tool === "time" || tool === "pierce" || tool == "phase" || tool == "discon"
       || tool == "find" || tool == "distaz" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");

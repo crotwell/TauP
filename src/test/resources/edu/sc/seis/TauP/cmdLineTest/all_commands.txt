@@ -68,6 +68,7 @@ taup velplot -o stdout --mod ak135 --text
 taup velplot -o stdout --mod ak135 --gmt
 taup velplot -o stdout --mod ak135 --svg 
 taup velplot -o stdout --mod ak135 --svg -x poisson
+taup discon --mod ak135fcont
 taup refltrans -o stdout --mod ak135 --depth 35 --svg
 taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135fcont --pwave --swave -x rayparam
 taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135favg --pwave --swave -x rayparam

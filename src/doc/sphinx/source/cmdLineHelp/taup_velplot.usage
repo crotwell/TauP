@@ -1,4 +1,4 @@
-Usage: taup velplot [--debug] [--help] [--legend] [--listdiscon] [--verbose]
+Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
                     [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                     [-o=<outFile>] [--prop=<toolPropsFilename>] [-x=type]
                     [-y=type] [--xminmax=x x]... [--yminmax=y y]...
@@ -12,7 +12,6 @@ Options:
       --debug                enable debugging output
       --help                 display this help message
       --legend               create a legend
-      --listdiscon           List the discontinuities in the velocity model
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                              plot width unit, i for inch, c for cm or p for px.

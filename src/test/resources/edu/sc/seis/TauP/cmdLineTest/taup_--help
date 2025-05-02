@@ -8,6 +8,7 @@ Commands:
                          seismic phases.
   distaz               Calc distance, az and baz for event lat,lon and station
                          lat,lon pairs.
+  discon               List velocity discontinuities for a model.
   find                 Find seismic phases in an earth model.
   path                 Plot ray paths, distance vs. depth, through the earth.
   phase                Describe a seismic phase in the current model.

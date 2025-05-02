@@ -1,8 +1,12 @@
 package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.StdModelGenerator;
+import edu.sc.seis.TauP.TauModelLoader;
+import edu.sc.seis.TauP.VelocityModel;
+import edu.sc.seis.TauP.VelocityModelException;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +64,22 @@ public class VelocityModelListArgs {
         velocityModelArgsList.add(vmodArg);
     }
 
+    public List<VelocityModel> getVelocityModels() throws VelocityModelException, IOException {
+        if (vModList == null) {
+            vModList = new ArrayList<>();
+            for (VelocityModelArgs vmodArg : getVelocityModelArgsList()) {
+                VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
+                if (vMod == null) {
+                    throw new VelocityModelException("Velocity model file not found: " + vmodArg.getModelFilename() + ", tried internally and from file");
+                }
+                vModList.add(vMod);
+            }
+        }
+        return vModList;
+    }
+
     public void clear() {
+        vModList.clear();
         velocityModelArgsList.clear();
     }
 
@@ -73,4 +92,7 @@ public class VelocityModelListArgs {
     }
 
     List<VelocityModelArgs> velocityModelArgsList = new ArrayList<>();
+
+
+    List<VelocityModel> vModList = null;
 }

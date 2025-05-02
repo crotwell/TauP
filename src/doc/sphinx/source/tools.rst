@@ -20,6 +20,7 @@ Tools
     taup_setsac
     taup_velmerge
     taup_velplot
+    taup_discon
     taup_refltrans
     taup_wavefront
     taup_spikes
@@ -45,6 +46,7 @@ Tools included with the TauP package:
 :ref:`setsac <taup_setsac>`         puts theoretical arrival times into sac header variables.
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
+:ref:`discon <taup_discon>`      list discontinuities in a velocity model.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
 :ref:`spikes <taup_spikes>`         create spike seismogram.
 :ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.

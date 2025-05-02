@@ -19,6 +19,7 @@ import java.io.*;
 				TauP_Create.class,
 				TauP_Curve.class,
 				TauP_DistAz.class,
+				TauP_VelocityDison.class,
 				TauP_Find.class,
 				TauP_Path.class,
 				TauP_PhaseDescribe.class,
@@ -51,6 +52,7 @@ public class ToolRun {
 	public static final String SETMSEED3 = "setms3";
 	public static final String TABLE = "table";
     public static final String VPLOT = "velplot";
+	public static final String DISCON = "discon";
 	public static final String VELMERGE = "velmerge";
 	public static final String WAVEFRONT = "wavefront";
 	public static final String SPIKES = "spikes";
@@ -98,6 +100,7 @@ public class ToolRun {
 			case TABLE:
 			case TIME:
 			case VPLOT:
+			case DISCON:
 			case VELMERGE:
 			case WAVEFRONT:
 			case REFLTRANSPLOT:
@@ -135,6 +138,8 @@ public class ToolRun {
 			tool = new TauP_Time();
 		} else if (toolToRun.contentEquals(VPLOT)) {
 			tool = new TauP_VelocityPlot();
+		} else if (toolToRun.contentEquals(DISCON)) {
+			tool = new TauP_VelocityDison();
 		} else if (toolToRun.contentEquals(VELMERGE)) {
 			tool = new TauP_VelocityMerge();
 		} else if (toolToRun.contentEquals(WAVEFRONT)) {
