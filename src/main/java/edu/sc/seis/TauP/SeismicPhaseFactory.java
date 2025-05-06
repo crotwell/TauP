@@ -829,6 +829,42 @@ public class SeismicPhaseFactory {
                 TauPConfig.DEBUG);
     }
 
+    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp){
+        List<TauBranch> branchList = new ArrayList<>();
+        int turnBranch=-1;
+        for (SeismicPhaseSegment seg : proto.segmentList) {
+            if (seg.isFlat) {
+                // flat segments handled external to branch seq
+                continue;
+            }
+            int add = seg.isDownGoing ? 1 : -1;
+            int sb = seg.startBranch;
+            if ( ( !seg.isDownGoing) && seg.prevEndAction == TURN) {
+                // prev was TURN, so start a turn branch and go up to end branch
+                sb = turnBranch;
+            }
+            for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+                TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
+                if (rp < tauBranch.getMaxRayParam()) {
+                    branchList.add(tauBranch);
+                    if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
+                        // ray turns in this branch
+                        turnBranch = b;
+                        break;
+                    } else {
+                        turnBranch = -1;
+                    }
+                } else {
+                    // ray can't go into branch
+                    return new ArrayList<>();
+                }
+            }
+        }
+        return branchList;
+    }
+
+
+
     public static TimeDist calcForIndex(ProtoSeismicPhase proto, int idx, int maxRayParamIndex, double[] rayParams){
         double rp = rayParams[idx];
         double dist = 0;
