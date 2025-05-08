@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -87,6 +89,14 @@ public class TimeDist implements Cloneable {
                 getTime(),
                 -1*getDistRadian(),
                 getDepth());
+    }
+
+    public static List<TimeDist> negateDistance(List<TimeDist> pierce) {
+        List<TimeDist> out = new ArrayList<>();
+        for (TimeDist td : pierce) {
+            out.add(td.negateDistance());
+        }
+        return out;
     }
 
     public String toString() {
