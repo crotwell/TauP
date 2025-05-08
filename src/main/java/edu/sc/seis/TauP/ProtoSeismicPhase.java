@@ -922,6 +922,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         int endOffset;
         boolean isDownGoing;
+        PhaseInteraction prevEndAction = isEmpty() ? PhaseInteraction.START : endSegment().endAction;
         double minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
         double maxRayParam;
         if (isEmpty()) {
@@ -962,17 +963,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             isDownGoing = true;
 
             double maxTurnInSegRayParam = tMod.getTauBranch(startBranch,
-                            isPWave).getMaxRayParam(); // at least penetrate the layer
+                            isPWave).getTopRayParam(); // at least penetrate the layer
             double minTurnInSegRayParam = tMod.getTauBranch(startBranch,
                     isPWave).getMinTurnRayParam();
-            for (int bnum = startBranch; bnum < endBranch; bnum++) {
+
+            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
                 minTurnInSegRayParam = Math.min(minTurnInSegRayParam, tMod.getTauBranch(bnum,
                                 isPWave).getMinTurnRayParam()); // should be getMinRayParam???
             }
             minRayParam = Math.max(minRayParam, minTurnInSegRayParam);
             maxRayParam = Math.min(maxRayParam, maxTurnInSegRayParam);
 
-                    // careful S wave and fluid layers, know at least startBranch is not fluid from above check,
+            // careful S wave and fluid layers, know at least startBranch is not fluid from above check,
             // stop path at first fluid layer
             if ( !isPWave) {
                 for (int bNum = startBranch+1; bNum <= endBranch; bNum++) {
@@ -1019,80 +1021,62 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             endOffset = 0;
             isDownGoing = false;
 
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMaxRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getTopRayParam());
 
             if (isPWave != nextIsPWave) {
                 maxRayParam = Math.min(maxRayParam,
                         tMod.getTauBranch(endBranch, nextIsPWave).getMaxRayParam());
             }
             if (endAction == REFLECT_UNDERSIDE_CRITICAL) {
-                try {
-                    TauBranch endTauBranch = tMod.getTauBranch(endBranch, isPWave);
-                    int slayAbove = tMod.getSlownessModel().layerNumberAbove(endTauBranch.getTopDepth(), isPWave);
-                    SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(slayAbove, isPWave);
-                    minRayParam = Math.max(minRayParam, sLayer.getBotP());
-                } catch (NoSuchLayerException e) {
-                    failNext("Unable to find layer for underside reflection: "+e.getMessage());
-                }
+                minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch-1, isPWave).getBotRayParam());
             }
         } else if(endAction == END) {
             endOffset = 0;
             isDownGoing = false;
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMaxRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
+            // also must be less than ending slowness
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getTopRayParam());
+
         } else if (endAction == END_DOWN) {
             endOffset = 0;
             isDownGoing = true;
 
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getBotRayParam());
+
         } else if(endAction == REFLECT_TOPSIDE || endAction == REFLECT_TOPSIDE_CRITICAL) {
             endOffset = 0;
             isDownGoing = true;
 
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getBotRayParam());
             if (isPWave != nextIsPWave) {
                 maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
                         nextIsPWave).getMinTurnRayParam());
             }
             if (endAction == REFLECT_TOPSIDE_CRITICAL) {
-                try {
-                    TauBranch endTauBranch = tMod.getTauBranch(endBranch, isPWave);
-                    int slayBelow = tMod.getSlownessModel().layerNumberBelow(endTauBranch.getBotDepth(), isPWave);
-                    SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(slayBelow,isPWave);
-                    minRayParam = Math.max(minRayParam,
-                            sLayer.getTopP());
-
-                } catch (NoSuchLayerException e) {
-                    failNext("Unable to find layer for topside reflection: "+e.getMessage());
-                }
+                minRayParam = Math.max(minRayParam,
+                        tMod.getTauBranch(endBranch+1, isPWave).getTopRayParam());
             }
         } else if(endAction == TRANSUP) {
             endOffset = -1;
             isDownGoing = false;
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMaxRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getTopRayParam());
             maxRayParam = Math.min(maxRayParam,
-                    tMod.getTauBranch(endBranch-1, nextIsPWave).getMinTurnRayParam());
+                    tMod.getTauBranch(endBranch-1, nextIsPWave).getBotRayParam());
         } else if(endAction == TRANSDOWN) {
             endOffset = 1;
             isDownGoing = true;
             // ray must reach discon
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             // and cross into lower
             if (endBranch == tMod.getNumBranches()-1) {
                 failNext(" Cannot TRANSDOWN center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
             }
-            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getTopRayParam());
+
         } else if(endAction == HEAD) {
             if (endBranch == tMod.getNumBranches()-1) {
                 failNext(" Cannot head wave at center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
@@ -1100,12 +1084,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             endOffset = 0;
             isDownGoing = true;
             // ray must reach discon, at turn/critical ray parameter
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             // and cross into lower layer, possible phase change
             maxRayParam = Math.min(maxRayParam,
-                    tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
+                    tMod.getTauBranch(endBranch+1, nextIsPWave).getTopRayParam());
             minRayParam = Math.max(minRayParam, maxRayParam);
         } else if(endAction == DIFFRACT) {
             if (endBranch == tMod.getNumBranches()-1 ) {
@@ -1119,16 +1101,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             endOffset = 0;
             isDownGoing = true;
             // ray must reach discon
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
-            }
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             // and propagate at the smallest turning ray param, may be different if phase conversion, ie SedPdiff
             if (isPWave != nextIsPWave) {
                 maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, nextIsPWave).getMinTurnRayParam());
             }
             // min rp same as max
             minRayParam = Math.max(minRayParam, maxRayParam);
-            double depth = tMod.getTauBranch(endBranch, isPWave).getBotDepth();
             if (tMod.getTauBranch(endBranch, isPWave).isHighSlowness()) {
                 // should diff be allowed if in neg slowness gradient at boundary???
                 failNext("No diffraction as above branch is a high slowness gradient");
@@ -1138,9 +1117,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         } else if (endAction == TRANSUPDIFFRACT) {
             endOffset = -1;
             isDownGoing = false;
-            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
-                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getMaxRayParam());
-            }
+
+            maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             maxRayParam = Math.min(maxRayParam,
                     tMod.getTauBranch(endBranch-1, nextIsPWave).getMinTurnRayParam());
             minRayParam = Math.max(minRayParam, maxRayParam);
@@ -1211,6 +1189,16 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return segment;
     }
 
+    protected double calcMaxTransitRP(int startBranch, int endBranch, boolean isPWave, PhaseInteraction prevEndAction, double maxRayParam) {
+        if (prevEndAction != TURN) {
+            // must make it all way from start to end
+            for (int bnum = startBranch; bnum <= endBranch; bnum++) {
+                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getTopRayParam());
+                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(bnum, isPWave).getBotRayParam());
+            }
+        }
+        return maxRayParam;
+    }
 
     protected SeismicPhaseSegment addFlatBranch(boolean isPWave,
                                                 PhaseInteraction prevEndAction,
