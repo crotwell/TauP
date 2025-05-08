@@ -33,13 +33,19 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     ProtoSeismicPhase proto;
 
-    /** Enables debugging output. */
+    /**
+     * Enables debugging output.
+     */
     public transient boolean DEBUG;
 
-    /** Enables verbose output. */
+    /**
+     * Enables verbose output.
+     */
     public transient boolean verbose = false;
 
-    /** TauModel to generate phase for. */
+    /**
+     * TauModel to generate phase for.
+     */
     protected TauModel tMod;
 
     /**
@@ -66,13 +72,19 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      */
     protected double[] time;
 
-    /** Array of possible ray parameters for this phase. */
+    /**
+     * Array of possible ray parameters for this phase.
+     */
     protected double[] rayParams;
 
-    /** Minimum ray parameter that exists for this phase. */
+    /**
+     * Minimum ray parameter that exists for this phase.
+     */
     protected double minRayParam;
 
-    /** Maximum ray parameter that exists for this phase. */
+    /**
+     * Maximum ray parameter that exists for this phase.
+     */
     protected double maxRayParam;
 
     /**
@@ -89,13 +101,19 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      */
     protected int minRayParamIndex;
 
-    /** The minimum distance that this phase can be theoretically observed. */
+    /**
+     * The minimum distance that this phase can be theoretically observed.
+     */
     protected double minDistance;
 
-    /** The maximum distance that this phase can be theoretically observed. */
+    /**
+     * The maximum distance that this phase can be theoretically observed.
+     */
     protected double maxDistance;
 
-    /** The phase name, ie PKiKP. */
+    /**
+     * The phase name, ie PKiKP.
+     */
     protected String name;
 
     /**
@@ -103,7 +121,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      */
     protected String puristName;
 
-    protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
+    protected double refineDistToleranceRadian = 0.0049 * Math.PI / 180;
 
     /**
      * Maximum recursion for refine arrival.
@@ -112,24 +130,28 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
 
     public SimpleContigSeismicPhase(ProtoSeismicPhase proto,
-                              double[] rayParams,
-                              double[] time,
-                              double[] dist,
-                              double minRayParam,
-                              double maxRayParam,
-                              int minRayParamIndex,
-                              int maxRayParamIndex,
-                              double minDistance,
-                              double maxDistance,
-                              boolean debug) {
-        if (proto == null) {throw new IllegalArgumentException("proto cannot be null");}
+                                    double[] rayParams,
+                                    double[] time,
+                                    double[] dist,
+                                    double minRayParam,
+                                    double maxRayParam,
+                                    int minRayParamIndex,
+                                    int maxRayParamIndex,
+                                    double minDistance,
+                                    double maxDistance,
+                                    boolean debug) {
+        if (proto == null) {
+            throw new IllegalArgumentException("proto cannot be null");
+        }
         try {
-            if (proto.isSuccessful()) {proto.validateSegList();}
+            if (proto.isSuccessful()) {
+                proto.validateSegList();
+            }
         } catch (TauModelException e) {
-            throw new RuntimeException(getName()+" fail validation:", e);
+            throw new RuntimeException(getName() + " fail validation:", e);
         }
         this.proto = proto;
-        this.DEBUG = debug ;
+        this.DEBUG = debug;
         this.name = proto.getName();
         this.tMod = proto.tMod;
         this.puristName = proto.getPuristName();
@@ -266,9 +288,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return List.of(getPhaseSegments());
     }
 
-    /** Description of segments of the phase. */
+    /**
+     * Description of segments of the phase.
+     */
     public List<SeismicPhaseSegment> getPhaseSegments() {
-    	return Collections.unmodifiableList(proto.segmentList);
+        return Collections.unmodifiableList(proto.segmentList);
     }
 
     @Override
@@ -314,7 +338,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double[] getTau() {
         double[] tau = new double[dist.length];
-        for(int i = 0; i < dist.length; i++) {
+        for (int i = 0; i < dist.length; i++) {
             tau[i] = time[i] - rayParams[i] * dist[i];
         }
         return tau;
@@ -334,18 +358,18 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     /**
      * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
      * laps nor going the long way around.
-     *  */
+     */
     public List<Arrival> calcTimeExactDistance(double searchDist) {
         List<Arrival> arrivals = new ArrayList<>();
-        for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
-            if(searchDist == dist[rayNum + 1]
+        for (int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
+            if (searchDist == dist[rayNum + 1]
                     && rayNum + 1 != dist.length - 1) {
                 /* So we don't get 2 arrivals for the same ray. */
                 continue;
-            } else if((dist[rayNum] - searchDist)
+            } else if ((dist[rayNum] - searchDist)
                     * (searchDist - dist[rayNum + 1]) >= 0.0) {
                 /* look for distances that bracket the search distance */
-                if((rayParams[rayNum] == rayParams[rayNum + 1])
+                if ((rayParams[rayNum] == rayParams[rayNum + 1])
                         && getMaxRayParam() > getMinRayParam()) {
                     /*
                      * Here we have a shadow zone, so it is not really an
@@ -353,14 +377,14 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                      */
                     continue;
                 }
-                if(DEBUG) {
+                if (DEBUG) {
                     Alert.debug("SeismicPhase " + name
                             + ", found arrival:\n" + "dist "
-                            + (float)(180 / Math.PI * dist[rayNum]) + " "
-                            + (float)(180 / Math.PI * searchDist) + " "
-                            + (float)(180 / Math.PI * dist[rayNum + 1]));
+                            + (float) (180 / Math.PI * dist[rayNum]) + " "
+                            + (float) (180 / Math.PI * searchDist) + " "
+                            + (float) (180 / Math.PI * dist[rayNum + 1]));
                     Alert.debug("time "
-                            +  time[rayNum] + " --  "
+                            + time[rayNum] + " --  "
                             + time[rayNum + 1]);
                 }
                 arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
@@ -372,6 +396,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     *
      * @param rayNum
      * @return
      */
@@ -379,14 +404,14 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         double dRPdDist = 0;
         if (rayParams.length > 1) {
             if (rayNum == 0) {
-                dRPdDist = (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1));
-            } else if (rayNum == rayParams.length-1) {
-                dRPdDist = (getRayParams(rayNum)-getRayParams(rayNum-1))/ (getDist(rayNum)-getDist(rayNum-1));
+                dRPdDist = (getRayParams(rayNum) - getRayParams(rayNum + 1)) / (getDist(rayNum) - getDist(rayNum + 1));
+            } else if (rayNum == rayParams.length - 1) {
+                dRPdDist = (getRayParams(rayNum) - getRayParams(rayNum - 1)) / (getDist(rayNum) - getDist(rayNum - 1));
             } else {
                 // average left and right ray params
-                dRPdDist = ((getRayParams(rayNum)-getRayParams(rayNum-1))/ (getDist(rayNum)-getDist(rayNum-1))
-                        + (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)))
-                        /2.0;
+                dRPdDist = ((getRayParams(rayNum) - getRayParams(rayNum - 1)) / (getDist(rayNum) - getDist(rayNum - 1))
+                        + (getRayParams(rayNum) - getRayParams(rayNum + 1)) / (getDist(rayNum) - getDist(rayNum + 1)))
+                        / 2.0;
             }
 
         }
@@ -401,13 +426,13 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
         Arrival left = createArrivalAtIndex(rayNum);
-        Arrival right = createArrivalAtIndex(rayNum+1);
+        Arrival right = createArrivalAtIndex(rayNum + 1);
         return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
     }
 
     public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
         Arrival linInterp = linearInterpArrival(searchDist, leftEstimate, rightEstimate);
-        if(maxRecursion <= 0 || countFlatLegs() > 0) {
+        if (maxRecursion <= 0 || countFlatLegs() > 0) {
             // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
         }
@@ -421,16 +446,16 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             return rightEstimate;
         }
 
-        if(DEBUG) {
-            Alert.debug("Phase: "+this);
-            Alert.debug("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate+"\nlinInterp: "+linInterp);
+        if (DEBUG) {
+            Alert.debug("Phase: " + this);
+            Alert.debug("Refine: " + maxRecursion + "\nleft:  " + leftEstimate + "\nright: " + rightEstimate + "\nlinInterp: " + linInterp);
         }
 
         if (leftEstimate.getRayParam() < minRayParam || maxRayParam < leftEstimate.getRayParam()) {
-            throw new RuntimeException("Left Ray param "+leftEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+            throw new RuntimeException("Left Ray param " + leftEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
         }
         if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
-            throw new RuntimeException("Right Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+            throw new RuntimeException("Right Ray param " + rightEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
         }
 
         try {
@@ -438,21 +463,21 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             if ((leftEstimate.getDist() - searchDist)
                     * (searchDist - shoot.getDist()) > 0) {
                 // search between left and shoot
-                if (Math.abs(shoot.getDist()-linInterp.getDist()) < distTolRadian) {
+                if (Math.abs(shoot.getDist() - linInterp.getDist()) < distTolRadian) {
                     return linearInterpArrival(searchDist, leftEstimate, shoot);
                 } else {
-                    return refineArrival(leftEstimate, shoot, searchDist, distTolRadian, maxRecursion-1);
+                    return refineArrival(leftEstimate, shoot, searchDist, distTolRadian, maxRecursion - 1);
                 }
             } else {
                 // search between shoot and right
-                if (Math.abs(shoot.getDist()-linInterp.getDist()) < distTolRadian) {
+                if (Math.abs(shoot.getDist() - linInterp.getDist()) < distTolRadian) {
                     return linearInterpArrival(searchDist, shoot, rightEstimate);
                 } else {
-                    return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion-1);
+                    return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion - 1);
                 }
             }
-        } catch(NoSuchLayerException | SlownessModelException e) {
-            throw new RuntimeException("Should not happen: "+getName(), e);
+        } catch (TauModelException | SlownessModelException e) {
+            throw new RuntimeException("Should not happen: " + getName(), e);
         }
     }
 
@@ -469,29 +494,29 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      */
     public SimpleContigSeismicPhase interpolateSimplePhase(double maxDeltaDeg) {
         int numToAdd = 0;
-        double maxDeltaRadian = maxDeltaDeg*DtoR;
-        for (int i = 0; i < rayParams.length-1; i++) {
-            if (Math.abs(dist[i]-dist[i+1]) > maxDeltaRadian) {
+        double maxDeltaRadian = maxDeltaDeg * DtoR;
+        for (int i = 0; i < rayParams.length - 1; i++) {
+            if (Math.abs(dist[i] - dist[i + 1]) > maxDeltaRadian) {
 
-                numToAdd+=(int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian)-1;
+                numToAdd += (int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian) - 1;
             }
         }
-        double[] out_rayParams = new double[rayParams.length+numToAdd];
-        double[] out_dist = new double[rayParams.length+numToAdd];
-        double[] out_time = new double[rayParams.length+numToAdd];
+        double[] out_rayParams = new double[rayParams.length + numToAdd];
+        double[] out_dist = new double[rayParams.length + numToAdd];
+        double[] out_time = new double[rayParams.length + numToAdd];
         int shift = 0;
-        for (int i = 0; i < rayParams.length-1; i++) {
+        for (int i = 0; i < rayParams.length - 1; i++) {
             out_dist[i + shift] = dist[i];
             out_rayParams[i + shift] = rayParams[i];
             out_time[i + shift] = time[i];
 
             int numRPs = (int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian);
-            double deltaDist=(dist[i + 1] - dist[i]) /numRPs;
+            double deltaDist = (dist[i + 1] - dist[i]) / numRPs;
             for (int j = 1; j < numRPs; j++) {
                 List<Arrival> aList = DistanceRay.ofExactRadians(dist[i] + j * deltaDist).calcSimplePhase(this);
 
                 for (Arrival a : aList) {
-                    if (rayParams[i+1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
+                    if (rayParams[i + 1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
                         shift++;
                         out_dist[i + shift] = a.getDist();
                         out_time[i + shift] = a.getTime();
@@ -500,19 +525,19 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                     }
                 }
                 if (aList.isEmpty()) {
-                    throw new RuntimeException("Bad calc for interp "+j+" "+(dist[i] + j * deltaDist)*RtoD+" for "+getName());
+                    throw new RuntimeException("Bad calc for interp " + j + " " + (dist[i] + j * deltaDist) * RtoD + " for " + getName());
                 }
             }
 
         }
         // add last sample
-        out_dist[rayParams.length-1 + shift] = dist[rayParams.length-1];
-        out_rayParams[rayParams.length-1 + shift] = rayParams[rayParams.length-1];
-        out_time[rayParams.length-1 + shift] = time[rayParams.length-1];
+        out_dist[rayParams.length - 1 + shift] = dist[rayParams.length - 1];
+        out_rayParams[rayParams.length - 1 + shift] = rayParams[rayParams.length - 1];
+        out_time[rayParams.length - 1 + shift] = time[rayParams.length - 1];
         SimpleContigSeismicPhase out = new SimpleContigSeismicPhase(proto, out_rayParams, out_time, out_dist,
                 minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, false);
         if (shift != numToAdd) {
-            throw new RuntimeException("shifty not numAdd "+shift+" "+numToAdd);
+            throw new RuntimeException("shifty not numAdd " + shift + " " + numToAdd);
         }
         return out;
     }
@@ -560,9 +585,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     /**
      * Interprets between two arrivals to find new arrival at given distance.
+     *
      * @param searchDist new arrival distance
-     * @param left known arrival to left
-     * @param right known arrival to right
+     * @param left       known arrival to left
+     * @param right      known arrival to right
      * @return Arrival at searchDist
      */
     private Arrival linearInterpArrival(double searchDist,
@@ -588,24 +614,23 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
                     right.getDist(), right.getTime(), searchDist);
             dRPdDist = 0;
-        } else
-        if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
+        } else if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
             arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
-            dRPdDist = (left.getRayParam()-arrivalRayParam)/ (left.getDist()-searchDist);
+            dRPdDist = (left.getRayParam() - arrivalRayParam) / (left.getDist() - searchDist);
         } else {
             arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
-            dRPdDist = (right.getRayParam()-arrivalRayParam)/ (right.getDist()-searchDist);
+            dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - searchDist);
         }
         if (Double.isNaN(arrivalTime)) {
-            throw new RuntimeException("Time is NaN, search "+searchDist +" leftDist "+ left.getDist()+ " leftTime "+left.getTime()
-                               +"  rightDist "+right.getDist()+"  rightTime "+right.getTime());
+            throw new RuntimeException("Time is NaN, search " + searchDist + " leftDist " + left.getDist() + " leftTime " + left.getTime()
+                    + "  rightDist " + right.getDist() + "  rightTime " + right.getTime());
         }
 
         return new Arrival(this,
                 this, arrivalTime,
-                           searchDist,
-                           arrivalRayParam,
-                           left.getRayParamIndex(),
+                searchDist,
+                arrivalRayParam,
+                left.getRayParamIndex(),
                 dRPdDist
         );
     }
@@ -613,10 +638,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
         if (takeoffDegree < 0 || takeoffDegree > 180) {
-            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was "+takeoffDegree);
+            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was " + takeoffDegree);
         }
         if (getPhaseSegments().isEmpty()) {
-            throw new NoArrivalException("No phase segments for "+getName());
+            throw new NoArrivalException("No phase segments for " + getName());
         }
 
         boolean firstIsPWave = getInitialPhaseSegment().isPWave;
@@ -624,8 +649,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         try {
             rayParam = calcRayParamForTakeoffAngleInModel(takeoffDegree, firstIsPWave, tMod,
                     getInitialPhaseSegment().isDownGoing);
-        } catch(NoSuchLayerException | SlownessModelException e) {
-            throw new RuntimeException("Should not happen",e);
+        } catch (NoSuchLayerException | SlownessModelException e) {
+            throw new RuntimeException("Should not happen", e);
         }
         return rayParam;
     }
@@ -636,9 +661,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                                                             boolean isDownGoing)
             throws NoSuchLayerException, SlownessModelException {
         if ((isDownGoing && (takeoffDegree > 90))
-                || ( ! isDownGoing && (takeoffDegree < 90))
+                || (!isDownGoing && (takeoffDegree < 90))
         ) {
-            throw new SlownessModelException("Phase downgoing and takeoff different up/down "+isDownGoing+" "+takeoffDegree);
+            throw new SlownessModelException("Phase downgoing and takeoff different up/down " + isDownGoing + " " + takeoffDegree);
         }
         SlownessLayer sLayer;
         if (isDownGoing) {
@@ -649,7 +674,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
         }
         double rayParam = sLayer.evaluateAt_bullen(tMod.getSourceDepth(), tMod.radiusOfEarth)
-                *Math.sin(takeoffDegree*SphericalCoords.DtoR);
+                * Math.sin(takeoffDegree * SphericalCoords.DtoR);
         return rayParam;
     }
 
@@ -657,10 +682,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
         if (incidentDegree < 0 || incidentDegree > 180) {
-            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was "+incidentDegree);
+            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was " + incidentDegree);
         }
         if (getPhaseSegments().isEmpty()) {
-            throw new NoArrivalException("No phase segments for "+getName());
+            throw new NoArrivalException("No phase segments for " + getName());
         }
 
         boolean firstIsPWave = getFinalPhaseSegment().isPWave;
@@ -668,24 +693,24 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         try {
             rayParam = calcRayParamForIncidentAngleInModel(incidentDegree, firstIsPWave, getProto(),
                     getFinalPhaseSegment().isDownGoing);
-        } catch(NoSuchLayerException | SlownessModelException e) {
-            throw new RuntimeException("Should not happen",e);
+        } catch (NoSuchLayerException | SlownessModelException e) {
+            throw new RuntimeException("Should not happen", e);
         }
         return rayParam;
     }
 
     public static double calcRayParamForIncidentAngleInModel(double incidentDegree,
-                                                            boolean isPWave,
-                                                            ProtoSeismicPhase proto,
-                                                            boolean isDownGoing)
+                                                             boolean isPWave,
+                                                             ProtoSeismicPhase proto,
+                                                             boolean isDownGoing)
             throws NoSuchLayerException, SlownessModelException {
         if ((isDownGoing && (incidentDegree < 90))
-                || ( ! isDownGoing && (incidentDegree > 90))
+                || (!isDownGoing && (incidentDegree > 90))
         ) {
-            throw new SlownessModelException("Phase ends downgoing and incident different up/down "+isDownGoing+" "+incidentDegree);
+            throw new SlownessModelException("Phase ends downgoing and incident different up/down " + isDownGoing + " " + incidentDegree);
         }
         SlownessLayer sLayer;
-        if ( ! isDownGoing) {
+        if (!isDownGoing) {
             int layerNum = proto.tMod.getSlownessModel().layerNumberBelow(proto.receiverDepth, isPWave);
             sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
         } else {
@@ -693,7 +718,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
         }
         double rayParam = sLayer.evaluateAt_bullen(proto.receiverDepth, proto.tMod.radiusOfEarth)
-                *Math.sin(incidentDegree*SphericalCoords.DtoR);
+                * Math.sin(incidentDegree * SphericalCoords.DtoR);
         return rayParam;
     }
 
@@ -714,7 +739,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
             }
             return takeoffVelocity;
-        } catch(NoSuchLayerException e) {
+        } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
@@ -725,18 +750,18 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             double incidentVelocity;
             VelocityModel vMod = getTauModel().getVelocityModel();
             VelocityModelMaterial lastLeg;
-            if (getPhaseSegments().get(getPhaseSegments().size()-1).isPWave) {
+            if (getPhaseSegments().get(getPhaseSegments().size() - 1).isPWave) {
                 lastLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
                 lastLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getPhaseSegments().get(getPhaseSegments().size()-1).isDownGoing) {
+            if (getPhaseSegments().get(getPhaseSegments().size() - 1).isDownGoing) {
                 incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
             } else {
                 incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
             }
             return incidentVelocity;
-        } catch(NoSuchLayerException e) {
+        } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
@@ -752,7 +777,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 rho = vMod.evaluateBelow(sourceDepth, VelocityModelMaterial.DENSITY);
             }
             return rho;
-        } catch(NoSuchLayerException e) {
+        } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
@@ -768,30 +793,31 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 rho = vMod.evaluateBelow(receiverDepth, VelocityModelMaterial.DENSITY);
             }
             return rho;
-        } catch(NoSuchLayerException e) {
+        } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
 
     @Override
     public double calcTakeoffAngleDegree(double arrivalRayParam) {
-        return calcTakeoffAngle(arrivalRayParam)*RtoD;
+        return calcTakeoffAngle(arrivalRayParam) * RtoD;
     }
+
     @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
         if (name.endsWith("kmps")) {
             return 0;
         }
-        double takeoffAngle = Math.asin(velocityAtSource()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
-        if (! Double.isFinite(takeoffAngle)
-                && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-sourceDepth)) < 0.05) {
+        double takeoffAngle = Math.asin(velocityAtSource() * arrivalRayParam / (getTauModel().getRadiusOfEarth() - sourceDepth));
+        if (!Double.isFinite(takeoffAngle)
+                && Math.abs(velocityAtSource() * arrivalRayParam - (getTauModel().getRadiusOfEarth() - sourceDepth)) < 0.05) {
             // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
             // just set takeoffAngle to 90 in this case
-            takeoffAngle = Math.PI/2;
+            takeoffAngle = Math.PI / 2;
         }
-        if ( !getInitialPhaseSegment().isDownGoing) {
+        if (!getInitialPhaseSegment().isDownGoing) {
             // upgoing, so angle is in 90-180 range
-            takeoffAngle = Math.PI-takeoffAngle;
+            takeoffAngle = Math.PI - takeoffAngle;
         }
         return takeoffAngle;
     }
@@ -806,12 +832,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         if (name.endsWith("kmps")) {
             return 0;
         }
-        double incidentAngle = Math.asin(velocityAtReceiver()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
-        if (! Double.isFinite(incidentAngle)
-                && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-receiverDepth)) < 0.05) {
+        double incidentAngle = Math.asin(velocityAtReceiver() * arrivalRayParam / (getTauModel().getRadiusOfEarth() - receiverDepth));
+        if (!Double.isFinite(incidentAngle)
+                && Math.abs(velocityAtSource() * arrivalRayParam - (getTauModel().getRadiusOfEarth() - receiverDepth)) < 0.05) {
             // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
             // just set incidentAngle to 90 in this case
-            incidentAngle = Math.PI/2;
+            incidentAngle = Math.PI / 2;
         }
         if (getFinalPhaseSegment().isDownGoing) {
             incidentAngle = Math.PI - incidentAngle;
@@ -830,12 +856,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     }
 
     public SeismicPhaseSegment getFinalPhaseSegment() {
-        return getPhaseSegments().get(getPhaseSegments().size()-1);
+        return getPhaseSegments().get(getPhaseSegments().size() - 1);
     }
 
     @Override
     public boolean finalSegmentIsPWave() {
-        return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
+        return getPhaseSegments().get(getPhaseSegments().size() - 1).isPWave;
     }
 
 
@@ -1005,8 +1031,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                                 branchTime,
                                 negMulDist * branchDist,
                                 branchDepth));
-                        if (DEBUG) {
-                            Alert.debug("------->  add pierce " + branchDepth);
+                        if (true || DEBUG) {
+                            Alert.debug("------->  add pierce " + branchDepth+"  bnum="+branchNum);
                             Alert.debug(" branchTime=" + branchTime
                                     + " branchDist=" + branchDist + " branchDepth="
                                     + branchDepth);

@@ -81,7 +81,7 @@ public interface JSONLabels {
     String WAVETYPE = "wavetype";
     String SEGMENT = "segment";
     String NAME = "name";
-    String PREFNAME = "prefferedname";
+    String PREFNAME = "preferredname";
     String ISBACKSCATTER = "isbackscatter";
     String PWAVE = "pwave";
     String SWAVE = "swave";

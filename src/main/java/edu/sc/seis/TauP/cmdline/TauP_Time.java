@@ -40,7 +40,6 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "time",
         description = "Calculate travel times for seismic phases in an earth model.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Time extends TauP_AbstractRayTool {
 

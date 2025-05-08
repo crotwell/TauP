@@ -885,6 +885,17 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return currBranch;
     }
 
+    /**
+     * Adds a segment to a path of a seismic phase. Generally this corresponds to a character in a phase name,
+     * like K in PKP.
+     * @param endBranch ending branch number, start is calculated from the end branch and end action of the prior leg.
+     * @param isPWave current leg phase type, true for P, false for S
+     * @param nextIsPWave next leg phase type, true for P, false for S, determines if a phase conversion at the end
+     * @param endAction action the phase takes at the end, like TURN or REFLECT_TOPSIDE
+     * @param currLeg name of current leg
+     * @return The segment added by this call
+     * @throws TauModelException if arguments not possible in the model, but not thrown for a simple failure to exist
+     */
     public SeismicPhaseSegment addToBranch(int endBranch,
                                            boolean isPWave,
                                            boolean nextIsPWave,

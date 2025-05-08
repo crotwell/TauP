@@ -458,7 +458,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException, SlownessModelException, TauModelException {
         return arrival.getSimpleContigSeismicPhase().calcSegmentPaths(arrival, prevEnd, prevIdx);
     }
 
@@ -479,17 +479,17 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, NoArrivalException {
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException {
         return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranPSV(arrival);
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, NoArrivalException {
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException {
         return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranSH(arrival);
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException {
+    public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws TauModelException {
         return arrival.getSimpleContigSeismicPhase().calcPierceTimeDist(arrival);
     }
 
