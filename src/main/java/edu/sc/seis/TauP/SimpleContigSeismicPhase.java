@@ -557,31 +557,23 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             // find index for ray param, done in for-loop check
         }
 
-        /* counter for passes through each branch. 0 is P and 1 is S. */
-        int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, getPhaseSegments());
-        TimeDist sum = new TimeDist(rayParam);
-        /* Sum the branches with the appropriate multiplier. */
-        for (Boolean isPWave : List.of(true, false)) {
-            int pIdx = isPWave ? 0 : 1;
-            for (int j = 0; j < tMod.getNumBranches(); j++) {
-                if (timesBranches[pIdx][j] != 0) {
-                    TimeDist td = tMod.getTauBranch(j, isPWave).calcTimeDist(rayParam, true);
-                    TimeDist mulTD = new TimeDist(rayParam,
-                            timesBranches[pIdx][j] * td.getTime(),
-                            timesBranches[pIdx][j] * td.getDistRadian(),
-                            td.getDepth());
-                    sum = sum.add(mulTD);
-                }
-            }
+        List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, rayParam);
+        TimeDist sum = new TimeDist(rayParam, 0, 0, getSourceDepth());
+        List<TimeDist> pierce = new ArrayList<>();
+        pierce.add(sum);
+        for (TauBranch tb : branchList) {
+            TimeDist td = tb.calcTimeDist(rayParam, true);
+            sum = sum.add(td);
+            pierce.add(sum);
         }
-        double dRPdDist = (rayParam-rayParams[rayParamIndex])/(sum.getDistRadian()-dist[rayParamIndex]);
-        return new Arrival(this,
-                this, sum.getTime(),
-                           sum.getDistRadian(),
-                           rayParam,
-                           rayParamIndex,
+        double dRPdDist = (rayParam - rayParams[rayParamIndex]) / (sum.getDistRadian() - dist[rayParamIndex]);
+        Arrival a = new Arrival(this,
+                this,
+                pierce,
+                rayParamIndex,
                 dRPdDist
         );
+        return a;
     }
 
     /**
