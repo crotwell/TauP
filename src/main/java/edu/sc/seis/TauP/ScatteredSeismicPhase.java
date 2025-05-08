@@ -415,7 +415,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException {
+    public List<TimeDist> interpPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException {
         List<TimeDist> out = new ArrayList<>();
         ScatteredArrival scatA = (ScatteredArrival) arrival;
         double scatDistance = inboundArrival.getDist();
@@ -433,7 +433,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
             out.addAll(Arrays.asList(inboundArrival.getPierce()));
         }
 
-        List<TimeDist> scatPierce = scatteredPhase.calcPierceTimeDist(scatA.getScatteredArrival());
+        List<TimeDist> scatPierce = scatteredPhase.interpPierceTimeDist(scatA.getScatteredArrival());
         // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
         scatPierce = scatPierce.subList(1,scatPierce.size());
         int scatNegative = 1;

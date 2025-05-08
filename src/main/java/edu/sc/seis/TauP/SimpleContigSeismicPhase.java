@@ -857,8 +857,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return getPhaseSegments().get(getPhaseSegments().size() - 1).isPWave;
     }
 
-
-    public List<TimeDist> calcPierceTimeDist(Arrival currArrival) {
+    public List<TimeDist> interpPierceTimeDist(Arrival currArrival) throws TauModelException {
         double branchDist = 0.0;
         double branchTime = 0.0;
         double prevBranchTime;
@@ -919,139 +918,124 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
          * leaves branch i is stored in i+1. Use linear interpolation
          * between rays that we know.
          */
+        SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : getPhaseSegments()) {
             boolean isPWave = seg.isPWave;
             int indexIncr = seg.isDownGoing ? 1 : -1;
             int finish = seg.endBranch + indexIncr;
-            for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
+            if (seg.isFlat) {
+                double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
+                double refractTime = refractDist * currArrival.getRayParam();
+                pierce.add(new TimeDist(distRayParam,
+                        branchTime + refractTime,
+                        negMulDist * (branchDist + refractDist),
+                        seg.getDepthRange()[0]));
+                branchDist += refractDist;
+                prevBranchTime = branchTime;
+                branchTime += refractTime;
 
-                if (seg.isFlat) {
-                    double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
-                    double refractTime = refractDist * currArrival.getRayParam();
-                    pierce.add(new TimeDist(distRayParam,
-                            branchTime + refractTime,
-                            negMulDist * (branchDist + refractDist),
-                            seg.getDepthRange()[0]));
-                    branchDist += refractDist;
-                    prevBranchTime = branchTime;
-                    branchTime += refractTime;
-                } else {
-                    /*
-                     * Save the turning depths for the ray parameter for both P and
-                     * S waves. This way we get the depth correct for any rays that
-                     * turn within a layer. We have to do this on a per branch basis
-                     * because of converted phases, e.g. SKS.
-                     */
-                    double turnDepth;
-                    try {
-                        if (distRayParam > tMod.getTauBranch(branchNum, isPWave)
-                                .getMaxRayParam()) {
-                            turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                                    .getTopDepth();
-                        } else if (distRayParam <= tMod.getTauBranch(branchNum,
-                                        isPWave)
-                                .getMinRayParam()) {
-                            turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                                    .getBotDepth();
-                        } else {
-                            if (isPWave
-                                    || tMod.getSlownessModel()
-                                    .depthInFluid((tMod.getTauBranch(branchNum,
-                                                    isPWave)
-                                            .getTopDepth() + tMod.getTauBranch(branchNum,
-                                                    isPWave)
-                                            .getBotDepth()) / 2.0)) {
-                                turnDepth = tMod.getSlownessModel()
-                                        .findDepth(distRayParam,
-                                                tMod.getTauBranch(branchNum,
-                                                                isPWave)
-                                                        .getTopDepth(),
-                                                tMod.getTauBranch(branchNum,
-                                                                isPWave)
-                                                        .getBotDepth(),
-                                                SeismicPhase.PWAVE);
-                            } else {
-                                turnDepth = tMod.getSlownessModel()
-                                        .findDepth(distRayParam,
-                                                tMod.getTauBranch(branchNum,
-                                                                isPWave)
-                                                        .getTopDepth(),
-                                                tMod.getTauBranch(branchNum,
-                                                                isPWave)
-                                                        .getBotDepth(),
-                                                isPWave);
-                            }
-                        }
-                    } catch (SlownessModelException e) {
-                        // shouldn't happen but...
-                        throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
-                                , e);
-                    }
-                    double timeA, timeB;
-                    if (countFlatLegs() > 0) {
-                        /* head waves and diffracted waves are a special case. */
-                        distA = tMod.getTauBranch(branchNum, isPWave)
-                                .getDist(rayNum);
-                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                        distB = tMod.getTauBranch(branchNum, isPWave)
-                                .getDist(rayNum);
-                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                    } else {
-                        distA = tMod.getTauBranch(branchNum, isPWave)
-                                .getDist(rayNum);
-                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                        distB = tMod.getTauBranch(branchNum, isPWave)
-                                .getDist(rayNum + 1);
-                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
-                    }
-                    branchDist += distRatio * (distB - distA) + distA;
-                    prevBranchTime = branchTime;
-                    branchTime += distRatio * (timeB - timeA) + timeA;
-                    double branchDepth;
-                    if (seg.isDownGoing) {
-                        branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                        .getBotDepth(),
-                                turnDepth);
-                    } else {
-                        branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                        .getTopDepth(),
-                                turnDepth);
-                    }
-                    // make sure ray actually propagates in this branch, leave
-                    // a little room for numerical "chatter"
-                    if (Math.abs(prevBranchTime - branchTime) > 1e-10) {
-                        pierce.add(new TimeDist(distRayParam,
-                                branchTime,
-                                negMulDist * branchDist,
-                                branchDepth));
-                        if (true || DEBUG) {
-                            Alert.debug("------->  add pierce " + branchDepth+"  bnum="+branchNum);
-                            Alert.debug(" branchTime=" + branchTime
-                                    + " branchDist=" + branchDist + " branchDepth="
-                                    + branchDepth);
-                            Alert.debug("incrementTime = "
-                                    + (distRatio * (timeB - timeA)) + " timeB="
-                                    + timeB + " timeA=" + timeA);
-                        }
-                    } else {
-                        if (DEBUG) {
-                            Alert.debug("Time inc in branch tiny: " + " branchTime=" + branchTime
-                                    + " branchDist=" + branchDist + " branchDepth="
-                                    + branchDepth);
-                        }
-                    }
+            } else {
+                int prevSegTurnBranch = SeismicPhaseFactory.turnBranch(prevSeg, distRayParam);
+                List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, distRayParam, seg, prevSegTurnBranch);
+                //for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
+                for (TauBranch tauBranch : branchList) {
                     if (seg.isFlat) {
                         double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
                         double refractTime = refractDist * currArrival.getRayParam();
                         pierce.add(new TimeDist(distRayParam,
                                 branchTime + refractTime,
                                 negMulDist * (branchDist + refractDist),
-                                branchDepth));
+                                seg.getDepthRange()[0]));
                         branchDist += refractDist;
+                        prevBranchTime = branchTime;
                         branchTime += refractTime;
+                    } else {
+                        /*
+                         * Save the turning depths for the ray parameter for both P and
+                         * S waves. This way we get the depth correct for any rays that
+                         * turn within a layer. We have to do this on a per branch basis
+                         * because of converted phases, e.g. SKS.
+                         */
+                        double turnDepth;
+                        try {
+                            if (distRayParam > tauBranch
+                                    .getTopRayParam()) {
+                                turnDepth = tauBranch
+                                        .getTopDepth();
+                            } else if (distRayParam <= tauBranch
+                                    .getBotRayParam()) {
+                                turnDepth = tauBranch
+                                        .getBotDepth();
+                            } else {
+                                turnDepth = tMod.getSlownessModel()
+                                        .findDepth(distRayParam,
+                                                tauBranch.getTopDepth(),
+                                                tauBranch.getBotDepth(),
+                                                isPWave);
+
+                            }
+                        } catch (SlownessModelException e) {
+                            // shouldn't happen but...
+                            throw new TauModelException("SeismicPhase.calcPierce: Caught SlownessModelException. "
+                                    , e);
+                        }
+                        double timeA, timeB;
+                        if (countFlatLegs() > 0) {
+                            /* head waves and diffracted waves are a special case. */
+                            distA = tauBranch
+                                    .getDist(rayNum);
+                            timeA = tauBranch.time[rayNum];
+                            distB = tauBranch
+                                    .getDist(rayNum);
+                            timeB = tauBranch.time[rayNum];
+                        } else {
+                            distA = tauBranch
+                                    .getDist(rayNum);
+                            timeA = tauBranch.time[rayNum];
+                            distB = tauBranch
+                                    .getDist(rayNum + 1);
+                            timeB = tauBranch.time[rayNum + 1];
+                        }
+                        branchDist += distRatio * (distB - distA) + distA;
+                        prevBranchTime = branchTime;
+                        branchTime += distRatio * (timeB - timeA) + timeA;
+                        double branchDepth;
+                        if (seg.isDownGoing) {
+                            branchDepth = Math.min(tauBranch
+                                            .getBotDepth(),
+                                    turnDepth);
+                        } else {
+                            branchDepth = Math.min(tauBranch
+                                            .getTopDepth(),
+                                    turnDepth);
+                        }
+                        // make sure ray actually propagates in this branch, leave
+                        // a little room for numerical "chatter"
+                        if (Math.abs(prevBranchTime - branchTime) > 1e-10) {
+                            pierce.add(new TimeDist(distRayParam,
+                                    branchTime,
+                                    negMulDist * branchDist,
+                                    branchDepth));
+                            if (DEBUG) {
+                                Alert.debug("------->  add pierce " + tauBranch);
+                                Alert.debug(" branchTime=" + branchTime
+                                        + " branchDist=" + branchDist + " branchDepth="
+                                        + branchDepth);
+                                Alert.debug("incrementTime = "
+                                        + (distRatio * (timeB - timeA)) + " timeB="
+                                        + timeB + " timeA=" + timeA);
+                            }
+                        } else {
+                            if (DEBUG) {
+                                Alert.debug("Time inc in branch tiny: " + " branchTime=" + branchTime
+                                        + " branchDist=" + branchDist + " branchDepth="
+                                        + branchDepth);
+                            }
+                        }
                     }
                 }
             }
+            prevSeg = seg;
         }
         return pierce;
     }

@@ -99,7 +99,7 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) {
+    public List<TimeDist> interpPierceTimeDist(Arrival arrival) {
         return List.of();
     }
 

@@ -700,7 +700,7 @@ public class Arrival {
     public TimeDist[] getPierce() {
         if (pierce == null) {
             try {
-                this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
+                this.pierce = getPhase().interpPierceTimeDist(this).toArray(new TimeDist[0]);
             } catch (NoArrivalException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             } catch (TauModelException e) {

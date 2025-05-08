@@ -164,7 +164,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
 
-    List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException;
+    List<TimeDist> interpPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException;
 
     double calcTstar(Arrival currArrival) throws NoArrivalException;
 

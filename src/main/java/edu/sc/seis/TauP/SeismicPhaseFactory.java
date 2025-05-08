@@ -832,55 +832,101 @@ public class SeismicPhaseFactory {
     public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp) throws TauModelException {
         List<TauBranch> branchList = new ArrayList<>();
         int turnBranch=-1;
+        SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : proto.segmentList) {
             if (seg.isFlat) {
                 // flat segments handled external to branch seq
                 continue;
             }
-            int add = seg.isDownGoing ? 1 : -1;
-            int sb = seg.startBranch;
-            if ( ( !seg.isDownGoing) && seg.prevEndAction == TURN) {
-                // prev was TURN, so start a turn branch and go up to end branch
-                sb = turnBranch;
+            branchList.addAll(calcBranchSeqForRayparam(proto, rp, seg, turnBranch(prevSeg, rp)));
+            prevSeg = seg;
+        }
+        return branchList;
+    }
+
+    /**
+     * Calculate the TauBranch a ray turns within. If the segement is not downgoing, or the end action is not TURN
+     * then result is -1.
+     * @param seg segment to calculate, maybe null
+     * @param rp ray param
+     * @return number of the tau branch where the ray turns, if possible
+     */
+    public static int turnBranch(SeismicPhaseSegment seg, double rp) {
+        if (seg == null || seg.endAction != TURN || ( ! seg.isDownGoing)) {
+            return -1;
+        }
+        for (int b = seg.startBranch;  b <= seg.endBranch; b++) {
+            TauBranch tauBranch = seg.tMod.getTauBranch(b, seg.isPWave);
+            if (rp >= tauBranch.getMinRayParam()) {
+                // ray turns in this branch
+                return b;
             }
-            for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
-                TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
-                if (rp <= tauBranch.getMaxRayParam()) {
-                    branchList.add(tauBranch);
-                    if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
-                        // ray turns in this branch
-                        turnBranch = b;
-                        break;
-                    } else {
-                        turnBranch = -1;
-                    }
-                } else {
-                    // ray can't go into branch
-                    throw new TauModelException("Ray can't go into branch, should never happen: "+rp+" "+tauBranch);
+        }
+        return -1;
+    }
+
+    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp, SeismicPhaseSegment seg, int prevSegTurnBranch) throws TauModelException {
+        List<TauBranch> branchList = new ArrayList<>();
+        int add = seg.isDownGoing ? 1 : -1;
+        int sb = seg.startBranch;
+        if ( ( !seg.isDownGoing) && seg.prevEndAction == TURN) {
+            // prev was TURN, so start a turn branch and go up to end branch
+            sb = prevSegTurnBranch;
+        }
+        for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+            TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
+            if (rp <= tauBranch.getMaxRayParam()) {
+                branchList.add(tauBranch);
+                if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
+                    // ray turns in this branch
+                    break;
                 }
+            } else {
+                // ray can't go into branch
+                throw new TauModelException("Ray can't go into branch, should never happen: "+rp+" "+tauBranch);
             }
         }
         return branchList;
     }
 
 
-
     public static TimeDist calcForIndex(ProtoSeismicPhase proto, int idx, int maxRayParamIndex, double[] rayParams){
+        List<TimeDist> pierce = calcPierceForIndex(proto, idx, maxRayParamIndex, rayParams);
+        return pierce.get(pierce.size()-1);
+    }
+    public static List<TimeDist> calcPierceForIndex(ProtoSeismicPhase proto, int idx, int maxRayParamIndex, double[] rayParams){
         double rp = rayParams[idx];
         double dist = 0;
         double time = 0;
+        int turnBranch=-1;
+
+        List<TimeDist> pierce = new ArrayList<>();
         for (SeismicPhaseSegment seg : proto.segmentList) {
             if (seg.isFlat) {continue;}
             int add = seg.isDownGoing ? 1 : -1;
-            for (int b = seg.startBranch; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+            int sb = seg.startBranch;
+            if ( ! seg.isDownGoing && seg.prevEndAction == TURN) {
+                // prev was TURN, so start a turn branch and go up to end branch
+                sb = turnBranch;
+            }
+            for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
                 TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
                 if (rp <= tauBranch.getMaxRayParam()) {
-                    dist += tauBranch.getDist(idx+maxRayParamIndex);
-                    time += tauBranch.getTime(idx+maxRayParamIndex);
+                    dist += tauBranch.getDist(idx + maxRayParamIndex);
+                    time += tauBranch.getTime(idx + maxRayParamIndex);
+                    double depth = seg.isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
+                    pierce.add(new TimeDist(rp, time, dist, depth));
+                }
+                if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
+                    // ray turns in this branch
+                    turnBranch = b;
+                    break;
+                } else {
+                    turnBranch = -1;
                 }
             }
         }
-        return new TimeDist(rp, time, dist);
+        return pierce;
     }
 
     public int calcStartBranch(ProtoSeismicPhase proto, String currLeg) {

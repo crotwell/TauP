@@ -489,8 +489,8 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws TauModelException {
-        return arrival.getSimpleContigSeismicPhase().calcPierceTimeDist(arrival);
+    public List<TimeDist> interpPierceTimeDist(Arrival arrival) throws TauModelException {
+        return arrival.getSimpleContigSeismicPhase().interpPierceTimeDist(arrival);
     }
 
     @Override
