@@ -245,7 +245,7 @@ public class OceanModelTest {
         seisPh = SeismicPhaseFactory.createPhase("S1554PKP1554S", tMod, 0, 0);
         assertTrue(seisPh.phasesExistsInModel());
         seisPh = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tMod, 0, 0);
-        assertTrue(seisPh.phasesExistsInModel());
+        assertFalse(seisPh.phasesExistsInModel());
 
         String depthOfDiscon = "1554";
         String disconLiqSil = PhaseSymbols.NAMED_DISCON_START+marsCustomDiscon+PhaseSymbols.NAMED_DISCON_END;
@@ -273,12 +273,13 @@ public class OceanModelTest {
         seisPh = SeismicPhaseFactory.createPhase(twoNamedDisconPhase, tMod, 0, 0);
         assertTrue(seisPh.phasesExistsInModel(), twoNamedDisconPhase);
 
+        // maybe doesn't exist as CMB is in shadow zone from liquid silicate layer
         String undersidePhase = "Pdiff^1554Pdiff";
         String undersideNamedDisconPhase = undersidePhase.replaceAll(depthOfDiscon, disconLiqSil);
         seisPh = SeismicPhaseFactory.createPhase(undersidePhase, tMod, 0, 0);
-        assertTrue(seisPh.phasesExistsInModel(), undersidePhase);
+        assertFalse(seisPh.phasesExistsInModel(), undersidePhase);
         seisPh = SeismicPhaseFactory.createPhase(undersideNamedDisconPhase, tMod, 0, 0);
-        assertTrue(seisPh.phasesExistsInModel(), undersideNamedDisconPhase);
+        assertFalse(seisPh.phasesExistsInModel(), undersideNamedDisconPhase);
 
     }
 

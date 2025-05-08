@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MoonLowVelocityTest {
@@ -143,15 +144,68 @@ public class MoonLowVelocityTest {
 
     @Test
     public void testMarsLiquidLowerMantle() throws TauModelException, IOException, SlownessModelException {
+        // see also OceanModelTest.testMarsLiquidLowerMantle()
         String mars = "MarsLiquidLowerMantle.nd";
         VelocityModel vmod = VelocityModelTest.loadTestVelMod(mars);
         SlownessModel smod = new SphericalSModel(vmod);
         TauModel tmod = new TauModel(smod);
         SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod);
-        assertTrue(Pdiff.phasesExistsInModel());
+        assertFalse(Pdiff.phasesExistsInModel());
         SeismicPhase PdiffUnderRefl = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tmod);
-        assertTrue(PdiffUnderRefl.phasesExistsInModel());
+        assertFalse(PdiffUnderRefl.phasesExistsInModel());
         SeismicPhase PCMBHead = SeismicPhaseFactory.createPhase("P1690n", tmod);
         assertFalse(PCMBHead.phasesExistsInModel());
+
+        SeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tmod);
+        assertTrue(P_phase.phasesExistsInModel());
+        assertInstanceOf(SimpleContigSeismicPhase.class, P_phase);
+        SimpleContigSeismicPhase P = (SimpleContigSeismicPhase) P_phase;
+        double deg = 70;
+        List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(P);
+        List<TimeDist> pierce = List.of(aList.get(0).getPierce());
+        assertEquals(deg, aList.get(0).getDistDeg(), 0.0001);
+        assertEquals(deg, pierce.get(pierce.size()-1).getDistDeg(), 0.002);
+    }
+
+    @Test
+    public void calcForIndexTest() throws TauPException, IOException {
+        String mars = "MarsLiquidLowerMantle.nd";
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(mars);
+        SlownessModel smod = new SphericalSModel(vmod);
+        TauModel tmod = new TauModel(smod);
+        SimpleContigSeismicPhase P_phase = (SimpleContigSeismicPhase)SeismicPhaseFactory.createPhase("P", tmod);
+        double deg = 70;
+        List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(P_phase);
+        assertTrue(aList.size()>0);
+
+        ProtoSeismicPhase proto = ProtoSeismicPhase.startNewPhase(tmod, true, PhaseInteraction.TRANSDOWN, true, 0);
+        proto.addToBranch(4, true, true, PhaseInteraction.TURN, "P");
+        proto.addToBranch(0, true, true, PhaseInteraction.END, "P");
+
+        TimeDist tdA = SeismicPhaseFactory.calcForIndex(proto, 254, P_phase.getMaxRayParamIndex(), P_phase.rayParams);
+        TimeDist tdB = SeismicPhaseFactory.calcForIndex(proto, 255, P_phase.getMaxRayParamIndex(), P_phase.rayParams);
+        assertEquals(0, Math.abs(tdA.getDistDeg()-deg), 2.5);
+        assertEquals(0, Math.abs(tdB.getDistDeg()-deg), 2.5);
+
+        assertTrue(256<P_phase.getRayParams().length);
+
+        List<TimeDist> pierceA = SeismicPhaseFactory.calcPierceForIndex(proto, 254, P_phase.getMaxRayParamIndex(), P_phase.rayParams);
+        List<TimeDist> pierceB = SeismicPhaseFactory.calcPierceForIndex(proto, 255, P_phase.getMaxRayParamIndex(), P_phase.rayParams);
+        assertEquals(tdA.getDistDeg(), pierceA.get(pierceA.size()-1).getDistDeg(), 0.00001);
+        assertEquals(tdB.getDistDeg(), pierceB.get(pierceA.size()-1).getDistDeg(), 0.00001);
+
+
+        Arrival a = aList.get(0);
+        assertEquals(deg, a.getDistDeg(), .0025);
+        TimeDist[] pierce = a.getPierce();
+        assertEquals(0, pierce[0].getDistDeg(), 0.001);
+
+
+        P_phase.DEBUG = true;
+        Arrival refined = P_phase.refineArrival(254, deg*DtoR, 0.001*DtoR, 5);
+        assertEquals(deg, refined.getDistDeg(), 0.001);
+
+        assertEquals(deg, pierce[pierce.length-1].getDistDeg(), 0.017);
+
     }
 }

@@ -84,7 +84,8 @@ class IllegalPhasesTest {
 			"scS", "pcP", "kiKP", "kkP", "iKP",
 			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
-			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
+			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf",
+			"P^mp"
 
 	};
 

@@ -38,7 +38,7 @@ public class FruitTest {
         System.err.println("preshad:  "+preshadow.getMinRayParam()+" "+preshadow.getMaxRayParam());
         assertEquals(0.0, P.getMinDistanceDeg(), tol);
         assertEquals(0.0, preshadow.getMinDistanceDeg(), tol);
-        assertEquals(71.32, preshadow.getMaxDistanceDeg(), tol);
+        assertEquals(72.66, preshadow.getMaxDistanceDeg(), tol);
 
         assertEquals(0, P.getInitialPhaseSegment().startBranch);
         assertEquals(0, P.getInitialPhaseSegment().endBranch);

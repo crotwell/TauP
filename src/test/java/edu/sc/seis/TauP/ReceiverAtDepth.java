@@ -83,7 +83,11 @@ public class ReceiverAtDepth {
             } else {
                 // upgoing at receiver
                 assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(upgoingRecBranch,
-                                        phase.getFinalPhaseSegment().isPWave).getMaxRayParam());
+                                        phase.getFinalPhaseSegment().isPWave).getTopRayParam(),
+                        phase.getName()+" "+phase.getFinalPhaseSegment().maxRayParam+"  "+
+                                tMod.getTauBranch(upgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getTopRayParam()
+                        );
             }
 
         }
@@ -170,8 +174,8 @@ public class ReceiverAtDepth {
     
     @Test
     public void testCloseDepths()  throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 2.4f;
+        double srcDepth = 2.39;
+        double recDepth = 2.4;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -186,8 +190,8 @@ public class ReceiverAtDepth {
 
     @Test
     public void testOuterCoreRec() throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 3000f;
+        double srcDepth = 2.39;
+        double recDepth = 3000;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -202,8 +206,8 @@ public class ReceiverAtDepth {
 
     @Test
     public void testInnerCoreRec() throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 5500f;
+        double srcDepth = 2.39;
+        double recDepth = 5500;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -218,9 +222,9 @@ public class ReceiverAtDepth {
 
     @Test
     public void testInnerCoreRecConvPhase() throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 6000f;
-        float surfaceRecDepth = 0;
+        double srcDepth = 2.39;
+        double recDepth = 6000;
+        double surfaceRecDepth = 0;
         String modelName = "outerCoreDiscon.nd";
         VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
         TauModel tMod = TauModelLoader.createTauModel(vMod);

@@ -177,9 +177,9 @@ public class AddToBranchTest {
 
     @Test
     public void refl_under_P_P() throws TauModelException {
-        ProtoSeismicPhase seisFactory = makeSPhFactory("P^mp");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("P^mP");
         seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        seisFactory.addToBranch(1,PWAVE,PWAVE, REFLECT_UNDERSIDE, "p");
+        seisFactory.addToBranch(1,PWAVE,PWAVE, REFLECT_UNDERSIDE, "P");
         double maxRP = Math.min(p_crust_rp, p_mantle_rp);
         assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
         assertEquals(p_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
@@ -293,6 +293,9 @@ public class AddToBranchTest {
 
     static double vs = 3.5;
 
+    /**
+     * Velocity step between crust and mantle and between mantle and outercore.
+     */
     static float step = 2.00f;
 
     static double p_surface_rp = (R)/vp;
@@ -303,6 +306,6 @@ public class AddToBranchTest {
     static double s_mantle_rp = (R-30)/(vs+step);
     static double p_cmb_rp = (R-2890)/(vp+step);
     static double s_cmb_rp = (R-2890)/(vs+step);
-    static double p_ocore_rp = (R-2890)/(vp+2*step);
+    static double p_ocore_rp = (R-2890)/(vp+2*step);  // outer core should be lvz for P???
 
 }
