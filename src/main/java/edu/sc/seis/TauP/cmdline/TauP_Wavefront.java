@@ -490,34 +490,28 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-
-        if (doInteractive) {
-            throw new RuntimeException("interactive wavefront not yet impl");
-        } else {
-            /* enough info given on cmd line, so just do one calc. */
-            Map<Double, List<WavefrontPathSegment>> isochronMap = calcIsochron();
-            List<Double> sortedKeys = new ArrayList<>(isochronMap.keySet());
-            Collections.sort(sortedKeys);
-            if (isSeparateFilesByTime()) {
-                Double lastTime = sortedKeys.get(sortedKeys.size() - 1);
-                int numDigits = 1;
-                while (Math.pow(10, numDigits) < lastTime) {
-                    numDigits++;
-                }
-                for (Double timeVal : sortedKeys) {
-                    String timeStr = String.format("_%05.2f", timeVal);
-                    Map<Double, List<WavefrontPathSegment>> singleTimeIsochronMap = new HashMap<>();
-                    singleTimeIsochronMap.put(timeVal, isochronMap.get(timeVal));
-                    File timeOutFile = new File(outputTypeArgs.getOutFileBase()+timeStr+"."+outputTypeArgs.getOutFileExtension());
-                    PrintWriter timeWriter = new PrintWriter(new BufferedWriter(new FileWriter(timeOutFile)));
-                    printIsochron(timeWriter, singleTimeIsochronMap);
-                    timeWriter.close();
-                }
-            } else {
-                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                printIsochron(writer, isochronMap);
-                writer.close();
+        Map<Double, List<WavefrontPathSegment>> isochronMap = calcIsochron();
+        List<Double> sortedKeys = new ArrayList<>(isochronMap.keySet());
+        Collections.sort(sortedKeys);
+        if (isSeparateFilesByTime()) {
+            Double lastTime = sortedKeys.get(sortedKeys.size() - 1);
+            int numDigits = 1;
+            while (Math.pow(10, numDigits) < lastTime) {
+                numDigits++;
             }
+            for (Double timeVal : sortedKeys) {
+                String timeStr = String.format("_%05.2f", timeVal);
+                Map<Double, List<WavefrontPathSegment>> singleTimeIsochronMap = new HashMap<>();
+                singleTimeIsochronMap.put(timeVal, isochronMap.get(timeVal));
+                File timeOutFile = new File(outputTypeArgs.getOutFileBase()+timeStr+"."+outputTypeArgs.getOutFileExtension());
+                PrintWriter timeWriter = new PrintWriter(new BufferedWriter(new FileWriter(timeOutFile)));
+                printIsochron(timeWriter, singleTimeIsochronMap);
+                timeWriter.close();
+            }
+        } else {
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            printIsochron(writer, isochronMap);
+            writer.close();
         }
     }
 
