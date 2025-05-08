@@ -17,7 +17,9 @@ export class Animator {
       this.toggle();
     });
     timeEl.addEventListener("change", (event) => {
-      this.pauseAnimation();
+      if (! this.paused) {
+        this.pauseAnimation();
+      }
       this.gotoStep(timeEl.value);
     });
   }
@@ -41,6 +43,9 @@ export class Animator {
     const svgEl = document.querySelector(this.svgSelector);
     if (svgEl === null) { return;}
     if (typeof step === 'string') {
+      if (step.length === 0) {
+        return;
+      }
       step = parseFloat(step);
     }
     this.step = step;
@@ -63,19 +68,23 @@ export class Animator {
       document.querySelector("#wavefronttime").value = `${this.step}`;
       document.querySelector("#wavefronttime").step = `${this.timestep}`;
     } else {
-      // done set all visible
-      styleEl.textContent = `
-        polyline.wavefront {
-          visibility: visible;
-        }
-        circle.wavefront {
-          visibility: visible;
-        }
-      `;
-      this.step=0;
-      document.querySelector("#wavefronttime").value = ``;
-      this.paused=true;
+      this.endAnimation();
     }
+  }
+  endAnimation() {
+    const styleEl = this.getStyleEl();
+    // done set all visible
+    styleEl.textContent = `
+      polyline.wavefront {
+        visibility: visible;
+      }
+      circle.wavefront {
+        visibility: visible;
+      }
+    `;
+    this.step=0;
+    document.querySelector("#wavefronttime").value = ``;
+    this.pauseAnimation();
   }
   animateStep() {
     if (this.paused) {
@@ -87,6 +96,9 @@ export class Animator {
       setTimeout(() => {
         this.animateStep();
       }, this.timestep*.01*1000);
+    } else {
+      // done?
+      this.endAnimation();
     }
   }
   getStyleEl() {
