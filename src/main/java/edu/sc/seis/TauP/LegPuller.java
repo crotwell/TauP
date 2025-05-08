@@ -425,10 +425,12 @@ public class LegPuller {
         double disconMax = tolerance;
         double disconDepth = Double.parseDouble(depthString);
         TauBranch tBranch;
+        // check free surface, depth=0
+        tBranch = tMod.getTauBranch(0, SeismicPhase.PWAVE);
         for(int i = 0; i < tMod.getNumBranches(); i++) {
-            tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
             if (tMod.isDiscontinuityBranch(i, SeismicPhase.PWAVE)
                     || tMod.isDiscontinuityBranch(i, SeismicPhase.SWAVE)) {
+                tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
                 double foundDepth = tBranch.getTopDepth();
                 double depthDelta = Math.abs(disconDepth - foundDepth);
                 if (depthDelta < disconMax

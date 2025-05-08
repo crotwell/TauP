@@ -223,12 +223,18 @@ public class TauModel implements Serializable {
 
     /**
      * True if a boundary at top of branch is a discontinuity for the given phase type in the velocity model.
+     * Branch 0 is always a discontinuity, free surface. Center of earth is never a discon, so we do not need
+     * to search the bottom of a branch.
      *
      * @param branchNum branch layer number
      * @param isPWave true for P, false for S
      * @return if a velocity discontinuity
      */
     public boolean isDiscontinuityBranch(int branchNum, boolean isPWave) {
+        if (branchNum==0) {
+            // free surface is always a discon
+            return true;
+        }
         double topDepth = getTauBranch(branchNum, isPWave).getTopDepth();
         int aboveIdx;
         try {
