@@ -69,20 +69,22 @@ public class TauP_VelocityDison extends TauP_Tool {
             outputTypeArgs.setOutputFormat(TEXT);
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
             for (VelocityModel vMod : vModList) {
-                writer.println("# " + vMod.getModelName()+"   Vp      Vs      Density");
+                writer.println("# " + vMod.getModelName());
+                writer.println("#        Depth    (Radius)");
+                writer.println("#        Vp      Vs      Density");
                 for (double d : vMod.getDisconDepths()) {
                     NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
                     String disconName = discon == null ? "" : "  " + discon.getPreferredName();
                     VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
                     VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
                     if (d != 0) {
-                        writer.println("            " + Outputs.formatRayParam(above.getBotPVelocity()) + " " + Outputs.formatRayParam(above.getBotSVelocity()) + " " + Outputs.formatRayParam(above.getBotDensity()));
+                        writer.println("      " + Outputs.formatRayParam(above.getBotPVelocity()) + " " + Outputs.formatRayParam(above.getBotSVelocity()) + " " + Outputs.formatRayParam(above.getBotDensity()));
                     }
-                    writer.println("---"+Outputs.formatDepth(d) + disconName);
+                    writer.println("---"+Outputs.formatDepth(d)+" "+Outputs.formatDepth(vMod.getRadiusOfEarth()-d)+" " + disconName);
                     if (d != vMod.getRadiusOfEarth()) {
-                        writer.println("            " + Outputs.formatRayParam(below.getTopPVelocity()) + " " + Outputs.formatRayParam(below.getTopSVelocity()) + " " + Outputs.formatRayParam(below.getTopDensity()));
-                        writer.println();
+                        writer.println("      " + Outputs.formatRayParam(below.getTopPVelocity()) + " " + Outputs.formatRayParam(below.getTopSVelocity()) + " " + Outputs.formatRayParam(below.getTopDensity()));
                     }
+                    writer.println();
                 }
             }
             writer.flush();
