@@ -46,6 +46,30 @@ import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
  */
 public class Arrival {
 
+
+    public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
+                   List<TimeDist> pierce,
+                   int rayParamIndex,
+                   double dRPdDist) {
+        this(phase,
+                simpleContigSeismicPhase,
+                pierce.get(pierce.size() - 1).getTime(),
+                pierce.get(pierce.size() - 1).getDistRadian(),
+                pierce.get(pierce.size() - 1).getP(),
+                rayParamIndex,
+                DistanceRay.ofRadians(pierce.get(pierce.size() - 1).getP()),
+                phase.getName(),
+                phase.getPuristName(),
+                phase.getSourceDepth(),
+                phase.getReceiverDepth(),
+                phase.calcTakeoffAngle(pierce.get(pierce.size() - 1).getP()),
+                phase.calcIncidentAngle(pierce.get(pierce.size() - 1).getP()),
+                dRPdDist
+                );
+        this.pierce = pierce.toArray(new TimeDist[0]);
+    }
+
     public Arrival(SeismicPhase phase,
                    SimpleContigSeismicPhase simpleContigSeismicPhase,
                    double time,
@@ -679,6 +703,8 @@ public class Arrival {
                 this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
             } catch (NoArrivalException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
             }
         }
         return pierce;
@@ -808,6 +834,10 @@ public class Arrival {
                 this.pathSegments = getPhase().calcSegmentPaths(this);
             } catch (NoArrivalException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (SlownessModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
             }
 
         }
@@ -823,6 +853,10 @@ public class Arrival {
             try {
                 pathSegments = getPhase().calcSegmentPaths(this);
             } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (SlownessModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
         }

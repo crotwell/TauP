@@ -152,7 +152,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
      */
     boolean finalSegmentIsPWave();
 
-    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException;
+    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException, SlownessModelException, TauModelException;
 
     String toString();
 
@@ -164,7 +164,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
 
-    List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException;
+    List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException;
 
     double calcTstar(Arrival currArrival) throws NoArrivalException;
 

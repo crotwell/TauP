@@ -543,16 +543,17 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        if(countFlatLegs() > 0 && rayParam != getMinRayParam()) {
-            throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves: "+getName());
+    public Arrival shootRay(double rayParam) throws SlownessModelException, TauModelException {
+        System.err.println("SimpleContig shootRay "+rayParam);
+        if (countFlatLegs() > 0 && rayParam != getMinRayParam()) {
+            throw new TauModelException("Unable to shoot ray in non-body, head, diffracted waves: " + getName());
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {
-            throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+            throw new TauModelException("Ray param " + rayParam + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
         }
         // looks like a body wave and can ray param can propagate
         int rayParamIndex = -1;
-        for (rayParamIndex = 0; rayParamIndex < rayParams.length-1 && rayParams[rayParamIndex+1] >= rayParam; rayParamIndex++) {
+        for (rayParamIndex = 0; rayParamIndex < rayParams.length - 1 && rayParams[rayParamIndex + 1] >= rayParam; rayParamIndex++) {
             // find index for ray param, done in for-loop check
         }
 

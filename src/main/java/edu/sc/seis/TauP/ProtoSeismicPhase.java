@@ -908,10 +908,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         int startBranch = calcStartBranch(currLeg);
 
         if (startBranch < 0 || startBranch > tMod.getNumBranches()) {
-            throw new IllegalArgumentException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
+            throw new TauModelException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
         }
         if (endBranch < 0 || endBranch > tMod.getNumBranches()) {
-            throw new IllegalArgumentException(getName()+": end branch outside range: "+endBranch);
+            throw new TauModelException(getName()+": end branch outside range: "+endBranch);
         }
         if(endAction == TRANSUP && endBranch == 0) {
             failNext("cannot TRANSUP with end branch zero, already at surface: "+endBranch);
@@ -940,17 +940,17 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         maxRayParam = Math.min(maxRayParam, highSZoneDepth.rayParam);
                     }
                 } catch(NoSuchLayerException e) {
-                    throw new RuntimeException("Should not happen", e);
+                    throw new TauModelException("Should not happen", e);
                 }
             } else {
-                throw new RuntimeException("Unknown starting max ray param for "+currLeg+" in "+getName()+" at "+tMod.getSourceDepth());
+                throw new TauModelException("Unknown starting max ray param for "+currLeg+" in "+getName()+" at "+tMod.getSourceDepth());
             }
         } else {
             maxRayParam = endSegment().maxRayParam;
         }
         if(TauPConfig.DEBUG) {
             Alert.debug("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            Alert.debug("addToBranch( start=" + startBranch + " end=" + endBranch
+            Alert.debug("  addToBranch( start=" + startBranch + " end=" + endBranch
                     + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
         }

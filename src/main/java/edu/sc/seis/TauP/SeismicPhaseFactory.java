@@ -829,7 +829,7 @@ public class SeismicPhaseFactory {
                 TauPConfig.DEBUG);
     }
 
-    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp){
+    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp) throws TauModelException {
         List<TauBranch> branchList = new ArrayList<>();
         int turnBranch=-1;
         for (SeismicPhaseSegment seg : proto.segmentList) {
@@ -845,7 +845,7 @@ public class SeismicPhaseFactory {
             }
             for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
                 TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
-                if (rp < tauBranch.getMaxRayParam()) {
+                if (rp <= tauBranch.getMaxRayParam()) {
                     branchList.add(tauBranch);
                     if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
                         // ray turns in this branch
@@ -856,7 +856,7 @@ public class SeismicPhaseFactory {
                     }
                 } else {
                     // ray can't go into branch
-                    return new ArrayList<>();
+                    throw new TauModelException("Ray can't go into branch, should never happen: "+rp+" "+tauBranch);
                 }
             }
         }
