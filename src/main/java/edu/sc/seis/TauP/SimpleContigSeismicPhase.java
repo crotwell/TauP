@@ -544,7 +544,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public Arrival shootRay(double rayParam) throws SlownessModelException, TauModelException {
-        System.err.println("SimpleContig shootRay "+rayParam);
         if (countFlatLegs() > 0 && rayParam != getMinRayParam()) {
             throw new TauModelException("Unable to shoot ray in non-body, head, diffracted waves: " + getName());
         }
@@ -936,7 +935,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
             } else {
                 List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, distRayParam, seg, prevSeg);
-                //for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
                 for (TauBranch tauBranch : branchList) {
                     if (seg.isFlat) {
                         double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
