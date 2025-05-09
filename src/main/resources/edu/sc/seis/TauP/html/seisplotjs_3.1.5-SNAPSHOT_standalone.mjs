@@ -51214,7 +51214,7 @@ var MSeed3Header = class _MSeed3Header {
    */
   startAsDateTime() {
     const millis = Math.round(this.nanosecond / 1e6);
-    const d = DateTime.fromObject(
+    let d = DateTime.fromObject(
       {
         year: this.year,
         ordinal: this.dayOfYear,
@@ -51225,7 +51225,7 @@ var MSeed3Header = class _MSeed3Header {
       },
       UTC_OPTIONS
     );
-    return d.plus(millis);
+    d = d.plus(millis);
     if (!d.isValid) {
       throw new Error(`Start is invalid: ${this.startFieldsInUtilFormat()} ${d.invalidReason} ${d.invalidExplanation}`);
     }
