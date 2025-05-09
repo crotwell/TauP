@@ -935,8 +935,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 branchTime += refractTime;
 
             } else {
-                int prevSegTurnBranch = SeismicPhaseFactory.turnBranch(prevSeg, distRayParam);
-                List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, distRayParam, seg, prevSegTurnBranch);
+                List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, distRayParam, seg, prevSeg);
                 //for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
                 for (TauBranch tauBranch : branchList) {
                     if (seg.isFlat) {

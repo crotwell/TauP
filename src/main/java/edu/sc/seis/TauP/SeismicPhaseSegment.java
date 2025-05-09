@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
-import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 /**
  * Partial segment of a full seismic phase, usually between major boundaries or turn points.
@@ -58,6 +57,27 @@ public class SeismicPhaseSegment {
 												  String legName) {
 		return new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave,
 				FAIL, isDownGoing, legName, -1, -1 );
+	}
+
+	/**
+	 * Calculate the TauBranch a ray turns within. If the segement is not downgoing, or the end action is not TURN
+	 * then result is -1.
+	 * @param rp ray param
+	 * @return number of the tau branch where the ray turns, if possible
+	 */
+	public int turnBranch(double rp) {
+		if (endAction != TURN || ( ! isDownGoing)) {
+			return -1;
+		}
+		for (int b = startBranch;  b <= endBranch; b++) {
+			TauBranch tauBranch = tMod.getTauBranch(b, isPWave);
+			if (rp >= tauBranch.getMinRayParam()) {
+				// ray turns in this branch
+				return b;
+			}
+		}
+		// force a turn, so turn at end
+		return endBranch;
 	}
 
 	public boolean endsAtTop() throws TauModelException {
@@ -386,11 +406,7 @@ public class SeismicPhaseSegment {
 		return desc;
 	}
 
-	public List<TimeDist> calcPierceTimeDist(Arrival currArrival, TimeDist prevEnd) throws SlownessModelException, TauModelException {
-		return calcTimeDist(currArrival, prevEnd, false);
-	}
-
-	public List<TimeDist> calcTimeDist(Arrival currArrival, TimeDist prevEnd, boolean doPath) throws SlownessModelException, TauModelException {
+	public List<TimeDist> calcTimeDist(Arrival currArrival, TimeDist prevEnd, boolean doPath, SeismicPhaseSegment prevSeg) throws SlownessModelException, TauModelException {
 		List<TimeDist> pierceList = new ArrayList<>();
 		double rp = currArrival.getRayParam();
 		if ( ! isFlat) {
@@ -398,7 +414,7 @@ public class SeismicPhaseSegment {
 			int sb = startBranch;
 			if (prevEndAction == TURN) {
 				// start at turn branch, not deeper, in case of high slowness zone
-				sb = tMod.findBranch(prevEnd.getDepth());
+				sb = prevSeg.turnBranch(rp);
 			}
 			for (int branchNum = sb; (isDownGoing && branchNum <= endBranch) || (!isDownGoing && branchNum >= endBranch); branchNum += bStep) {
 				TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
@@ -454,12 +470,7 @@ public class SeismicPhaseSegment {
 								// turned upgoing in layer?
 								break;
 							}
-						} else {
-							System.err.println("not calc "+branchNum+" "+tauBranch.getBotDepth()+" "+tauBranch.getTopDepth());
 						}
-					} else {
-						// not yet to point ray exists in segment
-						System.err.println("not calc B "+branchNum+" "+tauBranch.getBotDepth()+" "+tauBranch.getTopDepth());						continue;
 					}
 				}
 			}
@@ -493,8 +504,8 @@ public class SeismicPhaseSegment {
 		return pierceList;
 	}
 
-	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments) throws SlownessModelException, TauModelException {
-		List<TimeDist> outPath = calcTimeDist(currArrival, prevEnd, true);
+	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhaseSegment prevSeg) throws SlownessModelException, TauModelException {
+		List<TimeDist> outPath = calcTimeDist(currArrival, prevEnd, true, prevSeg);
 		outPath = ArrivalPathSegment.trimDuplicates(outPath);
 		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival,
 				this, segmentIndex, totalNumSegments);

@@ -831,47 +831,26 @@ public class SeismicPhaseFactory {
 
     public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp) throws TauModelException {
         List<TauBranch> branchList = new ArrayList<>();
-        int turnBranch=-1;
         SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : proto.segmentList) {
             if (seg.isFlat) {
                 // flat segments handled external to branch seq
                 continue;
             }
-            branchList.addAll(calcBranchSeqForRayparam(proto, rp, seg, turnBranch(prevSeg, rp)));
+            branchList.addAll(calcBranchSeqForRayparam(proto, rp, seg, prevSeg));
             prevSeg = seg;
         }
         return branchList;
     }
 
-    /**
-     * Calculate the TauBranch a ray turns within. If the segement is not downgoing, or the end action is not TURN
-     * then result is -1.
-     * @param seg segment to calculate, maybe null
-     * @param rp ray param
-     * @return number of the tau branch where the ray turns, if possible
-     */
-    public static int turnBranch(SeismicPhaseSegment seg, double rp) {
-        if (seg == null || seg.endAction != TURN || ( ! seg.isDownGoing)) {
-            return -1;
-        }
-        for (int b = seg.startBranch;  b <= seg.endBranch; b++) {
-            TauBranch tauBranch = seg.tMod.getTauBranch(b, seg.isPWave);
-            if (rp >= tauBranch.getMinRayParam()) {
-                // ray turns in this branch
-                return b;
-            }
-        }
-        return -1;
-    }
-
-    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp, SeismicPhaseSegment seg, int prevSegTurnBranch) throws TauModelException {
+    // move to seismicPhaseSegment?
+    public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp, SeismicPhaseSegment seg, SeismicPhaseSegment prevSeg) throws TauModelException {
         List<TauBranch> branchList = new ArrayList<>();
         int add = seg.isDownGoing ? 1 : -1;
         int sb = seg.startBranch;
         if ( ( !seg.isDownGoing) && seg.prevEndAction == TURN) {
             // prev was TURN, so start a turn branch and go up to end branch
-            sb = prevSegTurnBranch;
+            sb = prevSeg.turnBranch(rp);
         }
         for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
             TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);

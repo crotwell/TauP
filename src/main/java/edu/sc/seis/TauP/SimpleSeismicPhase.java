@@ -29,14 +29,12 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
         int idx = prevIdx+1;
         List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
         int numSegments = currArrival.listPhaseSegments().size();
+        SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : currArrival.listPhaseSegments()) {
-            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ numSegments);
-
-            if (segPath.path.isEmpty()) {
-                continue;
-            }
+            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ numSegments, prevSeg);
             segmentPaths.add(segPath);
             prevEnd = segPath.getPathEnd();
+            prevSeg = seg;
         }
         return ArrivalPathSegment.adjustPath(segmentPaths, currArrival);
     }
