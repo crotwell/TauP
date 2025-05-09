@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
@@ -229,6 +230,8 @@ distance, depth, latitude and longitude, respectively.</p>
                    i...]]... [--rayparamkm=s/km[,s/km...]]...
                    [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
                    deg...]]... [--degreerange=[step][min max][min max step]]...
+                   [--exactdegreerange=[step][min max][min max step]]...
+                   [--exactkilometerrange=[step][min max][min max step]]...
                    [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
@@ -317,8 +320,16 @@ Distance is given by:
                                min max or min max step. Default min is 0, max
                                is 180 and step is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
+      --exactdegreerange=[step][min max][min max step]
+                             regular distance range in exact degrees, not
+                               360-deg, one of step; min max or min max step.
+                               Default min is 0, max is 180 and step is 10.
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
+      --exactkilometerrange=[step][min max][min max step]
+                             regular distance range in kilometers, not 360-k,
+                               one of step; min max or min max step. Default
+                               min is 0, max is 1000 and step is 100.
       --incident=deg[,deg...]
                              incident angle in degrees at the receiver, zero is
                                down, 90 horizontal, 180 is up.

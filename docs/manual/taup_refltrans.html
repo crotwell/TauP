@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="TauP Wavefront" href="taup_wavefront.html" />
-    <link rel="prev" title="TauP VelocityPlot" href="taup_velplot.html" />
+    <link rel="prev" title="TauP Discon" href="taup_discon.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
@@ -95,7 +96,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="tools.html">Tools</a><ul>
-      <li>Previous: <a href="taup_velplot.html" title="previous chapter">TauP VelocityPlot</a></li>
+      <li>Previous: <a href="taup_discon.html" title="previous chapter">TauP Discon</a></li>
       <li>Next: <a href="taup_wavefront.html" title="next chapter">TauP Wavefront</a></li>
   </ul></li>
   </ul></li>
@@ -525,6 +526,66 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         }
         .legend .FreeRecFuncSh text {
           fill: red;
+          stroke: transparent;
+        }
+        .RpAngle {
+          stroke: blue;
+        }
+        .RpAngle.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .RsAngle {
+          stroke: firebrick;
+        }
+        .RsAngle.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .TpAngle {
+          stroke: darkblue;
+        }
+        .TpAngle.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .TsAngle {
+          stroke: magenta;
+        }
+        .TsAngle.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle text {
+          fill: magenta;
           stroke: transparent;
         }
 
@@ -2218,6 +2279,66 @@ circle.discontinuity.iocb {
           fill: red;
           stroke: transparent;
         }
+        .RpAngle {
+          stroke: blue;
+        }
+        .RpAngle.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .RsAngle {
+          stroke: firebrick;
+        }
+        .RsAngle.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .TpAngle {
+          stroke: darkblue;
+        }
+        .TpAngle.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .TsAngle {
+          stroke: magenta;
+        }
+        .TsAngle.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle text {
+          fill: magenta;
+          stroke: transparent;
+        }
 
 
 text.title {
@@ -3507,24 +3628,26 @@ circle.discontinuity.iocb {
 </g> <!-- legend end-->
 </svg>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
-                      [--help] [--legend] [--pwave] [--shwave] [--swave] [--up]
-                      [--verbose] [--anglestep=deg] [--depth=&lt;depth&gt;]
-                      [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
-                      [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
-                      [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
-                      y]... [--layer=vp vs rho vp vs rho]... [-y=type...]...
-                      [--gmt | --json | --svg | --text] [[--mod=&lt;modelName&gt;]
-                      [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                      [--scat=depth deg]...]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup refltrans [--abs] [--angles] [--debug] [--down] [--energyflux]
+                      [--fsrf] [--help] [--legend] [--pwave] [--shwave]
+                      [--swave] [--up] [--verbose] [--anglestep=deg]
+                      [--depth=&lt;depth&gt;] [--mapwidth=&lt;mapwidth&gt;]
+                      [--mapwidthunit=&lt;mapWidthUnit&gt;] [-o=&lt;outFile&gt;]
+                      [--prop=&lt;toolPropsFilename&gt;] [--rpstep=s/km] [-x=type]
+                      [--xminmax=x x]... [--yminmax=y y]... [--layer=vp vs rho
+                      vp vs rho]... [-y=type...]... [--gmt | --json | --svg |
+                      --text] [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
+                      [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
 Options:
 
       --abs                absolute value of amplitude factor
+      --angles             all angle coefficients, like TpAngle
       --anglestep=deg      step in degrees when x is degrees
       --debug              enable debugging output
-      --depth=&lt;depth&gt;      Depth in model to get boundary parameters
+      --depth=&lt;depth&gt;      Depth in model to get boundary parameters, may be
+                             number or name like moho.
       --down               incident is downgoing
       --energyflux         all energy flux coefficients, like TppEnergy
       --fsrf               all free surface receiver functions, like

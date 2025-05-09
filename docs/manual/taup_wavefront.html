@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
@@ -170,6 +171,13 @@ have GMT installed, you can just:</p>
             font-size: 228px;
         }
 
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
         polyline.swave {
             stroke: red;
         }
@@ -189,6 +197,13 @@ have GMT installed, you can just:</p>
           fill: red;
           stroke: transparent;
         }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -207,6 +222,13 @@ have GMT installed, you can just:</p>
         .legend .pwave text {
           fill: blue;
           stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
         }
         polyline.both_p_swave {
             stroke: green;

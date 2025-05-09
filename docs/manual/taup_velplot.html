@@ -13,7 +13,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="TauP ReflTrans" href="taup_refltrans.html" />
+    <link rel="next" title="TauP Discon" href="taup_discon.html" />
     <link rel="prev" title="TauP VelocityMerge" href="taup_velmerge.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
@@ -96,7 +97,7 @@
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="tools.html">Tools</a><ul>
       <li>Previous: <a href="taup_velmerge.html" title="previous chapter">TauP VelocityMerge</a></li>
-      <li>Next: <a href="taup_refltrans.html" title="next chapter">TauP ReflTrans</a></li>
+      <li>Next: <a href="taup_discon.html" title="next chapter">TauP Discon</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -151,6 +152,13 @@ y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
         polyline.swave {
             stroke: red;
         }
@@ -170,6 +178,13 @@ y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
           fill: red;
           stroke: transparent;
         }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -188,6 +203,13 @@ y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
         .legend .pwave text {
           fill: blue;
           stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
         }
         polyline.both_p_swave {
             stroke: green;
@@ -902,6 +924,13 @@ circle.discontinuity.iocb {
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
         polyline.swave {
             stroke: red;
         }
@@ -921,6 +950,13 @@ circle.discontinuity.iocb {
           fill: red;
           stroke: transparent;
         }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -939,6 +975,13 @@ circle.discontinuity.iocb {
         .legend .pwave text {
           fill: blue;
           stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
         }
         polyline.both_p_swave {
             stroke: green;
@@ -1278,7 +1321,7 @@ the velocity model file for the standard models. For example:</p>
 <p>will extract the iasp91 velocity model into a file named ‘iasp91.nd’
 in the current directory.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velplot [--debug] [--help] [--legend] [--listdiscon] [--verbose]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
                     [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
                     [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [-x=type]
                     [-y=type] [--xminmax=x x]... [--yminmax=y y]...
@@ -1292,7 +1335,6 @@ Options:
       --debug                enable debugging output
       --help                 display this help message
       --legend               create a legend
-      --listdiscon           List the discontinuities in the velocity model
       --mapwidth=&lt;mapwidth&gt;  plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
                              plot width unit, i for inch, c for cm or p for px.

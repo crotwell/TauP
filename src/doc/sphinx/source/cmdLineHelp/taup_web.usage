@@ -1,11 +1,13 @@
-Usage: taup web [--open] [--host=<host>] [-p=<port>]
+Usage: taup web [--nodefaultmodels] [--open] [--host=<host>] [-p=<port>]
                 [--models=<extraModelNames>...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
-      --host=<host>   host to expose port on, defaults to localhost
+      --host=<host>       host to expose port on, defaults to localhost
       --models=<extraModelNames>...
-                      List of additional models to use
-      --open          autoopen web page
-  -p, --port=<port>   port to use, defaults to 7409
+                          List of additional models to use
+      --nodefaultmodels   Do not include standard models at startup, requires
+                            --models
+      --open              autoopen web page
+  -p, --port=<port>       port to use, defaults to 7409

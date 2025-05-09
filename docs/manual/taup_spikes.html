@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Spikes</a></li>
@@ -134,28 +135,19 @@ a spike seismogram for specified phases through the given earth model.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
                    [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
-                   [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                   [--geodeticflattening=f] [--mw=&lt;mw&gt;]
+                   [--baz=&lt;backAzimuth&gt;] [--geodeticflattening=f] [--mw=&lt;mw&gt;]
                    [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                    [--otime=&lt;origintime&gt;] [--prop=&lt;toolPropsFilename&gt;]
                    [--pulsewidth=&lt;pulseWidth&gt;] [--qml=&lt;quakemlFilename&gt;]
-                   [sps=&lt;sps&gt;] [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,
-                   evt...]]... [--sid=sta[,sta...]]... [--evt=lat lon]...
-                   [--evt=lat lon]... [--sta=lat lon]... [--sta=lat lon]...
+                   [sps=&lt;sps&gt;] [--staxml=&lt;stationxmlFilename&gt;] [--deg=d[,
+                   d...]]... [--eid=evt[,evt...]]... [--km=km[,km...]]...
+                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
+                   lon]... [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...
                    [--strikediprake=strike dip rake]... [[--mod=&lt;modelName&gt;]
                    [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                    [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]... [--degreerange=[step][min max][min max step]]...
-                   [--incidentrange=[step][min max][min max step]]...
-                   [--kilometerrange=[step][min max][min max step]]...
-                   [--takeoffrange=[step][min max][min max step]]...]... [--ms3
-                   | --sac]
+                   [--phasefile=&lt;phaseFiles&gt;]...] [--ms3 | --sac]
 Calculate spike seismograms
 
 Options:
@@ -164,6 +156,12 @@ Options:
                              attenuation frequency for amplitude calculations,
                                default is 1.0
       --debug                enable debugging output
+      --deg, --degree=d[,d...]
+                             distance in degrees
+      --degreerange=[step][min max][min max step]
+                             regular distance range in degrees, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 180 and step is 10.
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
@@ -177,6 +175,12 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
+      --kilometerrange=[step][min max][min max step]
+                             regular distance range in kilometers, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 1000 and step is 100.
+      --km, --kilometer=km[,km...]
+                             distance in kilometers along surface.
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
                                default is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
@@ -223,47 +227,9 @@ Phase Names
                              seismic phase names
       --phasefile=&lt;phaseFiles&gt;
                              read list of phase names from file
-Distance is given by:
-      --allindex             all arrivals at sampling of model
-      --deg, --degree=d[,d...]
-                             distance in degrees
-      --degreerange=[step][min max][min max step]
-                             regular distance range in degrees, one of step;
-                               min max or min max step. Default min is 0, max
-                               is 180 and step is 10.
-      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
-      --exactkilometer=km[,km...]
-                             exact distance traveled in kilometers, not 360-k
-      --incident=deg[,deg...]
-                             incident angle in degrees at the receiver, zero is
-                               down, 90 horizontal, 180 is up.
-      --incidentrange=[step][min max][min max step]
-                             regular range in incident angle in degrees, one of
-                               step; min max or min max step. Default min is 0
-                               and step is 10.
-      --kilometerrange=[step][min max][min max step]
-                             regular distance range in kilometers, one of step;
-                               min max or min max step. Default min is 0, max
-                               is 1000 and step is 100.
-      --km, --kilometer=km[,km...]
-                             distance in kilometers along surface.
-      --rayparamdeg=s/deg[,s/deg...]
-                             ray parameter from the source in s/deg, up or down
-                               is determined by the phase
-      --rayparamidx=i[,i...] ray parameter from the source as index into model
-                               sampling, up or down is determined by the phase
-      --rayparamkm=s/km[,s/km...]
-                             ray parameter from the source in s/km, up or down
-                               is determined by the phase
-      --rayparamrad=s/rad[,s/rad...]
-                             ray parameter from the source in s/rad, up or down
-                               is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
-                               down, 90 horizontal, 180 is up.
-      --takeoffrange=[step][min max][min max step]
-                             regular range in takeoff angle in degrees, one of
-                               step; min,max or min,max,step. Default min is 0
-                               and step is 10.
+Output Type
+      --ms3                  outputs as mseed3
+      --sac                  outputs as SAC
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
@@ -272,9 +238,6 @@ Lat,Lon influenced by:
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
-Output Type
-      --ms3                  outputs as mseed3
-      --sac                  outputs as SAC
 </pre></div>
 </div>
 </section>
