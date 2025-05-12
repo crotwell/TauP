@@ -106,18 +106,18 @@ public class TauModelLoader {
         File jarFile;
         File modelFile;
         /* is model in configured otherVelocityModels */
-            if (otherVelocityModels.containsKey(modelName)) {
-                VelocityModel vMod = otherVelocityModels.get(modelName);
-                try {
-                    VelocityModel vmod = loadVelocityModel(modelName);
-                    if (vmod != null) {
-                        return createTauModel(vmod);
-                    }
-                } catch(Exception e) {
-                    throw new TauModelException("Can't find any saved models for "
-                            + modelName+" and creation from velocity model failed.", e);
+        if (otherVelocityModels.containsKey(modelName)) {
+            VelocityModel vMod = otherVelocityModels.get(modelName);
+            try {
+                VelocityModel vmod = loadVelocityModel(modelName);
+                if (vmod != null) {
+                    return createTauModel(vmod);
                 }
+            } catch(Exception e) {
+                throw new TauModelException("Can't find any saved models for "
+                        + modelName+" and creation from velocity model failed.", e);
             }
+        }
         /* First we try to find the model in the distributed taup.jar file. */
         Class c = null;
         try {
