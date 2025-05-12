@@ -67,7 +67,6 @@ public class TauP_Create extends TauP_Tool {
 
     protected boolean GUI = false;
 
-    protected Properties toolProps;
 
     /* constructor */
     public TauP_Create() {
