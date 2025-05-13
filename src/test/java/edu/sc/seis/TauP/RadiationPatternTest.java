@@ -15,7 +15,7 @@ public class RadiationPatternTest {
         double dip = 90 * DtoR;
         double rake = 0 * DtoR;
         double azimuth = 45 * DtoR;
-        double takeoff = 90 * DtoR;
+        double takeoff = 90 * DtoR;  // horizontal
         double[] radTerms = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth, takeoff);
         assertEquals(1, radTerms[0]);
         assertEquals(0, radTerms[1], 1e-9, "Sv");
