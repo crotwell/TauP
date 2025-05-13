@@ -452,10 +452,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         }
 
         if (leftEstimate.getRayParam() < minRayParam || maxRayParam < leftEstimate.getRayParam()) {
-            throw new RuntimeException("Left Ray param " + leftEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
+            throw new IllegalArgumentException("Left Ray param " + leftEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
         }
         if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
-            throw new RuntimeException("Right Ray param " + rightEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
+            throw new IllegalArgumentException("Right Ray param " + rightEstimate.getRayParam() + " is outside range for this phase: " + getName() + " min=" + minRayParam + " max=" + maxRayParam);
         }
 
         try {
