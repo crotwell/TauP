@@ -303,7 +303,7 @@ export async function display_results(taup_url) {
         return sp.mseed3.sddPerChannel(dataRecords);
       }).then(sddList => {
         let seisConfig = new sp.seismographconfig.SeismographConfig();
-        //seisConfig.isRelativeTime = true;
+        seisConfig.isRelativeTime = true;
         seisConfig.linkedAmplitudeScale = new sp.scale.LinkedAmplitudeScale();
         seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
         seisConfig.ySublabel = "m";
