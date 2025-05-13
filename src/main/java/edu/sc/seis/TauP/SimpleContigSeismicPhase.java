@@ -460,17 +460,18 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
         try {
             Arrival shoot = shootRay(linInterp.getRayParam());
+            double distError = Math.abs(shoot.getDist() - linInterp.getDist());
             if ((leftEstimate.getDist() - searchDist)
                     * (searchDist - shoot.getDist()) > 0) {
                 // search between left and shoot
-                if (Math.abs(shoot.getDist() - linInterp.getDist()) < distTolRadian) {
+                if (distError < distTolRadian) {
                     return linearInterpArrival(searchDist, leftEstimate, shoot);
                 } else {
                     return refineArrival(leftEstimate, shoot, searchDist, distTolRadian, maxRecursion - 1);
                 }
             } else {
                 // search between shoot and right
-                if (Math.abs(shoot.getDist() - linInterp.getDist()) < distTolRadian) {
+                if (distError < distTolRadian) {
                     return linearInterpArrival(searchDist, shoot, rightEstimate);
                 } else {
                     return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion - 1);
