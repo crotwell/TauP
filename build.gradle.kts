@@ -13,7 +13,7 @@ plugins {
   signing
   application
   id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.jreleaser") version "1.17.0"
+  id("org.jreleaser") version "1.18.0"
 }
 
 application {
@@ -27,48 +27,63 @@ version = "3.0.0-SNAPSHOT10"
 
 jreleaser {
   dryrun.set(true)
-    project {
-      description.set("The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities")
-      authors.add("Philip Crotwell")
-      license.set("LGPL-3.0")
-      links {
-          homepage.set("https://github.com/crotwell/TauP")
-      }
-      inceptionYear.set("1999")
+  project {
+    description.set("The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities")
+    authors.add("Philip Crotwell")
+    license.set("LGPL-3.0")
+    links {
+        homepage.set("https://github.com/crotwell/TauP")
     }
+    inceptionYear.set("1999")
+  }
 
-    release {
-        github {
-            repoOwner.set("crotwell")
-            overwrite.set(true)
-        }
-    }
-    distributions {
-        create("taup") {
-          distributionType.set(Distribution.DistributionType.JAVA_BINARY)
-           artifact {
-               path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
-           }
-           artifact {
-               path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.tar"))
-           }
-        }
-    }
-    packagers {
-      brew {
-        active.set(Active.ALWAYS)
+  release {
+      github {
+          repoOwner.set("crotwell")
+          overwrite.set(true)
       }
-      docker {
-            active.set(Active.ALWAYS)
-            postCommands.add("EXPOSE 7409")
+  }
+  distributions {
+      create("taup") {
+        distributionType.set(Distribution.DistributionType.JAVA_BINARY)
+         artifact {
+             path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
+         }
+         artifact {
+             path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.tar"))
+         }
       }
-      snap {
-            active.set(Active.ALWAYS)
-            grade.set("devel")
-            remoteBuild.set(true)
+  }
+  packagers {
+    brew {
+      active.set(Active.ALWAYS)
+    }
+    docker {
+          active.set(Active.ALWAYS)
+          postCommands.add("EXPOSE 7409")
+    }
+    snap {
+          active.set(Active.ALWAYS)
+          grade.set("devel")
+          remoteBuild.set(true)
 
+    }
+  }
+  signing {
+    setActive("ALWAYS")
+    armored.set(true)
+  }
+  deploy {
+    maven {
+      mavenCentral {
+        create("sonatype") {
+          setActive("ALWAYS")
+          url= "https://central.sonatype.com/api/v1/publisher"
+          stagingRepository("target/staging-deploy")
+        }
       }
     }
+  }
 }
 
 java {
