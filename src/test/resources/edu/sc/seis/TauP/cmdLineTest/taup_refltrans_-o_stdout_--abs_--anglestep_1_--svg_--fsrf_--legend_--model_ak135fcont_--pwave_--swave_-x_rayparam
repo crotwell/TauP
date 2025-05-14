@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup refltransplot -o stdout &#45;&#45;abs &#45;&#45;anglestep 1 &#45;&#45;svg &#45;&#45;fsrf &#45;&#45;legend &#45;&#45;model ak135fcont &#45;&#45;pwave &#45;&#45;swave -x rayparam </command>
-      <version>3.0.0-SNAPSHOT10</version>
+      <version>3.0.0</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="0.28901704818527135" ymin="0.0" ymax="5.568560892442749" />
     </taup>

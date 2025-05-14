@@ -23,7 +23,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.0.0-SNAPSHOT10"
+version = "3.0.0"
 
 jreleaser {
   dryrun.set(true)
