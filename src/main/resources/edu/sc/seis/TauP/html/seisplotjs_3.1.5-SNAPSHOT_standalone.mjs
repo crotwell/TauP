@@ -27883,20 +27883,20 @@ var require_leaflet_src = __commonJS({
           }
         }
       });
-      var control = function(options) {
+      var control2 = function(options) {
         return new Control(options);
       };
       Map2.include({
         // @method addControl(control: Control): this
         // Adds the given control to the map
-        addControl: function(control2) {
-          control2.addTo(this);
+        addControl: function(control3) {
+          control3.addTo(this);
           return this;
         },
         // @method removeControl(control: Control): this
         // Removes the given control from the map
-        removeControl: function(control2) {
-          control2.remove();
+        removeControl: function(control3) {
+          control3.remove();
           return this;
         },
         _initControlPos: function() {
@@ -28495,10 +28495,10 @@ var require_leaflet_src = __commonJS({
       Control.Zoom = Zoom;
       Control.Scale = Scale;
       Control.Attribution = Attribution;
-      control.layers = layers;
-      control.zoom = zoom;
-      control.scale = scale;
-      control.attribution = attribution;
+      control2.layers = layers;
+      control2.zoom = zoom;
+      control2.scale = scale;
+      control2.attribution = attribution;
       var Handler = Class.extend({
         initialize: function(map3) {
           this._map = map3;
@@ -29303,7 +29303,7 @@ var require_leaflet_src = __commonJS({
           return stamp(layer);
         }
       });
-      var layerGroup = function(layers2, options) {
+      var layerGroup2 = function(layers2, options) {
         return new LayerGroup(layers2, options);
       };
       var FeatureGroup = LayerGroup.extend({
@@ -30668,10 +30668,10 @@ var require_leaflet_src = __commonJS({
           };
         }
       });
-      function geoJSON(geojson, options) {
+      function geoJSON2(geojson, options) {
         return new GeoJSON(geojson, options);
       }
-      var geoJson = geoJSON;
+      var geoJson = geoJSON2;
       var ImageOverlay = Layer.extend({
         // @section
         // @aka ImageOverlay options
@@ -34162,18 +34162,18 @@ var require_leaflet_src = __commonJS({
       exports2.canvas = canvas;
       exports2.circle = circle2;
       exports2.circleMarker = circleMarker2;
-      exports2.control = control;
+      exports2.control = control2;
       exports2.divIcon = divIcon2;
       exports2.extend = extend2;
       exports2.featureGroup = featureGroup;
-      exports2.geoJSON = geoJSON;
+      exports2.geoJSON = geoJSON2;
       exports2.geoJson = geoJson;
       exports2.gridLayer = gridLayer;
       exports2.icon = icon;
       exports2.imageOverlay = imageOverlay;
       exports2.latLng = toLatLng;
       exports2.latLngBounds = toLatLngBounds;
-      exports2.layerGroup = layerGroup;
+      exports2.layerGroup = layerGroup2;
       exports2.map = createMap;
       exports2.marker = marker2;
       exports2.point = toPoint;
@@ -36965,12 +36965,13 @@ var SystemZone = class _SystemZone extends Zone {
 };
 
 // node_modules/luxon/src/zones/IANAZone.js
-var dtfCache = {};
-function makeDTF(zone) {
-  if (!dtfCache[zone]) {
-    dtfCache[zone] = new Intl.DateTimeFormat("en-US", {
+var dtfCache = /* @__PURE__ */ new Map();
+function makeDTF(zoneName) {
+  let dtf = dtfCache.get(zoneName);
+  if (dtf === void 0) {
+    dtf = new Intl.DateTimeFormat("en-US", {
       hour12: false,
-      timeZone: zone,
+      timeZone: zoneName,
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -36979,8 +36980,9 @@ function makeDTF(zone) {
       second: "2-digit",
       era: "short"
     });
+    dtfCache.set(zoneName, dtf);
   }
-  return dtfCache[zone];
+  return dtf;
 }
 var typeToPos = {
   year: 0,
@@ -37009,25 +37011,26 @@ function partsOffset(dtf, date2) {
   }
   return filled;
 }
-var ianaZoneCache = {};
+var ianaZoneCache = /* @__PURE__ */ new Map();
 var IANAZone = class _IANAZone extends Zone {
   /**
    * @param {string} name - Zone name
    * @return {IANAZone}
    */
   static create(name) {
-    if (!ianaZoneCache[name]) {
-      ianaZoneCache[name] = new _IANAZone(name);
+    let zone = ianaZoneCache.get(name);
+    if (zone === void 0) {
+      ianaZoneCache.set(name, zone = new _IANAZone(name));
     }
-    return ianaZoneCache[name];
+    return zone;
   }
   /**
    * Reset local caches. Should only be necessary in testing scenarios.
    * @return {void}
    */
   static resetCache() {
-    ianaZoneCache = {};
-    dtfCache = {};
+    ianaZoneCache.clear();
+    dtfCache.clear();
   }
   /**
    * Returns whether the provided string is a valid specifier. This only checks the string's format, not that the specifier identifies a known zone; see isValidZone for that.
@@ -37119,6 +37122,7 @@ var IANAZone = class _IANAZone extends Zone {
    * @return {number}
    */
   offset(ts) {
+    if (!this.valid) return NaN;
     const date2 = new Date(ts);
     if (isNaN(date2)) return NaN;
     const dtf = makeDTF(this.name);
@@ -37171,34 +37175,34 @@ function getCachedLF(locString, opts = {}) {
   }
   return dtf;
 }
-var intlDTCache = {};
+var intlDTCache = /* @__PURE__ */ new Map();
 function getCachedDTF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let dtf = intlDTCache[key];
-  if (!dtf) {
+  let dtf = intlDTCache.get(key);
+  if (dtf === void 0) {
     dtf = new Intl.DateTimeFormat(locString, opts);
-    intlDTCache[key] = dtf;
+    intlDTCache.set(key, dtf);
   }
   return dtf;
 }
-var intlNumCache = {};
+var intlNumCache = /* @__PURE__ */ new Map();
 function getCachedINF(locString, opts = {}) {
   const key = JSON.stringify([locString, opts]);
-  let inf = intlNumCache[key];
-  if (!inf) {
+  let inf = intlNumCache.get(key);
+  if (inf === void 0) {
     inf = new Intl.NumberFormat(locString, opts);
-    intlNumCache[key] = inf;
+    intlNumCache.set(key, inf);
   }
   return inf;
 }
-var intlRelCache = {};
+var intlRelCache = /* @__PURE__ */ new Map();
 function getCachedRTF(locString, opts = {}) {
   const { base, ...cacheKeyOpts } = opts;
   const key = JSON.stringify([locString, cacheKeyOpts]);
-  let inf = intlRelCache[key];
-  if (!inf) {
+  let inf = intlRelCache.get(key);
+  if (inf === void 0) {
     inf = new Intl.RelativeTimeFormat(locString, opts);
-    intlRelCache[key] = inf;
+    intlRelCache.set(key, inf);
   }
   return inf;
 }
@@ -37211,20 +37215,25 @@ function systemLocale() {
     return sysLocaleCache;
   }
 }
-var intlResolvedOptionsCache = {};
+var intlResolvedOptionsCache = /* @__PURE__ */ new Map();
 function getCachedIntResolvedOptions(locString) {
-  if (!intlResolvedOptionsCache[locString]) {
-    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  let opts = intlResolvedOptionsCache.get(locString);
+  if (opts === void 0) {
+    opts = new Intl.DateTimeFormat(locString).resolvedOptions();
+    intlResolvedOptionsCache.set(locString, opts);
   }
-  return intlResolvedOptionsCache[locString];
+  return opts;
 }
-var weekInfoCache = {};
+var weekInfoCache = /* @__PURE__ */ new Map();
 function getCachedWeekInfo(locString) {
-  let data = weekInfoCache[locString];
+  let data = weekInfoCache.get(locString);
   if (!data) {
     const locale3 = new Intl.Locale(locString);
     data = "getWeekInfo" in locale3 ? locale3.getWeekInfo() : locale3.weekInfo;
-    weekInfoCache[locString] = data;
+    if (!("minimalDays" in data)) {
+      data = { ...fallbackWeekSettings, ...data };
+    }
+    weekInfoCache.set(locString, data);
   }
   return data;
 }
@@ -37430,10 +37439,11 @@ var Locale = class _Locale {
   }
   static resetCache() {
     sysLocaleCache = null;
-    intlDTCache = {};
-    intlNumCache = {};
-    intlRelCache = {};
-    intlResolvedOptionsCache = {};
+    intlDTCache.clear();
+    intlNumCache.clear();
+    intlRelCache.clear();
+    intlResolvedOptionsCache.clear();
+    weekInfoCache.clear();
   }
   static fromObject({ locale: locale3, numberingSystem, outputCalendar, weekSettings } = {}) {
     return _Locale.create(locale3, numberingSystem, outputCalendar, weekSettings);
@@ -37835,19 +37845,23 @@ function parseDigits(str) {
     return value;
   }
 }
-var digitRegexCache = {};
+var digitRegexCache = /* @__PURE__ */ new Map();
 function resetDigitRegexCache() {
-  digitRegexCache = {};
+  digitRegexCache.clear();
 }
 function digitRegex({ numberingSystem }, append2 = "") {
   const ns = numberingSystem || "latn";
-  if (!digitRegexCache[ns]) {
-    digitRegexCache[ns] = {};
+  let appendCache = digitRegexCache.get(ns);
+  if (appendCache === void 0) {
+    appendCache = /* @__PURE__ */ new Map();
+    digitRegexCache.set(ns, appendCache);
   }
-  if (!digitRegexCache[ns][append2]) {
-    digitRegexCache[ns][append2] = new RegExp(`${numberingSystems[ns]}${append2}`);
+  let regex = appendCache.get(append2);
+  if (regex === void 0) {
+    regex = new RegExp(`${numberingSystems[ns]}${append2}`);
+    appendCache.set(append2, regex);
   }
-  return digitRegexCache[ns][append2];
+  return regex;
 }
 
 // node_modules/luxon/src/settings.js
@@ -40218,8 +40232,11 @@ var Interval = class _Interval {
     return _Interval.fromDateTimes(s2, e);
   }
   /**
-   * Merge an array of Intervals into a equivalent minimal set of Intervals.
+   * Merge an array of Intervals into an equivalent minimal set of Intervals.
    * Combines overlapping and adjacent Intervals.
+   * The resulting array will contain the Intervals in ascending order, that is, starting with the earliest Interval
+   * and ending with the latest.
+   *
    * @param {Array} intervals
    * @return {Array}
    */
@@ -41289,10 +41306,12 @@ function guessOffsetForZone(zone) {
     return zone.offset(zoneOffsetTs);
   }
   const zoneName = zone.name;
-  if (!zoneOffsetGuessCache[zoneName]) {
-    zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+  let offsetGuess = zoneOffsetGuessCache.get(zoneName);
+  if (offsetGuess === void 0) {
+    offsetGuess = zone.offset(zoneOffsetTs);
+    zoneOffsetGuessCache.set(zoneName, offsetGuess);
   }
-  return zoneOffsetGuessCache[zoneName];
+  return offsetGuess;
 }
 function quickDT(obj, opts) {
   const zone = normalizeZone(opts.zone, Settings.defaultZone);
@@ -41354,7 +41373,7 @@ function lastOpts(argList) {
   return [opts, args];
 }
 var zoneOffsetTs;
-var zoneOffsetGuessCache = {};
+var zoneOffsetGuessCache = /* @__PURE__ */ new Map();
 var DateTime = class _DateTime {
   /**
    * @access private
@@ -41786,7 +41805,7 @@ var DateTime = class _DateTime {
   }
   static resetCache() {
     zoneOffsetTs = void 0;
-    zoneOffsetGuessCache = {};
+    zoneOffsetGuessCache.clear();
   }
   // INFO
   /**
@@ -43091,7 +43110,7 @@ function friendlyDateTime(dateTimeish) {
 }
 
 // node_modules/luxon/src/luxon.js
-var VERSION = "3.6.0";
+var VERSION = "3.6.1";
 
 // src/datalink.ts
 var datalink_exports = {};
@@ -43126,6 +43145,7 @@ __export(datalink_exports, {
   USER_BROWSER: () => USER_BROWSER,
   daliDateTime: () => daliDateTime,
   dateTimeToHPTime: () => dateTimeToHPTime,
+  extractDLProto: () => extractDLProto,
   hpTimeToDateTime: () => hpTimeToDateTime,
   stringToUint8Array: () => stringToUint8Array
 });
@@ -51759,6 +51779,18 @@ var ENDSTREAM = "ENDSTREAM";
 var MSEED_TYPE = "/MSEED";
 var MSEED3_TYPE = "/MSEED3";
 var IRIS_RINGSERVER_URL = "ws://rtserve.iris.washington.edu/datalink";
+function extractDLProto(lines) {
+  for (let line of lines) {
+    line = line.trim();
+    let items = line.split(/[ ,]+/);
+    for (const p of items) {
+      if (p.startsWith("DLPROTO:")) {
+        return p.substring(8);
+      }
+    }
+  }
+  return "1.0";
+}
 var defaultHandleResponse = function(dlResponse) {
   log(`Unhandled datalink response: ${dlResponse.toString()}`);
 };
@@ -51780,6 +51812,8 @@ var DataLinkConnection = class _DataLinkConnection {
     /** @private */
     __publicField(this, "_responseReject");
     __publicField(this, "webSocket");
+    __publicField(this, "dlproto");
+    this.dlproto = "1.0";
     this.webSocket = null;
     this.url = url ? url : IRIS_RINGSERVER_URL;
     this._mode = "QUERY" /* Query */;
@@ -51907,6 +51941,8 @@ var DataLinkConnection = class _DataLinkConnection {
     ).then((dlResponse) => {
       if (dlResponse.type === "ID") {
         this.serverId = "" + dlResponse.message;
+        let lines = this.serverId.split(/\r?\n/g);
+        this.dlproto = extractDLProto(lines);
         return this.serverId;
       } else {
         throw new Error("not ID response: " + stringify(dlResponse.type));
@@ -52457,12 +52493,17 @@ var DataLinkStats = class _DataLinkStats {
    * @returns  the stats
    */
   static parseXMLAttributes(statusEl) {
+    let maxPacketId = 0;
+    if (parseUtil._grabAttribute(statusEl, "MaximumPacketID") != null) {
+      maxPacketId = parseInt(parseUtil._requireAttribute(statusEl, "MaximumPacketID"));
+    }
     const dlStats = new _DataLinkStats(
       daliDateTime(parseUtil._requireAttribute(statusEl, "StartTime")),
       parseUtil._requireAttribute(statusEl, "RingVersion"),
       parseInt(parseUtil._requireAttribute(statusEl, "RingSize")),
       parseInt(parseUtil._requireAttribute(statusEl, "PacketSize")),
-      parseInt(parseUtil._requireAttribute(statusEl, "MaximumPacketID")),
+      //parseInt(parseUtil._grabAttribute(statusEl, "MaximumPacketID")),
+      maxPacketId,
       parseInt(parseUtil._requireAttribute(statusEl, "MaximumPackets")),
       parseUtil._requireAttribute(statusEl, "MemoryMappedRing") === "TRUE",
       parseUtil._requireAttribute(statusEl, "VolatileRing") === "TRUE",
@@ -52614,6 +52655,10 @@ var StreamStat = class _StreamStat {
     this.dataLatency = dataLatency;
   }
   static parseXMLAttributes(statusEl) {
+    let earlyDataEnd = parseUtil._grabAttribute(statusEl, "EarliestPacketDataEndTime");
+    if (earlyDataEnd == null) {
+      earlyDataEnd = parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime");
+    }
     const sStat = new _StreamStat(
       parseUtil._requireAttribute(statusEl, "Name"),
       parseInt(parseUtil._requireAttribute(statusEl, "EarliestPacketID")),
@@ -52621,7 +52666,8 @@ var StreamStat = class _StreamStat {
         parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime")
       ),
       daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime")
+        earlyDataEnd
+        //  parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime"),
       ),
       parseInt(parseUtil._requireAttribute(statusEl, "LatestPacketID")),
       daliDateTime(
@@ -62964,6 +63010,7 @@ __export(leafletutil_exports, {
   createStationMarker: () => createStationMarker,
   cssClassForQuake: () => cssClassForQuake,
   cssClassForStationCodes: () => cssClassForStationCodes,
+  getRadiusForMag: () => getRadiusForMag,
   inactiveStationIcon: () => inactiveStationIcon,
   leaflet_css: () => leaflet_css2,
   stationIcon: () => stationIcon,
@@ -63779,15 +63826,20 @@ function createStationMarker(station, classList2, isactive = true, centerLon = 0
   m.bindTooltip(station.codes());
   return m;
 }
+function getRadiusForMag(magnitude, magScaleFactor) {
+  let radius = magnitude ? magnitude * magScaleFactor : 1;
+  if (radius < 1) {
+    radius = 1;
+  }
+  return radius;
+}
 function createQuakeMarker(quake, magScaleFactor = 5, classList2, centerLon = 0) {
   const allClassList = classList2 ? classList2.slice() : [];
   allClassList.push(QuakeMarkerClassName);
   allClassList.push(cssClassForQuake(quake));
   const qLon = quake.longitude - centerLon <= 180 ? quake.longitude : quake.longitude - 360;
-  let radius = quake.magnitude ? quake.magnitude.mag * magScaleFactor : magScaleFactor;
-  if (radius < 1) {
-    radius = 1;
-  }
+  let magnitude = quake.magnitude ? quake.magnitude.mag : 1;
+  let radius = getRadiusForMag(magnitude, magScaleFactor);
   const circle2 = L2.circleMarker([quake.latitude, qLon], {
     color: "currentColor",
     radius,
@@ -63821,14 +63873,24 @@ var QuakeStationMap = class extends SeisPlotElement {
     __publicField(this, "quakeList", []);
     __publicField(this, "stationList", []);
     __publicField(this, "geoRegionList", []);
+    __publicField(this, "geoJsonLayerMap");
     __publicField(this, "map");
     __publicField(this, "classToColor");
+    __publicField(this, "mapItems", []);
     __publicField(this, "stationClassMap");
     __publicField(this, "quakeClassMap");
+    __publicField(this, "geoJsonLayerClassMap");
+    __publicField(this, "overlayLayerMap");
+    __publicField(this, "quakeLayer", L2.layerGroup());
+    __publicField(this, "stationLayer", L2.layerGroup());
+    __publicField(this, "layerControl", L2.control.layers());
     this.map = null;
     this.classToColor = /* @__PURE__ */ new Map();
     this.stationClassMap = /* @__PURE__ */ new Map();
     this.quakeClassMap = /* @__PURE__ */ new Map();
+    this.geoJsonLayerClassMap = /* @__PURE__ */ new Map();
+    this.geoJsonLayerMap = /* @__PURE__ */ new Map();
+    this.overlayLayerMap = /* @__PURE__ */ new Map();
     this.addStyle(leaflet_css2);
     this.addStyle(stationMarker_css);
     const wrapper = document.createElement("div");
@@ -63961,6 +64023,22 @@ var QuakeStationMap = class extends SeisPlotElement {
       c.classList.remove(classname);
     });
   }
+  addGeoJsonLayer(layername, geoJsonData, classname) {
+    this.geoJsonLayerMap.set(layername, geoJsonData);
+    this.geoJsonLayerAddClass(layername, classname);
+  }
+  geoJsonLayerAddClass(layername, classname) {
+    const re2 = /\s+/;
+    let classList2 = [];
+    const layerClass = this.geoJsonLayerClassMap.get(layername);
+    if (layerClass != null) {
+      classList2 = layerClass;
+    }
+    if (classname && classname.length > 0) {
+      classList2 = classList2.concat(classname.split(re2));
+    }
+    this.geoJsonLayerClassMap.set(layername, classList2);
+  }
   /**
    * Set a color in css for the classname. This is a simple alternative
    * to full styling via addStyle().
@@ -64054,11 +64132,15 @@ var QuakeStationMap = class extends SeisPlotElement {
       wrapper.removeChild(wrapper.lastChild);
     }
     const divElement = wrapper.appendChild(document.createElement("div"));
-    const mymap = L2.map(divElement).setView(
+    const mymap = L2.map(
+      divElement,
+      { layers: [this.quakeLayer, this.stationLayer] }
+    ).setView(
       [this.centerLat, this.centerLon],
       this.zoomLevel
     );
     this.map = mymap;
+    this.layerControl.addTo(mymap);
     if (this.seismographConfig.wheelZoom) {
       mymap.scrollWheelZoom.enable();
     } else {
@@ -64082,40 +64164,80 @@ var QuakeStationMap = class extends SeisPlotElement {
       tileOptions.attribution = tileAttributionAttr;
     }
     L2.tileLayer(tileUrl, tileOptions).addTo(mymap);
-    const magScale = this.magScale;
-    const mapItems = [];
-    this.quakeList.concat(uniqueQuakes(this.seisData)).forEach((q) => {
+    const regionBounds = this.drawGeoRegions(mymap);
+    regionBounds.forEach((b) => this.mapItems.push(b));
+    this.drawGeoJsonLayers();
+    this.drawStationLayer();
+    this.drawQuakeLayer();
+    if (this.fitBounds && this.mapItems.length > 1) {
+      mymap.fitBounds(this.mapItems);
+    }
+  }
+  drawGeoJsonLayers() {
+    for (const [layername, jsondata] of this.geoJsonLayerMap) {
+      let classList2 = [];
+      const layerClass = this.geoJsonLayerClassMap.get(layername);
+      if (layerClass != null) {
+        classList2 = layerClass;
+      }
+      if (this.map) {
+        L2.geoJSON(jsondata, {
+          // @ts-ignore
+          className: classList2.join(" ")
+        }).addTo(this.map);
+      }
+    }
+  }
+  drawQuakeLayer() {
+    this.quakeLayer.clearLayers();
+    let layername = "Quakes";
+    let quakes = this.quakeList.concat(uniqueQuakes(this.seisData));
+    quakes.forEach((q) => {
       const circle2 = createQuakeMarker(
         q,
-        magScale,
+        this.magScale,
         this.quakeClassMap.get(cssClassForQuake(q)),
         this.centerLon
       );
-      circle2.addTo(mymap);
-      mapItems.push([q.latitude, q.longitude]);
+      circle2.addTo(this.quakeLayer);
+      this.mapItems.push([q.latitude, q.longitude]);
       circle2.addEventListener("click", (evt) => {
         const ce = createQuakeClickEvent(q, evt.originalEvent);
         this.dispatchEvent(ce);
       });
     });
-    this.stationList.concat(uniqueStations2(this.seisData)).forEach((s2) => {
+    if (this.map) {
+      this.quakeLayer.addTo(this.map);
+    }
+    if (quakes.length > 0 && !this.overlayLayerMap.has(layername)) {
+      this.overlayLayerMap.set(layername, this.quakeLayer);
+      this.layerControl.addOverlay(this.quakeLayer, layername);
+    }
+  }
+  drawStationLayer() {
+    this.stationLayer.clearLayers();
+    let layername = "Stations";
+    let stations = this.stationList.concat(uniqueStations2(this.seisData));
+    stations.forEach((s2) => {
       const m = createStationMarker(
         s2,
         this.stationClassMap.get(s2.codes(STATION_CODE_SEP)),
         true,
         this.centerLon
       );
-      m.addTo(mymap);
-      mapItems.push([s2.latitude, s2.longitude]);
+      m.addTo(this.stationLayer);
+      this.mapItems.push([s2.latitude, s2.longitude]);
       m.addEventListener("click", (evt) => {
         const ce = createStationClickEvent(s2, evt.originalEvent);
         this.dispatchEvent(ce);
       });
     });
-    const regionBounds = this.drawGeoRegions(mymap);
-    regionBounds.forEach((b) => mapItems.push(b));
-    if (this.fitBounds && mapItems.length > 1) {
-      mymap.fitBounds(mapItems);
+    if (this.map) {
+      this.stationLayer.addTo(this.map);
+    }
+    if (stations.length > 0 && !this.overlayLayerMap.has(layername)) {
+      this.overlayLayerMap.set(layername, this.stationLayer);
+      this.layerControl.addOverlay(this.stationLayer, layername);
     }
   }
   updateQuakeMarkerStyle() {
@@ -65184,10 +65306,7 @@ var OrganizedDisplay = class extends SeisPlotElement {
   set sortby(val) {
     this.setAttribute(SORT_BY, val);
   }
-  //draw(): Promise<Array<Promise<Array<TimeScalable>> | Promise<Array<AmplitudeScalable>>>> {
   draw() {
-    let timePromise = Promise.resolve([]);
-    let ampPromise = Promise.resolve([]);
     if (!this.isConnected) {
       return;
     }
@@ -65246,13 +65365,6 @@ var OrganizedDisplay = class extends SeisPlotElement {
       wrapper.appendChild(oi);
       oi.draw();
     });
-    if (this.seismographConfig.linkedTimeScale) {
-      timePromise = this.seismographConfig.linkedTimeScale.notifyAll();
-    }
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      ampPromise = this.seismographConfig.linkedAmplitudeScale.notifyAll();
-    }
-    Promise.all([timePromise, ampPromise]);
     return;
   }
   drawTools(sortedData) {
@@ -72967,6 +73079,7 @@ var RingserverConnection = class {
     /** @private */
     __publicField(this, "_timeoutSec");
     __publicField(this, "isFDSNSourceId", false);
+    __publicField(this, "dlproto", "1.0");
     const hostStr = isNonEmptyStringArg(host) ? host : IRIS_HOST3;
     if (hostStr.startsWith("http")) {
       const rs_url = new URL(hostStr);
@@ -73045,6 +73158,16 @@ var RingserverConnection = class {
         organization = organization.substring(ORG.length);
       }
       if (version2.startsWith(ringserver_v4)) {
+        this.isFDSNSourceId = true;
+      }
+      this.dlproto = extractDLProto(lines);
+      if (this.dlproto == "1.0") {
+        if (version2.startsWith(ringserver_v4)) {
+          this.isFDSNSourceId = true;
+        } else {
+          this.isFDSNSourceId = false;
+        }
+      } else {
         this.isFDSNSourceId = true;
       }
       return {
