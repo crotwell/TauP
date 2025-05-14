@@ -2,6 +2,7 @@
 build
 .gradle
 Notes/Models
+Notes/Papers
 *.aux
 taup.bbl
 taup.blg
