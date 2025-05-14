@@ -168,7 +168,7 @@ java {
 
 dependencies {
     implementation("org.json:json:20250107")
-    implementation("com.google.code.gson:gson:2.12.1")
+    implementation("com.google.code.gson:gson:2.13.1")
     implementation("edu.sc.seis:seisFile:2.3.0")
 
     // temporary use modified picocli to allow sort of ArgGroup options
