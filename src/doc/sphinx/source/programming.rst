@@ -67,7 +67,7 @@ http://localhost:7409/taup.html
 to see how the URL is encoded and what the results are. Note that the web form
 does not yet include all possible parameters that the web tools support.
 
-.. literalinclude:: programming/grab_times_http.py
+.. literalinclude:: programming/grab_taup_times_http.py
   :language: python
 
 Python
@@ -82,7 +82,7 @@ access to all of the command line arguments available.
 An example that gets travel times via Python show how this could be done.
 
 
-.. literalinclude:: programming/grab_times_subprocess.py
+.. literalinclude:: programming/grab_taup_times.py
   :language: python
 
 Graalvm and Graalpy

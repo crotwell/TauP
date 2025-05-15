@@ -368,6 +368,7 @@ tasks.register<Sync>("copyCmdLineHelpFiles") {
 
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
+  from("src/example/python/grab_taup_times.py")
   into("src/doc/sphinx/source/programming")
 }
 
