@@ -23,7 +23,9 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.0.0"
+version = "3.0.1"
+val zenodo_rel_id = "15426279"
+val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
 jreleaser {
   dryrun.set(true)
@@ -98,6 +100,14 @@ tasks.register("versionToVersionFile") {
   inputs.files("build.gradle.kts")
   outputs.files("VERSION")
   File("VERSION").writeText(""+version)
+}
+
+tasks.register("zenodoDoi") {
+  // value read by sphinx from file in conf.py
+
+  inputs.files("build.gradle.kts")
+  outputs.files(doifile)
+  File(doifile).writeText(""+zenodo_rel_id)
 }
 
 distributions {
@@ -223,6 +233,7 @@ tasks.named("sourcesJar") {
 
 tasks.named("makeVersionClass") {
   inputs.files("src/main/")
+  inputs.files("build.gradle.kts")
 }
 
 tasks.register<Checksum>("checksumDist") {
@@ -368,6 +379,8 @@ tasks.register<Sync>("copyCmdLineHelpFiles") {
 
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
+  from("src/example/python/grab_taup_times.py")
+  from("src/example/python/grab_taup_times_http.py")
   into("src/doc/sphinx/source/programming")
 }
 
@@ -402,6 +415,7 @@ distributions {
 tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
+  inputs.files(tasks.named("zenodoDoi"))
   inputs.files(fileTree(project.file("src/doc/sphinx")))
   outputs.files(fileTree(layout.buildDirectory.dir("sphinx/html")))
   dependsOn("copyProgramExampleFiles")

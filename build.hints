@@ -1,6 +1,9 @@
 
 # rerun sphinx for docs
 conda activate sphinx
+# check requirements.in and if update run
+# pip-compile requirements.in
+# then
 ./gradlew sphinx
 
 # check for dep updates
@@ -40,7 +43,9 @@ get new DOI
 update cite, version in
   README.md
   overview.rst
+  distribution.rst
   docs/index.md
+
 
 update CITATION.cff via
   https://citation-file-format.github.io/cff-initializer-javascript/
@@ -48,3 +53,7 @@ update CITATION.cff via
 
 upload to zenodo, check auto upload from github so maybe just edit fields
   https://zenodo.org/me/uploads?q=&l=list&p=1&s=10&sort=newest
+
+edit installers/homebrew/taup.rb and
+cp installers/homebrew/taup.rb ../homebrew-crotwell/Formula/.
+git commit and push from there
