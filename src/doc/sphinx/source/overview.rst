@@ -20,7 +20,7 @@ without recompiling. This package also offers
 the extraction of derivative information, such as ray paths through the
 earth, pierce and turning points, as well as travel time curves.
 
-A paper has been published in Seismological Research Letters,
+A paper was been published in Seismological Research Letters,
 :cite:t:`taupsrl`,
 that is intended to be used as a companion to this manual. While this manual
 mainly focuses on the practicalities of using the codes,
@@ -41,7 +41,8 @@ If you find TauP useful and would like to cite it, please use the following:
 
   Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.
 
-  Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.5281/zenodo.15426279
+  Crotwell, H. P. |release_year|. The TauP Toolkit (|release|). Zenodo. |zenodo_url|
+
 
 I really enjoy writing software that others find useful. And while the journey
 is its own reward, it is nice to hear from people that use and like TauP. If you

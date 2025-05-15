@@ -11,7 +11,7 @@ The current distribution of the TauP package is |release|, created |today|.
 
 Downloads available from either
 `GitHub <https://github.com/crotwell/TauP/releases>`_ or
-`Zenodo <https://zenodo.org/records/15426279>`_. Installation also
+`Zenodo <https://doi.org/10.5281/zenodo.10794857>`_. Installation also
 available for Macintosh OSX via
 `Homebrew <https://brew.sh/>`_ with:
 

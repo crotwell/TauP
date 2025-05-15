@@ -7,11 +7,25 @@ import json
 with open("cmdLineHelp/VERSION.json", "r") as vf:
     verjson = json.load(vf)
 
+with open("zenodo_id_num.txt", "r") as vf:
+    zenodo_doi_text = vf.read().strip()
+zenodo_url = f"https://doi.org/10.5281/zenodo.{zenodo_doi_text}"
+
+release_year = verjson['date'][0:4]
+
+# create text substitutions
+rst_epilog = f'''
+.. |release_year| replace:: {release_year}
+.. |zenodo_id_num| replace:: {zenodo_doi_text}
+.. |zenodo_url| replace:: {zenodo_url}
+.. |zenodo_doi| replace:: 10.5281/zenodo.{zenodo_doi_text}
+'''
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'TauP'
-copyright = '2025, Philip Crotwell'
+copyright = f'{release_year}, Philip Crotwell'
 author = 'Philip Crotwell'
 version = verjson['version'][0:3]
 release = verjson['version']

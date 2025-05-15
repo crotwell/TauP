@@ -24,6 +24,8 @@ application {
 
 group = "edu.sc.seis"
 version = "3.0.1"
+val zenodo_rel_id = "15426279"
+val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
 jreleaser {
   dryrun.set(true)
@@ -98,6 +100,14 @@ tasks.register("versionToVersionFile") {
   inputs.files("build.gradle.kts")
   outputs.files("VERSION")
   File("VERSION").writeText(""+version)
+}
+
+tasks.register("zenodoDoi") {
+  // value read by sphinx from file in conf.py
+
+  inputs.files("build.gradle.kts")
+  outputs.files(doifile)
+  File(doifile).writeText(""+zenodo_rel_id)
 }
 
 distributions {
@@ -405,6 +415,7 @@ distributions {
 tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
+  inputs.files(tasks.named("zenodoDoi"))
   inputs.files(fileTree(project.file("src/doc/sphinx")))
   outputs.files(fileTree(layout.buildDirectory.dir("sphinx/html")))
   dependsOn("copyProgramExampleFiles")
