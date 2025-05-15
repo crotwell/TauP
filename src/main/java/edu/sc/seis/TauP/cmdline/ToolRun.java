@@ -178,7 +178,6 @@ public class ToolRun {
 		}
 		CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.cmdline.ToolRun());
 		commandLine.setPosixClusteredShortOptionsAllowed(false);
-		commandLine.setColorScheme(colorScheme);
 		if (TauPConfig.DEBUG) {
 			commandLine.setParameterExceptionHandler(new CommandLine.IParameterExceptionHandler() {
 
