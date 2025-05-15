@@ -1,6 +1,9 @@
 
 # rerun sphinx for docs
 conda activate sphinx
+# check requirements.in and if update run
+# pip-compile requirements.in
+# then
 ./gradlew sphinx
 
 # check for dep updates
