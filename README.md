@@ -63,7 +63,7 @@ sudo snap install taup --channel=latest/edge
 ## Manually
 
 Download tarball from Zenodo here:
-https://zenodo.org/records/10794858
+https://zenodo.org/records/15116393
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 
