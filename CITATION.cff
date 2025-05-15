@@ -34,7 +34,7 @@ keywords:
   - traveltime
   - seismograph
 license: LGPL-3.0
-commit: 83f6a33568b6e9efbf02836595b42946933834b7
+commit: c80b19fd251805f2dcfc3ce8b5f9489f0eed4492
 version: 3.0.1
 date-released: '2025-05-15'
 preferred-citation:
