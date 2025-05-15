@@ -62,7 +62,7 @@ public class Alert {
      * ie GUI or command line.
      */
     public static void warning(String message, String extra) {
-        String nl_extra = (extra != null && extra.length()>0) ?  (nl + extra) : "";
+        String nl_extra = (extra != null && !extra.isEmpty()) ?  (nl + extra) : "";
         if(GUI) {
             System.err.println("Warning: " + message + nl_extra);
         } else {
@@ -85,7 +85,19 @@ public class Alert {
         }
     }
 
+    /**
+     * Simple proxy method so don't have System.err.println scattered in code.
+     * @param message message to print
+     */
+    public static void debug(String message) {
+        System.err.println(message);
+    }
+
     public static void setGUI(boolean newGUI) {
         GUI = newGUI;
+    }
+
+    public static void warning(Exception e) {
+        warning("" +e);
     }
 }

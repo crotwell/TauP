@@ -29,19 +29,13 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StreamTokenizer;
-import java.io.Writer;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class defines basic classes to store and manipulate a velocity model.
@@ -53,6 +47,9 @@ import java.util.List;
  * @author H. Philip Crotwell
  */
 public class VelocityModel implements Cloneable, Serializable {
+
+    public static final String ND = "nd";
+    public static final String TVEL = "tvel";
 
     public VelocityModel(String modelName,
                          double radiusOfEarth,
@@ -149,7 +146,7 @@ public class VelocityModel implements Cloneable, Serializable {
 
     /** set the model name. */
     public void setModelName(String modelName) {
-        if(modelName.length() > 0) {
+        if(!modelName.isEmpty()) {
             this.modelName = modelName;
         } else {
             this.modelName = "unknown";
@@ -174,6 +171,28 @@ public class VelocityModel implements Cloneable, Serializable {
         double[] discons = getDisconDepths();
         for (int i = 0; i < discons.length; i++) {
             if (depth == discons[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<NamedVelocityDiscon> getNamedDiscons() {
+        return namedDiscon;
+    }
+
+    public NamedVelocityDiscon getNamedDisconForDepth(double depth) {
+        for (NamedVelocityDiscon nDiscon : namedDiscon) {
+            if (depth == nDiscon.depth) {
+                return nDiscon;
+            }
+        }
+        return null;
+    }
+
+    public boolean isNamedDisconDepth(double depth) {
+        for (NamedVelocityDiscon nDiscon : namedDiscon) {
+            if (depth == nDiscon.depth) {
                 return true;
             }
         }
@@ -273,6 +292,22 @@ public class VelocityModel implements Cloneable, Serializable {
         this.spherical = spherical;
     }
 
+    public boolean densityIsDefault() {
+        boolean allDensityDefault = true;
+        for(VelocityLayer vlay: getLayers() ) {
+            allDensityDefault &= vlay.densityIsDefault();
+        }
+        return allDensityDefault;
+    }
+
+    public boolean QIsDefault() {
+        boolean allQDefault = true;
+        for(VelocityLayer vlay: getLayers() ) {
+            allQDefault &= vlay.QIsDefault();
+        }
+        return allQDefault;
+    }
+
     public VelocityLayer getVelocityLayerClone(int layerNum) {
         return (VelocityLayer)(layer.get(layerNum)).clone();
     }
@@ -287,7 +322,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
     
     public VelocityLayer[] getLayers() {
-        return (VelocityLayer[])layer.toArray(new VelocityLayer[0]);
+        return layer.toArray(new VelocityLayer[0]);
     }
 
     // normal methods
@@ -302,7 +337,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public int layerNumberAbove(double depth) throws NoSuchLayerException {
         VelocityLayer tempLayer;
         /* first check to see if depth is at top of top layer. */
-        tempLayer = (VelocityLayer)getVelocityLayer(0);
+        tempLayer = getVelocityLayer(0);
         if(depth == tempLayer.getTopDepth()) {
             return 0;
         } else {
@@ -377,13 +412,11 @@ public class VelocityModel implements Cloneable, Serializable {
      * @return the value of the given material property
      * @exception NoSuchLayerException
      *                occurs if no layer contains the given depth.
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
-    public double evaluateAbove(double depth, char materialProperty)
-            throws NoSuchLayerException, NoSuchMatPropException {
+    public double evaluateAbove(double depth, VelocityModelMaterial materialProperty)
+            throws NoSuchLayerException {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumberAbove(depth));
+        tempLayer = getVelocityLayer(layerNumberAbove(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
     }
 
@@ -395,13 +428,11 @@ public class VelocityModel implements Cloneable, Serializable {
      * @return the value of the given material property
      * @exception NoSuchLayerException
      *                occurs if no layer contains the given depth.
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
-    public double evaluateBelow(double depth, char materialProperty)
-            throws NoSuchLayerException, NoSuchMatPropException {
+    public double evaluateBelow(double depth, VelocityModelMaterial materialProperty)
+            throws NoSuchLayerException {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumberBelow(depth));
+        tempLayer = getVelocityLayer(layerNumberBelow(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
     }
 
@@ -410,13 +441,11 @@ public class VelocityModel implements Cloneable, Serializable {
      * velocity, at the top of the given layer.
      * 
      * @return the value of the given material property
-     * @exception NoSuchMatPropException
      *                occurs if the material property is not recognized.
      */
-    public double evaluateAtTop(int layerNumber, char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtTop(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtTop(materialProperty);
     }
 
@@ -425,13 +454,10 @@ public class VelocityModel implements Cloneable, Serializable {
      * velocity, at the bottom of the given layer.
      * 
      * @return the value of the given material property
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
-    public double evaluateAtBottom(int layerNumber, char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtBottom(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtBottom(materialProperty);
     }
 
@@ -442,7 +468,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double depthAtTop(int layerNumber) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.getTopDepth();
     }
 
@@ -450,12 +476,11 @@ public class VelocityModel implements Cloneable, Serializable {
      * returns the depth at the bottom of the given layer.
      * 
      * @return the depth.
-     * @exception NoSuchMatPropException
      *                occurs if the material property is not recognized.
      */
-    public double depthAtBottom(int layerNumber) throws NoSuchMatPropException {
+    public double depthAtBottom(int layerNumber) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.getBotDepth();
     }
 
@@ -471,8 +496,8 @@ public class VelocityModel implements Cloneable, Serializable {
                                        boolean smoothTop,
                                        boolean smoothBot)
             throws VelocityModelException {
-        try {
-            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+
+            List<VelocityLayer> outLayers = new ArrayList<>();
             int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
             int numAdded = 0;
             for(int i = 0; i<topLayerNum; i++) {
@@ -489,20 +514,29 @@ public class VelocityModel implements Cloneable, Serializable {
                                                 topLayer.getTopDepth(),
                                                 newLayers[0].getTopDepth(),
                                                 topLayer.getTopPVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 topLayer.getTopSVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 topLayer.getTopDensity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R')));
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.DENSITY),
+                        topLayer.getTopQp(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_P),
+                        topLayer.getTopQs(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_S)
+                        ));
                 outLayers.add(new VelocityLayer(numAdded++,
                                                 newLayers[0].getTopDepth(),
                                                 topLayer.getBotDepth(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 topLayer.getBotPVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 topLayer.getBotSVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R'),
-                                                topLayer.getBotDensity()));
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.DENSITY),
+                                                topLayer.getBotDensity(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_P),
+                        topLayer.getBotQp(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_S),
+                        topLayer.getBotQs()));
             } else {
                 // already a discon at our new layer top depth
                 outLayers.add(topLayer.cloneRenumber(numAdded++));
@@ -518,19 +552,19 @@ public class VelocityModel implements Cloneable, Serializable {
                                                 botLayer.getTopDepth(),
                                                 lastNewLayer.getBotDepth(),
                                                 botLayer.getTopPVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 botLayer.getTopSVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 botLayer.getTopDensity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R')));
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.DENSITY)));
                 outLayers.add(new VelocityLayer(numAdded++,
                                                 lastNewLayer.getBotDepth(),
                                                 botLayer.getBotDepth(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 botLayer.getBotPVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 botLayer.getBotSVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.DENSITY),
                                                 botLayer.getBotDensity()));
             } else {
                 // already a discon at our new layer top depth
@@ -562,7 +596,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 }
             }
             
-            List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
+            List<VelocityLayer> replaceoutLayers = new ArrayList<>();
             numAdded = 0;
             for(VelocityLayer vlay : outLayers) {
                 if (vlay.getTopDepth() < newLayers[0].getTopDepth()) {
@@ -605,10 +639,6 @@ public class VelocityModel implements Cloneable, Serializable {
                 throw new VelocityModelException("replace layers but now is not valid.");
             }
             return outVMod;
-        } catch(NoSuchMatPropException e) {
-            // can't happen, but...
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -619,8 +649,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public VelocityModel elevationLayer(float elevation,
                                        String name)
             throws VelocityModelException {
-        try {
-            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+            List<VelocityLayer> outLayers = new ArrayList<>();
 
             int numAdded = 0;
             VelocityLayer elevationLayer = getVelocityLayer(0).cloneRenumber(numAdded);
@@ -650,10 +679,6 @@ public class VelocityModel implements Cloneable, Serializable {
                 throw new VelocityModelException("replace layers but now is not valid.");
             }
             return outVMod;
-        } catch(NoSuchMatPropException e) {
-            // can't happen, but...
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -662,7 +687,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public void printGMT(String filename) throws IOException {
         String psFile;
-        if (filename == "stdout") { 
+        if (Objects.equals(filename, "stdout")) {
             psFile = "taup_velocitymodel";
         } else if(filename.endsWith(".gmt")) {
             psFile = filename.substring(0, filename.length() - 4) + ".ps";
@@ -671,7 +696,7 @@ public class VelocityModel implements Cloneable, Serializable {
         }
 
         PrintWriter dos;
-        if (filename == "stdout") {
+        if (filename.equals("stdout")) {
             dos = new PrintWriter(new OutputStreamWriter(System.out));
         } else {
             dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
@@ -716,14 +741,14 @@ public class VelocityModel implements Cloneable, Serializable {
      * prints out the velocity model into a file in a for suitable for plotting
      * with GMT.
      */
-    public void printGMT(PrintWriter dos) throws IOException {
+    public void printGMT(PrintWriter dos) {
         dos.println("> P velocity for " + modelName + "  below");
         printGMTforP(dos);
         dos.println("> S velocity for " + modelName + "  below");
         printGMTforP(dos);
     }
     
-    void printGMTforP(PrintWriter dos) throws IOException {
+    void printGMTforP(PrintWriter dos) {
         double pVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
             VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);
@@ -737,7 +762,7 @@ public class VelocityModel implements Cloneable, Serializable {
         }
     }
     
-    void printGMTforS(PrintWriter dos) throws IOException {
+    void printGMTforS(PrintWriter dos) {
         double sVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
             VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);
@@ -758,55 +783,55 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer currVelocityLayer, prevVelocityLayer;
         /* is radiusOfEarth positive? */
         if(radiusOfEarth <= 0.0) {
-            System.err.println("Radius of earth is not positive. radiusOfEarth = "
+            Alert.warning("Radius of earth is not positive. radiusOfEarth = "
                     + radiusOfEarth);
             return false;
         }
         /* is mohoDepth non-negative? */
         if(mohoDepth < 0.0) {
-            System.err.println("mohoDepth is not non-negative. mohoDepth = "
+            Alert.warning("mohoDepth is not non-negative. mohoDepth = "
                     + mohoDepth);
             return false;
         }
         /* is cmbDepth >= mohoDepth? */
         if(cmbDepth < mohoDepth) {
-            System.err.println("cmbDepth < mohoDepth. cmbDepth = " + cmbDepth
+            Alert.warning("cmbDepth < mohoDepth. cmbDepth = " + cmbDepth
                     + " mohoDepth = " + mohoDepth);
             return false;
         }
         /* is cmbDepth non-negative? */
         if(cmbDepth < 0.0) {
-            System.err.println("cmbDepth is negative. cmbDepth = "
+            Alert.warning("cmbDepth is negative. cmbDepth = "
                     + cmbDepth);
             return false;
         }
         /* is iocbDepth >= cmbDepth? */
         if(iocbDepth < cmbDepth) {
-            System.err.println("iocbDepth < cmbDepth. iocbDepth = " + iocbDepth
+            Alert.warning("iocbDepth < cmbDepth. iocbDepth = " + iocbDepth
                     + " cmbDepth = " + cmbDepth);
             return false;
         }
         /* is iocbDepth non-negative? */
         if(iocbDepth < 0.0) {
-            System.err.println("iocbDepth is negative. iocbDepth = "
+            Alert.warning("iocbDepth is negative. iocbDepth = "
                     + iocbDepth);
             return false;
         }
         /* is minRadius non-negative? */
         if(minRadius < 0.0) {
-            System.err.println("minRadius is not non-negative. minRadius = "
+            Alert.warning("minRadius is not non-negative. minRadius = "
                     + minRadius);
             return false;
         }
         /* is maxRadius positive? */
         if(maxRadius <= 0.0) {
-            System.err.println("maxRadius is not positive. maxRadius = "
+            Alert.warning("maxRadius is not positive. maxRadius = "
                     + maxRadius);
             return false;
         }
         /* is maxRadius > minRadius? */
         if(maxRadius <= minRadius) {
-            System.err.println("maxRadius <= minRadius. maxRadius = "
+            Alert.warning("maxRadius <= minRadius. maxRadius = "
                     + maxRadius + " minRadius = " + minRadius);
             return false;
         }
@@ -826,21 +851,21 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * There is a gap in the velocity model!
                  */
-                System.err.println("There is a gap in the velocity model "
+                Alert.warning("There is a gap in the velocity model "
                         + "between layers " + (layerNum - 1) + " and "
                         + layerNum);
-                System.err.println("prevVelocityLayer=" + prevVelocityLayer);
-                System.err.println("currVelocityLayer=" + currVelocityLayer);
+                Alert.warning("prevVelocityLayer=" + prevVelocityLayer);
+                Alert.warning("currVelocityLayer=" + currVelocityLayer);
                 return false;
             }
             if(currVelocityLayer.getBotDepth() == currVelocityLayer.getTopDepth()) {
                 /*
                  * This layer has zero thickness.
                  */
-                System.err.println("There is a zero thickness layer in the "
+                Alert.warning("There is a zero thickness layer in the "
                         + "velocity model at layer " + layerNum);
-                System.err.println("prevVelocityLayer=" + prevVelocityLayer);
-                System.err.println("currVelocityLayer=" + currVelocityLayer);
+                Alert.warning("prevVelocityLayer=" + prevVelocityLayer);
+                Alert.warning("currVelocityLayer=" + currVelocityLayer);
                 return false;
             }
             if(currVelocityLayer.getTopPVelocity() <= 0.0
@@ -848,7 +873,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer has a negative or zero P velocity.
                  */
-                System.err.println("There is a negative P velocity layer in the "
+                Alert.warning("There is a negative P velocity layer in the "
                         + "velocity model at layer " + layerNum);
                 return false;
             }
@@ -857,7 +882,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer has a negative S velocity.
                  */
-                System.err.println("There is a negative S velocity layer in the "
+                Alert.warning("There is a negative S velocity layer in the "
                         + "velocity model at layer " + layerNum);
                 return false;
             }
@@ -866,7 +891,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer goes to zero P velocity without a discontinuity.
                  */
-                System.err.println("There is a layer that goes to zero P velocity "
+                Alert.warning("There is a layer that goes to zero P velocity "
                         + "without a discontinuity in the "
                         + "velocity model at layer "
                         + layerNum
@@ -880,7 +905,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer goes to zero S velocity without a discontinuity.
                  */
-                System.err.println("There is a layer that goes to zero S velocity "
+                Alert.warning("There is a layer that goes to zero S velocity "
                         + "without a discontinuity in the "
                         + "velocity model at layer "
                         + layerNum
@@ -906,22 +931,35 @@ public class VelocityModel implements Cloneable, Serializable {
 
     public void writeToND(Writer out) throws IOException {
         VelocityLayer prev = null;
+        boolean allDensityDefault = densityIsDefault();
+        boolean allQDefault = QIsDefault();
         for(VelocityLayer vlay: getLayers() ) {
-            if (prev == null || 
+            if (prev == null ||
+                    vlay.getBotDepth() == getMohoDepth() ||
+                    vlay.getBotDepth() == getCmbDepth() ||
+                    vlay.getBotDepth() == getIocbDepth() ||
                     prev.getBotPVelocity()!=vlay.getTopPVelocity() ||
                     prev.getBotSVelocity()!=vlay.getTopSVelocity() ||
                     prev.getBotDensity()!=vlay.getTopDensity()) {
-                out.write(vlay.getTopDepth()+" "+vlay.getTopPVelocity()+" "+vlay.getTopSVelocity()+" "+vlay.getTopDensity()+"\n");
+                out.write(vlay.getTopDepth()+" "+vlay.getTopPVelocity()+" "+vlay.getTopSVelocity());
+                if (!allDensityDefault) {
+                    out.write(" "+vlay.getTopDensity());
+                }
+                if (!allQDefault) {
+                    out.write(" "+vlay.getTopQp()+" "+vlay.getTopQs());
+                }
+                out.write("\n");
             }
-            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity()+" "+vlay.getBotDensity()+"\n");
-            if (vlay.getBotDepth() == getMohoDepth()) {
-                out.write("mantle\n");
+            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity());
+            if (!allDensityDefault) {
+                out.write(" "+vlay.getBotDensity());
             }
-            if (vlay.getBotDepth() == getCmbDepth()) {
-                out.write("outer-core\n");
+            if (!allQDefault) {
+                out.write(" "+vlay.getBotQp()+" "+vlay.getBotQs());
             }
-            if (vlay.getBotDepth() == getIocbDepth()) {
-                out.write("inner-core\n");
+            out.write("\n");
+            if (isNamedDisconDepth(vlay.getBotDepth()) ) {
+                out.write(getNamedDisconForDepth(vlay.getBotDepth()).getName()+"\n");
             }
             prev = vlay;
         }
@@ -959,7 +997,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readVelocityFile(String filename,
                                                  String fileType)
             throws IOException, VelocityModelException {
-        if (fileType == null || fileType.equals("")) {
+        if (fileType == null || fileType.isEmpty()) {
             if (filename.endsWith(".nd")) {
                 fileType = ".nd";
             } else if (filename.endsWith(".tvel")) {
@@ -967,7 +1005,7 @@ public class VelocityModel implements Cloneable, Serializable {
             }
         }
         if (fileType.startsWith(".")) {
-            fileType = fileType.substring(1, fileType.length());
+            fileType = fileType.substring(1);
         }
         File f = new File(filename);
         if ( ! f.exists() && ! filename.endsWith("."+fileType) && new File(filename+"."+fileType).exists()) {
@@ -1143,6 +1181,11 @@ public class VelocityModel implements Cloneable, Serializable {
                                  true,
                                  layers);
         vMod.fixDisconDepths();
+        if (vMod.namedDiscon.isEmpty()) {
+            vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.MOHO, vMod.getMohoDepth()));
+            vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.CMB, vMod.getCmbDepth()));
+            vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.IOCB, vMod.getIocbDepth()));
+        }
         return vMod;
     }
 
@@ -1156,15 +1199,15 @@ public class VelocityModel implements Cloneable, Serializable {
      * This feature makes phase interpretation much easier to
      * code. Also, as they are not needed for travel time calculations, the
      * density, Qp and Qs may be omitted.
-     * 
+     * <p>
      * The velocities are assumed to be linear between sample points. Because
      * this type of model file doesn't give complete information we make the
      * following assumptions: 
-     * 
+     * <p>
      * modelname - from the filename, with ".nd" dropped, if present 
-     * 
+     * <p>
      * radiusOfEarth - the largest depth in the model
-     * 
+     * <p>
      * Also, because this method makes use of the string tokenizer, comments are
      * allowed. # as well as // signify that the rest of the line is a comment.
      * C style slash-star comments are also allowed.
@@ -1216,7 +1259,7 @@ public class VelocityModel implements Cloneable, Serializable {
         int myLayerNumber = 0;
         VelocityLayer tempLayer;
         VelocityLayer lastZeroThickLayer = null;
-        double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
+        double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = VelocityLayer.DEFAULT_QP, topQs = VelocityLayer.DEFAULT_QS;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
         List<NamedVelocityDiscon> namedDiscon = new ArrayList<>();
         double mohoDepth = DEFAULT_MOHO;
@@ -1483,10 +1526,8 @@ public class VelocityModel implements Cloneable, Serializable {
      * model via the earth flattening transform.
      * 
      * @return the flattened VelocityModel object.
-     * @exception VelocityModelException
-     *                occurs ???.
      */
-    public VelocityModel earthFlattenTransform() throws VelocityModelException {
+    public VelocityModel earthFlattenTransform() {
         VelocityLayer newLayer, oldLayer;
         boolean spherical = false;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>(vectorLength);
@@ -1523,4 +1564,88 @@ public class VelocityModel implements Cloneable, Serializable {
                                  spherical,
                                  layers);
     }
+
+    public ReflTrans calcReflTransCoefFreeSurface() throws VelocityModelException {
+        double pVel = getVelocityLayer(0).getTopPVelocity();
+        double sVel = getVelocityLayer(0).getTopSVelocity();
+        double rho = getVelocityLayer(0).getTopDensity();
+        return calcReflTransCoef(0, 0, 0, pVel, sVel, rho, false);
+    }
+
+    public ReflTrans calcReflTransCoef(double depth, boolean downgoing) throws VelocityModelException {
+        if (!isDisconDepth(depth)) {
+            throw new VelocityModelException("depth " + depth + " is not a discontinuity in the model");
+        }
+        double abovePVel = 0;
+        double aboveSVel = 0;
+        double aboveRho = 0;
+        double belowPVel = evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
+        double belowSVel = evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
+        double belowRho = evaluateBelow(depth, VelocityModelMaterial.DENSITY);
+        if (depth != 0) {
+            abovePVel = evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
+            aboveSVel = evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
+            aboveRho = evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+        } else {
+            abovePVel = belowPVel;
+        }
+        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, downgoing);
+    }
+
+    public static ReflTrans calcReflTransCoef(double abovePVel,
+                                              double aboveSVel,
+                                              double aboveRho,
+                                              double belowPVel,
+                                              double belowSVel,
+                                              double belowRho) throws VelocityModelException {
+        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, true);
+    }
+
+    public static ReflTrans calcReflTransCoef(double abovePVel,
+                                       double aboveSVel,
+                                       double aboveRho,
+                                       double belowPVel,
+                                       double belowSVel,
+                                       double belowRho,
+                                       boolean downgoing) throws VelocityModelException {
+        ReflTrans rtCoef;
+        if (abovePVel == 0.0 || aboveRho == 0.0) {
+            if (downgoing) {
+                throw new VelocityModelException("Downgoing to free surface is not possible");
+            }
+            rtCoef = ReflTransFreeSurface.createReflTransFreeSurface(belowPVel, belowSVel, belowRho);
+        } else if (belowPVel == 0.0 || belowRho == 0.0) {
+            if (!downgoing) {
+                throw new VelocityModelException("Upgoing to inverted free surface is not possible");
+            }
+            rtCoef = ReflTransFreeSurface.createReflTransFreeSurface(abovePVel, aboveSVel, aboveRho);
+
+        } else if (aboveSVel == 0.0 && belowSVel == 0.0) {
+            rtCoef = new ReflTransFluidFluid(abovePVel, aboveRho, belowPVel, belowRho);
+            if (!downgoing) {
+                rtCoef = rtCoef.flip();
+            }
+        } else if (aboveSVel == 0.0 ) {
+            if (downgoing) {
+                rtCoef = new ReflTransFluidSolid(abovePVel, aboveRho, belowPVel, belowSVel, belowRho);
+            } else {
+                rtCoef = new ReflTransSolidFluid(belowPVel, belowSVel, belowRho, abovePVel, aboveRho);
+            }
+        } else if (belowSVel == 0.0) {
+            if (downgoing) {
+                rtCoef = new ReflTransSolidFluid(abovePVel, aboveSVel, aboveRho, belowPVel, belowRho);
+            } else {
+                rtCoef = new ReflTransFluidSolid(belowPVel, belowRho, abovePVel, aboveSVel, aboveRho);
+            }
+        } else {
+            rtCoef = new ReflTransSolidSolid(
+                    abovePVel, aboveSVel, aboveRho,
+                    belowPVel, belowSVel, belowRho);
+            if (!downgoing) {
+                rtCoef = rtCoef.flip();
+            }
+        }
+        return rtCoef;
+    }
+
 }

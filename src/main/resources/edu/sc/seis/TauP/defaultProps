@@ -36,8 +36,11 @@ taup.rayparam.precision=3
 # option to TauP_Table
 taup.table.locsat.maxdiff=105.0
 
-# max jump in distance in path without simple linear path interpolation
+# max jump in distance (deg) in path without simple linear path interpolation
 taup.path.maxPathInc=1.0
+
+# max jump in distance (deg) in curve without simple linear interpolation
+taup.curve.maxPathInc=2.0
 
 # max number of laps for kmps style surface wave phases
 taup.maxRefraction=20

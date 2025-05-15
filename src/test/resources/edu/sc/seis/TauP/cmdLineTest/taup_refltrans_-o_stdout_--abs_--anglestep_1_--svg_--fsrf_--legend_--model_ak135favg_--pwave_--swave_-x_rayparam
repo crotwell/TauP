@@ -1,0 +1,2094 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 656.0 656.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup refltransplot -o stdout &#45;&#45;abs &#45;&#45;anglestep 1 &#45;&#45;svg &#45;&#45;fsrf &#45;&#45;legend &#45;&#45;model ak135favg &#45;&#45;pwave &#45;&#45;swave -x rayparam </command>
+      <version>3.0.0</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.0" xmax="0.6896544736007165" ymin="0.0" ymax="2.0" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps text {
+          fill: green;
+          stroke: transparent;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .Rsp {
+          stroke: mediumslateblue;
+        }
+        .Rsp.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rsp {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rsp text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .Rss {
+          stroke: red;
+        }
+        .Rss.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rss {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rss text {
+          fill: red;
+          stroke: transparent;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .Rshsh {
+          stroke: orange;
+        }
+        .Rshsh.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rshsh {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rshsh text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .RppEnergy {
+          stroke: blue;
+        }
+        .RppEnergy.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppEnergy {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppEnergy text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppEnergy {
+          stroke: cyan;
+        }
+        .TppEnergy.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppEnergy {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppEnergy text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsEnergy {
+          stroke: green;
+        }
+        .RpsEnergy.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsEnergy {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsEnergy text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsEnergy {
+          stroke: gold;
+        }
+        .TpsEnergy.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsEnergy {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsEnergy text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspEnergy {
+          stroke: mediumslateblue;
+        }
+        .RspEnergy.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspEnergy {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspEnergy text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspEnergy {
+          stroke: magenta;
+        }
+        .TspEnergy.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspEnergy {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspEnergy text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssEnergy {
+          stroke: red;
+        }
+        .RssEnergy.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssEnergy {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssEnergy text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssEnergy {
+          stroke: grey;
+        }
+        .TssEnergy.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssEnergy {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssEnergy text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshEnergy {
+          stroke: orange;
+        }
+        .RshshEnergy.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshEnergy {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshEnergy text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshEnergy {
+          stroke: violet;
+        }
+        .TshshEnergy.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshEnergy {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshEnergy text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .FreeRecFuncPr {
+          stroke: darkblue;
+        }
+        .FreeRecFuncPr.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .FreeRecFuncPr {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .FreeRecFuncPr text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .FreeRecFuncSvr {
+          stroke: firebrick;
+        }
+        .FreeRecFuncSvr.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .FreeRecFuncPz {
+          stroke: cyan;
+        }
+        .FreeRecFuncPz.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .FreeRecFuncPz {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .FreeRecFuncPz text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .FreeRecFuncSvz {
+          stroke: magenta;
+        }
+        .FreeRecFuncSvz.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .FreeRecFuncSvz {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .FreeRecFuncSvz text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .FreeRecFuncSh {
+          stroke: red;
+        }
+        .FreeRecFuncSh.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .FreeRecFuncSh {
+          stroke: red;
+          fill: red;
+        }
+        .legend .FreeRecFuncSh text {
+          fill: red;
+          stroke: transparent;
+        }
+        .RpAngle {
+          stroke: blue;
+        }
+        .RpAngle.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .RsAngle {
+          stroke: firebrick;
+        }
+        .RsAngle.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .TpAngle {
+          stroke: darkblue;
+        }
+        .TpAngle.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .TsAngle {
+          stroke: magenta;
+        }
+        .TsAngle.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle text {
+          fill: magenta;
+          stroke: transparent;
+        }
+
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="208.0" y="0">ak135favg at  surface</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Free Surface RF Coeff.</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="416.0">0.0</text>
+<line class="tick" x1="0" y1="416.0" x2="-10.0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="374.4">0.2</text>
+<line class="tick" x1="0" y1="374.4" x2="-10.0" y2="374.4" />
+<text class="ytick" font-size="12" x="-12.0" y="332.8">0.4</text>
+<line class="tick" x1="0" y1="332.8" x2="-10.0" y2="332.8" />
+<text class="ytick" font-size="12" x="-12.0" y="291.2">0.6</text>
+<line class="tick" x1="0" y1="291.2" x2="-10.0" y2="291.2" />
+<text class="ytick" font-size="12" x="-12.0" y="249.6">0.8</text>
+<line class="tick" x1="0" y1="249.6" x2="-10.0" y2="249.6" />
+<text class="ytick" font-size="12" x="-12.0" y="208.0">1.0</text>
+<line class="tick" x1="0" y1="208.0" x2="-10.0" y2="208.0" />
+<text class="ytick" font-size="12" x="-12.0" y="166.4">1.2</text>
+<line class="tick" x1="0" y1="166.4" x2="-10.0" y2="166.4" />
+<text class="ytick" font-size="12" x="-12.0" y="124.79999">1.4</text>
+<line class="tick" x1="0" y1="124.79999" x2="-10.0" y2="124.79999" />
+<text class="ytick" font-size="12" x="-12.0" y="83.20001">1.6</text>
+<line class="tick" x1="0" y1="83.20001" x2="-10.0" y2="83.20001" />
+<text class="ytick" font-size="12" x="-12.0" y="41.600006">1.8</text>
+<line class="tick" x1="0" y1="41.600006" x2="-10.0" y2="41.600006" />
+<text class="ytick" font-size="12" x="-12.0" y="0.0">2.0</text>
+<line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Ray Parameter (s/km)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="60.320061121048866" y="438.0">0.1</text>
+<line class="tick" x1="60.320061121048866" y1="416.0" x2="60.320061121048866" y2="426.0" />
+<text class="xtick" font-size="12" x="120.64012224209773" y="438.0">0.2</text>
+<line class="tick" x1="120.64012224209773" y1="416.0" x2="120.64012224209773" y2="426.0" />
+<text class="xtick" font-size="12" x="180.9601833631466" y="438.0">0.3</text>
+<line class="tick" x1="180.9601833631466" y1="416.0" x2="180.9601833631466" y2="426.0" />
+<text class="xtick" font-size="12" x="241.28024448419546" y="438.0">0.4</text>
+<line class="tick" x1="241.28024448419546" y1="416.0" x2="241.28024448419546" y2="426.0" />
+<text class="xtick" font-size="12" x="301.60030560524433" y="438.0">0.5</text>
+<line class="tick" x1="301.60030560524433" y1="416.0" x2="301.60030560524433" y2="426.0" />
+<text class="xtick" font-size="12" x="361.9203667262932" y="438.0">0.6</text>
+<line class="tick" x1="361.9203667262932" y1="416.0" x2="361.9203667262932" y2="426.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(603.2006,208.0)" >
+<g transform="translate(-0.0, -0.0)">
+    <g class="FreeRecFuncPz" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.0
+0.001  0.0
+0.002  0.0
+0.003  0.0
+0.004  0.0
+0.005  0.0
+0.006  0.0
+0.007  0.0
+0.008  0.0
+0.009  0.0
+0.01  0.0
+0.011  0.0
+0.012  0.0
+0.013  0.0
+0.014  0.0
+0.015  0.0
+0.016  0.0
+0.017  0.0
+0.018  0.0
+0.019  0.0
+0.02  0.0
+0.021  0.0
+0.022  0.0
+0.023  0.0
+0.024  0.0
+0.025  0.0
+0.026  0.0
+0.027  0.0
+0.028  0.0
+0.029  0.0
+0.03  0.0
+0.031  0.0
+0.032  0.0
+0.033  0.0
+0.034  0.0
+0.035  0.0
+0.036  0.0
+0.037  0.0
+0.038  0.0
+0.039  0.0
+0.04  0.0
+0.041  0.0
+0.042  0.0
+0.043  0.0
+0.044  0.0
+0.045  0.0
+0.046  0.0
+0.047  0.0
+0.048  0.0
+0.049  0.0
+0.05  0.0
+0.051  0.0
+0.052  0.0
+0.053  0.0
+0.054  0.0
+0.055  0.0
+0.056  0.0
+0.057  0.0
+0.058  0.0
+0.059  0.0
+0.06  0.0
+0.061  0.0
+0.062  0.0
+0.063  0.0
+0.064  0.0
+0.065  0.0
+0.066  0.0
+0.067  0.0
+0.068  0.0
+0.069  0.0
+0.07  0.0
+0.071  0.0
+0.072  0.0
+0.073  0.0
+0.074  0.0
+0.075  0.0
+0.076  0.0
+0.077  0.0
+0.078  0.0
+0.079  0.0
+0.08  0.0
+0.081  0.0
+0.082  0.0
+0.083  0.0
+0.084  0.0
+0.085  0.0
+0.086  0.0
+0.087  0.0
+0.088  0.0
+0.089  0.0
+0.09  0.0
+0.091  0.0
+0.092  0.0
+0.093  0.0
+0.094  0.0
+0.095  0.0
+0.096  0.0
+0.097  0.0
+0.098  0.0
+0.099  0.0
+0.1  0.0
+0.101  0.0
+0.102  0.0
+0.103  0.0
+0.104  0.0
+0.105  0.0
+0.106  0.0
+0.107  0.0
+0.108  0.0
+0.109  0.0
+0.11  0.0
+0.111  0.0
+0.112  0.0
+0.113  0.0
+0.114  0.0
+0.115  0.0
+0.116  0.0
+0.117  0.0
+0.118  0.0
+0.119  0.0
+0.12  0.0
+0.121  0.0
+0.122  0.0
+0.123  0.0
+0.124  0.0
+0.125  0.0
+0.126  0.0
+0.127  0.0
+0.128  0.0
+0.129  0.0
+0.13  0.0
+0.131  0.0
+0.132  0.0
+0.133  0.0
+0.134  0.0
+0.135  0.0
+0.136  0.0
+0.137  0.0
+0.138  0.0
+0.139  0.0
+0.14  0.0
+0.141  0.0
+0.142  0.0
+0.143  0.0
+0.144  0.0
+0.145  0.0
+0.146  0.0
+0.147  0.0
+0.148  0.0
+0.149  0.0
+0.15  0.0
+0.151  0.0
+0.152  0.0
+0.153  0.0
+0.154  0.0
+0.155  0.0
+0.156  0.0
+0.157  0.0
+0.158  0.0
+0.159  0.0
+0.16  0.0
+0.161  0.0
+0.162  0.0
+0.163  0.0
+0.164  0.0
+0.165  0.0
+0.166  0.0
+0.167  0.0
+0.168  0.0
+0.169  0.0
+0.17  0.0
+0.171  0.0
+0.172  0.0
+0.173  0.0
+0.174  0.0
+0.175  0.0
+0.176  0.0
+0.177  0.0
+0.178  0.0
+0.179  0.0
+0.18  0.0
+0.181  0.0
+0.182  0.0
+0.183  0.0
+0.184  0.0
+0.185  0.0
+0.186  0.0
+0.187  0.0
+0.188  0.0
+0.189  0.0
+0.19  0.0
+0.191  0.0
+0.192  0.0
+0.193  0.0
+0.194  0.0
+0.195  0.0
+0.196  0.0
+0.197  0.0
+0.198  0.0
+0.199  0.0
+0.2  0.0
+0.201  0.0
+0.202  0.0
+0.203  0.0
+0.204  0.0
+0.205  0.0
+0.206  0.0
+0.207  0.0
+0.208  0.0
+0.209  0.0
+0.21  0.0
+0.211  0.0
+0.212  0.0
+0.213  0.0
+0.214  0.0
+0.215  0.0
+0.216  0.0
+0.217  0.0
+0.218  0.0
+0.219  0.0
+0.22  0.0
+0.221  0.0
+0.222  0.0
+0.223  0.0
+0.224  0.0
+0.225  0.0
+0.226  0.0
+0.227  0.0
+0.228  0.0
+0.229  0.0
+0.23  0.0
+0.231  0.0
+0.232  0.0
+0.233  0.0
+0.234  0.0
+0.235  0.0
+0.236  0.0
+0.237  0.0
+0.238  0.0
+0.239  0.0
+0.24  0.0
+0.241  0.0
+0.242  0.0
+0.243  0.0
+0.244  0.0
+0.245  0.0
+0.246  0.0
+0.247  0.0
+0.248  0.0
+0.249  0.0
+0.25  0.0
+0.251  0.0
+0.252  0.0
+0.253  0.0
+0.254  0.0
+0.255  0.0
+0.256  0.0
+0.257  0.0
+0.258  0.0
+0.259  0.0
+0.26  0.0
+0.261  0.0
+0.262  0.0
+0.263  0.0
+0.264  0.0
+0.265  0.0
+0.266  0.0
+0.267  0.0
+0.268  0.0
+0.269  0.0
+0.27  0.0
+0.271  0.0
+0.272  0.0
+0.273  0.0
+0.274  0.0
+0.275  0.0
+0.276  0.0
+0.277  0.0
+0.278  0.0
+0.279  0.0
+0.28  0.0
+0.281  0.0
+0.282  0.0
+0.283  0.0
+0.284  0.0
+0.285  0.0
+0.286  0.0
+0.287  0.0
+0.288  0.0
+0.289  0.0
+0.29  0.0
+0.291  0.0
+0.292  0.0
+0.293  0.0
+0.294  0.0
+0.295  0.0
+0.296  0.0
+0.297  0.0
+0.298  0.0
+0.299  0.0
+0.3  0.0
+0.301  0.0
+0.302  0.0
+0.303  0.0
+0.304  0.0
+0.305  0.0
+0.306  0.0
+0.307  0.0
+0.308  0.0
+0.309  0.0
+0.31  0.0
+0.311  0.0
+0.312  0.0
+0.313  0.0
+0.314  0.0
+0.315  0.0
+0.316  0.0
+0.317  0.0
+0.318  0.0
+0.319  0.0
+0.32  0.0
+0.321  0.0
+0.322  0.0
+0.323  0.0
+0.324  0.0
+0.325  0.0
+0.326  0.0
+0.327  0.0
+0.328  0.0
+0.329  0.0
+0.33  0.0
+0.331  0.0
+0.332  0.0
+0.333  0.0
+0.334  0.0
+0.335  0.0
+0.336  0.0
+0.337  0.0
+0.338  0.0
+0.339  0.0
+0.34  0.0
+0.341  0.0
+0.342  0.0
+0.343  0.0
+0.344  0.0
+0.345  0.0
+0.346  0.0
+0.347  0.0
+0.348  0.0
+0.349  0.0
+0.35  0.0
+0.351  0.0
+0.352  0.0
+0.353  0.0
+0.354  0.0
+0.355  0.0
+0.356  0.0
+0.357  0.0
+0.358  0.0
+0.359  0.0
+0.36  0.0
+0.361  0.0
+0.362  0.0
+0.363  0.0
+0.364  0.0
+0.365  0.0
+0.366  0.0
+0.367  0.0
+0.368  0.0
+0.369  0.0
+0.37  0.0
+0.371  0.0
+0.372  0.0
+0.373  0.0
+0.374  0.0
+0.375  0.0
+0.376  0.0
+0.377  0.0
+0.378  0.0
+0.379  0.0
+0.38  0.0
+0.381  0.0
+0.382  0.0
+0.383  0.0
+0.384  0.0
+0.385  0.0
+0.386  0.0
+0.387  0.0
+0.388  0.0
+0.389  0.0
+0.39  0.0
+0.391  0.0
+0.392  0.0
+0.393  0.0
+0.394  0.0
+0.395  0.0
+0.396  0.0
+0.397  0.0
+0.398  0.0
+0.399  0.0
+0.4  0.0
+0.401  0.0
+0.402  0.0
+0.403  0.0
+0.404  0.0
+0.405  0.0
+0.406  0.0
+0.407  0.0
+0.408  0.0
+0.409  0.0
+0.41  0.0
+0.411  0.0
+0.412  0.0
+0.413  0.0
+0.414  0.0
+0.415  0.0
+0.416  0.0
+0.417  0.0
+0.418  0.0
+0.419  0.0
+0.42  0.0
+0.421  0.0
+0.422  0.0
+0.423  0.0
+0.424  0.0
+0.425  0.0
+0.426  0.0
+0.427  0.0
+0.428  0.0
+0.429  0.0
+0.43  0.0
+0.431  0.0
+0.432  0.0
+0.433  0.0
+0.434  0.0
+0.435  0.0
+0.436  0.0
+0.437  0.0
+0.438  0.0
+0.439  0.0
+0.44  0.0
+0.441  0.0
+0.442  0.0
+0.443  0.0
+0.444  0.0
+0.445  0.0
+0.446  0.0
+0.447  0.0
+0.448  0.0
+0.449  0.0
+0.45  0.0
+0.451  0.0
+0.452  0.0
+0.453  0.0
+0.454  0.0
+0.455  0.0
+0.456  0.0
+0.457  0.0
+0.458  0.0
+0.459  0.0
+0.46  0.0
+0.461  0.0
+0.462  0.0
+0.463  0.0
+0.464  0.0
+0.465  0.0
+0.466  0.0
+0.467  0.0
+0.468  0.0
+0.469  0.0
+0.47  0.0
+0.471  0.0
+0.472  0.0
+0.473  0.0
+0.474  0.0
+0.475  0.0
+0.476  0.0
+0.477  0.0
+0.478  0.0
+0.479  0.0
+0.48  0.0
+0.481  0.0
+0.482  0.0
+0.483  0.0
+0.484  0.0
+0.485  0.0
+0.486  0.0
+0.487  0.0
+0.488  0.0
+0.489  0.0
+0.49  0.0
+0.491  0.0
+0.492  0.0
+0.493  0.0
+0.494  0.0
+0.495  0.0
+0.496  0.0
+0.497  0.0
+0.498  0.0
+0.499  0.0
+0.5  0.0
+0.501  0.0
+0.502  0.0
+0.503  0.0
+0.504  0.0
+0.505  0.0
+0.506  0.0
+0.507  0.0
+0.508  0.0
+0.509  0.0
+0.51  0.0
+0.511  0.0
+0.512  0.0
+0.513  0.0
+0.514  0.0
+0.515  0.0
+0.516  0.0
+0.517  0.0
+0.518  0.0
+0.519  0.0
+0.52  0.0
+0.521  0.0
+0.522  0.0
+0.523  0.0
+0.524  0.0
+0.525  0.0
+0.526  0.0
+0.527  0.0
+0.528  0.0
+0.529  0.0
+0.53  0.0
+0.531  0.0
+0.532  0.0
+0.533  0.0
+0.534  0.0
+0.535  0.0
+0.536  0.0
+0.537  0.0
+0.538  0.0
+0.539  0.0
+0.54  0.0
+0.541  0.0
+0.542  0.0
+0.543  0.0
+0.544  0.0
+0.545  0.0
+0.546  0.0
+0.547  0.0
+0.548  0.0
+0.549  0.0
+0.55  0.0
+0.551  0.0
+0.552  0.0
+0.553  0.0
+0.554  0.0
+0.555  0.0
+0.556  0.0
+0.557  0.0
+0.558  0.0
+0.559  0.0
+0.56  0.0
+0.561  0.0
+0.562  0.0
+0.563  0.0
+0.564  0.0
+0.565  0.0
+0.566  0.0
+0.567  0.0
+0.568  0.0
+0.569  0.0
+0.57  0.0
+0.571  0.0
+0.572  0.0
+0.573  0.0
+0.574  0.0
+0.575  0.0
+0.576  0.0
+0.577  0.0
+0.578  0.0
+0.579  0.0
+0.58  0.0
+0.581  0.0
+0.582  0.0
+0.583  0.0
+0.584  0.0
+0.585  0.0
+0.586  0.0
+0.587  0.0
+0.588  0.0
+0.589  0.0
+0.59  0.0
+0.591  0.0
+0.592  0.0
+0.593  0.0
+0.594  0.0
+0.595  0.0
+0.596  0.0
+0.597  0.0
+0.598  0.0
+0.599  0.0
+0.6  0.0
+0.601  0.0
+0.602  0.0
+0.603  0.0
+0.604  0.0
+0.605  0.0
+0.606  0.0
+0.607  0.0
+0.608  0.0
+0.609  0.0
+0.61  0.0
+0.611  0.0
+0.612  0.0
+0.613  0.0
+0.614  0.0
+0.615  0.0
+0.616  0.0
+0.617  0.0
+0.618  0.0
+0.619  0.0
+0.62  0.0
+0.621  0.0
+0.622  0.0
+0.623  0.0
+0.624  0.0
+0.625  0.0
+0.626  0.0
+0.627  0.0
+0.628  0.0
+0.629  0.0
+0.63  0.0
+0.631  0.0
+0.632  0.0
+0.633  0.0
+0.634  0.0
+0.635  0.0
+0.636  0.0
+0.637  0.0
+0.638  0.0
+0.639  0.0
+0.64  0.0
+0.641  0.0
+0.642  0.0
+0.643  0.0
+0.644  0.0
+0.645  0.0
+0.646  0.0
+0.647  0.0
+0.648  0.0
+0.649  0.0
+0.65  0.0
+0.651  0.0
+0.652  0.0
+0.653  0.0
+0.654  0.0
+0.655  0.0
+0.656  0.0
+0.657  0.0
+0.658  0.0
+0.659  0.0
+0.66  0.0
+0.661  0.0
+0.662  0.0
+0.663  0.0
+0.664  0.0
+0.665  0.0
+0.666  0.0
+0.667  0.0
+0.668  0.0
+0.669  0.0
+0.67  0.0
+0.671  0.0
+0.672  0.0
+0.673  0.0
+0.674  0.0
+0.675  0.0
+0.676  0.0
+0.677  0.0
+0.678  0.0
+0.679  0.0
+0.68  0.0
+0.681  0.0
+0.682  0.0
+0.683  0.0
+0.684  0.0
+0.685  0.0
+0.686  0.0
+0.687  0.0
+0.688  0.0
+0.689  0.0
+0.68965447  0.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="FreeRecFuncPr" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  2.0
+0.001  2.0
+0.002  2.0
+0.003  2.0
+0.004  2.0
+0.005  2.0
+0.006  2.0
+0.007  2.0
+0.008  2.0
+0.009  2.0
+0.01  2.0
+0.011  2.0
+0.012  2.0
+0.013  2.0
+0.014  2.0
+0.015  2.0
+0.016  2.0
+0.017  2.0
+0.018  2.0
+0.019  2.0
+0.02  2.0
+0.021  2.0
+0.022  2.0
+0.023  2.0
+0.024  2.0
+0.025  2.0
+0.026  2.0
+0.027  2.0
+0.028  2.0
+0.029  2.0
+0.03  2.0
+0.031  2.0
+0.032  2.0
+0.033  2.0
+0.034  2.0
+0.035  2.0
+0.036  2.0
+0.037  2.0
+0.038  2.0
+0.039  2.0
+0.04  2.0
+0.041  2.0
+0.042  2.0
+0.043  2.0
+0.044  2.0
+0.045  2.0
+0.046  2.0
+0.047  2.0
+0.048  2.0
+0.049  2.0
+0.05  2.0
+0.051  2.0
+0.052  2.0
+0.053  2.0
+0.054  2.0
+0.055  2.0
+0.056  2.0
+0.057  2.0
+0.058  2.0
+0.059  2.0
+0.06  2.0
+0.061  2.0
+0.062  2.0
+0.063  2.0
+0.064  2.0
+0.065  2.0
+0.066  2.0
+0.067  2.0
+0.068  2.0
+0.069  2.0
+0.07  2.0
+0.071  2.0
+0.072  2.0
+0.073  2.0
+0.074  2.0
+0.075  2.0
+0.076  2.0
+0.077  2.0
+0.078  2.0
+0.079  2.0
+0.08  2.0
+0.081  2.0
+0.082  2.0
+0.083  2.0
+0.084  2.0
+0.085  2.0
+0.086  2.0
+0.087  2.0
+0.088  2.0
+0.089  2.0
+0.09  2.0
+0.091  2.0
+0.092  2.0
+0.093  2.0
+0.094  2.0
+0.095  2.0
+0.096  2.0
+0.097  2.0
+0.098  2.0
+0.099  2.0
+0.1  2.0
+0.101  2.0
+0.102  2.0
+0.103  2.0
+0.104  2.0
+0.105  2.0
+0.106  2.0
+0.107  2.0
+0.108  2.0
+0.109  2.0
+0.11  2.0
+0.111  2.0
+0.112  2.0
+0.113  2.0
+0.114  2.0
+0.115  2.0
+0.116  2.0
+0.117  2.0
+0.118  2.0
+0.119  2.0
+0.12  2.0
+0.121  2.0
+0.122  2.0
+0.123  2.0
+0.124  2.0
+0.125  2.0
+0.126  2.0
+0.127  2.0
+0.128  2.0
+0.129  2.0
+0.13  2.0
+0.131  2.0
+0.132  2.0
+0.133  2.0
+0.134  2.0
+0.135  2.0
+0.136  2.0
+0.137  2.0
+0.138  2.0
+0.139  2.0
+0.14  2.0
+0.141  2.0
+0.142  2.0
+0.143  2.0
+0.144  2.0
+0.145  2.0
+0.146  2.0
+0.147  2.0
+0.148  2.0
+0.149  2.0
+0.15  2.0
+0.151  2.0
+0.152  2.0
+0.153  2.0
+0.154  2.0
+0.155  2.0
+0.156  2.0
+0.157  2.0
+0.158  2.0
+0.159  2.0
+0.16  2.0
+0.161  2.0
+0.162  2.0
+0.163  2.0
+0.164  2.0
+0.165  2.0
+0.166  2.0
+0.167  2.0
+0.168  2.0
+0.169  2.0
+0.17  2.0
+0.171  2.0
+0.172  2.0
+0.173  2.0
+0.174  2.0
+0.175  2.0
+0.176  2.0
+0.177  2.0
+0.178  2.0
+0.179  2.0
+0.18  2.0
+0.181  2.0
+0.182  2.0
+0.183  2.0
+0.184  2.0
+0.185  2.0
+0.186  2.0
+0.187  2.0
+0.188  2.0
+0.189  2.0
+0.19  2.0
+0.191  2.0
+0.192  2.0
+0.193  2.0
+0.194  2.0
+0.195  2.0
+0.196  2.0
+0.197  2.0
+0.198  2.0
+0.199  2.0
+0.2  2.0
+0.201  2.0
+0.202  2.0
+0.203  2.0
+0.204  2.0
+0.205  2.0
+0.206  2.0
+0.207  2.0
+0.208  2.0
+0.209  2.0
+0.21  2.0
+0.211  2.0
+0.212  2.0
+0.213  2.0
+0.214  2.0
+0.215  2.0
+0.216  2.0
+0.217  2.0
+0.218  2.0
+0.219  2.0
+0.22  2.0
+0.221  2.0
+0.222  2.0
+0.223  2.0
+0.224  2.0
+0.225  2.0
+0.226  2.0
+0.227  2.0
+0.228  2.0
+0.229  2.0
+0.23  2.0
+0.231  2.0
+0.232  2.0
+0.233  2.0
+0.234  2.0
+0.235  2.0
+0.236  2.0
+0.237  2.0
+0.238  2.0
+0.239  2.0
+0.24  2.0
+0.241  2.0
+0.242  2.0
+0.243  2.0
+0.244  2.0
+0.245  2.0
+0.246  2.0
+0.247  2.0
+0.248  2.0
+0.249  2.0
+0.25  2.0
+0.251  2.0
+0.252  2.0
+0.253  2.0
+0.254  2.0
+0.255  2.0
+0.256  2.0
+0.257  2.0
+0.258  2.0
+0.259  2.0
+0.26  2.0
+0.261  2.0
+0.262  2.0
+0.263  2.0
+0.264  2.0
+0.265  2.0
+0.266  2.0
+0.267  2.0
+0.268  2.0
+0.269  2.0
+0.27  2.0
+0.271  2.0
+0.272  2.0
+0.273  2.0
+0.274  2.0
+0.275  2.0
+0.276  2.0
+0.277  2.0
+0.278  2.0
+0.279  2.0
+0.28  2.0
+0.281  2.0
+0.282  2.0
+0.283  2.0
+0.284  2.0
+0.285  2.0
+0.286  2.0
+0.287  2.0
+0.288  2.0
+0.289  2.0
+0.29  2.0
+0.291  2.0
+0.292  2.0
+0.293  2.0
+0.294  2.0
+0.295  2.0
+0.296  2.0
+0.297  2.0
+0.298  2.0
+0.299  2.0
+0.3  2.0
+0.301  2.0
+0.302  2.0
+0.303  2.0
+0.304  2.0
+0.305  2.0
+0.306  2.0
+0.307  2.0
+0.308  2.0
+0.309  2.0
+0.31  2.0
+0.311  2.0
+0.312  2.0
+0.313  2.0
+0.314  2.0
+0.315  2.0
+0.316  2.0
+0.317  2.0
+0.318  2.0
+0.319  2.0
+0.32  2.0
+0.321  2.0
+0.322  2.0
+0.323  2.0
+0.324  2.0
+0.325  2.0
+0.326  2.0
+0.327  2.0
+0.328  2.0
+0.329  2.0
+0.33  2.0
+0.331  2.0
+0.332  2.0
+0.333  2.0
+0.334  2.0
+0.335  2.0
+0.336  2.0
+0.337  2.0
+0.338  2.0
+0.339  2.0
+0.34  2.0
+0.341  2.0
+0.342  2.0
+0.343  2.0
+0.344  2.0
+0.345  2.0
+0.346  2.0
+0.347  2.0
+0.348  2.0
+0.349  2.0
+0.35  2.0
+0.351  2.0
+0.352  2.0
+0.353  2.0
+0.354  2.0
+0.355  2.0
+0.356  2.0
+0.357  2.0
+0.358  2.0
+0.359  2.0
+0.36  2.0
+0.361  2.0
+0.362  2.0
+0.363  2.0
+0.364  2.0
+0.365  2.0
+0.366  2.0
+0.367  2.0
+0.368  2.0
+0.369  2.0
+0.37  2.0
+0.371  2.0
+0.372  2.0
+0.373  2.0
+0.374  2.0
+0.375  2.0
+0.376  2.0
+0.377  2.0
+0.378  2.0
+0.379  2.0
+0.38  2.0
+0.381  2.0
+0.382  2.0
+0.383  2.0
+0.384  2.0
+0.385  2.0
+0.386  2.0
+0.387  2.0
+0.388  2.0
+0.389  2.0
+0.39  2.0
+0.391  2.0
+0.392  2.0
+0.393  2.0
+0.394  2.0
+0.395  2.0
+0.396  2.0
+0.397  2.0
+0.398  2.0
+0.399  2.0
+0.4  2.0
+0.401  2.0
+0.402  2.0
+0.403  2.0
+0.404  2.0
+0.405  2.0
+0.406  2.0
+0.407  2.0
+0.408  2.0
+0.409  2.0
+0.41  2.0
+0.411  2.0
+0.412  2.0
+0.413  2.0
+0.414  2.0
+0.415  2.0
+0.416  2.0
+0.417  2.0
+0.418  2.0
+0.419  2.0
+0.42  2.0
+0.421  2.0
+0.422  2.0
+0.423  2.0
+0.424  2.0
+0.425  2.0
+0.426  2.0
+0.427  2.0
+0.428  2.0
+0.429  2.0
+0.43  2.0
+0.431  2.0
+0.432  2.0
+0.433  2.0
+0.434  2.0
+0.435  2.0
+0.436  2.0
+0.437  2.0
+0.438  2.0
+0.439  2.0
+0.44  2.0
+0.441  2.0
+0.442  2.0
+0.443  2.0
+0.444  2.0
+0.445  2.0
+0.446  2.0
+0.447  2.0
+0.448  2.0
+0.449  2.0
+0.45  2.0
+0.451  2.0
+0.452  2.0
+0.453  2.0
+0.454  2.0
+0.455  2.0
+0.456  2.0
+0.457  2.0
+0.458  2.0
+0.459  2.0
+0.46  2.0
+0.461  2.0
+0.462  2.0
+0.463  2.0
+0.464  2.0
+0.465  2.0
+0.466  2.0
+0.467  2.0
+0.468  2.0
+0.469  2.0
+0.47  2.0
+0.471  2.0
+0.472  2.0
+0.473  2.0
+0.474  2.0
+0.475  2.0
+0.476  2.0
+0.477  2.0
+0.478  2.0
+0.479  2.0
+0.48  2.0
+0.481  2.0
+0.482  2.0
+0.483  2.0
+0.484  2.0
+0.485  2.0
+0.486  2.0
+0.487  2.0
+0.488  2.0
+0.489  2.0
+0.49  2.0
+0.491  2.0
+0.492  2.0
+0.493  2.0
+0.494  2.0
+0.495  2.0
+0.496  2.0
+0.497  2.0
+0.498  2.0
+0.499  2.0
+0.5  2.0
+0.501  2.0
+0.502  2.0
+0.503  2.0
+0.504  2.0
+0.505  2.0
+0.506  2.0
+0.507  2.0
+0.508  2.0
+0.509  2.0
+0.51  2.0
+0.511  2.0
+0.512  2.0
+0.513  2.0
+0.514  2.0
+0.515  2.0
+0.516  2.0
+0.517  2.0
+0.518  2.0
+0.519  2.0
+0.52  2.0
+0.521  2.0
+0.522  2.0
+0.523  2.0
+0.524  2.0
+0.525  2.0
+0.526  2.0
+0.527  2.0
+0.528  2.0
+0.529  2.0
+0.53  2.0
+0.531  2.0
+0.532  2.0
+0.533  2.0
+0.534  2.0
+0.535  2.0
+0.536  2.0
+0.537  2.0
+0.538  2.0
+0.539  2.0
+0.54  2.0
+0.541  2.0
+0.542  2.0
+0.543  2.0
+0.544  2.0
+0.545  2.0
+0.546  2.0
+0.547  2.0
+0.548  2.0
+0.549  2.0
+0.55  2.0
+0.551  2.0
+0.552  2.0
+0.553  2.0
+0.554  2.0
+0.555  2.0
+0.556  2.0
+0.557  2.0
+0.558  2.0
+0.559  2.0
+0.56  2.0
+0.561  2.0
+0.562  2.0
+0.563  2.0
+0.564  2.0
+0.565  2.0
+0.566  2.0
+0.567  2.0
+0.568  2.0
+0.569  2.0
+0.57  2.0
+0.571  2.0
+0.572  2.0
+0.573  2.0
+0.574  2.0
+0.575  2.0
+0.576  2.0
+0.577  2.0
+0.578  2.0
+0.579  2.0
+0.58  2.0
+0.581  2.0
+0.582  2.0
+0.583  2.0
+0.584  2.0
+0.585  2.0
+0.586  2.0
+0.587  2.0
+0.588  2.0
+0.589  2.0
+0.59  2.0
+0.591  2.0
+0.592  2.0
+0.593  2.0
+0.594  2.0
+0.595  2.0
+0.596  2.0
+0.597  2.0
+0.598  2.0
+0.599  2.0
+0.6  2.0
+0.601  2.0
+0.602  2.0
+0.603  2.0
+0.604  2.0
+0.605  2.0
+0.606  2.0
+0.607  2.0
+0.608  2.0
+0.609  2.0
+0.61  2.0
+0.611  2.0
+0.612  2.0
+0.613  2.0
+0.614  2.0
+0.615  2.0
+0.616  2.0
+0.617  2.0
+0.618  2.0
+0.619  2.0
+0.62  2.0
+0.621  2.0
+0.622  2.0
+0.623  2.0
+0.624  2.0
+0.625  2.0
+0.626  2.0
+0.627  2.0
+0.628  2.0
+0.629  2.0
+0.63  2.0
+0.631  2.0
+0.632  2.0
+0.633  2.0
+0.634  2.0
+0.635  2.0
+0.636  2.0
+0.637  2.0
+0.638  2.0
+0.639  2.0
+0.64  2.0
+0.641  2.0
+0.642  2.0
+0.643  2.0
+0.644  2.0
+0.645  2.0
+0.646  2.0
+0.647  2.0
+0.648  2.0
+0.649  2.0
+0.65  2.0
+0.651  2.0
+0.652  2.0
+0.653  2.0
+0.654  2.0
+0.655  2.0
+0.656  2.0
+0.657  2.0
+0.658  2.0
+0.659  2.0
+0.66  2.0
+0.661  2.0
+0.662  2.0
+0.663  2.0
+0.664  2.0
+0.665  2.0
+0.666  2.0
+0.667  2.0
+0.668  2.0
+0.669  2.0
+0.67  2.0
+0.671  2.0
+0.672  2.0
+0.673  2.0
+0.674  2.0
+0.675  2.0
+0.676  2.0
+0.677  2.0
+0.678  2.0
+0.679  2.0
+0.68  2.0
+0.681  2.0
+0.682  2.0
+0.683  2.0
+0.684  2.0
+0.685  2.0
+0.686  2.0
+0.687  2.0
+0.688  2.0
+0.689  2.0
+0.68965447  2.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+<g class="legend " transform="translate(41.0,41.0)"> <!-- legend -->
+<g class="FreeRecFuncPz">
+<line class="FreeRecFuncPz" x1="0" y1="0" x2="10" y2="0" />
+<text class="FreeRecFuncPz" font-size="12" x="11" y="0">Free Surface Factor Pz</text>
+</g>
+<g class="FreeRecFuncPr">
+<line class="FreeRecFuncPr" x1="0" y1="14" x2="10" y2="14" />
+<text class="FreeRecFuncPr" font-size="12" x="11" y="14">Free Surface Factor Pr</text>
+</g>
+</g> <!-- legend end-->
+</svg>

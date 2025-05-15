@@ -58,7 +58,6 @@ public class CriticalDepth implements Cloneable, Serializable {
     private int SLayerNum;
 
     // Constructors
-    public CriticalDepth() {}
 
     public CriticalDepth(double depth,
                          int velLayerNum,
@@ -124,7 +123,7 @@ public class CriticalDepth implements Cloneable, Serializable {
             return newObject;
         } catch(CloneNotSupportedException e) {
             // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
+            Alert.warning("Caught CloneNotSupportedException: "
                     + e.getMessage());
             throw new InternalError(e.toString());
         }

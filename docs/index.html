@@ -1,0 +1,76 @@
+<p><img alt="Alt TauP" src="https://crotwell.github.io/TauP/taupLogo.svg" />
+<a class="reference external image-reference" href="https://search.maven.org/search?q=g:%22edu.sc.seis%22%20AND%20a:%22TauP%22"><img alt="Maven Central" src="https://img.shields.io/maven-central/v/edu.sc.seis/TauP.svg?label=Maven%20Central" /></a>
+<a class="reference external image-reference" href="https://javadoc.io/doc/edu.sc.seis/TauP"><img alt="javadoc" src="https://javadoc.io/badge2/edu.sc.seis/TauP/javadoc.svg" /></a>
+<a class="reference external image-reference" href="https://snapcraft.io/taup"><img alt="taup" src="https://snapcraft.io/taup/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/crotwell/TauP/actions/workflows/gradle.yml"><img alt="Tests" src="https://github.com/crotwell/TauP/actions/workflows/gradle.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://taup.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/taup/badge/?version=latest" /></a></p>
+<pre class="code literal-block"><code>                       The TauP Toolkit
+
+        Flexible Seismic Travel-Time and Raypath Utilities
+                          Version 3.0
+                  http://www.seis.sc.edu/taup/
+</code></pre>
+<p>The TauP Toolkit is a seismic travel time calculator. In addition to travel
+times, it can calculate derivative information such as ray paths through the
+earth, pierce and turning points. It handles many types of velocity models and
+can calculate times for virtually any seismic phase with a phase parser.
+It is written in Java so it should run on any Java enabled platform.</p>
+<p>The website for the TauP Toolkit is:
+https://github.com/crotwell/TauP</p>
+<p>Documentation is available at <a class="reference external" href="https://taup.readthedocs.io/en/latest/">Read The Docs</a>, or in docs/manual directory of the distribution.</p>
+<p>If you like TauP and would like to cite it, please use the following:
+Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160, as well as the <a class="reference external" href="https://zenodo.org/doi/10.5281/zenodo.10794857">Zenodo DOI</a> for the version you are using..
+Crotwell, H. P. (2022). The TauP Toolkit (2.6.1). Zenodo. https://doi.org/10.5281/zenodo.10794858</p>
+<p>Comments, criticism and random remarks may be sent to taup&#64;seis.sc.edu.</p>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">index.md</span>, line 34)</p>
+<p>Document headings start at H3, not H1 [myst.header]</p>
+</aside>
+<section id="install">
+<h1>Install</h1>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">index.md</span>, line 36)</p>
+<p>Document headings start at H2, not H1 [myst.header]</p>
+</aside>
+</section>
+<section id="macintosh">
+<h1>Macintosh</h1>
+<p>Using <a class="reference external" href="https://brew.sh/">homebrew</a>:</p>
+<pre class="code literal-block"><code>brew tap crotwell/crotwell
+brew install taup
+taup --help
+</code></pre>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">index.md</span>, line 45)</p>
+<p>Document headings start at H2, not H1 [myst.header]</p>
+</aside>
+</section>
+<section id="linux">
+<h1>Linux</h1>
+<p>Using <a class="reference external" href="https://snapcraft.io">snap</a>:</p>
+<pre class="code literal-block"><code>sudo snap install taup
+taup --help
+</code></pre>
+<p>Note: I have only tested this on Ubuntu on amd64.</p>
+<p>You may also get the lastest development version via</p>
+<pre class="code literal-block"><code>sudo snap install taup --channel=latest/edge
+</code></pre>
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">index.md</span>, line 60)</p>
+<p>Document headings start at H2, not H1 [myst.header]</p>
+</aside>
+</section>
+<section id="manually">
+<h1>Manually</h1>
+<p>Download tarball from Zenodo here:
+https://zenodo.org/records/10794858
+or from the releases section on Github
+https://github.com/crotwell/TauP/releases</p>
+<section id="rebuilding">
+<h2>Rebuilding</h2>
+<p>You should not need to rebuild TauP unless you are trying to help debug, but if you do, you can build it using the Gradle wrapper script.</p>
+<pre class="code literal-block"><code>./gradlew installDist
+</code></pre>
+<p>will build TauP into the build/install directory.</p>
+</section>
+</section>

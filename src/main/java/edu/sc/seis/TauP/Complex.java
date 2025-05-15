@@ -135,6 +135,9 @@ public class Complex implements java.io.Serializable, Cloneable {
         return (Double.isNaN(re) || Double.isNaN(im));
     }
 
+
+    public static final Complex NaN = new Complex(Double.NaN, Double.NaN);
+
     /**
      * Tests if this is an infinite complex number.
      * 

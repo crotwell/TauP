@@ -1,0 +1,26 @@
+{
+  "model": "iasp91",
+  "sourcedepthlist": [
+    10.0
+  ],
+  "receiverdepthlist": [
+    0.0
+  ],
+  "phases": [
+    "P"
+  ],
+  "arrivals": [
+    {
+      "sourcedepth": 10.0,
+      "receiverdepth": 0.0,
+      "distdeg": 35.0,
+      "phase": "P",
+      "time": 412.4329,
+      "rayparam": 8.613012,
+      "takeoff": 26.741543,
+      "incident": 26.69624,
+      "puristdist": 35.0,
+      "puristname": "P"
+    }
+  ]
+}

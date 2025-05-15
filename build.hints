@@ -1,0 +1,50 @@
+
+# rerun sphinx for docs
+conda activate sphinx
+./gradlew sphinx
+
+# check for dep updates
+./gradlew dependencyUpdates
+
+# wrapper
+./gradlew wrapper --gradle-version 8.13 --distribution-type bin
+
+# regen cmd line tests, check for any differences
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
+
+./gradlew cCLTF
+
+./gradlew javadoc sphinx iD check
+
+JReleaser
+---------
+To create templates for brew, snap, docker, etc, in case need to modify:
+jreleaser template generate -b src/jreleaser -p brew -d taup
+
+dryrun is set to true in build.gradle.kts to avoid accidentaly upload
+
+
+
+# On release:
+--------------
+publish to oss.sonatype
+
+get new DOI
+  Go to existing TauP on zenodo, log in, then
+  https://zenodo.org/records/10794858
+  then click "Manage Record"
+  then "New Version"
+
+  https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/
+
+update cite, version in
+  README.md
+  overview.rst
+  docs/index.md
+
+update CITATION.cff via
+  https://citation-file-format.github.io/cff-initializer-javascript/
+
+
+upload to zenodo, check auto upload from github so maybe just edit fields
+  https://zenodo.org/me/uploads?q=&l=list&p=1&s=10&sort=newest

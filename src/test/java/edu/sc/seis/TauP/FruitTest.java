@@ -16,8 +16,7 @@ public class FruitTest {
     @BeforeEach
     public void setUp() throws Exception {
         VelocityModel vMod = VelocityModelTest.loadTestVelMod(fruitModelFile);
-        TauP_Create taupCreate = new TauP_Create();
-        tMod = taupCreate.createTauModel(vMod);
+        tMod = TauModelLoader.createTauModel(vMod);
         sMod = tMod.getSlownessModel();
     }
 
@@ -34,11 +33,17 @@ public class FruitTest {
     public void noMantleP() throws Exception {
         SimpleSeismicPhase P = SeismicPhaseFactory.createPhase("P", tMod);
         double tol = 0.01;
+        assertInstanceOf(SimpleContigSeismicPhase.class, P);
+        SimpleContigSeismicPhase preshadow = (SimpleContigSeismicPhase)P;
+        System.err.println("preshad:  "+preshadow.getMinRayParam()+" "+preshadow.getMaxRayParam());
         assertEquals(0.0, P.getMinDistanceDeg(), tol);
-        assertEquals(72.66, P.getMaxDistanceDeg(), tol);
-        assertEquals(2, P.branchSeq.size());
-        assertEquals(0, P.branchSeq.get(0));
-        assertEquals(0, P.branchSeq.get(1));
+        assertEquals(0.0, preshadow.getMinDistanceDeg(), tol);
+        assertEquals(72.66, preshadow.getMaxDistanceDeg(), tol);
+
+        assertEquals(0, P.getInitialPhaseSegment().startBranch);
+        assertEquals(0, P.getInitialPhaseSegment().endBranch);
+        assertEquals(0, P.getFinalPhaseSegment().startBranch);
+        assertEquals(0, P.getFinalPhaseSegment().endBranch);
     }
 
 }

@@ -1,61 +1,18 @@
 package edu.sc.seis.TauP;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface SeismicPhase extends Serializable, Cloneable {
-    /**
-     * @return max refractions distance for head waves
-     * @deprecated see SeismicPhaseFactory
-     */
-    static double getMaxRefraction() {
-        return SeismicPhaseFactory.getMaxRefraction();
-    }
 
-    /**
-     * set max refractions distance for head waves
-     *
-     * @deprecated see SeismicPhaseFactory
-     */
-    static void setMaxRefraction(double max) {
-        SeismicPhaseFactory.setMaxRefraction(max);
-    }
+    boolean PWAVE = true;
+    boolean SWAVE = false;
 
-    /**
-     * @return max diffraction distance for diff waves
-     * @deprecated see SeismicPhaseFactory
-     */
-    static double getMaxDiffraction() {
-        return SeismicPhaseFactory.getMaxDiffraction();
-    }
-
-    /**
-     * set max diffraction distance for diff waves
-     *
-     * @deprecated see SeismicPhaseFactory
-     */
-    static void setMaxDiffraction(double max) {
-        SeismicPhaseFactory.setMaxDiffraction(max);
-    }
-
-    static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
-        Arrival minArrival = null;
-        for (SeismicPhase seismicPhase : phases) {
-            seismicPhase.calcTime(degrees);
-            Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
-            if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
-                minArrival = currArrival;
-            }
-        }
-        return minArrival;
-    }
 
     boolean phasesExistsInModel();
 
     Arrival getEarliestArrival(double degrees);
-
-    TauModel getTauModel();
 
     double getMinDistanceDeg();
 
@@ -69,9 +26,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double getMinRayParam();
 
-    int getMaxRayParamIndex();
+    double getMinTime();
 
-    int getMinRayParamIndex();
+    double getMaxTime();
 
     String getName();
 
@@ -81,9 +38,40 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double getReceiverDepth();
 
-    List<String> getLegs();
+    boolean hasArrivals();
 
-    List<SeismicPhaseSegment> getPhaseSegments();
+    String describe();
+
+    String describeShort();
+
+    TauModel getTauModel();
+
+    static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
+        Arrival minArrival = null;
+        for (SeismicPhase seismicPhase : phases) {
+            Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
+            if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
+                minArrival = currArrival;
+            }
+        }
+        return minArrival;
+    }
+
+    boolean isFail();
+
+    String failReason();
+
+    int getMaxRayParamIndex();
+
+    int getMinRayParamIndex();
+
+    List<List<SeismicPhaseSegment>> getListPhaseSegments();
+
+    SeismicPhaseSegment getInitialPhaseSegment();
+
+    SeismicPhaseSegment getFinalPhaseSegment();
+
+    int countFlatLegs();
 
     double getRayParams(int i);
 
@@ -101,14 +89,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double[] getTau();
 
-    boolean[] getDownGoing();
-
-    boolean[] getWaveType();
-
-    int[] getLegAction();
-
-    boolean hasArrivals();
-
     static double distanceTrim180(double deg) {
         double tempDeg = deg;
         if(tempDeg < 0.0) {
@@ -124,27 +104,100 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return tempDeg;
     }
 
-    List<Arrival> calcTime(double deg);
+    /**
+     * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     * @param rayNum index in ray parameters
+     */
+    Arrival createArrivalAtIndex(int rayNum);
 
-    Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
+    Arrival shootRay(double rayParam) throws TauPException;
 
-    double calcRayParamForTakeoffAngle(double takeoffDegree);
+    /** True is all segments of this path are only P waves.
+     *
+     */
+    boolean isAllPWave();
+
+    /** True is all segments of this path are only S waves.
+     *
+     */
+    boolean isAllSWave();
+
+    double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException;
+
+    double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException;
+
+    double velocityAtSource();
+
+    double velocityAtReceiver();
+
+    double densityAtReceiver();
+
+    double densityAtSource();
+
+    double calcTakeoffAngleDegree(double arrivalRayParam);
 
     double calcTakeoffAngle(double arrivalRayParam);
 
     double calcIncidentAngle(double arrivalRayParam);
 
-    String describe();
+    double calcIncidentAngleDegree(double arrivalRayParam);
+
+    /**
+     * True if the initial leg, leaving the source, wavetype is a P wave, false if an S wave.
+     */
+    boolean sourceSegmentIsPWave();
+
+    /**
+     * True if the final, incident, wavetype is a P wave, false if an S wave.
+     */
+    boolean finalSegmentIsPWave();
+
+    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException, SlownessModelException, TauModelException;
 
     String toString();
 
     void dump();
 
-    List<TimeDist> calcPierceTimeDist(Arrival arrival);
+    SeismicPhase interpolatePhase(double maxDeltaDeg);
 
-    List<TimeDist> calcPathTimeDist(Arrival arrival);
+    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
 
-    public static String baseDescribe(SeismicPhase phase) {
+    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
+
+    List<TimeDist> interpPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException;
+
+    double calcTstar(Arrival currArrival) throws NoArrivalException;
+
+    /**
+     * Split calculated array into segments for repeated ray parameter values, which indicate a
+     * discontinuity in the calculations usually due to low velocity zone.
+     *
+     * @param rayParams ray parameter array for phase
+     * @param values derived array, such as distance, time, tau, etc.
+     * @return list of arrays for each contiguous segment
+     */
+    static List<double[]> splitForRepeatRayParam(double[] rayParams, double[] values) {
+        List<double[]> out = new ArrayList<>();
+        int partialStart = 0;
+        if (rayParams.length != values.length) {
+            throw new IllegalArgumentException("rayParams and values must be same length: "+rayParams.length+" "+values.length);
+        }
+        for (int i = 0; i < values.length-1; i++) {
+            if((rayParams[i] == rayParams[i + 1]) && rayParams.length > 2) {
+                double[] partialValues = new double[1+i-partialStart];
+                System.arraycopy(values, partialStart, partialValues, 0, partialValues.length);
+                out.add(partialValues);
+                partialStart = i+1;
+            }
+        }
+        // and last partial section
+        double[] partialValues = new double[values.length-partialStart];
+        System.arraycopy(values, partialStart, partialValues, 0, partialValues.length);
+        out.add(partialValues);
+        return out;
+    }
+
+    static String baseDescribe(SeismicPhase phase) {
         String desc = "";
         if (phase.phasesExistsInModel()) {
 
@@ -157,38 +210,35 @@ public interface SeismicPhase extends Serializable, Cloneable {
                 mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
             }
             desc += "  exists from "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+" to "
-                    +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees.\n";
+                    +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees in the "
+                    +phase.getTauModel().getModelName()+" model.\n";
             if (phase.getMaxRayParam() > phase.getMinRayParam()) {
-                desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)
-                        + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD) + " sec/deg.\n";
+                desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)
+                        + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             } else {
-                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD) + " sec/deg.\n";
+                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             }
-            double[] time = phase.getTime();
-            double[] dist = phase.getDist();
-            double[] rayParams = phase.getRayParams();
-            desc += "  travel times from " + Outputs.formatTimeNoPad(time[0]) + " to " + Outputs.formatTimeNoPad(time[time.length - 1]) + " sec";
-            for (int i = 0; i < dist.length; i++) {
-                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
-                        && rayParams.length > 2) {
-                    /* Here we have a shadow zone, so output a warning of break in curve. */
-                    desc += "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
-                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg";
-                }
+            desc += "  travel times from " + Outputs.formatTimeNoPad(phase.getMinTime()) + " to " + Outputs.formatTimeNoPad(phase.getMaxTime()) + " sec";
+            StringBuilder builder = new StringBuilder();
+            for (ShadowZone shad : phase.getShadowZones()) {
+                Arrival pre = shad.getPreArrival();
+                Arrival post = shad.getPostArrival();
+                builder.append( "\n  with shadow zone between " + Outputs.formatDistance(pre.getDistDeg())
+                        + " and " + Outputs.formatDistance(post.getDistDeg()) + " deg");
             }
-            desc += ".\n";
+            builder.append(".\n");
+            desc += builder.toString();
         } else {
             desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
         }
         return desc;
     }
 
-    public static String segmentDescribe(SeismicPhase phase) {
-        String desc = "";
-        String indent = "  ";
-        for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
-            desc += indent+ segment.toString()+"\n";
-        }
-        return desc;
+    static String segmentDescribe(SeismicPhase phase) {
+        return SeismicPhaseSegment.segmentListDescribe(phase.getListPhaseSegments());
     }
+
+    int getNumRays();
+
+    List<ShadowZone> getShadowZones();
 }

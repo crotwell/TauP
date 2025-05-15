@@ -13,11 +13,10 @@ class SlownessModelToVelocityModel {
      * 
      * @throws TauModelException
      * @throws NoSuchLayerException
-     * @throws NoSuchMatPropException
      */
     @ParameterizedTest
     @ValueSource(strings = {"iasp91", "ak135", "prem"})
-    void sModTovMod(String modelName) throws TauModelException, NoSuchLayerException, NoSuchMatPropException {
+    void sModTovMod(String modelName) throws TauModelException, NoSuchLayerException {
 
         TauModel tMod = TauModelLoader.load(modelName);
         SlownessModel sMod = tMod.getSlownessModel();
@@ -28,11 +27,11 @@ class SlownessModelToVelocityModel {
                 // velocity values
                 double topcalcVel = (vMod.radiusOfEarth - sLayer.getTopDepth())
                         / sLayer.getTopP();
-                assertEquals(vMod.evaluateBelow(sLayer.getTopDepth(), 'P'), topcalcVel, 0.01, "P at "+sLayer.getTopDepth()+" "+sLayer);
+                assertEquals(vMod.evaluateBelow(sLayer.getTopDepth(), VelocityModelMaterial.P_VELOCITY), topcalcVel, 0.01, "P at "+sLayer.getTopDepth()+" "+sLayer);
                 if (sLayer.getBotDepth() != sMod.getRadiusOfEarth()) {
                     double botcalcVel = (vMod.radiusOfEarth - sLayer.getBotDepth())
                             / sLayer.getBotP();
-                    assertEquals(vMod.evaluateAbove(sLayer.getBotDepth(), 'P'), botcalcVel, 0.01, "P at "+sLayer.getBotDepth()+" "+sLayer);
+                    assertEquals(vMod.evaluateAbove(sLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY), botcalcVel, 0.01, "P at "+sLayer.getBotDepth()+" "+sLayer);
                 }
             }
         }
@@ -45,11 +44,11 @@ class SlownessModelToVelocityModel {
                 // velocity values
                 double calcVel = (vMod.radiusOfEarth - sLayer.getTopDepth())
                         / sLayer.getTopP();
-                assertEquals(vMod.evaluateBelow(sLayer.getTopDepth(), 'S'), calcVel, 0.01, "S at "+sLayer.getTopDepth());
+                assertEquals(vMod.evaluateBelow(sLayer.getTopDepth(), VelocityModelMaterial.S_VELOCITY), calcVel, 0.01, "S at "+sLayer.getTopDepth());
                 if (sLayer.getBotDepth() != sMod.getRadiusOfEarth()) {
                     double botcalcVel = (vMod.radiusOfEarth - sLayer.getBotDepth())
                             / sLayer.getBotP();
-                    assertEquals(vMod.evaluateAbove(sLayer.getBotDepth(), 'S'), botcalcVel, 0.01, "S at "+sLayer.getBotDepth()+" "+sLayer);
+                    assertEquals(vMod.evaluateAbove(sLayer.getBotDepth(), VelocityModelMaterial.S_VELOCITY), botcalcVel, 0.01, "S at "+sLayer.getBotDepth()+" "+sLayer);
                 }
             }
         }
@@ -62,11 +61,10 @@ class SlownessModelToVelocityModel {
      * 
      * @throws TauModelException
      * @throws NoSuchLayerException
-     * @throws NoSuchMatPropException
      */
     @ParameterizedTest
     @ValueSource(strings = {"iasp91", "ak135", "prem"})
-    void vModTosMod(String modelName) throws TauModelException, NoSuchLayerException, NoSuchMatPropException {
+    void vModTosMod(String modelName) throws TauModelException, NoSuchLayerException {
 
         TauModel tMod = TauModelLoader.load(modelName);
         SlownessModel sMod = tMod.getSlownessModel();
@@ -106,12 +104,11 @@ class SlownessModelToVelocityModel {
      * 
      * @throws TauModelException
      * @throws NoSuchLayerException
-     * @throws NoSuchMatPropException
      * @throws SlownessModelException 
      */
     @ParameterizedTest
     @ValueSource(strings = {"iasp91", "ak135", "prem"})
-    void sModCenterRayParam(String modelName) throws TauModelException, NoSuchLayerException, NoSuchMatPropException, SlownessModelException {
+    void sModCenterRayParam(String modelName) throws TauModelException, NoSuchLayerException, SlownessModelException {
 
         TauModel tMod = TauModelLoader.load(modelName);
         SlownessModel sMod = tMod.getSlownessModel();

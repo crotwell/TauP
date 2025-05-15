@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TauP VelocityPlot &#8212; TauP 3.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TauP Discon" href="taup_discon.html" />
+    <link rel="prev" title="TauP VelocityMerge" href="taup_velmerge.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_table.html">TauP Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setms3.html">TauP SetMS3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tools.html">Tools</a><ul>
+      <li>Previous: <a href="taup_velmerge.html" title="previous chapter">TauP VelocityMerge</a></li>
+      <li>Next: <a href="taup_discon.html" title="next chapter">TauP Discon</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="taup-velocityplot">
+<span id="taup-velplot"></span><h1>TauP VelocityPlot<a class="headerlink" href="#taup-velocityplot" title="Link to this heading">¶</a></h1>
+<p>TauP VelocityPlot creates a plot the given velocity model. It can create
+traditional plots of velocity and density as a function of depth, but can
+also plot various derived quantities like Poisson’s Ratio and other material
+properties.</p>
+<p>For example, a plot of P and S velocity against depth on the
+y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup velplot --mod ak135fcont --mod prem --svg
+</pre></div>
+</div>
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 656.0 656.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup velplot &#45;&#45;mod ak135fcont &#45;&#45;mod prem &#45;&#45;svg -o stdout </command>
+      <version>3.0.0</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.0" xmax="13.7166" ymin="0.0" ymax="6371.0" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
+        polyline.swave {
+            stroke: red;
+        }
+        circle.swave {
+            stroke: red;
+            fill: red;
+        }
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave text {
+          fill: red;
+          stroke: transparent;
+        }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
+        polyline.pwave {
+            stroke: blue;
+        }
+        circle.pwave {
+            stroke: blue;
+            fill: blue;
+        }
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave text {
+          fill: blue;
+          stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
+        }
+        polyline.both_p_swave {
+            stroke: green;
+        }
+        circle.both_p_swave {
+            stroke: green;
+            fill: green;
+        }
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave text {
+          fill: green;
+          stroke: transparent;
+        }
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        g.autocolor > :nth-child(4n+1) {
+            stroke: blue;
+        }
+        g.autocolor > :nth-child(4n+2) {
+            stroke: red;
+        }
+        g.autocolor > :nth-child(4n+3) {
+            stroke: blue;
+        }
+        g.autocolor > :nth-child(4n+4) {
+            stroke: red;
+        }
+
+        .autocolor.phaselabel > :nth-child(4n+1) {
+            fill: blue;
+        }
+        .autocolor.phaselabel > :nth-child(4n+2) {
+            fill: red;
+        }
+        .autocolor.phaselabel > :nth-child(4n+3) {
+            fill: blue;
+        }
+        .autocolor.phaselabel > :nth-child(4n+4) {
+            fill: red;
+        }
+
+        .autocolor.legend > :nth-child(4n+1) {
+            fill: blue;
+        }
+        .autocolor.legend > :nth-child(4n+2) {
+            fill: red;
+        }
+        .autocolor.legend > :nth-child(4n+3) {
+            fill: blue;
+        }
+        .autocolor.legend > :nth-child(4n+4) {
+            fill: red;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="208.0" y="0">ak135fcont, prem</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Depth (km)</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
+<line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
+<text class="ytick" font-size="12" x="-12.0" y="65.29587">1000.0</text>
+<line class="tick" x1="0" y1="65.29587" x2="-10.0" y2="65.29587" />
+<text class="ytick" font-size="12" x="-12.0" y="130.59174">2000.0</text>
+<line class="tick" x1="0" y1="130.59174" x2="-10.0" y2="130.59174" />
+<text class="ytick" font-size="12" x="-12.0" y="195.88762">3000.0</text>
+<line class="tick" x1="0" y1="195.88762" x2="-10.0" y2="195.88762" />
+<text class="ytick" font-size="12" x="-12.0" y="261.18347">4000.0</text>
+<line class="tick" x1="0" y1="261.18347" x2="-10.0" y2="261.18347" />
+<text class="ytick" font-size="12" x="-12.0" y="326.47937">5000.0</text>
+<line class="tick" x1="0" y1="326.47937" x2="-10.0" y2="326.47937" />
+<text class="ytick" font-size="12" x="-12.0" y="391.77524">6000.0</text>
+<line class="tick" x1="0" y1="391.77524" x2="-10.0" y2="391.77524" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Velocity (km/s)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="30.328215446976657" y="438.0">1.0</text>
+<line class="tick" x1="30.328215446976657" y1="416.0" x2="30.328215446976657" y2="426.0" />
+<text class="xtick" font-size="12" x="60.65643089395331" y="438.0">2.0</text>
+<line class="tick" x1="60.65643089395331" y1="416.0" x2="60.65643089395331" y2="426.0" />
+<text class="xtick" font-size="12" x="90.98464634092997" y="438.0">3.0</text>
+<line class="tick" x1="90.98464634092997" y1="416.0" x2="90.98464634092997" y2="426.0" />
+<text class="xtick" font-size="12" x="121.31286178790663" y="438.0">4.0</text>
+<line class="tick" x1="121.31286178790663" y1="416.0" x2="121.31286178790663" y2="426.0" />
+<text class="xtick" font-size="12" x="151.64107723488328" y="438.0">5.0</text>
+<line class="tick" x1="151.64107723488328" y1="416.0" x2="151.64107723488328" y2="426.0" />
+<text class="xtick" font-size="12" x="181.96929268185994" y="438.0">6.0</text>
+<line class="tick" x1="181.96929268185994" y1="416.0" x2="181.96929268185994" y2="426.0" />
+<text class="xtick" font-size="12" x="212.29750812883657" y="438.0">7.0</text>
+<line class="tick" x1="212.29750812883657" y1="416.0" x2="212.29750812883657" y2="426.0" />
+<text class="xtick" font-size="12" x="242.62572357581325" y="438.0">8.0</text>
+<line class="tick" x1="242.62572357581325" y1="416.0" x2="242.62572357581325" y2="426.0" />
+<text class="xtick" font-size="12" x="272.95393902278994" y="438.0">9.0</text>
+<line class="tick" x1="272.95393902278994" y1="416.0" x2="272.95393902278994" y2="426.0" />
+<text class="xtick" font-size="12" x="303.28215446976657" y="438.0">10.0</text>
+<line class="tick" x1="303.28215446976657" y1="416.0" x2="303.28215446976657" y2="426.0" />
+<text class="xtick" font-size="12" x="333.6103699167432" y="438.0">11.0</text>
+<line class="tick" x1="333.6103699167432" y1="416.0" x2="333.6103699167432" y2="426.0" />
+<text class="xtick" font-size="12" x="363.9385853637199" y="438.0">12.0</text>
+<line class="tick" x1="363.9385853637199" y1="416.0" x2="363.9385853637199" y2="426.0" />
+<text class="xtick" font-size="12" x="394.2668008106965" y="438.0">13.0</text>
+<line class="tick" x1="394.2668008106965" y1="416.0" x2="394.2668008106965" y2="426.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(30.328215,0.065295875)" >
+<g transform="translate(-0.0, -0.0)">
+    <g class="autocolor">
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="pwave" tauplabel="ak135fcont Velocity (km/s) / Depth (km)"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+5.8  0.0
+5.8  20.0
+6.5  20.0
+6.5  35.0
+8.04  35.0
+8.045  77.5
+8.0505  120.0
+8.175  165.0
+8.3007  210.0
+8.4822  260.0
+8.665  310.0
+8.8476  360.0
+9.0302  410.0
+9.3601  410.0
+9.528  460.0
+9.6962  510.0
+9.864  560.0
+10.032  610.0
+10.2  660.0
+10.7909  660.0
+10.9222  710.0
+11.0553  760.0
+11.1355  809.5
+11.2228  859.0
+11.3068  908.5
+11.3897  958.0
+11.4704  1007.5
+11.5493  1057.0
+11.6265  1106.5
+11.702  1156.0
+11.7768  1205.5
+11.8491  1255.0
+11.9208  1304.5
+11.9891  1354.0
+12.0571  1403.5
+12.1247  1453.0
+12.1912  1502.5
+12.2558  1552.0
+12.3181  1601.5
+12.3813  1651.0
+12.4427  1700.5
+12.503  1750.0
+12.5638  1799.5
+12.6226  1849.0
+12.6807  1898.5
+12.7384  1948.0
+12.7956  1997.5
+12.8524  2047.0
+12.9093  2096.5
+12.9663  2146.0
+13.0226  2195.5
+13.0786  2245.0
+13.1337  2294.5
+13.1895  2344.0
+13.2465  2393.5
+13.3017  2443.0
+13.3584  2492.5
+13.4156  2542.0
+13.4741  2591.5
+13.5311  2640.0
+13.5899  2690.0
+13.6498  2740.0
+13.6533  2789.67
+13.657  2839.33
+13.6601  2891.5
+8.0  2891.5
+8.0382  2939.33
+8.1283  2989.66
+8.2213  3039.99
+8.3122  3090.32
+8.4001  3140.66
+8.4861  3190.99
+8.5692  3241.32
+8.6496  3291.65
+8.7283  3341.98
+8.8036  3392.31
+8.8761  3442.64
+8.9461  3492.97
+9.0138  3543.3
+9.0792  3593.64
+9.1426  3643.97
+9.2042  3694.3
+9.2634  3744.63
+9.3205  3794.96
+9.376  3845.29
+9.4297  3895.62
+9.4814  3945.95
+9.5306  3996.28
+9.5777  4046.62
+9.6232  4096.95
+9.6673  4147.28
+9.71  4197.61
+9.7513  4247.94
+9.7914  4298.27
+9.8304  4348.6
+9.8682  4398.93
+9.9051  4449.26
+9.941  4499.6
+9.9761  4549.93
+10.0103  4600.26
+10.0439  4650.59
+10.0768  4700.92
+10.1095  4751.25
+10.1415  4801.58
+10.1739  4851.91
+10.2049  4902.24
+10.2329  4952.58
+10.2565  5002.91
+10.2745  5053.24
+10.2854  5103.57
+10.289  5153.5
+11.0427  5153.5
+11.0585  5204.61
+11.0718  5255.32
+11.085  5306.04
+11.0983  5356.75
+11.1166  5407.46
+11.1316  5458.17
+11.1457  5508.89
+11.159  5559.6
+11.1715  5610.31
+11.1832  5661.02
+11.1941  5711.74
+11.2041  5762.45
+11.2134  5813.16
+11.2219  5863.87
+11.2295  5914.59
+11.2364  5965.3
+11.2424  6016.01
+11.2477  6066.72
+11.2521  6117.44
+11.2557  6168.15
+11.2586  6218.86
+11.2606  6269.57
+11.2618  6320.29
+11.2622  6371.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end ak135fcont Velocity (km/s) / Depth (km) -->
+    </g> <!-- end invert axis -->
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="swave" tauplabel="ak135fcont Velocity (km/s) / Depth (km)"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+3.46  0.0
+3.46  20.0
+3.85  20.0
+3.85  35.0
+4.48  35.0
+4.49  77.5
+4.5  120.0
+4.509  165.0
+4.5184  210.0
+4.6094  260.0
+4.6964  310.0
+4.7832  360.0
+4.8702  410.0
+5.0806  410.0
+5.1864  460.0
+5.2922  510.0
+5.3989  560.0
+5.5047  610.0
+5.6104  660.0
+5.9607  660.0
+6.0898  710.0
+6.21  760.0
+6.2424  809.5
+6.2799  859.0
+6.3164  908.5
+6.3519  958.0
+6.386  1007.5
+6.4182  1057.0
+6.4514  1106.5
+6.4822  1156.0
+6.5131  1205.5
+6.5431  1255.0
+6.5728  1304.5
+6.6009  1354.0
+6.6285  1403.5
+6.6554  1453.0
+6.6813  1502.5
+6.707  1552.0
+6.7323  1601.5
+6.7579  1651.0
+6.782  1700.5
+6.8056  1750.0
+6.8289  1799.5
+6.8517  1849.0
+6.8743  1898.5
+6.8972  1948.0
+6.9194  1997.5
+6.9416  2047.0
+6.9625  2096.5
+6.9852  2146.0
+7.0069  2195.5
+7.0286  2245.0
+7.0504  2294.5
+7.0722  2344.0
+7.0932  2393.5
+7.1144  2443.0
+7.1368  2492.5
+7.1584  2542.0
+7.1804  2591.5
+7.2031  2640.0
+7.2253  2690.0
+7.2485  2740.0
+7.2593  2789.67
+7.27  2839.33
+7.2817  2891.5
+0.0  2891.5
+0.0  2939.33
+0.0  2989.66
+0.0  3039.99
+0.0  3090.32
+0.0  3140.66
+0.0  3190.99
+0.0  3241.32
+0.0  3291.65
+0.0  3341.98
+0.0  3392.31
+0.0  3442.64
+0.0  3492.97
+0.0  3543.3
+0.0  3593.64
+0.0  3643.97
+0.0  3694.3
+0.0  3744.63
+0.0  3794.96
+0.0  3845.29
+0.0  3895.62
+0.0  3945.95
+0.0  3996.28
+0.0  4046.62
+0.0  4096.95
+0.0  4147.28
+0.0  4197.61
+0.0  4247.94
+0.0  4298.27
+0.0  4348.6
+0.0  4398.93
+0.0  4449.26
+0.0  4499.6
+0.0  4549.93
+0.0  4600.26
+0.0  4650.59
+0.0  4700.92
+0.0  4751.25
+0.0  4801.58
+0.0  4851.91
+0.0  4902.24
+0.0  4952.58
+0.0  5002.91
+0.0  5053.24
+0.0  5103.57
+0.0  5153.5
+3.5043  5153.5
+3.5187  5204.61
+3.5314  5255.32
+3.5435  5306.04
+3.5551  5356.75
+3.5661  5407.46
+3.5765  5458.17
+3.5864  5508.89
+3.5957  5559.6
+3.6044  5610.31
+3.6126  5661.02
+3.6202  5711.74
+3.6272  5762.45
+3.6337  5813.16
+3.6396  5863.87
+3.645  5914.59
+3.6498  5965.3
+3.654  6016.01
+3.6577  6066.72
+3.6608  6117.44
+3.6633  6168.15
+3.6653  6218.86
+3.6667  6269.57
+3.6675  6320.29
+3.6678  6371.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end ak135fcont Velocity (km/s) / Depth (km) -->
+    </g> <!-- end invert axis -->
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="pwave" tauplabel="prem Velocity (km/s) / Depth (km)"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+5.8  0.0
+5.8  15.0
+6.8  15.0
+6.8  24.4
+8.11061  24.4
+8.10119  40.0
+8.08907  60.0
+8.07688  80.0
+8.0554  115.0
+8.0337  150.0
+8.0118  185.0
+7.9897  220.0
+8.55896  220.0
+8.64552  265.0
+8.73209  310.0
+8.81867  355.0
+8.90522  400.0
+9.13397  400.0
+9.3899  450.0
+9.64588  500.0
+9.90185  550.0
+10.15782  600.0
+10.21203  635.0
+10.26622  670.0
+10.75131  670.0
+10.91005  721.0
+11.06557  771.0
+11.2449  871.0
+11.4156  971.0
+11.57828  1071.0
+11.73357  1171.0
+11.88209  1271.0
+12.02445  1371.0
+12.16126  1471.0
+12.29316  1571.0
+12.42075  1671.0
+12.54466  1771.0
+12.6655  1871.0
+12.78389  1971.0
+12.90045  2071.0
+13.01579  2171.0
+13.13055  2271.0
+13.24532  2371.0
+13.36074  2471.0
+13.47742  2571.0
+13.59597  2671.0
+13.68041  2741.0
+13.68753  2771.0
+13.71168  2871.0
+13.7166  2891.0
+8.06482  2891.0
+8.19939  2971.0
+8.36019  3071.0
+8.51298  3171.0
+8.65805  3271.0
+8.79573  3371.0
+8.92632  3471.0
+9.05015  3571.0
+9.16752  3671.0
+9.27867  3771.0
+9.38418  3871.0
+9.48409  3971.0
+9.57881  4071.0
+9.66865  4171.0
+9.75393  4271.0
+9.83496  4371.0
+9.91206  4471.0
+9.98554  4571.0
+10.05572  4671.0
+10.12291  4771.0
+10.18743  4871.0
+10.24959  4971.0
+10.30971  5071.0
+10.35568  5149.5
+11.02827  5149.5
+11.03643  5171.0
+11.07249  5271.0
+11.10542  5371.0
+11.13521  5471.0
+11.16186  5571.0
+11.18538  5671.0
+11.20576  5771.0
+11.22301  5871.0
+11.23712  5971.0
+11.24809  6071.0
+11.25593  6171.0
+11.26064  6271.0
+11.2622  6371.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end prem Velocity (km/s) / Depth (km) -->
+    </g> <!-- end invert axis -->
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="swave" tauplabel="prem Velocity (km/s) / Depth (km)"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+3.2  0.0
+3.2  15.0
+3.9  15.0
+3.9  24.4
+4.49094  24.4
+4.48486  40.0
+4.47715  60.0
+4.46953  80.0
+4.45643  115.0
+4.44361  150.0
+4.43108  185.0
+4.41885  220.0
+4.64391  220.0
+4.6754  265.0
+4.7069  310.0
+4.7384  355.0
+4.76989  400.0
+4.93259  400.0
+5.07842  450.0
+5.22428  500.0
+5.37014  550.0
+5.51602  600.0
+5.54311  635.0
+5.5702  670.0
+5.94508  670.0
+6.09418  721.0
+6.24046  771.0
+6.31091  871.0
+6.37813  971.0
+6.44232  1071.0
+6.5037  1171.0
+6.5625  1271.0
+6.61891  1371.0
+6.67317  1471.0
+6.72548  1571.0
+6.77606  1671.0
+6.82512  1771.0
+6.87289  1871.0
+6.91957  1971.0
+6.96538  2071.0
+7.01053  2171.0
+7.05525  2271.0
+7.09974  2371.0
+7.14423  2471.0
+7.18892  2571.0
+7.23403  2671.0
+7.26597  2741.0
+7.26575  2771.0
+7.26486  2871.0
+7.26466  2891.0
+0.0  2891.0
+0.0  2971.0
+0.0  3071.0
+0.0  3171.0
+0.0  3271.0
+0.0  3371.0
+0.0  3471.0
+0.0  3571.0
+0.0  3671.0
+0.0  3771.0
+0.0  3871.0
+0.0  3971.0
+0.0  4071.0
+0.0  4171.0
+0.0  4271.0
+0.0  4371.0
+0.0  4471.0
+0.0  4571.0
+0.0  4671.0
+0.0  4771.0
+0.0  4871.0
+0.0  4971.0
+0.0  5071.0
+0.0  5149.5
+3.50432  5149.5
+3.51002  5171.0
+3.53522  5271.0
+3.55823  5371.0
+3.57905  5471.0
+3.59767  5571.0
+3.61411  5671.0
+3.62835  5771.0
+3.64041  5871.0
+3.65027  5971.0
+3.65794  6071.0
+3.66342  6171.0
+3.6667  6271.0
+3.6678  6371.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end prem Velocity (km/s) / Depth (km) -->
+    </g> <!-- end invert axis -->
+    </g> <!-- end autocolor g -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+</svg>
+<p>Or a plot of Poisson’s Ratio for the <cite>ak135fcont</cite> model:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup velplot --mod ak135fcont -x poisson --svg
+</pre></div>
+</div>
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 656.0 656.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup velplot &#45;&#45;mod ak135fcont -x poisson &#45;&#45;svg -o stdout </command>
+      <version>3.0.0</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.22375440733972052" xmax="0.5" ymin="0.0" ymax="6371.0" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        g.swave polyline {
+            stroke: red;
+        }
+        g.swave circle {
+            stroke: red;
+            fill: red;
+        }
+        polyline.swave {
+            stroke: red;
+        }
+        circle.swave {
+            stroke: red;
+            fill: red;
+        }
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave text {
+          fill: red;
+          stroke: transparent;
+        }
+        g.pwave polyline {
+            stroke: blue;
+        }
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
+        }
+        polyline.pwave {
+            stroke: blue;
+        }
+        circle.pwave {
+            stroke: blue;
+            fill: blue;
+        }
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave text {
+          fill: blue;
+          stroke: transparent;
+        }
+        g.both_p_swave polyline {
+            stroke: green;
+        }
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
+        }
+        polyline.both_p_swave {
+            stroke: green;
+        }
+        circle.both_p_swave {
+            stroke: green;
+            fill: green;
+        }
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave text {
+          fill: green;
+          stroke: transparent;
+        }
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        g.autocolor > :nth-child(1n+1) {
+            stroke: green;
+        }
+
+        .autocolor.phaselabel > :nth-child(1n+1) {
+            fill: green;
+        }
+
+        .autocolor.legend > :nth-child(1n+1) {
+            fill: green;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="208.0" y="0">ak135fcont</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Depth (km)</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
+<line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
+<text class="ytick" font-size="12" x="-12.0" y="65.29587">1000.0</text>
+<line class="tick" x1="0" y1="65.29587" x2="-10.0" y2="65.29587" />
+<text class="ytick" font-size="12" x="-12.0" y="130.59174">2000.0</text>
+<line class="tick" x1="0" y1="130.59174" x2="-10.0" y2="130.59174" />
+<text class="ytick" font-size="12" x="-12.0" y="195.88762">3000.0</text>
+<line class="tick" x1="0" y1="195.88762" x2="-10.0" y2="195.88762" />
+<text class="ytick" font-size="12" x="-12.0" y="261.18347">4000.0</text>
+<line class="tick" x1="0" y1="261.18347" x2="-10.0" y2="261.18347" />
+<text class="ytick" font-size="12" x="-12.0" y="326.47937">5000.0</text>
+<line class="tick" x1="0" y1="326.47937" x2="-10.0" y2="326.47937" />
+<text class="ytick" font-size="12" x="-12.0" y="391.77524">6000.0</text>
+<line class="tick" x1="0" y1="391.77524" x2="-10.0" y2="391.77524" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Poisson's Ratio</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="24.46434160847337" y="438.0">0.24</text>
+<line class="tick" x1="24.46434160847337" y1="416.0" x2="24.46434160847337" y2="426.0" />
+<text class="xtick" font-size="12" x="54.582469177052374" y="438.0">0.26</text>
+<line class="tick" x1="54.582469177052374" y1="416.0" x2="54.582469177052374" y2="426.0" />
+<text class="xtick" font-size="12" x="84.70059674563136" y="438.0">0.28</text>
+<line class="tick" x1="84.70059674563136" y1="416.0" x2="84.70059674563136" y2="426.0" />
+<text class="xtick" font-size="12" x="114.81872431421037" y="438.0">0.3</text>
+<line class="tick" x1="114.81872431421037" y1="416.0" x2="114.81872431421037" y2="426.0" />
+<text class="xtick" font-size="12" x="144.93685188278937" y="438.0">0.32</text>
+<line class="tick" x1="144.93685188278937" y1="416.0" x2="144.93685188278937" y2="426.0" />
+<text class="xtick" font-size="12" x="175.05497945136835" y="438.0">0.34</text>
+<line class="tick" x1="175.05497945136835" y1="416.0" x2="175.05497945136835" y2="426.0" />
+<text class="xtick" font-size="12" x="205.17310701994734" y="438.0">0.36</text>
+<line class="tick" x1="205.17310701994734" y1="416.0" x2="205.17310701994734" y2="426.0" />
+<text class="xtick" font-size="12" x="235.29123458852638" y="438.0">0.38</text>
+<line class="tick" x1="235.29123458852638" y1="416.0" x2="235.29123458852638" y2="426.0" />
+<text class="xtick" font-size="12" x="265.4093621571053" y="438.0">0.4</text>
+<line class="tick" x1="265.4093621571053" y1="416.0" x2="265.4093621571053" y2="426.0" />
+<text class="xtick" font-size="12" x="295.52748972568435" y="438.0">0.42</text>
+<line class="tick" x1="295.52748972568435" y1="416.0" x2="295.52748972568435" y2="426.0" />
+<text class="xtick" font-size="12" x="325.64561729426333" y="438.0">0.44</text>
+<line class="tick" x1="325.64561729426333" y1="416.0" x2="325.64561729426333" y2="426.0" />
+<text class="xtick" font-size="12" x="355.7637448628423" y="438.0">0.46</text>
+<line class="tick" x1="355.7637448628423" y1="416.0" x2="355.7637448628423" y2="426.0" />
+<text class="xtick" font-size="12" x="385.88187243142136" y="438.0">0.48</text>
+<line class="tick" x1="385.88187243142136" y1="416.0" x2="385.88187243142136" y2="426.0" />
+<text class="xtick" font-size="12" x="416.00000000000034" y="438.0">0.5</text>
+<line class="tick" x1="416.00000000000034" y1="416.0" x2="416.00000000000034" y2="426.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(1505.9064,0.065295875)" >
+<g transform="translate(-0.2237544, -0.0)">
+    <g class="autocolor">
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="both_p_swave" tauplabel="ak135fcont Poisson's Ratio / Depth (km)"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.2237544  0.0
+0.2237544  20.0
+0.22978762  20.0
+0.22978762  35.0
+0.27485013  35.0
+0.2737968  77.5
+0.27278107  120.0
+0.28138408  165.0
+0.28946427  210.0
+0.2904725  260.0
+0.29202512  310.0
+0.29351464  360.0
+0.29491073  410.0
+0.29115757  410.0
+0.2894721  460.0
+0.2878515  510.0
+0.2861485  560.0
+0.28460318  610.0
+0.28310978  660.0
+0.2804451  660.0
+0.27444223  710.0
+0.26950663  760.0
+0.2708648  809.5
+0.2720768  859.0
+0.27317593  908.5
+0.27429375  958.0
+0.27540803  1007.5
+0.2765922  1057.0
+0.27756086  1106.5
+0.27865648  1156.0
+0.27968553  1205.5
+0.28065073  1255.0
+0.28159732  1304.5
+0.28250304  1354.0
+0.28342634  1403.5
+0.28438017  1453.0
+0.285356  1502.5
+0.28624067  1552.0
+0.28703538  1601.5
+0.28783646  1651.0
+0.28867257  1700.5
+0.28948873  1750.0
+0.29034397  1799.5
+0.2911371  1849.0
+0.29190475  1898.5
+0.2926188  1948.0
+0.2933604  1997.5
+0.29407486  2047.0
+0.2948933  2096.5
+0.29555756  2146.0
+0.29626504  2195.5
+0.2969511  2245.0
+0.29758212  2294.5
+0.29823613  2344.0
+0.29899734  2393.5
+0.29965773  2443.0
+0.30027944  2492.5
+0.30097705  2542.0
+0.30168912  2591.5
+0.30227792  2640.0
+0.30297104  2690.0
+0.30362457  2740.0
+0.30294892  2789.67
+0.30228713  2839.33
+0.30152318  2891.5
+0.5  2891.5
+0.5  2939.33
+0.5  2989.66
+0.5  3039.99
+0.5  3090.32
+0.5  3140.66
+0.5  3190.99
+0.5  3241.32
+0.5  3291.65
+0.5  3341.98
+0.5  3392.31
+0.5  3442.64
+0.5  3492.97
+0.5  3543.3
+0.5  3593.64
+0.5  3643.97
+0.5  3694.3
+0.5  3744.63
+0.5  3794.96
+0.5  3845.29
+0.5  3895.62
+0.5  3945.95
+0.5  3996.28
+0.5  4046.62
+0.5  4096.95
+0.5  4147.28
+0.5  4197.61
+0.5  4247.94
+0.5  4298.27
+0.5  4348.6
+0.5  4398.93
+0.5  4449.26
+0.5  4499.6
+0.5  4549.93
+0.5  4600.26
+0.5  4650.59
+0.5  4700.92
+0.5  4751.25
+0.5  4801.58
+0.5  4851.91
+0.5  4902.24
+0.5  4952.58
+0.5  5002.91
+0.5  5053.24
+0.5  5103.57
+0.5  5153.5
+0.44400877  5153.5
+0.44367507  5204.61
+0.4433733  5255.32
+0.44309148  5306.04
+0.4428285  5356.75
+0.44264445  5407.46
+0.44244412  5458.17
+0.44225144  5508.89
+0.4420711  5559.6
+0.44190314  5610.31
+0.44174394  5661.02
+0.4415971  5711.74
+0.4414614  5762.45
+0.44133562  5813.16
+0.44122216  5863.87
+0.4411162  5914.59
+0.44102377  5965.3
+0.44094244  6016.01
+0.44087097  6066.72
+0.44081062  6117.44
+0.44076258  6168.15
+0.44072437  6218.86
+0.44069728  6269.57
+0.44068247  6320.29
+0.44067633  6371.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end ak135fcont Poisson's Ratio / Depth (km) -->
+    </g> <!-- end invert axis -->
+    </g> <!-- end autocolor g -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+</svg>
+<p>While the <code class="code docutils literal notranslate"><span class="pre">--nameddiscon</span></code> option is oddly named, it allows easily getting
+the velocity model file for the standard models. For example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup velplot --nameddiscon --mod iasp91
+</pre></div>
+</div>
+<p>will extract the iasp91 velocity model into a file named ‘iasp91.nd’
+in the current directory.</p>
+<p>The usage is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
+                    [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
+                    [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [-x=type]
+                    [-y=type] [--xminmax=x x]... [--yminmax=y y]...
+                    [--mod=model [--mod=model]... | --nd=model [--nd=model]...
+                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --json |
+                    --nameddiscon | --svg | --text]
+Plot velocity vs depth for a model.
+
+Options:
+
+      --debug                enable debugging output
+      --help                 display this help message
+      --legend               create a legend
+      --mapwidth=&lt;mapwidth&gt;  plot width in units from --mapwidthunit.
+      --mapwidthunit=&lt;mapWidthUnit&gt;
+                             plot width unit, i for inch, c for cm or p for px.
+  -o, --output=&lt;outFile&gt;     output to file, default is stdout.
+      --prop=&lt;toolPropsFilename&gt;
+                             load defaults from properties file
+      --verbose              enable verbose output
+  -x, --xaxis=type           X axis data type, one of depth, radius, velocity,
+                               Vp, Vs, slownessdeg, slownessdeg_p,
+                               slownessdeg_s, slownessrad, slownessrad_p,
+                               slownessrad_s, density, velocity_density, Qp,
+                               Qs, Q, vpvs, vpdensity, vsdensity, poisson,
+                               shearmodulus, lambda, bulkmodulus, youngsmodulus
+                             Default is velocity.
+      --xminmax=x x          min and max x axis for plotting
+  -y, --yaxis=type           Y axis data type, one of depth, radius, velocity,
+                               Vp, Vs, slownessdeg, slownessdeg_p,
+                               slownessdeg_s, slownessrad, slownessrad_p,
+                               slownessrad_s, density, velocity_density, Qp,
+                               Qs, Q, vpvs, vpdensity, vsdensity, poisson,
+                               shearmodulus, lambda, bulkmodulus, youngsmodulus
+                             Default is depth.
+      --yminmax=y y          min and max y axis for plotting
+Velocity Model
+      --mod, --model=model   use velocity model &quot;modelname&quot; for calculations,
+                               format is guessed.
+      --nd=model             &quot;named discontinuities&quot; velocity file
+      --tvel=model           &quot;.tvel&quot; velocity file, ala ttimes
+Output Type:
+      --csv                  outputs as CSV
+      --gmt                  outputs as GMT
+      --json                 outputs as JSON
+      --nameddiscon          outputs as .nd named discontinuity model file
+      --svg                  outputs as SVG
+      --text                 outputs as Text
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/taup_velplot.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "!layout.html" %}
+  {% block footer %} {{ super() }}
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+{% endblock %}

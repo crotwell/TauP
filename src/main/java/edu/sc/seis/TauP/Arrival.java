@@ -25,8 +25,14 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
+
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 
 /**
  * convenience class for storing the parameters associated with a phase arrival.
@@ -40,37 +46,70 @@ import java.util.List;
  */
 public class Arrival {
 
+
     public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
+                   List<TimeDist> pierce,
+                   int rayParamIndex,
+                   double dRPdDist) {
+        this(phase,
+                simpleContigSeismicPhase,
+                pierce.get(pierce.size() - 1).getTime(),
+                pierce.get(pierce.size() - 1).getDistRadian(),
+                pierce.get(pierce.size() - 1).getP(),
+                rayParamIndex,
+                DistanceRay.ofRadians(pierce.get(pierce.size() - 1).getP()),
+                phase.getName(),
+                phase.getPuristName(),
+                phase.getSourceDepth(),
+                phase.getReceiverDepth(),
+                phase.calcTakeoffAngle(pierce.get(pierce.size() - 1).getP()),
+                phase.calcIncidentAngle(pierce.get(pierce.size() - 1).getP()),
+                dRPdDist
+                );
+        this.pierce = pierce.toArray(new TimeDist[0]);
+    }
+
+    public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
                    double time,
                    double dist,
                    double rayParam,
-                   int rayParamIndex) {
+                   int rayParamIndex,
+                   double dRPdDist) {
         this(phase,
+                simpleContigSeismicPhase,
                 time,
                 dist,
                 rayParam,
                 rayParamIndex,
-                dist,
+                DistanceRay.ofRadians(dist),
                 phase.getName(),
                 phase.getPuristName(),
                 phase.getSourceDepth(),
                 phase.getReceiverDepth(),
                 phase.calcTakeoffAngle(rayParam),
-                phase.calcIncidentAngle(rayParam));
+                phase.calcIncidentAngle(rayParam),
+                dRPdDist
+        );
     }
     public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
                    double time,
                    double dist,
                    double rayParam,
                    int rayParamIndex,
-                   double searchDist,
+                   RayCalculateable searchDist,
                    String name,
                    String puristName,
                    double sourceDepth,
                    double receiverDepth,
-                   double takeoffAngle,
-                   double incidentAngle) {
-
+                   double takeoffAngleRadian,
+                   double incidentAngleRadian,
+                   double dRPdDist) {
+        if ( ! (phase instanceof SimpleContigSeismicPhase || phase instanceof ScatteredSeismicPhase)) {
+            throw new IllegalArgumentException("Phase must be SimpleContigSeismicPhase or ScatteredSeismicPhase");
+        }
         if (Double.isNaN(time)) {
             throw new IllegalArgumentException("Time cannot be NaN");
         }
@@ -82,60 +121,157 @@ public class Arrival {
         this.dist = dist;
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
-        this.searchDist = searchDist;
+        this.searchCalc = searchDist;
         this.name = name;
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
         this.receiverDepth = receiverDepth;
-        this.takeoffAngle = takeoffAngle;
-        this.incidentAngle = incidentAngle;
+        this.takeoffAngleRadian = takeoffAngleRadian;
+        this.incidentAngleRadian = incidentAngleRadian;
+        this.dRPdDist = dRPdDist;
+        this.simpleContigSeismicPhase = simpleContigSeismicPhase;
+        this.pierce = null;
+        this.pathSegments = null;
     }
 
 
     /** phase that generated this arrival. */
-    private SeismicPhase phase;
+    private final SimpleContigSeismicPhase simpleContigSeismicPhase;
+
+    /** phase that generated this arrival. */
+    private final SeismicPhase phase;
 
     /** travel time in seconds */
-    private double time;
+    private final double time;
 
     /** angular distance (great circle) in radians */
-    private double dist;
+    private final double dist;
 
     /** ray parameter in seconds per radians. */
-    private double rayParam;
+    private final double rayParam;
 
-    private int rayParamIndex;
+    private final int rayParamIndex;
 
-    /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
-     * or be pi - dist for long way around. */
-    private double searchDist;
-    /** original angular search distance (great circle) in degrees. May differ from dist by multiple of 180
-     * or be 360 - dist for long way around. */
-    private double searchDistDeg;
+    private final double dRPdDist;
+
+    /** original angular search criteria, usually distance (great circle) in degrees.
+     * May differ from dist by multiple of 180
+     * or be 180 - dist for long way around. */
+    private RayCalculateable searchCalc;
 
     /** phase name */
-    private String name;
+    private final String name;
 
     /** phase name changed for true depths */
-    private String puristName;
+    private final String puristName;
 
     /** source depth in kilometers */
-    private double sourceDepth;
+    private final double sourceDepth;
 
     /** receiver depth in kilometers */
-    private double receiverDepth;
+    private final double receiverDepth;
 
     /** pierce and path points */
-    private TimeDist[] pierce, path;
+    private TimeDist[] pierce;
 
-    private double incidentAngle;
+    private List<ArrivalPathSegment> pathSegments;
+
+    private final double incidentAngleRadian;
     
-    private double takeoffAngle;
-    
+    private final double takeoffAngleRadian;
+
+    private Arrival relativeToArrival = null;
+
+    public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
+        arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
+        return arrivals;
+    }
+
+    public static List<Arrival> onlyFirst(List<Arrival> arrivalList) {
+        List<Arrival> first = new ArrayList<>();
+        List<Arrival> copyList = new ArrayList<>(arrivalList);
+        copyList = Arrival.sortArrivals(copyList);
+        while (!copyList.isEmpty()) {
+            Arrival early = copyList.get(0);
+            first.add(early);
+            copyList.remove(early);
+            List<Arrival> samePhase = new ArrayList<>();
+            for (Arrival a : copyList) {
+                if (a.getPhase() == early.getPhase()) {
+                    samePhase.add(a);
+                }
+            }
+            copyList.removeAll(samePhase);
+        }
+        return first;
+    }
+
+    public  String getCommentLine() {
+        String outName = getName();
+        if ( ! getName().equals(getPuristName())) {
+            outName+="("+getPuristName()+")";
+        }
+        String out = outName + " at "
+                + Outputs.formatTime(getTime())
+                + " seconds at "
+                + Outputs.formatDistance(getDistDeg())
+                + " degrees for a "
+                + Outputs.formatDepth(getSourceDepth())
+                + " km deep source in the " + getPhase().getTauModel().getModelName() + " model with rayParam "
+                + Outputs.formatRayParam(Math.PI / 180 * getRayParam())
+                + " s/deg";
+        if (getPhase().getReceiverDepth() != 0.0) {
+            out += ", receiver at depth: "+getPhase().getReceiverDepth()+" km";
+        }
+        if (getRayCalculateable().hasDescription()) {
+            out += ", "+getRayCalculateable().getDescription()+".";
+        } else {
+            out += ".";
+        }
+        return out;
+    }
+
     // get set methods
+
     /** @return the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {
         return phase;
+    }
+
+    /**
+     * Returns the contiguous part of the phase that generated this arrival.
+     * Usually the same as getPhase(), except in the
+     * case of CompositeSeismicPhase where several contiguous phases are separated by shadow zones.
+     *
+     * @return
+     */
+    public SimpleContigSeismicPhase getSimpleContigSeismicPhase() {
+        if (phase instanceof SimpleContigSeismicPhase) {
+            return (SimpleContigSeismicPhase) phase;
+        }
+        return simpleContigSeismicPhase;
+    }
+
+    public boolean isFromCompositePhase() {
+        return phase instanceof CompositeSeismicPhase;
+    }
+
+    public List<SeismicPhaseSegment> listPhaseSegments() {
+        if (phase instanceof SimpleContigSeismicPhase) {
+            return ((SimpleContigSeismicPhase)phase).getPhaseSegments();
+        }
+        if (phase instanceof CompositeSeismicPhase) {
+            return getSimpleContigSeismicPhase().getPhaseSegments();
+        }
+        throw new RuntimeException("SHould not happen, can't find phase segments for arrival");
+    }
+
+    /**
+     *
+     * @return TauModel used to generate the phase that this arrival came from
+     */
+    public TauModel getTauModel() {
+        return phase.getTauModel();
     }
 
     /** @return travel time in seconds */
@@ -157,7 +293,7 @@ public class Arrival {
      * returns travel distance in degrees.
      */
     public double getDistDeg() {
-        return RtoD * getDist();
+        return SphericalCoords.RtoD * getDist();
     }
 
     /**
@@ -180,15 +316,18 @@ public class Arrival {
         return SeismicPhase.distanceTrim180(getDistDeg());
     }
 
-    public void setSearchDistDeg(double searchDistDeg) {
-        this.searchDistDeg = searchDistDeg;
+    public void setSearchValue(RayCalculateable searchVal) {
+        this.searchCalc = searchVal;
     }
 
     /**
      * returns search distance in degrees.
      */
     public double getSearchDistDeg() {
-        return this.searchDistDeg;
+        if (this.searchCalc instanceof DistanceRay) {
+            return ((DistanceRay)this.searchCalc).getDegrees(getTauModel().getRadiusOfEarth());
+        }
+        return this.getDistDeg();
     }
 
     /**
@@ -213,15 +352,284 @@ public class Arrival {
 
     /** returns ray parameter in seconds per deg */
     public double getRayParamDeg() {
-        return getRayParam()/RtoD;
+        return getRayParam()/ SphericalCoords.RtoD;
     }
 
-    public double getIncidentAngle() {
-        return incidentAngle;
+    public double getDRayParamDDelta() {
+        return dRPdDist;
+    }
+
+    public double getDRayParamDDeltaDeg() {
+        return dRPdDist/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
+    }
+
+    public ArrivalAmplitude calcAmplitude() throws SlownessModelException, TauModelException {
+        return new ArrivalAmplitude(this);
+    }
+
+    /**
+     * Geometrical spreading factor for amplitude, sqrt of energy spreading.
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.19.
+     *
+     * @throws TauModelException
+     */
+    public double getAmplitudeGeometricSpreadingFactor() throws TauModelException {
+        double d = getEnergyGeometricSpreadingFactor();
+        if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
+        return Math.sqrt(getEnergyGeometricSpreadingFactor());
+    }
+
+
+    /**
+     * Energy Geometrical spreading factor.
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.10.
+     * Note that eq 13.10 has divide by zero in case of a horizontal ray arriving at the receiver.
+     *
+     */
+    public double getEnergyGeometricSpreadingFactor() {
+        double out = 1;
+        TauModel tMod = getTauModel();
+        double R = tMod.radiusOfEarth;
+        out *= getPhase().velocityAtSource()/
+                ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
+        double takeoffRadian = getTakeoffAngleRadian();
+        if ( ! getPhase().getInitialPhaseSegment().isDownGoing) {
+            takeoffRadian = Math.PI-takeoffRadian;
+        }
+        out *= Math.tan(takeoffRadian)/Math.cos(getIncidentAngleRadian());
+        out *= 1/Math.sin(getModuloDist());
+        double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta
+        out *= Math.abs(dRPdDist);
+        return out;
+    }
+
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival in the P-SV plane. Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public double getEnergyFluxFactorReflTransPSV() throws VelocityModelException, SlownessModelException {
+        try {
+            return getPhase().calcEnergyFluxFactorReflTranPSV(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
+    }
+
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival for transverse, SH, waves. If any segment on the path is a P wave, the result will be zero.
+     * Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public double getEnergyFluxFactorReflTransSH() throws VelocityModelException, SlownessModelException {
+        try {
+            return getPhase().calcEnergyFluxFactorReflTranSH(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
+    }
+
+    /**
+     * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
+     * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
+     * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+     * <p>
+     * See FMGS eq 17.74
+     */
+    public double getAmplitudeFactorPSV() throws TauModelException, SlownessModelException {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        if (sourceArgs == null) {
+            throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable());
+        }
+
+        double ampFactor = getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            double radTerm = 1;
+            if (getPhase().getInitialPhaseSegment().isPWave) {
+                radTerm = radiationPattern[0];
+            } else {
+                radTerm = radiationPattern[1];
+            }
+            ampFactor *= radTerm;
+        } else if (sourceArgs.getStrikeDipRake() != null && (searchCalc.hasAzimuth()) ) {
+            // change to TauPException
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
+        }
+        return ampFactor;
+    }
+
+    public double getAmplitudeFactorPSV(double momentRate, double attenuationFrequency, int numFreq)
+            throws TauModelException, SlownessModelException {
+        // dimensionaless
+        double refltran = getEnergyFluxFactorReflTransPSV();
+        double freeFactor = 1.0;
+        if (getReceiverDepth() <= 1.0) {
+            VelocityModel vMod = getTauModel().getVelocityModel();
+            VelocityLayer top = vMod.getVelocityLayer(0);
+            Complex[] freeSurfRF;
+            ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+            if (getPhase().getFinalPhaseSegment().isPWave) {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
+            } else {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
+            }
+            freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
+        }
+        double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
+        //       km/s
+        double sourceVel = getPhase().velocityAtSource();
+        //                                           Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
+        double radiationTerm = calcRadiationTerm();
+        double attenuation=1;
+        if (attenuationFrequency > 0) {
+            attenuation = calcAttenuation(attenuationFrequency, numFreq);
+        }
+        return 1                   // units:
+                * attenuation      // 1
+                * freeFactor       // 1
+                * momentRate       // Kg m2 / s3
+                * refltran         // 1
+                * geoSpread        // 1/km
+                / radiationTerm    // 1/(Kg/s3)
+                / 1e3;             //  m2/km =>  m / 1e3
+    }
+
+        /**
+         * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
+         * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
+         * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+         * @return
+         * @throws TauModelException
+         * @throws VelocityModelException
+         * @throws SlownessModelException
+         */
+    public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            ampFactor *= radiationPattern[2];
+        } else if (sourceArgs.hasStrikeDipRake() && !searchCalc.hasAzimuth() ) {
+            // change to TauPException
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth: "+searchCalc);
+        }
+        return ampFactor;
+    }
+
+    public double getAmplitudeFactorSH(double momentRate, double attenuationFrequency, int numFreq)
+            throws TauModelException, SlownessModelException {
+        double refltran = getEnergyFluxFactorReflTransSH();
+        // avoid NaN in case of no S wave legs where geo spread returns INFINITY
+        if (refltran == 0.0) {return 0.0;}
+        double geoSpread = getAmplitudeGeometricSpreadingFactor();
+        double sourceVel = getPhase().velocityAtSource();
+        double radiationTerm = calcRadiationTerm();
+        double attenuation=1;
+        if (attenuationFrequency > 0) {
+            attenuation = calcAttenuation(attenuationFrequency, numFreq);
+        }
+        double freeFactor =  1.0;
+        if (getReceiverDepth() <= 1.0) {
+            // should be exactly 2.0, but go through the steps so looks like PSv case
+            VelocityModel vMod = getTauModel().getVelocityModel();
+            VelocityLayer top = vMod.getVelocityLayer(0);
+            ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+
+            freeFactor = rtFree.getFreeSurfaceReceiverFunSh(getRayParam() / vMod.getRadiusOfEarth());
+
+            //freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
+        }
+
+        return 1                   // units:
+                * attenuation      // 1
+                * freeFactor       // 1
+                * momentRate       // Kg m2 / s3
+                * refltran         // 1
+                * geoSpread        // 1/km
+                / radiationTerm    // 1/(Kg/s3)
+                / 1e3;             //  m2/km =>  m / 1e3
+    }
+
+    public double getRadiationPatternPSV() {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double radTerm = 1;
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            if (getPhase().getInitialPhaseSegment().isPWave) {
+                radTerm = radiationPattern[0];
+            } else {
+                radTerm = radiationPattern[1];
+            }
+        }
+        return radTerm;
+    }
+
+    public double getRadiationPatternSH() {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double radTerm = 1;
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            if (getPhase().getInitialPhaseSegment().isPWave) {
+                radTerm = 0;
+            } else {
+                radTerm = radiationPattern[2];
+            }
+        }
+        return radTerm;
+    }
+
+    public double getIncidentAngleDegree() {
+        return getIncidentAngleRadian()* SphericalCoords.RtoD;
+    }
+
+    public double getIncidentAngleRadian() {
+        return incidentAngleRadian;
+    }
+
+    public double getTakeoffAngleDegree() {
+        return getTakeoffAngleRadian()* SphericalCoords.RtoD;
     }
     
-    public double getTakeoffAngle() {
-        return takeoffAngle;
+    public double getTakeoffAngleRadian() {
+        return takeoffAngleRadian;
+    }
+
+    public double velocityAtSource() {
+        return getPhase().velocityAtSource();
+    }
+
+    public double radialSlownessAtSource() {
+        double srcVel = velocityAtSource();
+        double rofE = getTauModel().getRadiusOfEarth();
+        double srcRadius = rofE - getSourceDepth();
+        double radSlow = Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
+        if (! Double.isFinite(radSlow)
+                && Math.abs( 1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius)) < 1e-6) {
+            // due to interpolation/rounding horizontal ray might give NaN, if close to zero but negative,
+            // just return zero
+            radSlow = 0;
+        }
+        return radSlow;
+    }
+
+
+    public double velocityAtReceiver() {
+        return getPhase().velocityAtReceiver();
+    }
+
+    public double radialSlownessAtReceiver() {
+        double recVel = velocityAtReceiver();
+        double rofE = getTauModel().getRadiusOfEarth();
+        double recRadius = rofE - getReceiverDepth();
+        return Math.sqrt(1/(recVel*recVel) - getRayParam()*getRayParam()/(recRadius*recRadius));
     }
 
     public int getRayParamIndex() {
@@ -246,26 +654,261 @@ public class Arrival {
         return sourceDepth;
     }
 
+    /** returns receiver (station) depth in kilometers */
+    public double getReceiverDepth() {
+        return receiverDepth;
+    }
+
+
+    /** returns shallowest point on path, in kilometers */
+    public TimeDist getShallowestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist shallowest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDepth() < shallowest.getDepth()) {
+                shallowest = td;
+            }
+        }
+        return shallowest;
+    }
+
+    /** returns deepest point on path, in kilometers */
+    public TimeDist getDeepestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist deepest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDepth() > deepest.getDepth()) {
+                deepest = td;
+            }
+        }
+        return deepest;
+    }
+
+    /** returns furthest distance point module pi/180 on path, in radians */
+    public TimeDist getFurthestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist furthest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDistRadian() > furthest.getDistRadian()) {
+                furthest = td;
+            }
+        }
+        return furthest;
+    }
+
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPierce() {
         if (pierce == null) {
-            this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
+            try {
+                this.pierce = getPhase().interpPierceTimeDist(this).toArray(new TimeDist[0]);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
         }
         return pierce;
     }
 
-    /** returns path points as TimeDist objects. */
-    public TimeDist[] getPath() {
-        if (path == null) {
-            this.path = getPhase().calcPathTimeDist(this).toArray(new TimeDist[0]);
+    public double calcFreeFactor() throws VelocityModelException {
+        VelocityModel vMod = getTauModel().getVelocityModel();
+        VelocityLayer top = vMod.getVelocityLayer(0);
+        double freeFactor = 1.0;
+        if (getReceiverDepth() <= 1.0) {
+            Complex[] freeSurfRF;
+            ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+            if (getPhase().getFinalPhaseSegment().isPWave) {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
+            } else {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
+            }
+            freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         }
-        return path;
+        return freeFactor;
     }
 
+    /**
+     * Calculate attenuation over path at the default frequency. See eq B13.2.2 in FMGS, p374.
+     */
+    public double calcAttenuation() {
+        return calcAttenuation(getRayCalculateable().getSourceArgs().getAttenuationFrequency(),
+                getRayCalculateable().getSourceArgs().getNumFrequencies());
+    }
+
+    /**
+     * Calculate attenuation over path at the given frequency. See eq B13.2.2 in FMGS, p374.
+     * Averages over N+1 frequencies from 0 to maxfreq.
+     */
+    public double calcAttenuation(double maxfreq, int N) {
+        double tstar = calcTStar();
+        double atten = 0;
+        if (Double.isFinite(tstar)) {
+            if (N == 0 || N == 1) {
+                // only do maxfreq
+                atten = Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar);
+            } else {
+                double deltaFreq = maxfreq/(N-1);
+                for (int n = 0; n <= N; n++) {
+                    double freq = n*deltaFreq;
+                    // attenuation is dispirsive, maybe phase shift a cosine by XXX
+                    atten += Math.pow(Math.E, -1 * Math.PI * freq * tstar);
+                }
+                atten = atten / N;
+            }
+        } else {
+            atten = 1;
+        }
+        return atten;
+    }
+
+
+    /**
+     * Calculate t* over path at the given frequency. See eq B13.2.2 in FMGS, p374.
+     */
+    public double calcTStar() {
+        try {
+            return getPhase().calcTstar(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
+    }
+
+    /**
+     * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
+     *
+     * @return  Fp, Fsv, Fsh
+     */
+    public double[] calcRadiationPattern() {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+
+        double[] radiationPattern = new double[] {1,1,1};
+        if (sourceArgs!=null && searchCalc.hasAzimuth()) {
+            radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+        }
+        return radiationPattern;
+    }
+
+    public double calcRadiationTerm() {
+        double sourceVel = getPhase().velocityAtSource();
+        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
+        return radiationTerm;
+    }
+
+    public double calcPathLength() {
+        // path length
+        double length = 0;
+        TauModel tMod = getTauModel();
+        double R = tMod.radiusOfEarth;
+        List<ArrivalPathSegment> pathSegList = getPathSegments();
+        TimeDist prev = new TimeDist();
+        for (ArrivalPathSegment pseg : pathSegList) {
+            if (pseg.getPhaseSegment().getIsFlat()) {
+                // flat so calc circle length at depth
+
+                for (TimeDist td : pseg.getPath()) {
+                    double radianInc = td.getDistRadian() - prev.getDistRadian();
+                    length += radianInc*(R-td.getDepth());
+                }
+            } else {
+                // normal segment
+                for (TimeDist td : pseg.getPath()) {
+                    double radianInc = td.getDistRadian() - prev.getDistRadian();
+                    double radius_a = R - prev.getDepth();
+                    double radius_b = R - td.getDepth();
+                    double pathInc = Math.sqrt(radius_a * radius_a + radius_b * radius_b - 2 * radius_a * radius_b * Math.cos(radianInc));
+                    length += pathInc;
+                    prev = td;
+                }
+            }
+        }
+
+        return length;
+    }
+
+    /**
+     * returns path points as TimeDist objects.
+     * */
+    public TimeDist[] getPath() {
+        if (pathSegments == null) {
+            try {
+                this.pathSegments = getPhase().calcSegmentPaths(this);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (SlownessModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
+
+        }
+        List<TimeDist> pathList = new ArrayList<>();
+        for (ArrivalPathSegment seg : pathSegments) {
+            pathList.addAll(seg.path);
+        }
+        return pathList.toArray(new TimeDist[0]);
+    }
+
+    public List<ArrivalPathSegment> getPathSegments() {
+        if (pathSegments == null) {
+            try {
+                pathSegments = getPhase().calcSegmentPaths(this);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (SlownessModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
+        }
+        return this.pathSegments;
+    }
+
+    /**
+     * Negates the arrival distance. Primarily used when printing a scatter arrival that is at negative distance.
+     * No other fields are changed.
+     * @return new Arrival with dist and search dist negated
+     */
+    public Arrival negateDistance() {
+        return new Arrival( phase,
+                simpleContigSeismicPhase, time,
+                -1* dist,
+                rayParam,
+                rayParamIndex,
+                searchCalc,
+                name,
+                puristName,
+                sourceDepth,
+                receiverDepth,
+                takeoffAngleRadian,
+                incidentAngleRadian,
+                dRPdDist
+        );
+    }
+
+    public boolean isRelativeToArrival() {
+        return relativeToArrival != null;
+    }
+
+    public Arrival getRelativeToArrival() {
+        return relativeToArrival;
+    }
+
+    public void setRelativeToArrival(Arrival relativeToArrival) {
+        this.relativeToArrival = relativeToArrival;
+    }
+
+    public static String toStringHeader() {
+        return "Dist(deg)  Source  Name  Time    RayParam  Takeoff  Incident  PureDist  = PureName";
+    }
     public String toString() {
-        String desc =  Outputs.formatDistance(getModuloDistDeg()) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
+        double moduloDistDeg = getModuloDistDeg();
+        if (getSearchDistDeg() < 0) {
+            // search in neg distance, likely for scatter
+            moduloDistDeg *= -1;
+        }
+        String desc =  Outputs.formatDistance(moduloDistDeg) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
-                + "  " + Outputs.formatDistance(getTakeoffAngle()) + " " + Outputs.formatDistance(getIncidentAngle())
+                + "  " + Outputs.formatDistance(getTakeoffAngleDegree()) + " " + Outputs.formatDistance(getIncidentAngleDegree())
                 + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();
         if (getName().equals(getPuristName())) {
             desc += "   = ";
@@ -273,28 +916,33 @@ public class Arrival {
             desc += "   * ";
         }
         desc += getPuristName();
+        if (getRayCalculateable().hasDescription()) {
+            desc += " "+getRayCalculateable().getDescription();
+        }
         return desc;
     }
 
+    /**
+     * Create TimeDist point for source, first point in pierce or path.
+     */
+    public TimeDist getSourceTimeDist() {
+        return new TimeDist(getRayParam(), 0, 0, getSourceDepth());
+    }
     public int getNumPiercePoints() {
-        if(pierce != null) {
-            return pierce.length;
-        } else {
-            return 0;
-        }
+        return getPierce().length;
     }
 
     public int getNumPathPoints() {
-        if(path != null) {
-            return path.length;
-        } else {
-            return 0;
+        int c = 0;
+        for (ArrivalPathSegment seg : getPathSegments()) {
+            c += seg.path.size();
         }
+        return c;
     }
 
     public TimeDist getPiercePoint(int i) {
         // don't check for i> length since we want an ArrayOutOfBounds anyway
-        return pierce[i];
+        return getPierce()[i];
     }
 
     /**
@@ -304,9 +952,9 @@ public class Arrival {
      *             if depth is not found
      */
     public TimeDist getFirstPiercePoint(double depth) {
-        for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].getDepth() == depth) {
-                return pierce[i];
+        for (TimeDist timeDist : getPierce()) {
+            if (timeDist.getDepth() == depth) {
+                return timeDist;
             }
         }
         throw new ArrayIndexOutOfBoundsException("No Pierce point found for depth "
@@ -321,9 +969,9 @@ public class Arrival {
      */
     public TimeDist getLastPiercePoint(double depth) {
         TimeDist piercepoint = null;
-        for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].getDepth() == depth) {
-                piercepoint = pierce[i];
+        for (TimeDist timeDist : getPierce()) {
+            if (timeDist.getDepth() == depth) {
+                piercepoint = timeDist;
             }
         }
         if(piercepoint == null) {
@@ -333,16 +981,12 @@ public class Arrival {
         return piercepoint;
     }
 
-    public TimeDist getPathPoint(int i) {
-        // don't check for i> length since we want an ArrayOutOfBounds anyway
-        return path[i];
-    }
 
-    protected static final double TWOPI = 2.0 * Math.PI;
+    public static final float DEFAULT_ATTENUATION_FREQUENCY = 1.0f;
 
-    protected static final double DtoR = Math.PI / 180.0;
+    protected static final double KMtoM = 1000.0; // 1000 m per km
 
-    protected static final double RtoD = 180.0 / Math.PI;
+    protected static final double MgtoKg = 1.0/1000;
 
     public static Arrival getEarliestArrival(List<Arrival> arrivals) {
         double soonest = Double.MAX_VALUE;
@@ -356,10 +1000,10 @@ public class Arrival {
         return soonestArrival;
     }
     public static Arrival getLatestArrival(List<Arrival> arrivals) {
-        double latest = Double.MAX_VALUE;
+        double latest = -1*Double.MAX_VALUE;
         Arrival latestArrival = null;
         for (Arrival a : arrivals) {
-            if (a.getTime() < latest) {
+            if (a.getTime() > latest) {
                 latestArrival = a;
                 latest = a.getTime();
             }
@@ -367,41 +1011,39 @@ public class Arrival {
         return latestArrival;
     }
 
-    public String asJSON(boolean pretty, String indent) {
-        String NL = "";
-        if (pretty) {
-            NL = "\n";
+    public static String CSVHeader() {
+        return "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
+    }
+
+    public String asCSVRow() {
+        String sep = ",";
+        String modelName = getTauModel().getModelName().replaceAll("\"", " ");
+        if (modelName.contains(",")) {
+            modelName = "\""+modelName+"\"";
         }
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        StringBuilder out = new StringBuilder();
-        out.append(indent+"{"+NL);
-        out.append(indent+SQ+"distdeg"+QC+(float)getModuloDistDeg()+COMMA+NL);
-        out.append(indent+SQ+"phase"+QCQ+getName()+QCOMMA+NL);
-        out.append(indent+SQ+"time"+QC+(float)getTime()+COMMA+NL);
-        out.append(indent+SQ+"rayparam"+QC+(float)(Math.PI / 180.0 * getRayParam())+COMMA+NL);
-        out.append(indent+SQ+"takeoff"+QC+(float)getTakeoffAngle()+COMMA+NL);
-        out.append(indent+SQ+"incident"+QC+(float)getIncidentAngle()+COMMA+NL);
-        out.append(indent+SQ+"puristdist"+QC+(float)getDistDeg()+COMMA+NL);
-        out.append(indent+SQ+"puristname"+QCQ+getPuristName()+Q);
-        if (getPhase() instanceof ScatteredSeismicPhase) {
-            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
-            out.append(COMMA+NL);
-            out.append(indent+SQ+"scatterdepth"+QC+(float)scatPhase.getScattererDepth()+COMMA+NL);
-            out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg()+NL);
-        } else {
-            out.append(NL);
-        }
-        out.append(indent+"}");
-        return out.toString();
+        String line = modelName + sep
+                + Outputs.formatDistance(getModuloDistDeg()).trim() + sep
+                + Outputs.formatDepth(getSourceDepth()).trim() + sep
+                + getName().trim() + sep
+                + Outputs.formatTime(getTime()).trim() + sep
+                + Outputs.formatRayParam(getRayParamDeg()).trim() + sep
+                + Outputs.formatDistance(getTakeoffAngleDegree()).trim() + sep
+                + Outputs.formatDistance(getIncidentAngleDegree()).trim() + sep
+                + Outputs.formatDistance(getDistDeg()).trim() + sep
+                + getPuristName().trim()
+                + receiverDepth;
+        return line;
+    }
+
+    public RayCalculateable getRayCalculateable() {
+        return this.searchCalc;
+    }
+
+    public boolean isLatLonable() {
+        return this.getRayCalculateable() != null && this.getRayCalculateable().isLatLonable() ;
+    }
+    public LatLonable getLatLonable() {
+        return getRayCalculateable() != null ? getRayCalculateable().getLatLonable() : null;
     }
 
 }

@@ -36,12 +36,12 @@ public class ConstantModelWithoutCore {
 
     @Test
     public void testDirectP() {
-        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.PWAVE);
+        ConstantModelTest.doDirectTest(tMod, SeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.SWAVE);
+        ConstantModelTest.doDirectTest(tMod, SeismicPhase.SWAVE);
     }
     
     @Test
@@ -50,7 +50,7 @@ public class ConstantModelWithoutCore {
         for (String phaseName : badPhaseList) {
                 SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phaseName, tMod);
                 assertFalse( pPhase.phasesExistsInModel(), phaseName+" should not exist in model");
-                List<Arrival> arrivals = pPhase.calcTime(130);
+                List<Arrival> arrivals = DistanceRay.ofDegrees(130).calculate(pPhase);
                 assertEquals( 0, arrivals.size());
         }
     }
@@ -60,11 +60,15 @@ public class ConstantModelWithoutCore {
  * @throws TauModelException
  */
     @Test
-    public void testDepthP() throws TauModelException {
+    public void testDepthP() throws Exception {
+        String phase = "P";
+        TauModel tModDepth = tMod.depthCorrect(0);
+        SeismicPhase PPhase = SeismicPhaseFactory.createPhase(phase.toUpperCase(), tModDepth, 0, 0,true);
+
         double vp = tMod.getVelocityModel().getVelocityLayer(0).getTopPVelocity();
         for (int depth = 0; depth < 400; depth += 5) {
             for (int deg = 0; deg < 90; deg++) {
-                ConstantModelTest.doSeismicPhase(depth, deg, vp, "P", tMod);
+                ConstantModelTest.doSeismicPhase(depth, deg, vp, phase, tMod);
             }
         }
     }
@@ -90,6 +94,33 @@ public class ConstantModelWithoutCore {
                 dist += tMod.getTauBranch(j, isPWave).getDist(i);
             }
             ConstantModelTest.doSeismicPhase(2 * dist, velocity, "P", tMod);
+        }
+    }
+
+    @Test
+    public void testGeomSpreadingP() throws TauModelException {
+        String phase = "P";
+        testGeomSpreadingForPhase(phase);
+    }
+
+    @Test
+    public void testGeomSpreadingS() throws TauModelException {
+        String phase = "S";
+        testGeomSpreadingForPhase(phase);
+    }
+
+    public void testGeomSpreadingForPhase(String phase) throws TauModelException {
+        double R = tMod.getRadiusOfEarth();
+        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
+        for (double dist=10; dist <= 180; dist+=10) {
+            List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
+            assertEquals(1, arrivals.size());
+            Arrival a = arrivals.get(0);
+            // constant model, so geometrical spreading is 1/r, ie length of chord
+            assertFalse(Double.isNaN(a.getAmplitudeGeometricSpreadingFactor()), "dist: "+dist);
+            assertEquals(1.0 / (2 * R * Math.sin(dist / 2 * Math.PI / 180)),
+                    a.getAmplitudeGeometricSpreadingFactor(),
+                    0.01, "dist: "+dist);
         }
     }
 

@@ -26,9 +26,8 @@
 package edu.sc.seis.TauP;
 
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * convenience class for loading properties.
@@ -42,13 +41,11 @@ import java.util.zip.ZipFile;
  */
 public class PropertyLoader {
 
-    protected static String jarFileName = "taup.jar";
-
     protected static String defaultPropFileName = "defaultProps";
 
     protected static String packageName = "/edu/sc/seis/TauP";
 
-    protected static String userPropFileName = ".taup";
+    protected static String propFileName = ".taup";
 
     /**
      * loads the properties from a file. First the default properties are loaded
@@ -57,7 +54,7 @@ public class PropertyLoader {
      * directory, followed by ".taup" in the current directory if it can be
      * found. If neither can be found then the default Properties object is
      * returned unmodified.
-     * 
+     * <p>
      * A special case is made for the taup.model.path property. If it is defined
      * in the system properties, then the system version is prepended to the
      * users version. This allows for setting system wide search paths on UNIX
@@ -69,11 +66,6 @@ public class PropertyLoader {
         Properties defaultProps = new Properties();
         // load default properties
         try {
-            String classPath = System.getProperty("java.class.path");
-            String pathEntry = "";
-            int offset = 0;
-            int pathSepIndex;
-            File jarFile;
             Class c = null;
             try {
                 c = Class.forName("edu.sc.seis.TauP.PropertyLoader");
@@ -85,7 +77,7 @@ public class PropertyLoader {
             if(in != null) {
                 defaultProps.load(new BufferedInputStream(in));
             } else {
-                System.err.println("Warning: unable to load default configuration properties from jar, "+packageName+"/"+defaultPropFileName);
+                Alert.warning("Warning: unable to load default configuration properties from jar, "+packageName+"/"+defaultPropFileName);
             }
         } catch(FileNotFoundException e) {
             // can't find defaults, so we'll just have to use an empty
@@ -97,7 +89,7 @@ public class PropertyLoader {
         // append/overwrite with user's directory .taup
         try {
             applicationProps.load(new FileInputStream(System.getProperty("user.home")
-                    + System.getProperty("file.separator") + ".taup"));
+                    + FileSystems.getDefault().getSeparator() + propFileName));
         } catch(FileNotFoundException ee) {
             // file doesn't exist, so go on
         }
@@ -105,7 +97,7 @@ public class PropertyLoader {
         try {
             /* Check for .taup in the current directory. */
             applicationProps.load(new FileInputStream(System.getProperty("user.dir")
-                    + System.getProperty("file.separator") + ".taup"));
+                    + FileSystems.getDefault().getSeparator() + propFileName));
         } catch(FileNotFoundException e) {
             // file doesn't exist, so go on
         }
@@ -126,7 +118,7 @@ public class PropertyLoader {
 
     /** writes the current system properties out to the file given. */
     public static void save(Properties props) throws IOException {
-        save(props, ".taup");
+        save(props, propFileName);
     }
 
     /** writes the current system properties out to the file given. */
@@ -137,13 +129,4 @@ public class PropertyLoader {
         propFile.close();
     }
 
-    public static void main(String[] args) {
-        try {
-            Properties props = PropertyLoader.load();
-            props.put("Key", "Value and another value");
-            save(props, "testProperties");
-        } catch(IOException e) {
-            System.out.println("Caught IOException: " + e.getMessage());
-        }
-    }
 }

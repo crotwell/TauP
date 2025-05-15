@@ -1,64 +1,212 @@
 import java.util.Date
 import org.gradle.crypto.checksum.Checksum
+import org.jreleaser.model.Active
+import org.jreleaser.model.Distribution
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.2.2"
+  id("edu.sc.seis.version-class") version "1.4.1"
   id("org.gradle.crypto.checksum") version "1.4.0"
   `java-library`
-    `java-library-distribution`
-  eclipse
+  `java-library-distribution`
   `project-report`
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.47.0"
+  id("com.github.ben-manes.versions") version "0.52.0"
+  id("org.jreleaser") version "1.18.0"
 }
 
 application {
-  mainClass.set("edu.sc.seis.TauP.ToolRun")
+  mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
   applicationName = "taup"
+  //applicationName = "taupdev"
 }
 
 group = "edu.sc.seis"
-version = "2.7.0-SNAPSHOT5"
+version = "3.0.0"
+
+jreleaser {
+  dryrun.set(true)
+  project {
+    description.set("The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities")
+    authors.add("Philip Crotwell")
+    license.set("LGPL-3.0")
+    links {
+        homepage.set("https://github.com/crotwell/TauP")
+    }
+    inceptionYear.set("1999")
+  }
+
+  release {
+      github {
+          repoOwner.set("crotwell")
+          overwrite.set(true)
+      }
+  }
+  distributions {
+      create("taup") {
+        distributionType.set(Distribution.DistributionType.JAVA_BINARY)
+         artifact {
+             path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.zip"))
+         }
+         artifact {
+             path.set(file("build/distributions/{{distributionName}}-{{projectVersion}}.tar"))
+         }
+      }
+  }
+  packagers {
+    brew {
+      active.set(Active.ALWAYS)
+    }
+    docker {
+          active.set(Active.ALWAYS)
+          postCommands.add("EXPOSE 7409")
+    }
+    snap {
+          active.set(Active.ALWAYS)
+          grade.set("devel")
+          remoteBuild.set(true)
+
+    }
+  }
+  signing {
+    setActive("ALWAYS")
+    armored.set(true)
+  }
+  deploy {
+    maven {
+      mavenCentral {
+        create("sonatype") {
+          setActive("ALWAYS")
+          url= "https://central.sonatype.com/api/v1/publisher"
+          stagingRepository("target/staging-deploy")
+        }
+      }
+    }
+  }
+}
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
     withJavadocJar()
     withSourcesJar()
 }
-tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
+
+tasks.register("versionToVersionFile") {
+  inputs.files("build.gradle.kts")
+  outputs.files("VERSION")
+  File("VERSION").writeText(""+version)
+}
+
+distributions {
+  main {
+    distributionBaseName = "TauP"
+    contents {
+      from(".") {
+          include("CITATION.cff")
+          include("LICENSE")
+          include("README.md")
+      }
+      from(tasks.named("versionToVersionFile")) {
+        into(".")
+      }
+      from("docs") {
+        into("docs")
+      }
+      from(tasks.named("javadoc")) {
+          into("docs/javadoc")
+      }
+      from(".") {
+          include("build.gradle.kts")
+          include("settings.gradle.kts")
+      }
+      from(".") {
+          include("src/**")
+      }
+      from(".") {
+          include("gradle/**")
+          include("gradlew")
+          include("gradlew.bat")
+      }
+      from("src/main/resources/edu/sc/seis/TauP") {
+          include("defaultProps")
+          into("docs")
+      }
+      from("src/main/resources/edu/sc/seis/TauP") {
+          include("StdModels/*.tvel")
+          include("StdModels/*.nd")
+      }
+      from("build/generated-src/modVersion") {
+          include("java/**")
+          into("src/main")
+      }
+    }
+  }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(arrayOf("-Xlint:deprecation"))
+    // for picocli
+    options.compilerArgs.addAll(arrayOf("-Aproject=${project.group}/${project.name}"))
+}
+
+
+sourceSets {
+    create("example") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+java {
+    registerFeature("example") {
+        usingSourceSet(sourceSets["example"])
+    }
+}
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.6") {
-      // we need seisFile for sac output, but not all the other functionality
-      exclude(group = "info.picocli", module = "picocli")
-      exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
-      exclude(group = "org.apache.httpcomponents", module = "httpclient")
-    }
-    runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.36")
+    implementation("org.json:json:20250107")
+    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("edu.sc.seis:seisFile:2.3.0")
 
-    // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+    // temporary use modified picocli to allow sort of ArgGroup options
+    // see src/main/java/picocli
+    //implementation("info.picocli:picocli:4.7.6")
+    annotationProcessor("info.picocli:picocli-codegen:4.7.6")
+
+    implementation("org.slf4j:slf4j-reload4j:2.0.6")
+
+
+    implementation("io.undertow:undertow-core:2.3.18.Final")
+
+        // Use JUnit Jupiter API for testing.
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }
 
 
 repositories {
     mavenCentral()
-        mavenLocal()
+    mavenLocal()
+    maven {
+        name = "oss.sonatype.org snapshots"
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
 }
 
 tasks {
   jar {
       manifest {
         attributes(
-            mapOf("Implementation-Title" to project.name,
+            mapOf("Automatic-Module-Name" to "edu.sc.seis.TauP",
+                  "Implementation-Title" to project.name,
                   "Implementation-Version" to archiveVersion,
                   "TauP-Compile-Date" to Date()))
       }
@@ -69,127 +217,21 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
-
-val dirName = project.name+"-"+version
-val binDirName = project.name+"_bin-"+version
-
-val binDistFiles: CopySpec = copySpec {
-    from("build/scripts") {
-        include("*")
-        into("bin")
-    }
-    from(tasks.named("jar")) {
-        into("lib")
-    }
-    from(configurations.runtimeClasspath) {
-        into("lib")
-    }
-    /*
-    // don't think this is needed...
-    from(configurations.runtimeClasspath.get().allArtifacts.files) {
-        into("lib")
-    }
-     */
+tasks.named("sourcesJar") {
+    dependsOn("makeVersionClass")
 }
 
-val distFiles: CopySpec = copySpec {
-    with(binDistFiles)
-    from(".") {
-        include("build.gradle.kts")
-        include("settings.gradle.kts")
-    }
-    from("build/docs") {
-        include("javadoc/**")
-        into("docs")
-    }
-    from("docs") {
-      include("*")
-      into("docs")
-    }
-    from(".") {
-        include("LICENSE")
-        include("jacl/**")
-        include("groovy/**")
-        include("native/**")
-        include("src/**")
-        include("README.md")
-        exclude("**/*.svn")
-    }
-    from(".") {
-        include("gradle/**")
-        include("gradlew")
-        include("gradlew.bat")
-    }
-    from("src/main/resources/edu/sc/seis/TauP") {
-        include("defaultProps")
-        into("docs")
-    }
-    from("src/main/resources/edu/sc/seis/TauP") {
-        include("StdModels/*.tvel")
-        include("StdModels/*.nd")
-    }
-    from("build/generated-src/modVersion") {
-        include("java/**")
-        into("src/main")
-    }
+tasks.named("makeVersionClass") {
+  inputs.files("src/main/")
 }
-
-tasks.register<Sync>("explodeBin") {
-  dependsOn("jar")
-  dependsOn("startScripts")
-  dependsOn("genModels")
-    with( binDistFiles)
-  into( file("$buildDir/explode"))
-}
-
-tasks.register<Tar>("tarBin") {
-  archiveAppendix.set("bin")
-  dependsOn("explodeBin")
-  compression = Compression.GZIP
-  into(dirName) {
-      with( binDistFiles)
-  }
-}
-tasks.register<Zip>("zipBin") {
-  archiveAppendix.set("bin")
-  dependsOn("explodeBin")
-    into(dirName) {
-        with( binDistFiles)
-    }
-}
-
-tasks.register<Sync>("explodeDist") {
-  dependsOn("explodeBin")
-  dependsOn("javadoc")
-  dependsOn("wrapper")
-    with(distFiles)
-    into( file("$buildDir/explode"))
-}
-
-tasks.register<Tar>("tarDist") {
-  dependsOn("explodeDist")
-    compression = Compression.GZIP
-    into(dirName) {
-        with( distFiles)
-    }
-}
-
 
 tasks.register<Checksum>("checksumDist") {
-  dependsOn("tarBin")
-  dependsOn("tarDist")
-  dependsOn("zipDist")
   dependsOn("distZip")
-  files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
-  outputDir=File(project.buildDir, "distributions")
-  algorithm = Checksum.Algorithm.SHA256
-}
-
-tasks.register<Zip>("zipDist") {
-  dependsOn("explodeDist")
-    into(dirName) {
-        with( distFiles)
-    }
+  dependsOn("distTar")
+  inputs.files(tasks.getByName("distTar").outputs.files)
+  inputs.files(tasks.getByName("distZip").outputs.files)
+  outputs.dir(layout.buildDirectory.dir("distributions"))
+  algorithm = Checksum.Algorithm.SHA512
 }
 
 publishing {
@@ -227,12 +269,12 @@ publishing {
     repositories {
       maven {
         name = "TestDeploy"
-        url = uri("$buildDir/repos/test-deploy")
+        url = uri(layout.buildDirectory.dir("repos/test-deploy"))
       }
       maven {
           val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
           val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-          url = uri(if ( version.toString().toLowerCase().endsWith("snapshot")) snapshotRepo else releaseRepo)
+          url = uri(if ( version.toString().lowercase().endsWith("snapshot")) snapshotRepo else releaseRepo)
           name = "ossrh"
           // credentials in gradle.properties as ossrhUsername and ossrhPassword
           credentials(PasswordCredentials::class)
@@ -243,92 +285,150 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
-    sign(tasks.getByName("tarDist"))
-    sign(tasks.getByName("zipDist"))
-    sign(tasks.getByName("tarBin"))
+    sign(tasks.getByName("distTar"))
+    sign(tasks.getByName("distZip"))
 }
-
-tasks.register("createRunScripts"){}
-tasks.named("startScripts") {
-    dependsOn("createRunScripts")
-}
-
-val scriptNames = mapOf(
-// taup is created via startScripts as default for assemble plugin
-//    "taup" to "edu.sc.seis.TauP.ToolRun",
-    "taup_time" to "edu.sc.seis.TauP.TauP_Time",
-    "taup_pierce" to "edu.sc.seis.TauP.TauP_Pierce",
-    "taup_path" to "edu.sc.seis.TauP.TauP_Path",
-    "taup_create" to "edu.sc.seis.TauP.TauP_Create",
-    "taup_curve" to "edu.sc.seis.TauP.TauP_Curve",
-    "taup_setsac" to "edu.sc.seis.TauP.TauP_SetSac",
-    "taup_wavefront" to "edu.sc.seis.TauP.TauP_Wavefront",
-    "taup_table" to "edu.sc.seis.TauP.TauP_Table"
-)
-for (key in scriptNames.keys) {
-  tasks.register<CreateStartScripts>(key) {
-    outputDir = file("build/scripts")
-    getMainClass().set(scriptNames[key])
-    applicationName = key
-    classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
-  }
-  tasks.named("createRunScripts") {
-      dependsOn(key)
-  }
-}
-
 
 tasks.register<JavaExec>("genModels") {
   description = "generate TauP default model files"
   classpath = sourceSets.getByName("main").runtimeClasspath
     getMainClass().set("edu.sc.seis.TauP.StdModelGenerator")
 
-  val generatedSrcDir = File(project.buildDir, "generated-src/StdModels")
-  val resourceDir =  File(generatedSrcDir, "/resources")
-  val outDir =  File(resourceDir, "edu/sc/seis/TauP/StdModels/")
-  outDir.mkdirs()
-  val inDir = File(project.projectDir, "src/main/resources/edu/sc/seis/TauP/StdModels/")
+  val generatedSrcDir = "generated-src/StdModels"
+  val resourceDir =  generatedSrcDir+ "/resources"
+    val outDirStr =  resourceDir+ "/edu/sc/seis/TauP/StdModels/"
+  val outDir =  layout.buildDirectory.dir(resourceDir+ "/edu/sc/seis/TauP/StdModels/")
+  file(outDir).mkdirs()
+  val inDirStr = "src/main/resources/edu/sc/seis/TauP/StdModels/"
+  val inDir = layout.projectDirectory.dir(inDirStr)
 
-  args = listOf(inDir.path, outDir.path)
+  args = listOf(file(inDir).getPath(), file(outDir).getPath())
   dependsOn += tasks.getByName("compileJava")
   inputs.files("src/main/resources/edu/sc/seis/TauP/defaultProps")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135favg.nd")
+  inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fsyngine.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fcont.nd")
-  outputs.files(File(outDir, "ak135.taup"))
-  outputs.files(File(outDir, "iasp91.taup"))
-  outputs.files(File(outDir, "prem.taup"))
-  outputs.files(File(outDir, "qdt.taup"))
-  outputs.files(File(outDir, "ak135favg.taup"))
-  outputs.files(File(outDir, "ak135fcont.taup"))
+  outputs.files(layout.buildDirectory.file(outDirStr+"/ak135.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/iasp91.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/prem.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135favg.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fsyngine.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fcont.taup"))
 }
 
+
+tasks.register<JavaExec>("genAk135Plots") {
+    description = "generate TauP AK135 compare plots"
+    classpath = sourceSets.getByName("test").runtimeClasspath
+    getMainClass().set("edu.sc.seis.TauP.AK135Test")
+    dependsOn += tasks.getByName("classes")
+    dependsOn += tasks.getByName("testClasses")
+    outputs.files(fileTree("build/ak135Compare"))
+}
+tasks.register<Sync>("copyReflTranCompareFiles") {
+  from("src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare")
+  into("build/cmdLineTest/refltranCompare")
+}
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
-    getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
+    getMainClass().set("edu.sc.seis.TauP.cmdline.CmdLineOutputTest")
+    dependsOn += tasks.getByName("classes")
     dependsOn += tasks.getByName("testClasses")
-    outputs.files(fileTree("cmdLineTest"))
+    dependsOn += tasks.getByName("copyReflTranCompareFiles")
+    dependsOn += tasks.getByName("genAk135Plots")
+    outputs.files(fileTree("build/cmdLineTest"))
 }
 tasks.register<Sync>("copyCmdLineTestFiles") {
   from(tasks.getByName("genCmdLineTestFiles").outputs)
   into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
 }
+tasks.get("test").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("jar").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("distTar").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("distZip").mustRunAfter("copyCmdLineTestFiles")
+
+tasks.register<JavaExec>("genCmdLineHelpFiles") {
+  inputs.files("build.gradle.kts") // for version.json
+  description = "generate TauP cmd line help output files"
+  classpath = sourceSets.getByName("test").runtimeClasspath
+  getMainClass().set("edu.sc.seis.TauP.cmdline.GenCmdLineUsage")
+  dependsOn += tasks.getByName("testClasses")
+  outputs.files(fileTree("build/cmdLineHelp"))
+}
+tasks.register<Sync>("copyCmdLineHelpFiles") {
+  from(tasks.getByName("genCmdLineHelpFiles").outputs)
+  into("src/doc/sphinx/source/cmdLineHelp")
+  dependsOn("genCmdLineHelpFiles")
+}
+
+tasks.register<Sync>("copyProgramExampleFiles") {
+  from("src/example/java/edu/sc/seis/example/TimeExample.java")
+  into("src/doc/sphinx/source/programming")
+}
+
+tasks.register<Sync>("copyStdModelsToSphinx") {
+  from("src/main/resources/edu/sc/seis/TauP/StdModels") {
+      include("*.tvel")
+      include("*.nd")
+  }
+  into("src/doc/sphinx/source/_static/StdModels")
+}
+
+tasks.register<JavaExec>("genAutocomplete") {
+  description = "generate TauP cmd line help output files"
+  dependsOn += tasks.getByName("classes")
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  getMainClass().set("picocli.AutoComplete")
+  args = listOf("edu.sc.seis.TauP.cmdline.ToolRun", "--force")
+  dependsOn += tasks.getByName("compileJava")
+  workingDir = File("build/autocomplete")
+  outputs.files(fileTree("build/autocomplete"))
+}
+distributions {
+  main {
+    contents {
+      from(tasks.named("genAutocomplete")) {
+        into(".")
+      }
+    }
+  }
+}
+
+tasks.register<Exec>("sphinxMakeHtml") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "html")
+  inputs.files(fileTree(project.file("src/doc/sphinx")))
+  outputs.files(fileTree(layout.buildDirectory.dir("sphinx/html")))
+  dependsOn("copyProgramExampleFiles")
+  dependsOn("copyCmdLineHelpFiles")
+  dependsOn("copyStdModelsToSphinx")
+}
+tasks.register<Sync>("copySphinxToDocs") {
+  from(tasks.named("sphinxMakeHtml"))
+  into("docs/manual")
+  dependsOn("sphinxMakeHtml")
+  exclude("_sources")
+  exclude(".buildinfo")
+}
+tasks.register("sphinx") {
+  dependsOn("sphinxMakeHtml")
+  dependsOn("copySphinxToDocs")
+}
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 
 // note can pass password for signing in with -Psigning.password=secret
-tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
-tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
-tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
-tasks.get("signTarBin").dependsOn(tasks.get("checksumDist"))
-tasks.get("signTarDist").dependsOn(tasks.get("checksumDist"))
-tasks.get("signZipDist").dependsOn(tasks.get("checksumDist"))
+tasks.get("assemble").dependsOn(tasks.get("signDistZip"))
+tasks.get("assemble").dependsOn(tasks.get("signDistTar"))
+tasks.get("signDistTar").dependsOn(tasks.get("checksumDist"))
+tasks.get("signDistZip").dependsOn(tasks.get("checksumDist"))
 
-val generatedSrcDir = file("$buildDir/generated-src/StdModels")
+val generatedSrcDir = file(layout.buildDirectory.dir("generated-src/StdModels"))
 val resourceDir =  File(generatedSrcDir, "/resources")
 val outDir =  File(resourceDir, "edu/sc/seis/TauP/StdModels/")
 sourceSets.create("stdmodels").resources {
@@ -344,7 +444,18 @@ tasks.get("processStdmodelsResources").dependsOn("genModels")
 tasks.jar {
     dependsOn("processStdmodelsResources")
     from(sourceSets["stdmodels"].output)
+    from("docs/manual") {
+      into("edu/sc/seis/TauP/html/doc")
+    }
+    from("src/doc/favicon") {
+      into("edu/sc/seis/TauP/html")
+    }
+    mustRunAfter("sphinx")
 }
+tasks.get("installDist").mustRunAfter("sphinx")
+tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
+tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
+tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {

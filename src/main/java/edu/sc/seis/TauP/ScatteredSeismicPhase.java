@@ -1,40 +1,57 @@
 package edu.sc.seis.TauP;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A seismic phase that scatters. Includes a specific inbound Arrival, then an outbound seismic phase.
+ */
 public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
     private final SimpleSeismicPhase scatteredPhase;
-    private final double scattererDepth;
-    private final double scattererDistanceDeg;
+    private final Scatterer scatterer;
     private final boolean backscatter;
 
     public ScatteredSeismicPhase(Arrival inboundArrival,
                                  SimpleSeismicPhase scatteredPhase,
-                                 double scattererDepth,
-                                 double scattererDistanceDeg,
+                                 Scatterer scatterer,
                                  boolean backscatter) {
         this.inboundArrival = inboundArrival;
         this.scatteredPhase = scatteredPhase;
-        this.scattererDepth = scattererDepth;
-        this.scattererDistanceDeg = scattererDistanceDeg;
+        this.scatterer = scatterer;
         this.backscatter = backscatter;
     }
 
+    /**
+     * Gets the arrival inbound to the scatterer from the source. This part of the phase path is the same for all
+     * arrivals for the scattered phase.
+     * @return inbound arrival
+     */
+    public Arrival getInboundArrival() {
+        return inboundArrival;
+    }
+
+    /**
+     * Gets the simple phase from the scatterer to the receiver, equivalent to setting a source at the scatterer
+     * location.
+     * @return scattered phase
+     */
+    public SimpleSeismicPhase getScatteredPhase() {
+        return scatteredPhase;
+    }
+
     public double getScattererDepth() {
-        return scattererDepth;
+        return scatterer.depth;
     }
 
     public double getScattererDistance() {
-        return scattererDistanceDeg*Arrival.DtoR;
+        return scatterer.getDistanceDegree()* SphericalCoords.DtoR;
     }
 
     public double getScattererDistanceDeg() {
-        return scattererDistanceDeg ;
+        return scatterer.getDistanceDegree() ;
     }
 
     public boolean isBackscatter() {
@@ -48,7 +65,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(calcTime(degrees));
+        return Arrival.getEarliestArrival(DistanceRay.ofDegrees(degrees).calcScatteredPhase(this));
     }
 
     @Override
@@ -58,26 +75,33 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public double getMinDistanceDeg() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistanceDeg()+mulFac*scatteredPhase.getMinDistanceDeg();
     }
 
     @Override
     public double getMinDistance() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistance()+mulFac*scatteredPhase.getMinDistance();
     }
 
     @Override
     public double getMaxDistanceDeg() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistanceDeg()+mulFac*scatteredPhase.getMaxDistanceDeg();
     }
 
     @Override
     public double getMaxDistance() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistance()+mulFac*scatteredPhase.getMaxDistance();
+    }
+
+    public int getScatterDistMulFactor() {
+        int mulFac = 1;
+        if (inboundArrival.getSearchDistDeg()>0 && isBackscatter() ) { mulFac = -1;}
+        if (inboundArrival.getSearchDistDeg()<0 && ! isBackscatter() ) { mulFac = -1;}
+        return mulFac;
     }
 
     @Override
@@ -98,6 +122,16 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public int getMinRayParamIndex() {
         return scatteredPhase.getMinRayParamIndex();
+    }
+
+    @Override
+    public double getMinTime() {
+        return inboundArrival.getTime()+scatteredPhase.getMinTime();
+    }
+
+    @Override
+    public double getMaxTime() {
+        return inboundArrival.getTime()+scatteredPhase.getMaxTime();
     }
 
     @Override
@@ -123,19 +157,29 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<String> getLegs() {
-        List<String> out = new ArrayList<>();
-        out.addAll(inboundArrival.getPhase().getLegs());
-        out.addAll(scatteredPhase.getLegs());
+    public List<List<SeismicPhaseSegment>> getListPhaseSegments() {
+        List<List<SeismicPhaseSegment>> out = new ArrayList<>();
+        List<SeismicPhaseSegment> inboundSegList = inboundArrival.listPhaseSegments();
+        for (List<SeismicPhaseSegment> subphaseSeg : scatteredPhase.getListPhaseSegments()) {
+            List<SeismicPhaseSegment> inSegList = new ArrayList<>();
+            inSegList.addAll(inboundSegList);
+            inSegList.addAll(subphaseSeg);
+            out.add(inSegList);
+        }
         return out;
     }
 
+    public SeismicPhaseSegment getInitialPhaseSegment() {
+        return inboundArrival.getPhase().getInitialPhaseSegment();
+    }
+
+    public SeismicPhaseSegment getFinalPhaseSegment() {
+        return scatteredPhase.getFinalPhaseSegment();
+    }
+
     @Override
-    public List<SeismicPhaseSegment> getPhaseSegments() {
-        List<SeismicPhaseSegment> out = new ArrayList<>();
-        out.addAll(inboundArrival.getPhase().getPhaseSegments());
-        out.addAll(scatteredPhase.getPhaseSegments());
-        return out;
+    public int countFlatLegs() {
+        return inboundArrival.getPhase().countFlatLegs()+scatteredPhase.countFlatLegs();
     }
 
     @Override
@@ -146,6 +190,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public double[] getRayParams() {
         return scatteredPhase.getRayParams();
+    }
+
+    @Override
+    public int getNumRays() {
+        return scatteredPhase.getNumRays();
     }
 
     @Override
@@ -189,76 +238,32 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public boolean[] getDownGoing() {
-        boolean[] inDowngoing = inboundArrival.getPhase().getDownGoing();
-        boolean[] scatDownGoing = scatteredPhase.getDownGoing();
-        boolean[] out = new boolean[inDowngoing.length+scatDownGoing.length];
-        System.arraycopy(inDowngoing, 0, out, 0, inDowngoing.length);
-        System.arraycopy(scatDownGoing, 0, out, inDowngoing.length, scatDownGoing.length);
-        return out;
-    }
-
-    @Override
-    public boolean[] getWaveType() {
-        boolean[] in = inboundArrival.getPhase().getWaveType();
-        boolean[] scat = scatteredPhase.getWaveType();
-        boolean[] out = new boolean[in.length+scat.length];
-        System.arraycopy(in, 0, out, 0, in.length);
-        System.arraycopy(scat, 0, out, in.length, scat.length);
-        return out;
-    }
-
-    @Override
-    public int[] getLegAction() {
-        int[] in = inboundArrival.getPhase().getLegAction();
-        int[] scat = scatteredPhase.getLegAction();
-        int[] out = new int[in.length+scat.length];
-        System.arraycopy(in, 0, out, 0, in.length);
-        System.arraycopy(scat, 0, out, in.length, scat.length);
-        return out;
-    }
-
-    @Override
     public boolean hasArrivals() {
         return inboundArrival!= null && scatteredPhase.hasArrivals();
     }
 
-    @Override
-    public List<Arrival> calcTime(double deg) {
-        List<Arrival> out = new ArrayList<>();
-        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter()) % 360;
-        if (scatDist < 0) {
-            scatDist += 360;
-        }
-
-        List<Arrival> scat = new ArrayList<>();
-        double calcScatRad = scatDist * Arrival.DtoR ;
-        while (calcScatRad < scatteredPhase.getMaxDistance()) {
-            List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
-            for (Arrival a : scatAtDist) {
-                a.setSearchDistDeg(scatDist);
-                if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
-                    // make sure actually arrives at deg, can be messed up by neg forwardScatDist
-                    Arrival b = new ScatteredArrival(
-                            this,
-                            deg,
-                            inboundArrival,
-                            a,
-                            isBackscatter());
-                    b.setSearchDistDeg(deg);
-                    out.add(b);
-                } else {
-                    if (TauP_Tool.DEBUG) {
-                        System.out.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
-                    }
-                }
-            }
-            scat.addAll(scatAtDist);
-            calcScatRad += 2*Math.PI;
-        }
-        return out;
+    /**
+     * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     * @param rayNum ray parameter index
+     * @return arraival at ray num
+     */
+    public Arrival createArrivalAtIndex(int rayNum) {
+        Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
+        return new ScatteredArrival(
+                this,
+                DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg()),
+                inboundArrival,
+                scatteredArrival,
+                isBackscatter());
     }
 
+    /**
+     * Calculates the distance from the scatterer to the receiver.
+     * @param deg source to receiver distance
+     * @param scattererDeg scatterer distance, may be negative
+     * @param backscatter if the phase is backscattered
+     * @return scatterer to receiver distance in range -180 to 180
+     */
     public static double calcScatterDistDeg(double deg, double scattererDeg, boolean backscatter) {
         double scatDist;
         double calcDeg = deg % 360;
@@ -290,47 +295,114 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 throw new RuntimeException("Should never happen "+deg+" "+scattererDeg);
             }
         }
+        scatDist = (180+scatDist) % 360 -180;
         return scatDist;
     }
 
     @Override
-    public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        return null;
+    public Arrival shootRay(double rayParam) {
+        throw new IllegalArgumentException("Cannot shoot ray for scattered phase");
     }
 
     @Override
-    public double calcRayParamForTakeoffAngle(double takeoffDegree) {
-        return inboundArrival.getRayParam();
+    public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
+        if (takeoffDegree == inboundArrival.getTakeoffAngleDegree()) {
+            return inboundArrival.getRayParam();
+        }
+        throw new NoArrivalException("Scattered phase cannot have arbitrary takeoff angle: "+getName());
     }
 
+    @Override
+    public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
+        return getScatteredPhase().calcRayParamForIncidentAngle(incidentDegree);
+    }
+
+    @Override
+    public double velocityAtSource() {
+        return inboundArrival.getPhase().velocityAtSource();
+    }
+
+    @Override
+    public double velocityAtReceiver() {
+        return scatteredPhase.velocityAtReceiver();
+    }
+
+    @Override
+    public double densityAtReceiver() {
+        return scatteredPhase.densityAtReceiver();
+    }
+
+    @Override
+    public double densityAtSource() {
+        return inboundArrival.getPhase().densityAtSource();
+    }
+    @Override
+    public double calcTakeoffAngleDegree(double arrivalRayParam) {
+        return inboundArrival.getTakeoffAngleDegree();
+    }
     @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
-        return inboundArrival.getTakeoffAngle();
+        return inboundArrival.getTakeoffAngleRadian();
     }
 
     @Override
     public double calcIncidentAngle(double arrivalRayParam) {
         return scatteredPhase.calcIncidentAngle(arrivalRayParam);
     }
-/*
+
     @Override
-    public String describe() {
-        String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
-        return desc+baseDescribe()+"\n"+segmentDescribe();
-    }*/
+    public double calcIncidentAngleDegree(double arrivalRayParam) {
+        return scatteredPhase.calcIncidentAngleDegree(arrivalRayParam);
+    }
+
+    @Override
+    public boolean sourceSegmentIsPWave() {
+        return getInitialPhaseSegment().isPWave;
+    }
+
+    @Override
+    public boolean finalSegmentIsPWave() {
+        return getFinalPhaseSegment().isPWave;
+    }
 
     public String describe() {
-        String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
+        String backscatter = isBackscatter() ? "backscattered" : "scattered";
+        String desc = getName() + " "+backscatter+" at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
         desc += SeismicPhase.baseDescribe(this);
         desc += SeismicPhase.segmentDescribe(this);
         String scat_direction = isBackscatter() ? "Backscatter" : "Scatter";
+        Arrival printArrival = inboundArrival;
+        if (inboundArrival.getSearchDistDeg() < 0 && inboundArrival.getDistDeg() > 0) {
+            printArrival = inboundArrival.negateDistance();
+        }
         desc +="\nInbound to Scatterer: "+inboundArrival.getPhase().getName()+"\n"
                 +SeismicPhase.baseDescribe(inboundArrival.getPhase())
-                +"Arrival at Scatterer: "+inboundArrival
-                +"\n"+scat_direction+" from "+ scattererDepth +", "+ scattererDistanceDeg
+                +"Arrival at Scatterer: "+printArrival
+                +"\n"+scat_direction+" from "+ scatterer.depth +", "+ scatterer.getDistanceDegree()
                 +"\nOutbound from Scatterer: "+scatteredPhase.getName()+"\n"
                 +SeismicPhase.baseDescribe(scatteredPhase);
         return desc;
+    }
+
+    @Override
+    public String describeShort() {
+        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
+                + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km,"
+                + " scatter: "+getScattererDepth()+" km,"+getScattererDistanceDeg()+" deg";
+        return desc;
+    }
+
+    @Override
+    public boolean isFail() {
+        return inboundArrival == null || scatteredPhase.isFail();
+    }
+
+    @Override
+    public String failReason() {
+        if (isFail()) {
+
+        }
+        return "";
     }
 
     @Override
@@ -338,12 +410,12 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         double[] dist = scatteredPhase.getDist();
         double[] rayParams = scatteredPhase.getRayParams();
         for(int j = 0; j < dist.length; j++) {
-            System.out.println(j + "  " + (scattererDistanceDeg +dist[j]) + "  " + rayParams[j]);
+            System.out.println(j + "  " + (scatterer.getDistanceDegree() +dist[j]) + "  " + rayParams[j]);
         }
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) {
+    public List<TimeDist> interpPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException {
         List<TimeDist> out = new ArrayList<>();
         ScatteredArrival scatA = (ScatteredArrival) arrival;
         double scatDistance = inboundArrival.getDist();
@@ -353,7 +425,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 TimeDist btd = new TimeDist(
                         td.getP(),
                         td.getTime(),
-                        -1 * td.getDistRadian(),
+                        td.getDistRadian(),
                         td.getDepth());
                 out.add(btd);
             }
@@ -361,9 +433,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
             out.addAll(Arrays.asList(inboundArrival.getPierce()));
         }
 
-        List<TimeDist> scatPierce = scatteredPhase.calcPierceTimeDist(scatA.getScatteredArrival());
+        List<TimeDist> scatPierce = scatteredPhase.interpPierceTimeDist(scatA.getScatteredArrival());
         // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
-       // scatPierce = scatPierce.subList(1,scatPierce.size());
+        scatPierce = scatPierce.subList(1,scatPierce.size());
         int scatNegative = 1;
         if (scatA.isScatterNegativeDirection()) {
             scatNegative = -1;
@@ -378,40 +450,91 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return out;
     }
 
+    public double calcTstar(Arrival currArrival) throws NoArrivalException {
+        return inboundArrival.getPhase().calcTstar(inboundArrival)
+            + scatteredPhase.calcTstar(currArrival);
+    }
+
+    /**
+     * True is all segments of this path are only S waves.
+     */
     @Override
-    public List<TimeDist> calcPathTimeDist(Arrival arrival) {
-        List<TimeDist> out = new ArrayList<>();
-        ScatteredArrival scatA = (ScatteredArrival) arrival;
-        double scatDistance = inboundArrival.getDist();
-        TimeDist[] inPath = inboundArrival.getPath();
-        if (scatA.isInboundNegativeDirection()) {
-            scatDistance = -1*scatDistance;
-            for (TimeDist td : inboundArrival.getPath()) {
-                TimeDist btd = new TimeDist(
-                        td.getP(),
-                        td.getTime(),
-                        -1 * td.getDistRadian(),
-                        td.getDepth());
-                out.add(btd);
+    public boolean isAllPWave() {
+        for (List<SeismicPhaseSegment> subList : getListPhaseSegments()){
+            for (SeismicPhaseSegment seg : subList) {
+                if (!seg.isPWave) {
+                    return false;
+                }
             }
-        } else {
-            out.addAll(Arrays.asList(inboundArrival.getPath()));
         }
+        return true;
+    }
 
-        List<TimeDist> scatPath = scatteredPhase.calcPathTimeDist(scatA.getScatteredArrival());
-        // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
-        scatPath = scatPath.subList(1,scatPath.size());
-        int scatNegative = 1;
-        if (scatA.isScatterNegativeDirection()) {
-            scatNegative = -1;
+    /**
+     * True is all segments of this path are only S waves.
+     */
+    @Override
+    public boolean isAllSWave() {
+        for (List<SeismicPhaseSegment> subList : getListPhaseSegments()){
+            for (SeismicPhaseSegment seg : subList) {
+                if (seg.isPWave) {
+                    return false;
+                }
+            }
         }
-        for (TimeDist td : scatPath) {
-            out.add(new TimeDist(td.getP(),
-                    inboundArrival.getTime()+td.getTime(),
-                    scatDistance + scatNegative*td.getDistRadian(),
-                    td.getDepth()));
-        }
+        return true;
+    }
 
+    @Override
+    public SeismicPhase interpolatePhase(double maxDeltaDeg) {
+        return new ScatteredSeismicPhase(inboundArrival, scatteredPhase.interpolateSimplePhase(maxDeltaDeg), scatterer, backscatter);
+    }
+
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
+    @Override
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) {
+        return 0;
+    }
+
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
+    @Override
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) {
+        return 0;
+    }
+
+    @Override
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) throws NoArrivalException, SlownessModelException, TauModelException {
+        List<ArrivalPathSegment> out = new ArrayList<>();
+        List<ArrivalPathSegment> inboundPath = inboundArrival.getPathSegments();
+        for (ArrivalPathSegment seg : inboundPath) {
+            // swap arrival for main
+            seg.arrival = arrival;
+            out.add(seg);
+        }
+        ScatteredArrival scatA = (ScatteredArrival) arrival;
+        ArrivalPathSegment lastSeg =  inboundPath.get(inboundPath.size()-1);
+        TimeDist prevEnd = lastSeg.getPathEnd();
+        List<ArrivalPathSegment> outboundPath = scatteredPhase.calcSegmentPaths(scatA.getScatteredArrival(), prevEnd, lastSeg.segmentIndex);
+
+        int segIdx = lastSeg.segmentIndex+1;
+        for (ArrivalPathSegment scatPathSeg : outboundPath) {
+            scatPathSeg.segmentIndex = segIdx++;
+            scatPathSeg.arrival = arrival;
+        }
+        out.addAll(outboundPath);
         return out;
+    }
+
+    @Override
+    public List<ShadowZone> getShadowZones() {
+        return scatteredPhase.getShadowZones();
+    }
+
+    public Scatterer getScatterer() {
+        return scatterer;
     }
 }

@@ -1,0 +1,18 @@
+Pv410p:
+  exists from 0.00 to 21.42 degrees in the iasp91 model.
+  with ray parameter from   11.521 down to    0.000 sec/deg.
+  travel times from   100.85 to   292.39 sec.
+
+  P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then reflect topside
+  p going up   as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+
+--------
+PV410p:
+  exists from 14.08 to 21.42 degrees in the iasp91 model.
+  with ray parameter from   11.521 down to   11.115 sec/deg.
+  travel times from   208.70 to   292.39 sec.
+
+  P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then critical reflect topside
+  p going up   as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+
+--------

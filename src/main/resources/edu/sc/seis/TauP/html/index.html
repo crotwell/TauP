@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <style>
+      .topheader {
+        display: flex;
+      }
+    </style>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+  </head>
+<body>
+  <div class="topheader">
+    <img src="doc/_static/taupLogo.svg"/>
+    <h1>Web Interface</h1>
+
+  </div>
+  <h5 id="version"></h5>
+<h3>Resources:</h3>
+<ul>
+  <li><a href="doc/index.html" target="taupdocs">Documentation</a> </li>
+  <li><a href="http://www.seis.sc.edu/taup">http://www.seis.sc.edu/taup</a></li>
+</ul>
+
+<h3>TauP Online Calculator:</a></h3>
+<p>Calculate <a href="./taup.html">times, paths and more interactively.</a></p>
+
+<h3>Examples:</h3>
+<ul>
+    <li>
+        describe phase: <a href="phase?evdepth=100&phase=P,S">phase?evdepth=100&phase=P,S</a>
+    </li>
+    <li>
+        time: <a href="time?degree=35&evdepth=100&phase=P,S">time?degree=35&evdepth=100&phase=P,S</a>
+    </li>
+    <li>
+        pierce: <a href="pierce?degree=35&evdepth=100&phase=P,S&format=text">pierce?degree=35&evdepth=100&phase=P,S&format=text</a>
+    </li>
+    <li>
+        path: <a href="path?degree=35&evdepth=100&phase=P,S&format=svg">path?degree=35&evdepth=100&phase=P,S&format=svg</a>
+    </li>
+    <li>
+        wavefront: <a href="wavefront?negdist=true&evdepth=100&phase=P&format=svg">wavefront?degree=35&evdepth=100&phase=P&format=svg</a>
+    </li>
+    <li>
+        curve: <a href="curve?evdepth=100&phase=P&format=svg">curve?evdepth=100&phase=P&format=svg</a>
+    </li>
+    <li>
+        scatter: <a href="path?scatter=400,-5&degree=35&evdepth=100&phase=P,S,PedOP,SedOS&format=svg">path?scatter=200,-5&amp;degree=35&evdepth=100&phase=P,S,PedOP,SedOS&format=svg</a>
+    </li>
+    <li>
+      reflection and transmission: <a href="refltrans?&layer=6.5,3.75,2.9,8,4.5,3.3&anglestep=1&down=true&abs=true&pwave=true&x=rayparam&legend=true&format=svg">
+        refltrans?&layer=6.5,3.75,2.9,8,4.5,3.3&anglestep=1&down=true&abs=true&pwave=true&x=rayparam&legend=true&format=svg</a>
+    </li>
+    <li>
+      phase amplitude curves: <a href="curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&y=amp&ylog=true&legend=true&format=svg">
+        curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&y=amp&ylog=true&legend=true&format=svg</a>
+    </li>
+</ul>
+<script type="module" src="getversion.js">
+</script>
+</body>
+</html>

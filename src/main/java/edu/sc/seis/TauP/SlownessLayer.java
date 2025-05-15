@@ -43,14 +43,16 @@ public class SlownessLayer implements Serializable {
                          double topDepth,
                          double botP,
                          double botDepth) {
-        Assert.isFalse(topDepth > botDepth, "topDepth > botDepth: " + topDepth
-                + " > " + botDepth);
-        Assert.isFalse(topDepth < 0.0 || Double.isNaN(topDepth)
-                               || Double.isInfinite(topDepth),
-                       "topDepth is not a number or is negative: " + topDepth);
-        Assert.isFalse(botDepth < 0.0 || Double.isNaN(botDepth)
-                               || Double.isInfinite(botDepth),
-                       "botDepth is not a number or is negative: " + botDepth);
+        if (topDepth > botDepth) {throw new IllegalArgumentException("topDepth > botDepth: " + topDepth
+                + " > " + botDepth);}
+        if (topDepth < 0.0 || Double.isNaN(topDepth)
+                               || Double.isInfinite(topDepth)) {
+            throw new IllegalArgumentException("topDepth is not a number or is negative: " + topDepth);
+        }
+        if(botDepth < 0.0 || Double.isNaN(botDepth)
+                               || Double.isInfinite(botDepth)) {
+            throw new IllegalArgumentException("botDepth is not a number or is negative: " + botDepth);
+        }
         this.topP = topP;
         this.topDepth = topDepth;
         this.botP = botP;
@@ -64,19 +66,19 @@ public class SlownessLayer implements Serializable {
                          boolean spherical,
                          double radiusOfEarth,
                          boolean isPWave) {
-        Assert.isFalse(vLayer.getTopDepth() > vLayer.getBotDepth(),
-                       "vLayer.topDepth > vLayer.botDepth :"
-                               + vLayer.getTopDepth() + " "
-                               + vLayer.getBotDepth());
+        if (vLayer.getTopDepth() > vLayer.getBotDepth()) {
+            throw new IllegalArgumentException("vLayer.topDepth > vLayer.botDepth :"
+                    + vLayer.getTopDepth() + " "
+                    + vLayer.getBotDepth());
+        }
         topDepth = vLayer.getTopDepth();
         botDepth = vLayer.getBotDepth();
-        char waveType;
+        VelocityModelMaterial waveType;
         if(isPWave) {
-            waveType = 'P';
+            waveType = VelocityModelMaterial.P_VELOCITY;
         } else {
-            waveType = 'S';
+            waveType = VelocityModelMaterial.S_VELOCITY;
         }
-        try {
             if(spherical) {
                 topP = (radiusOfEarth - getTopDepth())
                         / vLayer.evaluateAtTop(waveType);
@@ -86,13 +88,10 @@ public class SlownessLayer implements Serializable {
                 topP = 1.0 / vLayer.evaluateAtTop(waveType);
                 botP = 1.0 / vLayer.evaluateAtBottom(waveType);
             }
-            Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
-                           "Slowness sample is NaN: topP=" + getTopP()
-                                   + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
-        } catch(NoSuchMatPropException e) {
-            // Can't happen
-            throw new RuntimeException(e);
-        }
+            if (Double.isNaN(getTopP()) || Double.isNaN(getBotP())) {
+                throw new IllegalArgumentException("Slowness sample is NaN: topP=" + getTopP()
+                        + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
+            }
     }
 
     /**
@@ -131,11 +130,7 @@ public class SlownessLayer implements Serializable {
 
     /** Is the layer a zero thickness layer, ie a total reflection? */
     public boolean isZeroThickness() {
-        if(getTopDepth() == getBotDepth()) {
-            return true;
-        } else {
-            return false;
-        }
+        return getTopDepth() == getBotDepth();
     }
     
     public boolean containsDepth(double depth) {
@@ -154,18 +149,20 @@ public class SlownessLayer implements Serializable {
      */
     public double evaluateAt_bullen(double depth, double radiusOfEarth)
             throws SlownessModelException {
-        Assert.isFalse(getBotDepth() > radiusOfEarth,
-                       "SlownessLayer.evaluateAt_bullen:"
-                               + " radiusOfEarth="
-                               + radiusOfEarth
-                               + " is smaller than the maximum depth of this layer."
-                               + " topDepth=" + getTopDepth() + " botDepth="
-                               + getBotDepth());
-        Assert.isFalse((getTopDepth() - depth) * (depth - getBotDepth()) < 0.0,
-                       "SlownessLayer.evaluateAt_bullen:" + " depth=" + depth
-                               + " is not contained within this layer."
-                               + " topDepth=" + getTopDepth() + " botDepth="
-                               + getBotDepth());
+        if (getBotDepth() > radiusOfEarth) {
+            throw new IllegalArgumentException("SlownessLayer.evaluateAt_bullen:"
+                    + " radiusOfEarth="
+                    + radiusOfEarth
+                    + " is smaller than the maximum depth of this layer."
+                    + " topDepth=" + getTopDepth() + " botDepth="
+                    + getBotDepth());
+        }
+        if((getTopDepth() - depth) * (depth - getBotDepth()) < 0.0) {
+            throw new IllegalArgumentException("SlownessLayer.evaluateAt_bullen:" + " depth=" + depth
+                    + " is not contained within this layer."
+                    + " topDepth=" + getTopDepth() + " botDepth="
+                    + getBotDepth());
+        }
         if(depth == getTopDepth()) {
             return getTopP();
         } else if(depth == getBotDepth()) {
@@ -188,8 +185,8 @@ public class SlownessLayer implements Serializable {
                     double linear = (getBotP() - getTopP())
                             / (getBotDepth() - getTopDepth())
                             * (depth - getTopDepth()) + getTopP();
-                    if(linear < 0.0 || Double.isNaN(linear)
-                            || Double.isInfinite(linear)) {} else {
+                    if( ! (linear < 0.0 || Double.isNaN(linear)
+                            || Double.isInfinite(linear))) {
                         return linear;
                     }
                 }
@@ -198,7 +195,7 @@ public class SlownessLayer implements Serializable {
                         + " is not a number or is negative: "
                         + answer
                         + "\n"
-                        + this.toString()
+                        + this
                         + "\n A="
                         + A
                         + "   B="
@@ -235,15 +232,22 @@ public class SlownessLayer implements Serializable {
         if(getTopDepth() == getBotDepth()) {
             return new TimeDist(p, 0.0, 0.0, outDepth);
         }
+        if (getBotDepth() == radiusOfEarth) {
+            // special case for center of earth due to power law divide by zero, treat as constant layer
+            // time is just top slowness
+            double distRadian = Math.PI / 2.0;
+            double time = getTopP();
+            return new TimeDist(p, time, distRadian, outDepth);
+        }
         // only do bullen radial slowness if the layer is not too thin
         // here we use 1 micron = .000000001
         // just return 0 in this case
         if(getBotDepth() - getTopDepth() < .000000001) {
             return new TimeDist(p, 0.0, 0.0, outDepth);
         }
-        double B = Math.log(getTopP() / getBotP())
-                / Math.log((radiusOfEarth - getTopDepth())
-                        / (radiusOfEarth - getBotDepth()));
+
+        double[] AB = calcBullenAB(radiusOfEarth);
+        double B = AB[1];
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);
         double distRadian = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
@@ -257,7 +261,7 @@ public class SlownessLayer implements Serializable {
                     + "\n botDepth = " + getBotDepth() + "\n dist="
                     + distRadian + "\n time=" + time + "\n topP = "
                     + getTopP() + "\n botP = " + getBotP() + "\n B = " + B
-                    + " " + toString());
+                    + " " + this);
         }
         return new TimeDist(p, time, distRadian, outDepth);
     }
@@ -279,20 +283,17 @@ public class SlownessLayer implements Serializable {
             if (getTopP() == rayParam) {return getTopDepth();}
             if (getBotP() == rayParam) {return getBotDepth();}
             if(getBotP() != 0.0 && getBotDepth() != radiusOfEarth) {
-                double B = Math.log(getTopP() / getBotP())
-                        / Math.log((radiusOfEarth - getTopDepth())
-                                / (radiusOfEarth - getBotDepth()));
-                double A = getTopP()
-                        / Math.pow((radiusOfEarth - getTopDepth()), B);
+                double[] AB = calcBullenAB(radiusOfEarth);
+                double A = AB[0];
+                double B = AB[1];
                 if (A != 0 && B != 0) {
                 tempDepth = radiusOfEarth
                         - Math.exp(1.0 / B * Math.log(rayParam / A));
                 } else {
                     // overflow double, maybe B so large? use linear interp
-                    double linear = (getBotDepth() - getTopDepth())
+                    tempDepth = (getBotDepth() - getTopDepth())
                             / (getBotP() - getTopP())
                             * (rayParam - getTopP()) + getTopDepth();
-                    tempDepth = linear;
                 }
                 /*
                  * tempDepth = radiusOfEarth - Math.pow(rayParam/A, 1.0/B);
@@ -311,8 +312,8 @@ public class SlownessLayer implements Serializable {
                         double linear = (getBotDepth() - getTopDepth())
                                 / (getBotP() - getTopP())
                                 * (rayParam - getTopP()) + getTopDepth();
-                        if(linear < 0.0 || Double.isNaN(linear)
-                                || Double.isInfinite(linear)) {} else {
+                        if( ! (linear < 0.0 || Double.isNaN(linear)
+                                || Double.isInfinite(linear))) {
                             return linear;
                         }
                     }
@@ -356,13 +357,19 @@ public class SlownessLayer implements Serializable {
         }
     }
 
+    public double[] calcBullenAB(double radiusOfEarth) {
+        double B = Math.log(getTopP() / getBotP())
+                / Math.log(  (radiusOfEarth - getTopDepth())
+                            /(radiusOfEarth - getBotDepth()));
+        double A = getTopP()
+                / Math.pow((radiusOfEarth - getTopDepth()), B);
+        return new double[] {A, B};
+    }
+
     /** returns a String description of this SlownessLayer. */
     public String toString() {
-        // String desc = "top p "+ (float)topP +", topDepth " + (float)topDepth
-        // +", bot p "+ (float)botP +", botDepth " + (float)botDepth;
-        String desc = "top p " + getTopP() + ", topDepth " + getTopDepth()
+        return "top p " + getTopP() + ", topDepth " + getTopDepth()
                 + ", bot p " + getBotP() + ", botDepth " + getBotDepth();
-        return desc;
     }
 
     public boolean validate() throws SlownessModelException {
@@ -383,14 +390,14 @@ public class SlownessLayer implements Serializable {
     }
 
     /** Slowness at the top of the layer. */
-    private double topP;
+    private final double topP;
 
     /** Slowness at the bottom of the layer. */
-    private double botP;
+    private final double botP;
 
     /** Depth at the top of the layer. */
-    private double topDepth;
+    private final double topDepth;
 
     /** Depth at the bottom of the layer. */
-    private double botDepth;
+    private final double botDepth;
 }

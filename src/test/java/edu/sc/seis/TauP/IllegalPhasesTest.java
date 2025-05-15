@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +26,7 @@ class IllegalPhasesTest {
 			"Pedcp",
 			"PKp",
 			"PKs",
+			"Pcp^20P",
 			"Pn^20P",
 			"Pdiff^410P",
 			"PK^cKP",
@@ -47,12 +48,18 @@ class IllegalPhasesTest {
 			"PedPdiffKP",
 			"PKdiffP",
 			"PK3000diffP",// assuming discon in outer core at 3000
+			"SedK3000diffp",
 			"PKv3000kP",
 			"PK^3000KP",
 			"PKI5500diffkp", // assuming discon in inner core at 5500
 			"PKIv5500ykp",
 			"PKI^5500Ikp",
-			"PKIkp"
+			"PKIkp",
+			"P410diffp",
+			"P410diff",
+			"P410diffS",
+			"Pvmp",
+			"Pv_moho_p"
 	);
 
 	static List<String> scatterLegalPhases = Arrays.asList(
@@ -77,7 +84,8 @@ class IllegalPhasesTest {
 			"scS", "pcP", "kiKP", "kkP", "iKP",
 			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
-			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
+			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf",
+			"P^mp"
 
 	};
 
@@ -95,7 +103,7 @@ class IllegalPhasesTest {
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
 	ArrayList<String> createIllegalPhases() {
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		ArrayList<String> illegalEndPhases = new ArrayList<>();
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
@@ -142,17 +150,18 @@ class IllegalPhasesTest {
 
 		String modelName = "outerCoreDiscon.nd";
 		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-		TauP_Create taupCreate = new TauP_Create();
-		TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+		TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
 
 		TauModel tModDepth = tMod_OCD.depthCorrect(10);
 		float receiverDepth = 100;
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
 				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
+				assertNotNull(phase);
 				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
+				assertNotNull(phase_depth);
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
@@ -164,7 +173,7 @@ class IllegalPhasesTest {
 	void checkLegalScatterPhasesTest() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 		// maybe dumb test, just check that leg puller doesn't die
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		legalPhases.addAll(scatterLegalPhases);
 		for (String phaseName : legalPhases) {
 			List<String> legs = LegPuller.legPuller(phaseName);

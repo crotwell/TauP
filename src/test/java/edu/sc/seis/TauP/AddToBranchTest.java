@@ -1,12 +1,10 @@
 package edu.sc.seis.TauP;
 
-import static edu.sc.seis.TauP.PhaseInteraction.FAIL;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_UNDERSIDE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -37,204 +35,206 @@ public class AddToBranchTest {
 
     @Test
     public void turn_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("P");
-        seisFactory.addToBranch(tMod, 0,0,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        assertEquals(p_surface_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_crust_rp, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("P");
+        seisFactory.addToBranch(0,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
+        assertEquals(p_surface_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_crust_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void turn_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("S");
-        seisFactory.addToBranch(tMod, 0,0,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
-        assertEquals(s_surface_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_crust_rp, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("S");
+        seisFactory.addToBranch(0,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
+        assertEquals(s_surface_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_crust_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttop_P_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Pvmp");
-        seisFactory.addToBranch(tMod, 0,0, PWAVE, PWAVE, PhaseInteraction.REFLECT_TOPSIDE, "P");
-        assertEquals(p_crust_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Pvmp");
+        seisFactory.addToBranch(0, PWAVE, PWAVE, PhaseInteraction.REFLECT_TOPSIDE, "P");
+        assertEquals(p_crust_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttop_P_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Pvms");
-        seisFactory.addToBranch(tMod, 0,0, PWAVE, SWAVE, PhaseInteraction.REFLECT_TOPSIDE, "P");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Pvms");
+        seisFactory.addToBranch(0, PWAVE, SWAVE, PhaseInteraction.REFLECT_TOPSIDE, "P");
         double maxRP = Math.min(p_crust_rp, s_crust_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttop_S_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Svmp");
-        seisFactory.addToBranch(tMod, 0,0, SWAVE, PWAVE, PhaseInteraction.REFLECT_TOPSIDE, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Svmp");
+        seisFactory.addToBranch(0, SWAVE, PWAVE, PhaseInteraction.REFLECT_TOPSIDE, "S");
         double maxRP = Math.min(p_crust_rp, s_crust_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttop_S_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Svms");
-        seisFactory.addToBranch(tMod, 0,0,SWAVE,SWAVE,PhaseInteraction.REFLECT_TOPSIDE, "S");
-        assertEquals(s_crust_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Svms");
+        seisFactory.addToBranch(0,SWAVE,SWAVE,PhaseInteraction.REFLECT_TOPSIDE, "S");
+        assertEquals(s_crust_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttopCritical_P_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("PVcp");
-        seisFactory.addToBranch(tMod, 0,0,PWAVE,PWAVE,PhaseInteraction.REFLECT_TOPSIDE_CRITICAL, "P");
-        assertEquals(p_crust_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_mantle_rp, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("PVcp");
+        seisFactory.addToBranch(0,PWAVE,PWAVE,PhaseInteraction.REFLECT_TOPSIDE_CRITICAL, "P");
+        assertEquals(p_crust_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_mantle_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void reflecttopCritical_S_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("SVcs");
-        seisFactory.addToBranch(tMod, 0,0,SWAVE,SWAVE,PhaseInteraction.REFLECT_TOPSIDE_CRITICAL, "S");
-        assertEquals(s_crust_rp, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_mantle_rp, seisFactory.minRayParam, 0.0001);
+        ProtoSeismicPhase seisFactory = makeSPhFactory("SVcs");
+        seisFactory.addToBranch(0,SWAVE,SWAVE,PhaseInteraction.REFLECT_TOPSIDE_CRITICAL, "S");
+        assertEquals(s_crust_rp, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_mantle_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transdown_P_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("PmP");
-        seisFactory.addToBranch(tMod, 0,0,PWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "P");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("PmP");
+        seisFactory.addToBranch(0,PWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "P");
         double maxRP = Math.min(p_crust_rp, p_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transdown_P_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("PmS");
-        seisFactory.addToBranch(tMod, 0,0,PWAVE,SWAVE,PhaseInteraction.TRANSDOWN, "P");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("PmS");
+        seisFactory.addToBranch(0,PWAVE,SWAVE,PhaseInteraction.TRANSDOWN, "P");
         double maxRP = Math.min(p_crust_rp, s_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transdown_S_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("SmP");
-        seisFactory.addToBranch(tMod, 0,0,SWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("SmP");
+        seisFactory.addToBranch(0,SWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "S");
         double maxRP = Math.min(s_crust_rp, p_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transdown_S_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("SmS");
-        seisFactory.addToBranch(tMod, 0,0,SWAVE,SWAVE,PhaseInteraction.TRANSDOWN, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("SmS");
+        seisFactory.addToBranch(0,SWAVE,SWAVE,PhaseInteraction.TRANSDOWN, "S");
         double maxRP = Math.min(s_crust_rp, s_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transup_P_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Pmp");
-        seisFactory.addToBranch(tMod, 0,1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        seisFactory.addToBranch(tMod, 1,1,PWAVE,PWAVE,PhaseInteraction.TRANSUP, "p");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Pmp");
+        seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
+        seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TRANSUP, "p");
         double maxRP = Math.min(p_crust_rp, p_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transup_P_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Pms");
-        seisFactory.addToBranch(tMod, 0,1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        seisFactory.addToBranch(tMod, 1,1,PWAVE,SWAVE,PhaseInteraction.TRANSUP, "P");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Pms");
+        seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
+        seisFactory.addToBranch(1,PWAVE,SWAVE,PhaseInteraction.TRANSUP, "P");
         double maxRP = Math.min(p_mantle_rp, s_crust_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transup_S_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Smp");
-        seisFactory.addToBranch(tMod, 0,1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
-        seisFactory.addToBranch(tMod, 1,1,SWAVE,PWAVE,PhaseInteraction.TRANSUP, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Smp");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
+        seisFactory.addToBranch(1,SWAVE,PWAVE,PhaseInteraction.TRANSUP, "S");
         double maxRP = Math.min(s_mantle_rp, p_crust_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transup_S_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("Sms");
-        seisFactory.addToBranch(tMod, 0,1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
-        seisFactory.addToBranch(tMod, 1,1,SWAVE,SWAVE,PhaseInteraction.TRANSUP, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("Sms");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,PhaseInteraction.TRANSUP, "S");
         double maxRP = Math.min(s_crust_rp, s_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void refl_under_P_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("P^mp");
-        seisFactory.addToBranch(tMod, 0,1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        seisFactory.addToBranch(tMod, 1,1,PWAVE,PWAVE, REFLECT_UNDERSIDE, "p");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("P^mP");
+        seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
+        seisFactory.addToBranch(1,PWAVE,PWAVE, REFLECT_UNDERSIDE, "P");
         double maxRP = Math.min(p_crust_rp, p_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void refl_under_P_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("P^ms");
-        seisFactory.addToBranch(tMod, 0,1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
-        seisFactory.addToBranch(tMod, 1,1,PWAVE,SWAVE,REFLECT_UNDERSIDE, "P");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("P^ms");
+        seisFactory.addToBranch(1,PWAVE,PWAVE,PhaseInteraction.TURN, "P");
+        seisFactory.addToBranch(1,PWAVE,SWAVE,REFLECT_UNDERSIDE, "P");
         double maxRP = Math.min(p_mantle_rp, s_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(p_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(p_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void refl_under_S_P() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("S^mp");
-        seisFactory.addToBranch(tMod, 0,1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
-        seisFactory.addToBranch(tMod, 1,1,SWAVE,PWAVE,REFLECT_UNDERSIDE, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("S^mp");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
+        seisFactory.addToBranch(1,SWAVE,PWAVE,REFLECT_UNDERSIDE, "S");
         double maxRP = Math.min(s_mantle_rp, p_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void refl_under_S_S() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("S^ms");
-        seisFactory.addToBranch(tMod, 0,1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
-        seisFactory.addToBranch(tMod, 1,1,SWAVE,SWAVE,REFLECT_UNDERSIDE, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("S^ms");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,PhaseInteraction.TURN, "S");
+        seisFactory.addToBranch(1,SWAVE,SWAVE,REFLECT_UNDERSIDE, "S");
         double maxRP = Math.min(s_crust_rp, s_mantle_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(s_cmb_rp, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(s_cmb_rp, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void transdown_S_K_core() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("SKS");
-        seisFactory.addToBranch(tMod, 0,1,SWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "S");
+        ProtoSeismicPhase seisFactory = makeSPhFactory("SKS");
+        seisFactory.addToBranch(1,SWAVE,PWAVE,PhaseInteraction.TRANSDOWN, "S");
         double maxRP = Math.min(s_cmb_rp, p_ocore_rp);
-        assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
-        assertEquals(0, seisFactory.minRayParam, 0.0001);
+        assertEquals(maxRP, seisFactory.endSegment().maxRayParam, 0.0001);
+        assertEquals(0, seisFactory.endSegment().minRayParam, 0.0001);
     }
 
     @Test
     public void legsArePWaveTest() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("PKP");
-        boolean[] legsArePWave = seisFactory.legsArePWave();
+        ProtoSeismicPhase seisFactory = makeSPhFactory("PKP");
+        ArrayList<String> legsPKP = LegPuller.legPuller(seisFactory.getName());
+        boolean[] legsArePWave = SeismicPhaseFactory.legsArePWave(legsPKP);
         for (boolean b : legsArePWave) {
             assertEquals(true, b);
         }
         seisFactory = makeSPhFactory("SKS");
-        legsArePWave = seisFactory.legsArePWave();
+        ArrayList<String> legs = LegPuller.legPuller(seisFactory.getName());
+        legsArePWave = SeismicPhaseFactory.legsArePWave(legs);
         // legs includes END as leg
         assertEquals(4, legsArePWave.length);
         assertEquals(false, legsArePWave[0]);
@@ -243,21 +243,19 @@ public class AddToBranchTest {
         assertEquals(false, legsArePWave[2]);
     }
 
-    public static SeismicPhaseFactory makeSPhFactory(String name) throws TauModelException {
+    public static ProtoSeismicPhase makeSPhFactory(String name) throws TauModelException {
         boolean isPWave = true;
         if (name.startsWith("S") || name.startsWith("s") || name.startsWith("J") || name.startsWith("j")) {
             isPWave = false;
         }
-        SeismicPhaseFactory seisFactory = new SeismicPhaseFactory(name, tMod, 0,0,true);
-        seisFactory.legs = LegPuller.legPuller(seisFactory.name);
-        seisFactory.puristName = LegPuller.createPuristName(tMod, seisFactory.legs);
-        seisFactory.currBranch = tMod.getSourceBranch();
-        seisFactory.maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(), isPWave).getMaxRayParam();
-        return seisFactory;
+        ProtoSeismicPhase proto = ProtoSeismicPhase.startEmpty(name, tMod, 0);
+        List<String> legs = LegPuller.legPuller(name);
+        //seisFactory.legs = legs;
+        return proto;
     }
 
     @BeforeAll
-    public static void createTMod() throws SlownessModelException, TauModelException, NoSuchMatPropException, NoSuchLayerException {
+    public static void createTMod() throws SlownessModelException, TauModelException, NoSuchLayerException {
         vmod = createVelMod(vp, vs);
         smod = new SphericalSModel(vmod,
                                        0.1,
@@ -295,6 +293,9 @@ public class AddToBranchTest {
 
     static double vs = 3.5;
 
+    /**
+     * Velocity step between crust and mantle and between mantle and outercore.
+     */
     static float step = 2.00f;
 
     static double p_surface_rp = (R)/vp;
@@ -305,6 +306,6 @@ public class AddToBranchTest {
     static double s_mantle_rp = (R-30)/(vs+step);
     static double p_cmb_rp = (R-2890)/(vp+step);
     static double s_cmb_rp = (R-2890)/(vs+step);
-    static double p_ocore_rp = (R-2890)/(vp+2*step);
+    static double p_ocore_rp = (R-2890)/(vp+2*step);  // outer core should be lvz for P???
 
 }

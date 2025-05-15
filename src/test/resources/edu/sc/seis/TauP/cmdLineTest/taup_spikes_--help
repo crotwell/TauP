@@ -1,0 +1,105 @@
+Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
+                   [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
+                   [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
+                   [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                   [--otime=<origintime>] [--prop=<toolPropsFilename>]
+                   [--pulsewidth=<pulseWidth>] [--qml=<quakemlFilename>]
+                   [sps=<sps>] [--staxml=<stationxmlFilename>] [--deg=d[,
+                   d...]]... [--eid=evt[,evt...]]... [--km=km[,km...]]...
+                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
+                   lon]... [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...
+                   [--strikediprake=strike dip rake]... [[--mod=<modelName>]
+                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
+                   [--phasefile=<phaseFiles>]...] [--ms3 | --sac]
+Calculate spike seismograms
+
+Options:
+
+      --attenuationfreq=<attenuationFreq>
+                             attenuation frequency for amplitude calculations,
+                               default is 1.0
+      --debug                enable debugging output
+      --deg, --degree=d[,d...]
+                             distance in degrees
+      --degreerange=[step][min max][min max step]
+                             regular distance range in degrees, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 180 and step is 10.
+      --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --geodeticflattening=f Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
+      --help                 display this help message
+      --kilometerrange=[step][min max][min max step]
+                             regular distance range in kilometers, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 1000 and step is 100.
+      --km, --kilometer=km[,km...]
+                             distance in kilometers along surface.
+      --mw=<mw>              scale amplitude by source moment magnitude,
+                               default is 4.0
+      --numattenuationfreq=<numFrequencies>
+                              number attenuation frequencies for amplitude
+                               calculations, default is 64
+  -o, --output=<outFile>     output to file, default is stdout.
+      --otime=<origintime>   event origin time, as ISO8601
+      --prop=<toolPropsFilename>
+                             load defaults from properties file
+      --pulsewidth=<pulseWidth>
+                             Width in seconds of the spike pulse for each
+                               arrival
+      --qml, --quakeml=<quakemlFilename>
+                             QuakeML file to load for earthquake origins to use
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
+      sps=<sps>              Samples per second for the output seismogram,
+                               defaults to $DEFAULT_VALUE
+      --staxml=<stationxmlFilename>
+                             StationXML file to extract station latitudes and
+                               longitudes from
+      --strikediprake=strike dip rake
+                             fault strike, dip and rake for amplitude
+                               calculations. If not given radiation pattern is
+                               unity in all directions.
+      --verbose              enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                             source depth in km
+      --mod, --model=<modelName>
+                             use velocity model "modelName" for calculations.
+                             Default is iasp91. Other builtin models include
+                               prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=depth deg
+                             scattering depth and distance in degrees, which
+                               may be negative. Only effects phases with 'o' or
+                               'O' in the phase name.
+      --stadepth, --receiverdepth=depth[,depth...]
+                             the receiver depth in km for stations not at the
+                               surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                             seismic phase names
+      --phasefile=<phaseFiles>
+                             read list of phase names from file
+Output Type
+      --ms3                  outputs as mseed3
+      --sac                  outputs as SAC
+Lat,Lon influenced by:
+      --az=<azimuth>         azimuth in degrees, source to receiver
+      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --evt, --event=lat lon event latitude and longitude.  Creates a distance
+                               if station is also given.
+      --sta, --station=lat lon
+                             station latitude and longitude. Creates a distance
+                               if event is also given.

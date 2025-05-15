@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TauP SetMS3 &#8212; TauP 3.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TauP SetSac" href="taup_setsac.html" />
+    <link rel="prev" title="TauP Table" href="taup_table.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_table.html">TauP Table</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TauP SetMS3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tools.html">Tools</a><ul>
+      <li>Previous: <a href="taup_table.html" title="previous chapter">TauP Table</a></li>
+      <li>Next: <a href="taup_setsac.html" title="next chapter">TauP SetSac</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="taup-setms3">
+<span id="id1"></span><h1>TauP SetMS3<a class="headerlink" href="#taup-setms3" title="Link to this heading">¶</a></h1>
+<p>TauP setms3 saves travel times into the extra headers of miniseed3 records.
+The source depth and distance used for the calculations can be provided
+on the command line or can be extracted from
+<a class="reference external" href="https://crotwell.github.io/ms3eh/">bag style json</a> in extra headers
+in the records.</p>
+<p>In the simplest case, with miniseed3 records that contain <em>bag</em> style
+extra headers with earthquake depth and station distance, travel times
+can be calculated by just giving the phases of interest. Alternatively,
+a depth and distance can be given, or earthquake and station information
+can be extracted from QuakeML and StationXML files.</p>
+<p>For example, if the records in my_earthquake.ms3 have bag style extra
+headers, then this will add markers to the extra headers for P and S:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup setms3 -p P,S my_earthquake.ms3
+</pre></div>
+</div>
+<p>The usage is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setms3 [--amp] [--debug] [--geodetic] [--help] [--verbose] [--taupeh
+                   [=&lt;ehKey&gt;]] [--attenuationfreq=&lt;attenuationFreq&gt;]
+                   [--geodeticflattening=f] [--mw=&lt;mw&gt;]
+                   [--numattenuationfreq=&lt;numFrequencies&gt;]
+                   [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
+                   [--qmltol=&lt;quakeOTimeTol&gt;] [--staxml=&lt;stationxmlFilename&gt;]
+                   [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
+                   [--strikediprake=strike dip rake]... [[--mod=&lt;modelName&gt;]
+                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
+                   [--phasefile=&lt;phaseFiles&gt;]...] [mseed3file...]
+Save travel times in the extra header of miniseed3 files.
+    https://crotwell.github.io/ms3eh/
+has details on the JSON structure.
+
+      [mseed3file...]      Miniseed3 files to process.
+
+Options:
+
+      --amp                show amplitude factor for each phase
+      --attenuationfreq=&lt;attenuationFreq&gt;
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
+      --debug              enable debugging output
+      --eid=evt[,evt...]   event id, like us7000pn9s, for lookup via USGS fdsn
+                             event web service. Creates a distance if station
+                             is also given.
+      --geodetic           use geodetic latitude for distance calculations,
+                             which implies an ellipticity. Default is
+                             spherical. Note this only affects calculation of
+                             distance from lat/lon pairs, all travel time
+                             calculations are done in a purely spherical model.
+      --geodeticflattening=f
+                           Inverse Elliptical flattening for distance
+                             calculations when --geodetic, defaults to WGS84 ~
+                             298.257. The distance calculation uses 1/x.
+      --help               display this help message
+      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
+                             is 4.0
+      --numattenuationfreq=&lt;numFrequencies&gt;
+                            number attenuation frequencies for amplitude
+                             calculations, default is 64
+      --prop=&lt;toolPropsFilename&gt;
+                           load defaults from properties file
+      --qml, --quakeml=&lt;quakemlFilename&gt;
+                           QuakeML file to load for earthquake origins to use
+      --qmltol=&lt;quakeOTimeTol&gt;
+                           time window to search for origins in a QuakeML file
+                             as an ISO8601 string, default value is PT1H.
+      --sid=sta[,sta...]   station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                             via fedcat web service. Creates a distance if
+                             event is also given.
+      --staxml=&lt;stationxmlFilename&gt;
+                           StationXML file to extract station latitudes and
+                             longitudes from
+      --strikediprake=strike dip rake
+                           fault strike, dip and rake for amplitude
+                             calculations. If not given radiation pattern is
+                             unity in all directions.
+      --taupeh[=&lt;ehKey&gt;]   key to store full TauP JSON output within extra
+                             headers within, otherwise use abbreviated &#39;bag&#39;
+                             style markers.If specified without parameter,
+                             extra header key of taup will be used.
+      --verbose            enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                           source depth in km
+      --mod, --model=&lt;modelName&gt;
+                           use velocity model &quot;modelName&quot; for calculations.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=depth deg
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
+                             in the phase name.
+      --stadepth, --receiverdepth=depth[,depth...]
+                           the receiver depth in km for stations not at the
+                             surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
+      --phasefile=&lt;phaseFiles&gt;
+                           read list of phase names from file
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/taup_setms3.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>

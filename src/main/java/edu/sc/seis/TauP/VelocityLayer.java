@@ -23,10 +23,6 @@
  * crotwell@seis.sc.edu or Tom Owens, owens@seis.sc.edu
  * 
  */
-/**
- * package for storage and manipulation of seismic earth models.
- * 
- */
 package edu.sc.seis.TauP;
 
 import java.io.Serializable;
@@ -57,17 +53,21 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     private double botSVelocity;
 
-    private double topDensity = 2.6;
+    private double topDensity;
 
-    private double botDensity = 2.6;
+    private double botDensity;
 
-    private double topQp = 1000;
+    private double topQp;
 
-    private double botQp = 1000;
+    private double botQp;
 
-    private double topQs = 2000;
+    private double topQs;
 
-    private double botQs = 2000;
+    private double botQs;
+
+    public static double DEFAULT_DENSITY = 2.6;
+    public static double DEFAULT_QP = 1000;
+    public static double DEFAULT_QS = 500;
 
     public VelocityLayer(int myLayerNumber,
                          double topDepth,
@@ -83,8 +83,8 @@ public class VelocityLayer implements Cloneable, Serializable {
              botPVelocity,
              topSVelocity,
              botSVelocity,
-             2.6,
-             2.6);
+             VelocityLayer.DEFAULT_DENSITY,
+             VelocityLayer.DEFAULT_DENSITY);
     }
 
     public VelocityLayer(int myLayerNumber,
@@ -105,10 +105,10 @@ public class VelocityLayer implements Cloneable, Serializable {
              botSVelocity,
              topDensity,
              bottomDensity,
-             1000,
-             1000,
-             2000,
-             2000);
+             VelocityLayer.DEFAULT_QP,
+             VelocityLayer.DEFAULT_QP,
+             VelocityLayer.DEFAULT_QS,
+             VelocityLayer.DEFAULT_QS);
     }
 
     public VelocityLayer(int myLayerNumber,
@@ -179,84 +179,84 @@ public class VelocityLayer implements Cloneable, Serializable {
     }
 
 
-    public double evaluateAtBottom(char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtBottom(VelocityModelMaterial materialProperty) {
         double answer;
         switch(materialProperty){
-            case 'P':
-            case 'p':
+            case P_VELOCITY:
                 answer = getBotPVelocity();
                 break;
-            case 's':
-            case 'S':
+            case S_VELOCITY:
                 answer = getBotSVelocity();
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
+            case DENSITY:
                 answer = getBotDensity();
                 break;
+            case Q_P:
+                answer = getBotQp();
+                break;
+            case Q_S:
+                answer = getBotQs();
+                break;
             default:
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("Unknown mat prop: "+materialProperty);
         }
         return answer;
     }
 
-    public double evaluateAtTop(char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtTop(VelocityModelMaterial materialProperty) {
         double answer;
         switch(materialProperty){
-            case 'P':
-            case 'p':
+            case P_VELOCITY:
                 answer = getTopPVelocity();
                 break;
-            case 's':
-            case 'S':
+            case S_VELOCITY:
                 answer = getTopSVelocity();
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
+            case DENSITY:
                 answer = getTopDensity();
                 break;
+            case Q_P:
+                answer = getTopQp();
+                break;
+            case Q_S:
+                answer = getTopQs();
+                break;
             default:
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("Unknown mat prop: "+materialProperty);
         }
         return answer;
     }
 
-    public double evaluateAt(double depth, char materialProperty)
-            throws NoSuchMatPropException {
-        double slope, answer;
+    public double evaluateAt(double depth, VelocityModelMaterial materialProperty) {
+        double answer;
+        double botY;
+        double topY;
         switch(materialProperty){
-            case 'P':
-            case 'p':
-                slope = (getBotPVelocity() - getTopPVelocity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopPVelocity();
+            case P_VELOCITY:
+                botY = getBotPVelocity();
+                topY = getTopPVelocity();
                 break;
-            case 's':
-            case 'S':
-                slope = (getBotSVelocity() - getTopSVelocity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopSVelocity();
+            case S_VELOCITY:
+                botY = getBotSVelocity();
+                topY = getTopSVelocity();
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
-                slope = (getBotDensity() - getTopDensity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopDensity();
+            case DENSITY:
+                botY = getBotDensity();
+                topY = getTopDensity();
+                break;
+            case Q_P:
+                botY = getBotQp();
+                topY = getTopQp();
+                break;
+            case Q_S:
+                botY = getBotQs();
+                topY = getTopQs();
                 break;
             default:
-                System.out.println("I don't understand this material property: "
-                        + materialProperty + "\nUse one of P p S s R r D d");
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("I don't understand this material property: "
+                        + materialProperty);
         }
-        return answer;
+        return LinearInterpolation.linearInterp(getBotDepth(), botY, getTopDepth(), topY, depth);
     }
 
     public String toString() {
@@ -267,7 +267,7 @@ public class VelocityLayer implements Cloneable, Serializable {
         description += " Density " + getTopDensity() + " " + getBotDensity();
         return description;
     }
-    
+
     public int getLayerNum() {
         return myLayerNumber;
     }
@@ -312,6 +312,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         return topSVelocity;
     }
 
+    public boolean isFluid() {
+        return getTopSVelocity() == 0.0;
+    }
+
     public void setBotSVelocity(double botSVelocity) {
         this.botSVelocity = botSVelocity;
     }
@@ -336,6 +340,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         return botDensity;
     }
 
+    public boolean densityIsDefault() {
+        return topDensity == DEFAULT_DENSITY && botDensity == DEFAULT_DENSITY;
+    }
+
     public void setTopQp(double topQp) {
         this.topQp = topQp;
     }
@@ -350,6 +358,12 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     public double getBotQp() {
         return botQp;
+    }
+    public boolean QpIsDefault() {
+        return topQp == DEFAULT_QP && botQp == DEFAULT_QP;
+    }
+    public boolean QIsDefault() {
+        return QpIsDefault() && QsIsDefault();
     }
 
     public void setTopQs(double topQs) {
@@ -368,7 +382,39 @@ public class VelocityLayer implements Cloneable, Serializable {
         return botQs;
     }
 
+    public boolean QsIsDefault() {
+        return topQs == DEFAULT_QS && botQs == DEFAULT_QS;
+    }
+
     public double getThickness() {
         return getBotDepth()-getTopDepth();
+    }
+
+
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible, at top of layer.
+     *
+     */
+    public double calcTopQpFromQs() {
+        return calcQpFromQs(getTopQs(), getTopPVelocity(), getTopSVelocity());
+    }
+
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible, at bottom of layer.
+     *
+     */
+    public double calcBotQpFromQs() {
+        return calcQpFromQs(getBotQs(), getBotPVelocity(), getBotSVelocity());
+    }
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible.
+     * See Montagner and Kennett, 1996, eqn 2.6
+     * @param Qs S wave Q factor, aka Q_mu
+     * @param vp P wave velocity
+     * @param vs S wave velocity
+     * @return Qp P wave Q factor
+     */
+    public static double calcQpFromQs(double Qs, double vp, double vs) {
+        return 3.0/4*((vp*vp)/(vs*vs))*Qs;
     }
 }

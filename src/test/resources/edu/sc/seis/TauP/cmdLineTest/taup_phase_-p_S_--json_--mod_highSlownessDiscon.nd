@@ -1,0 +1,150 @@
+{
+  "model": "highSlownessDiscon.nd",
+  "sourcedepthlist": [
+    0.0
+  ],
+  "receiverdepthlist": [
+    0.0
+  ],
+  "phases": [
+    "S"
+  ],
+  "descriptions": [
+    {
+      "name": "S",
+      "puristname": "S",
+      "sourcedepth": 0.0,
+      "receiverdepth": 0.0,
+      "minexists": {
+        "dist": 0.0,
+        "modulodist": 0.0,
+        "rayparameter": 8.323271,
+        "time": 0.0
+      },
+      "maxexists": {
+        "dist": 87.39913,
+        "modulodist": 87.39913,
+        "rayparameter": 30.052683,
+        "time": 1484.6116
+      },
+      "shadow": [
+        {
+          "rayparam": 1719.1891891891892,
+          "topdepth": 10.0,
+          "botdepth": 15.0,
+          "preshadow": {
+            "sourcedepth": 0.0,
+            "receiverdepth": 0.0,
+            "distdeg": 6.4212656,
+            "phase": "S",
+            "time": 192.87529,
+            "rayparam": 30.005512,
+            "takeoff": 86.78937,
+            "incident": 86.78937,
+            "puristdist": 6.4212656,
+            "puristname": "S"
+          },
+          "postshadow": {
+            "sourcedepth": 0.0,
+            "receiverdepth": 0.0,
+            "distdeg": 6.5993147,
+            "phase": "S",
+            "time": 199.58609,
+            "rayparam": 30.005512,
+            "takeoff": 86.78937,
+            "incident": 86.78937,
+            "puristdist": 6.5993147,
+            "puristname": "Sed15S"
+          }
+        }
+      ],
+      "segments": [
+        {
+          "maxrayparam": 30.052683,
+          "minrayparam": 30.005512,
+          "branchseq": [
+            {
+              "name": "S",
+              "updown": "down",
+              "type": "swave",
+              "branch_desc": "crust",
+              "branches": [
+                0
+              ],
+              "depths": [
+                0.0,
+                10.0
+              ],
+              "then": "turn"
+            },
+            {
+              "name": "S",
+              "updown": "up",
+              "type": "swave",
+              "branch_desc": "crust",
+              "branches": [
+                0
+              ],
+              "depths": [
+                10.0,
+                0.0
+              ],
+              "then": "end"
+            }
+          ]
+        },
+        {
+          "maxrayparam": 30.005512,
+          "minrayparam": 8.323271,
+          "branchseq": [
+            {
+              "name": "S",
+              "updown": "down",
+              "type": "swave",
+              "branch_desc": "crust",
+              "branches": [
+                0,
+                1
+              ],
+              "depths": [
+                0.0,
+                15.0
+              ],
+              "then": "transmit down"
+            },
+            {
+              "name": "S",
+              "updown": "down",
+              "type": "swave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                2,
+                3
+              ],
+              "depths": [
+                15.0,
+                2889.0
+              ],
+              "then": "turn"
+            },
+            {
+              "name": "S",
+              "updown": "up",
+              "type": "swave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                3,
+                0
+              ],
+              "depths": [
+                2889.0,
+                0.0
+              ],
+              "then": "end"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

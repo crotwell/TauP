@@ -1,0 +1,12 @@
+PK5153.9diffP (PKdiffp):
+  exists from 155.49 to 215.49 (144.51)  degrees in the iasp91 model.
+  with degenerate ray parameter of    2.071 sec/deg.
+  travel times from  1204.64 to  1328.89 sec.
+
+  P going down as a P in the crust/mantle, layer 0 to 5, depths 0.0 to 2889.0, then transmit down
+  K5153.9diff going down as a P in the outer core, layer 6, depths 2889.0 to 5153.9, then diffract
+  K5153.9diff going flat as a P in the outer core, layer 6, depths  at 5153.9 (DIFF), then turn after diffract
+  K5153.9diff going up   as a P in the outer core, layer 6, depths 5153.9 to 2889.0, then transmit up
+  P going up   as a P in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
+
+--------

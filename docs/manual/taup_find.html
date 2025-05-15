@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TauP Find &#8212; TauP 3.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TauP Curve" href="taup_curve.html" />
+    <link rel="prev" title="TauP Distaz" href="taup_distaz.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_table.html">TauP Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setms3.html">TauP SetMS3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tools.html">Tools</a><ul>
+      <li>Previous: <a href="taup_distaz.html" title="previous chapter">TauP Distaz</a></li>
+      <li>Next: <a href="taup_curve.html" title="next chapter">TauP Curve</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="taup-find">
+<span id="id1"></span><h1>TauP Find<a class="headerlink" href="#taup-find" title="Link to this heading">¶</a></h1>
+<p>TauP Find generates many possible phase paths through the given earth model.
+It is a way of cheating in that favorite game of seismologists, what’s that
+wiggle? It will attempt all possible paths within a model, subject to the
+given constraints. The output is either a simple list of possible phase names or
+travel times in the same format as <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span></code>.</p>
+<p>The complexity or length of the path is limited by the <code class="code docutils literal notranslate"><span class="pre">--max</span></code>
+command line argument, which limits the number of interactions with
+discontinuities in the model, either reflection or phase conversion.
+For example, P and PKP both have 0 interactions while
+the phases sS and PcP both have one interaction due to the
+reflections and PKS has one due to the KS phase conversion.
+SKS has 2 because of the two shear-compression conversions at the core-mantle
+boundary and sP has 2 due to one phase conversion and one reflection,
+both at the surface.</p>
+<p>Great care should be take as the combinatorial explosion is
+significant.  In the iasp91 model for a surface source, <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">1</span></code>
+results in 85 phases while <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">2</span></code> results in over 1000 phases.
+Then <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">3</span></code> results in over 13,000 phases and
+<code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">4</span></code> is over 160,000. The number of phase paths can be limited
+by a range of ray parameters or times or by disabling interactions with
+discontinuities in the model.</p>
+<p>The phases may also be limited by a ray parameter range or optionally by a
+travel time range. Note that limiting by interaction number, via <code class="code docutils literal notranslate"><span class="pre">--max</span></code>
+or limiting the ray parameter range via <code class="code docutils literal notranslate"><span class="pre">--rayparam</span></code> or
+<code class="code docutils literal notranslate"><span class="pre">--rayparamkm</span></code> are simple.
+Limiting by arrival time of the phase using the <code class="code docutils literal notranslate"><span class="pre">--time</span></code> is more
+complex as the phase must be evaluated fully in the model, which takes longer.
+Both <code class="code docutils literal notranslate"><span class="pre">--rayparam</span></code> and <code class="code docutils literal notranslate"><span class="pre">--time</span></code> accept one or two values. If one,
+then the resulting phase must overlap that value, if two then it must overlap
+at least a part of that range. Note <code class="code docutils literal notranslate"><span class="pre">--time</span></code> also working with
+<code class="code docutils literal notranslate"><span class="pre">--deltatime</span></code> to allow specifying a single time and a delta time before
+and after it.</p>
+<p>For example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup find --max 2 -h 100 --exclude 210
+</pre></div>
+</div>
+<p>gives you all phases with 0,1 or 2 interactions for a 100 kilometer
+deep source, excluding interactions with the 210 discontinuity. Both the
+<cite>iasp91</cite> and <cite>ak135</cite> velocity models have very small discontinuities only in
+S velocity at 210, and so it is probably best to exclude that as it is too
+small to generate significant amplitude interacting phases.
+Note that many of these phases even with more substantial discontinuities
+may be of very small amplitude, below what is detectable,
+or may not exist at all for some distances and source depths.</p>
+<p>This command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210
+</pre></div>
+</div>
+<p>gives simimar phases to the previous, but also limits to arrivals between 400
+and 420 seconds at 35 degrees away. If your seismogram contained what appears
+to be an arrival at roughly 410 seconds, this would give some possible phases
+that may explain it.</p>
+<p>The usage is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
+                 [--showrayparam] [--swaveonly] [--verbose]
+                 [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
+                 [--deltatime=dt] --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;]
+                 [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
+                 [--prop=&lt;toolPropsFilename&gt;] [--deg=d[,d...]]...
+                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
+                 [--time=t [t]]... [--strikediprake=strike dip rake]...
+                 [--exclude=depth[,depth...]...]... [[--mod=&lt;modelName&gt;]
+                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                 [--scat=depth deg]...] [[-p=phase[,phase...]]...
+                 [--phasefile=&lt;phaseFiles&gt;]...] [--json | --text]
+Find seismic phases in an earth model.
+
+Options:
+
+      --amp                show amplitude factor for each phase
+      --attenuationfreq=&lt;attenuationFreq&gt;
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
+      --az=&lt;azimuth&gt;       azimuth in degrees, for amp calculations
+      --debug              enable debugging output
+      --deg, --degree=d[,d...]
+                           distance in degrees
+      --deltatime=dt       find arrivals within the +- deltatime, --times must
+                             have single time
+      --exclude=depth[,depth...]...
+                           Exclude boundaries from phase conversion or
+                             reflection interactions
+                           May be depth (within tol) or named boundary like
+                             moho, cmb, iocb
+      --help               display this help message
+      --max=&lt;maxActions&gt;   Maximum number of reflections and phase conversion
+      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
+                             is 4.0
+      --numattenuationfreq=&lt;numFrequencies&gt;
+                            number attenuation frequencies for amplitude
+                             calculations, default is 64
+  -o, --output=&lt;outFile&gt;   output to file, default is stdout.
+      --onlynameddiscon    only interact with named discontinuities like moho,
+                             cmb, iocb
+      --prop=&lt;toolPropsFilename&gt;
+                           load defaults from properties file
+      --pwaveonly          only P wave legs, no S
+      --rayparamdeg=s/deg [s/deg]
+                           only keep phases that overlap the given ray
+                             parameter range in s/deg
+      --rayparamkm=s/km [s/km]
+                           only keep phases that overlap the given ray
+                             parameter range in s/km
+      --showrayparam       show min and max ray parameter for each phase name
+      --strikediprake=strike dip rake
+                           fault strike, dip and rake for amplitude
+                             calculations. If not given radiation pattern is
+                             unity in all directions.
+      --swaveonly          only S wave legs, no P
+      --time=t [t]         find arrivals within the given range
+      --verbose            enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                           source depth in km
+      --mod, --model=&lt;modelName&gt;
+                           use velocity model &quot;modelName&quot; for calculations.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=depth deg
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
+                             in the phase name.
+      --stadepth, --receiverdepth=depth[,depth...]
+                           the receiver depth in km for stations not at the
+                             surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
+      --phasefile=&lt;phaseFiles&gt;
+                           read list of phase names from file
+Output Type:
+      --json               outputs as JSON
+      --text               outputs as Text
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/taup_find.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>

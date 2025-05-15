@@ -25,72 +25,56 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
- * TauP_Create - Re-implementation of the seismic travel time calculation method
- * described in "The Computation of Seismic Travel Times" by Buland and Chapman,
- * BSSA vol. 73, No. 5, October 1983, pp 1271-1302. This creates the
- * SlownessModel and tau branches and saves them for later use.
- *
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- *
- *
- *
+ * Generate standard models. This is used by the gradle build, but unlikely to be useful to end users.
  * @author H. Philip Crotwell
  */
 public class StdModelGenerator {
 
-  public static final void main(String[] args)
+  public static void main(String[] args)
   throws IOException, TauPException {
     File inDir = new File(args[0]);
     File outDir = new File(args[1]);
     createStandardModels( inDir,  outDir);
   }
 
-  public static final void createStandardModels(File inDir, File outDir)
+  public static class StdModelCandidates extends ArrayList<String> {
+      StdModelCandidates() {
+          super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "ak135fsyngine"));
+      }
+  }
+
+  public static void createStandardModels(File inDir, File outDir)
   throws IOException, TauPException {
-    ArrayList<String> tvelModelNames = new ArrayList<String>();
+    ArrayList<String> tvelModelNames = new ArrayList<>();
     tvelModelNames.add("iasp91");
     tvelModelNames.add("ak135");
-    ArrayList<String> ndModelNames = new ArrayList<String>();
+    ArrayList<String> ndModelNames = new ArrayList<>();
     ndModelNames.add("prem");
     ndModelNames.add("ak135fcont");
     ndModelNames.add("ak135favg");
-    TauP_Create taupCreate = new TauP_Create();
-    taupCreate.setDirectory(inDir.getPath());
-    taupCreate.setVelFileType("tvel");
+    ndModelNames.add("ak135fsyngine");
+
     for (String modelName: tvelModelNames) {
-        taupCreate.setModelFilename(modelName);
-        VelocityModel vMod = taupCreate.loadVMod();
-        TauModel tMod = taupCreate.createTauModel(vMod);
-        tMod.writeModel( new File(outDir, modelName+".taup").getPath());
+      System.out.println(modelName);
+      File inVModFile = new File(inDir, modelName+".tvel");
+      VelocityModel vMod = VelocityModel.readTVelFile(inVModFile);
+      vMod.setModelName(modelName);
+      TauModel tMod = TauModelLoader.createTauModel(vMod);
+      tMod.writeModel( new File(outDir, modelName+".taup").getPath());
     }
-    taupCreate.setVelFileType("nd");
     for (String modelName: ndModelNames) {
-        taupCreate.setModelFilename(modelName);
-        VelocityModel vMod = taupCreate.loadVMod();
-        TauModel tMod = taupCreate.createTauModel(vMod);
-        tMod.writeModel( new File(outDir, modelName+".taup").getPath());
+      System.out.println(modelName);
+      File inVModFile = new File(inDir, modelName+".nd");
+      VelocityModel vMod = VelocityModel.readNDFile(inVModFile);
+      vMod.setModelName(modelName);
+      TauModel tMod = TauModelLoader.createTauModel(vMod);
+      tMod.writeModel( new File(outDir, modelName+".taup").getPath());
     }
-    // qdt with bigger tol.
-    taupCreate.setVelFileType("tvel");
-    taupCreate.setMinDeltaP(0.5f);
-    taupCreate.setMaxDeltaP(50.0f);
-    taupCreate.setMaxDepthInterval(915.0f);
-    taupCreate.setMaxRangeInterval(10.0f);
-    taupCreate.setMaxInterpError(1.0f);
-    taupCreate.setAllowInnerCoreS(false);
-    taupCreate.setModelFilename("iasp91");
-    VelocityModel vMod = taupCreate.loadVMod();
-    vMod.setModelName("qdt");
-    TauModel tMod = taupCreate.createTauModel(vMod);
-    tMod.writeModel( new File(outDir, "qdt.taup").getPath());
   }
 }

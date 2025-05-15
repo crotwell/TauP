@@ -1,0 +1,10 @@
+Pdiff:
+  exists from 98.40 to 158.40 degrees in the iasp91 model.
+  with degenerate ray parameter of    4.439 sec/deg.
+  travel times from   819.64 to  1085.98 sec.
+
+  Pdiff going down as a P in the crust/mantle, layer 0 to 5, depths 0.0 to 2889.0, then diffract
+  Pdiff going flat as a P in the mantle, layer 5, depths  at 2889.0 (DIFF), then turn after diffract
+  Pdiff going up   as a P in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
+
+--------

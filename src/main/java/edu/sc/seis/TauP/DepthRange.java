@@ -54,11 +54,6 @@ public class DepthRange implements Serializable, Cloneable {
 
     public DepthRange() {}
 
-    public DepthRange(double topDepth, double botDepth) {
-        this.topDepth = topDepth;
-        this.botDepth = botDepth;
-    }
-
     public DepthRange(double topDepth, double botDepth, double rayParam) {
         this.topDepth = topDepth;
         this.botDepth = botDepth;
@@ -72,7 +67,7 @@ public class DepthRange implements Serializable, Cloneable {
             return newObject;
         } catch(CloneNotSupportedException e) {
             // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
+            Alert.warning("Caught CloneNotSupportedException: "
                     + e.getMessage());
             throw new InternalError(e.toString());
         }

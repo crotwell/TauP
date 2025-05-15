@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -22,23 +24,47 @@ public class OceanModelTest {
                 assertEquals(3, nd.depth);
             }
         }
-        assertEquals(10, vMod.getMohoDepth());
+        assertEquals(18, vMod.getMohoDepth());
         assertEquals(2891.50, vMod.getCmbDepth());
         assertEquals(5153.50, vMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(vMod);
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
         assertEquals(10, tMod.getNumBranches());
-        assertEquals(808, tMod.getRayParams().length);
+        assertEquals(979, tMod.getRayParams().length);
         assertEquals(2, tMod.getSlownessModel().fluidLayerDepths.size());
         String phase = "P";
         double dist = 30;
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
-        List<Arrival> arrivals = pPhase.calcTime(dist);
+        List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
         assertEquals(1, arrivals.size());
         Arrival a = arrivals.get(0);
         assertEquals(371.95,
                 a.getTime(),
                 0.01);
+
+    }
+
+    @Test
+    public void ttallOcean() throws TauModelException, SlownessModelException {
+        String modelName = "ak135favg.nd";
+        TauModel tMod = TauModelLoader.load(modelName);
+        List<String> phaseNameList = PhaseArgs.extractPhaseNames("ttall");
+        List<SeismicPhase> phaseList = new ArrayList<>();
+        for (String pn : phaseNameList) {
+            SeismicPhase sp = SeismicPhaseFactory.createPhase(pn, tMod, tMod.sourceDepth);
+            phaseList.add(sp);
+        }
+        SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+        double dist = 5;
+        for (SeismicPhase sp : phaseList) {
+            DistanceRay dr = DistanceRay.ofDegrees(dist);
+            dr.setSourceArgs(sourceArgs);
+            List<Arrival> arrivals = dr.calculate(sp);
+            for (Arrival aa : arrivals) {
+                assertNotNull(aa);
+                assertNotNull(aa.getAmplitudeFactorPSV(), sp.getName());
+
+            }
+        }
     }
 
     /**
@@ -50,7 +76,7 @@ public class OceanModelTest {
      * @throws SlownessModelException
      */
     @Test
-    public void iasp91_ocean() throws TauModelException, VelocityModelException, SlownessModelException {
+    public void iasp91_ocean() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
 
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
@@ -89,10 +115,7 @@ public class OceanModelTest {
                 prev.getBotDepth(),
                 true,
                 vlayers);
-        TauP_Create create = new TauP_Create();
-        TauModel oceanTMod = create.createTauModel(oceanVMod);
-        TauP_Time ocean_time = new TauP_Time(oceanTMod);
-        TauP_Time crust_time = new TauP_Time(modelName);
+        TauModel oceanTMod = TauModelLoader.createTauModel(oceanVMod);
         String[] phaseList = new String[]{"P", "S", "PKP", "PKIKP"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
         for (double depth : depths) {
@@ -102,8 +125,9 @@ public class OceanModelTest {
                 SeismicPhase oceanPh = SeismicPhaseFactory.createPhase(phasename, ocean_tmod_depth, depth + ocean.getBotDepth(), ocean.getBotDepth());
                 SeismicPhase crustPh = SeismicPhaseFactory.createPhase(phasename, crust_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    List<Arrival> ocean_arr = oceanPh.calcTime(deg);
-                    List<Arrival> crust_arr = crustPh.calcTime(deg);
+                    DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+                    List<Arrival> ocean_arr = distanceRay.calculate(oceanPh);
+                    List<Arrival> crust_arr = distanceRay.calculate(crustPh);
                     assertEquals(crust_arr.size(), ocean_arr.size());
                     for (int i = 0; i < crust_arr.size(); i++) {
                         Arrival ocean_a = ocean_arr.get(i);
@@ -131,17 +155,17 @@ public class OceanModelTest {
         assertEquals(105, europaVMod.getMohoDepth());
         assertEquals(900, europaVMod.getCmbDepth());
         assertEquals(europaVMod.getRadiusOfEarth(), europaVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel europaTMod = taupCreate.createTauModel(europaVMod);
+        TauModel europaTMod = TauModelLoader.createTauModel(europaVMod);
 
-        String[] phaseList = new String[]{"P", "PKP", "PKIKP"};
+        String[] phaseList = new String[]{"P", "PKP", "PKIKP",
+                "Pv" + PhaseSymbols.NAMED_DISCON_START + "ocean-crust" + PhaseSymbols.NAMED_DISCON_END + "s"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
         for (double depth : depths) {
             TauModel europa_tmod_depth = europaTMod.depthCorrect(depth);
             for (String phasename : phaseList) {
                 SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, europa_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    List<Arrival> arrivalList = seisPh.calcTime(deg);
+                    List<Arrival> arrivalList = DistanceRay.ofDegrees(deg).calculate(seisPh);
                     // this is not a good test, other than that no errors occur
                     assertNotEquals(-1, arrivalList.size(), phasename);
                 }
@@ -155,8 +179,7 @@ public class OceanModelTest {
         assertEquals(10, ioVMod.getMohoDepth());
         assertEquals(900, ioVMod.getCmbDepth());
         assertEquals(ioVMod.getRadiusOfEarth(), ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
 
     }
 
@@ -165,17 +188,17 @@ public class OceanModelTest {
         VelocityModel ioVMod = VelocityModelTest.loadTestVelMod("allCore.nd");
         assertEquals(0, ioVMod.getCmbDepth());
         assertEquals(5154.9, ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
         String phasename = "KIK";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        List<Arrival> arrivalList = seisPh.calcTime(deg);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+        List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);
         phasename = "PKIKP";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
     }
 
@@ -185,24 +208,94 @@ public class OceanModelTest {
         assertEquals(0, ioVMod.getMohoDepth());
         assertEquals(0, ioVMod.getCmbDepth());
         assertEquals(0, ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
         assertEquals(0, tMod.getMohoDepth());
         assertEquals(0, tMod.getCmbDepth());
         assertEquals(0, tMod.getIocbDepth());
         String phasename = "I";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        List<Arrival> arrivalList = seisPh.calcTime(deg);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+        List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);
         phasename = "PKIKP";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
         phasename = "KIK";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
     }
+
+    @Test
+    public void marsLiquidLowerMantleTest() throws VelocityModelException, IOException, SlownessModelException, TauModelException {
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsLiquidLowerMantle.nd");
+        assertEquals(0.0, marsVMod.getVelocityLayer(marsVMod.layerNumberAbove(1560)).getTopSVelocity());
+        TauModel tMod = TauModelLoader.createTauModel(marsVMod);
+        assertEquals(tMod.getCmbDepth(), 1679.894f, 0.001);
+        String phasename = "S";
+        SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("SS", tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("SKS", tMod, 0, 0);
+        assertFalse(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("S1554PKP1554S", tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tMod, 0, 0);
+        assertFalse(seisPh.phasesExistsInModel());
+
+        String depthOfDiscon = "1554";
+        String disconLiqSil = PhaseSymbols.NAMED_DISCON_START+marsCustomDiscon+PhaseSymbols.NAMED_DISCON_END;
+
+        String depthDisconPhase = "S1554Pcp";
+        seisPh = SeismicPhaseFactory.createPhase(depthDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        String namedDisconPhase = depthDisconPhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(namedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+
+        assertTrue(LegPuller.isBoundary(disconLiqSil));
+        assertEquals(LegPuller.closestDisconBranchToDepth(tMod,depthOfDiscon),
+                LegPuller.closestDisconBranchToDepth(tMod, disconLiqSil));
+        assertEquals(LegPuller.legAsDepthBoundary(tMod, depthOfDiscon),
+                LegPuller.legAsDepthBoundary(tMod, disconLiqSil));
+
+        seisPh = SeismicPhaseFactory.createPhase(namedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), namedDisconPhase);
+
+        String twoDisconPhase = "S1554PKP1554S";
+        String twoNamedDisconPhase = twoDisconPhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(twoDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase(twoNamedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), twoNamedDisconPhase);
+
+        // maybe doesn't exist as CMB is in shadow zone from liquid silicate layer
+        String undersidePhase = "Pdiff^1554Pdiff";
+        String undersideNamedDisconPhase = undersidePhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(undersidePhase, tMod, 0, 0);
+        assertFalse(seisPh.phasesExistsInModel(), undersidePhase);
+        seisPh = SeismicPhaseFactory.createPhase(undersideNamedDisconPhase, tMod, 0, 0);
+        assertFalse(seisPh.phasesExistsInModel(), undersideNamedDisconPhase);
+
+    }
+
+
+    @Test
+    public void marsLiquidLowerMantleDiff() throws VelocityModelException, IOException, SlownessModelException, TauModelException {
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsLiquidLowerMantle.nd");
+        assertEquals(0.0, marsVMod.getVelocityLayer(marsVMod.layerNumberAbove(1560)).getTopSVelocity());
+        TauModel tMod = TauModelLoader.createTauModel(marsVMod);
+        String Pdiff = "Pdiff";
+        assertTrue(PhaseSymbols.isDiffracted(Pdiff, 0), "isDiffracted "+Pdiff+" re: "+LegPuller.namedHeadDiffRE) ;
+        String liqsilDiffName = "P" + PhaseSymbols.NAMED_DISCON_START + marsCustomDiscon + PhaseSymbols.NAMED_DISCON_END + "diff";
+        assertTrue(PhaseSymbols.isDiffracted(liqsilDiffName, 0), "isDiffracted "+liqsilDiffName);
+        SeismicPhase liqsilDiff = SeismicPhaseFactory.createPhase(liqsilDiffName, tMod, 0, 0);
+        assertTrue(liqsilDiff.phasesExistsInModel());
+    }
+
+    public static final String marsCustomDiscon = "liquid-silicate";
 }

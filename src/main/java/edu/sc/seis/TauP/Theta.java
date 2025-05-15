@@ -45,8 +45,9 @@ public class Theta {
 
     protected double[] rayParams;
 
-    public Theta(SeismicPhase phase, double radians) {
-        this.radians = radians;
+    public Theta(Arrival arrival) {
+        SeismicPhase phase = arrival.getPhase();
+        this.radians = arrival.getDist();
         int minRayParamIndex = phase.getMinRayParamIndex();
         int maxRayParamIndex = phase.getMaxRayParamIndex();
         rayParams = phase.getRayParams();
@@ -67,6 +68,14 @@ public class Theta {
         return radians;
     }
 
+    public double[] getThetaAtX() {
+        return thetaAtX;
+    }
+
+    public double[] getRayParams() {
+        return rayParams;
+    }
+
     public double getMaxRayParam() {
         return rayParams[0];
     }
@@ -76,22 +85,26 @@ public class Theta {
         // loop until we find a theta s.t. abs(thetaStart-theta) == timeStep
         // or we fall off the end of the array, ie ArrayIndexOutOfBounds
         boolean found = false;
+        double newTheta;
         int i = getThetaIndex(rayParam);
-        while(Math.abs(thetaAtX[i + 1] - thetaStart) <= timeStep) {
+        while(i < thetaAtX.length-1 && Math.abs(thetaAtX[i + 1] - thetaStart) <= timeStep) {
             i++;
         }
-        double newTheta;
+        if (i >= thetaAtX.length-1) {
+            // fallen off end
+            return -1;
+        }
         if(thetaStart < thetaAtX[i + 1]) {
             newTheta = thetaStart + timeStep;
         } else {
             newTheta = thetaStart - timeStep;
         }
         // return the interpolated ray parameter.
-        return linInterp(thetaAtX[i],
-                         thetaAtX[i + 1],
-                         rayParams[i],
-                         rayParams[i + 1],
-                         newTheta);
+        return LinearInterpolation.linearInterp(thetaAtX[i],
+                rayParams[i],
+                thetaAtX[i + 1],
+                rayParams[i + 1],
+                newTheta);
     }
 
     public double getTheta(double rayParam) {
@@ -103,11 +116,11 @@ public class Theta {
         }
         int currentNum = getThetaIndex(rayParam);
         // find theta at given rayParam
-        double thetaStart = linInterp(rayParams[currentNum],
-                                      rayParams[currentNum + 1],
-                                      thetaAtX[currentNum],
-                                      thetaAtX[currentNum + 1],
-                                      rayParam);
+        double thetaStart = LinearInterpolation.linearInterp(rayParams[currentNum],
+                thetaAtX[currentNum],
+                rayParams[currentNum + 1],
+                thetaAtX[currentNum + 1],
+                rayParam);
         return thetaStart;
     }
 
@@ -131,11 +144,4 @@ public class Theta {
         return currentNum;
     }
 
-    public static double linInterp(double xa,
-                                   double xb,
-                                   double ya,
-                                   double yb,
-                                   double x) {
-        return (yb - ya) * (x - xa) / (xb - xa) + ya;
-    }
 } // Theta

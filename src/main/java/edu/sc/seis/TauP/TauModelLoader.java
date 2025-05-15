@@ -26,16 +26,17 @@
 package edu.sc.seis.TauP;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
-import java.io.OptionalDataException;
 import java.io.Reader;
-import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
+import java.nio.file.FileSystems;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -53,7 +54,11 @@ import java.util.zip.ZipFile;
 public class TauModelLoader {
 
     protected static String packageName = "/edu/sc/seis/TauP/StdModels";
-    
+
+    public static List<String> defaultModelList = List.of("iasp91", "ak135", "ak135favg", "ak135fcont", "ak135fsyngine", "prem");
+
+    public static Map<String, VelocityModel> otherVelocityModels = new HashMap<>();
+
     public static TauModel load(String modelName) throws TauModelException {
         return load(modelName, System.getProperty("taup.model.path"));
     }
@@ -73,9 +78,13 @@ public class TauModelLoader {
         TauModel out = loadFromCache(modelName);
         if (out == null) {
             out = internalLoad(modelName, searchPath, verbose);
-            tModCache.put(modelName, new SoftReference<TauModel>(out));
+            addToCache(modelName, out);
         }
         return out;
+    }
+
+    public static void addToCache(String modelName, TauModel tMod) {
+        tModCache.put(modelName, new SoftReference<TauModel>(tMod));
     }
 
     public static TauModel internalLoad(String modelName,
@@ -96,6 +105,19 @@ public class TauModelLoader {
         String pathEntry;
         File jarFile;
         File modelFile;
+        /* is model in configured otherVelocityModels */
+        if (otherVelocityModels.containsKey(modelName)) {
+            VelocityModel vMod = otherVelocityModels.get(modelName);
+            try {
+                VelocityModel vmod = loadVelocityModel(modelName);
+                if (vmod != null) {
+                    return createTauModel(vmod);
+                }
+            } catch(Exception e) {
+                throw new TauModelException("Can't find any saved models for "
+                        + modelName+" and creation from velocity model failed.", e);
+            }
+        }
         /* First we try to find the model in the distributed taup.jar file. */
         Class c = null;
         try {
@@ -110,7 +132,7 @@ public class TauModelLoader {
         } catch(Exception ex) {
             // couldn't get as a resource, so keep going
             if(verbose)
-                System.out.println("couldn't load as resource: " + filename
+                Alert.warning("couldn't load as resource: " + filename
                         + "\n message: " + ex.getMessage());
         }
         /* couldn't find as a resource, try in classpath. */
@@ -182,8 +204,7 @@ public class TauModelLoader {
         try {
             VelocityModel vmod = loadVelocityModel(modelName);
             if (vmod != null) {
-                TauP_Create tauPCreate = new TauP_Create();
-                return tauPCreate.createTauModel(vmod);
+                return createTauModel(vmod);
             }
         } catch(Exception e) {
             throw new TauModelException("Can't find any saved models for "
@@ -193,17 +214,7 @@ public class TauModelLoader {
         throw new TauModelException("Can't find any saved models for "
                                         + modelName);
 
-        } catch(InvalidClassException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(StreamCorruptedException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(OptionalDataException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(FileNotFoundException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(ClassNotFoundException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(IOException e) {
+        } catch(ClassNotFoundException | IOException e) {
             throw new TauModelException("Unable to load '"+modelName+"'", e);
         }
     }
@@ -222,9 +233,17 @@ public class TauModelLoader {
      * @throws VelocityModelException
      */
     public static VelocityModel loadVelocityModel(String modelName, String fileType) throws IOException, VelocityModelException {
+        /* is model in configured otherVelocityModels */
+        if (otherVelocityModels.containsKey(modelName)) {
+            VelocityModel vMod = otherVelocityModels.get(modelName);
+            if (vMod == null) {
+                throw new VelocityModelException("Velocity model "+modelName+" is null");
+            }
+            return vMod;
+        }
         if (modelName == null) {modelName = "iasp91"; fileType = "tvel";}
         String basemodelName = modelName;
-        int dirSepIndex = modelName.lastIndexOf(System.getProperty("file.separator"));
+        int dirSepIndex = modelName.lastIndexOf(FileSystems.getDefault().getSeparator());
         if(dirSepIndex != -1) {
             // assume a full filename, look as a regular file
             basemodelName = modelName.substring(dirSepIndex + 1);
@@ -239,17 +258,20 @@ public class TauModelLoader {
         /* First we try to find the model in the distributed taup.jar file. */
         VelocityModel vMod = null;
         if (dirSepIndex == -1) {
-            Class c = new TauModelLoader().getClass();
-            String filename = basemodelName+".nd";
-            InputStream in = c.getResourceAsStream(packageName + "/" + filename);
-            if(in != null) {
-                Reader inReader = new InputStreamReader(in);
-                vMod = VelocityModel.readNDFile(inReader, modelName);
-                inReader.close();
-            } else {
+            Class c = TauModelLoader.class;
+            if (fileType == null || fileType.equals("nd")) {
+                String filename = basemodelName + ".nd";
+                InputStream in = c.getResourceAsStream(packageName + "/" + filename);
+                if (in != null) {
+                    Reader inReader = new InputStreamReader(in);
+                    vMod = VelocityModel.readNDFile(inReader, modelName);
+                    inReader.close();
+                }
+            }
+            if (vMod == null) {
                 // try tvel
-                filename = basemodelName+".tvel";
-                in = c.getResourceAsStream(packageName + "/" + filename);
+                String filename = basemodelName+".tvel";
+                InputStream in = c.getResourceAsStream(packageName + "/" + filename);
                 if(in != null) {
                     Reader inReader = new InputStreamReader(in);
                     vMod =  VelocityModel.readTVelFile(inReader, modelName);
@@ -275,20 +297,77 @@ public class TauModelLoader {
         }
         return vMod;
     }
+
+
+    public static TauModel createTauModel(VelocityModel vMod) throws SlownessModelException, TauModelException, IOException {
+        return createTauModel(vMod, PropertyLoader.load());
+    }
+
+    public static TauModel createTauModel(VelocityModel vMod, Properties toolProps) throws SlownessModelException, TauModelException {
+        if (vMod == null) {throw new IllegalArgumentException("vMod cannot be null");}
+        if(!vMod.getSpherical()) {
+            throw new SlownessModelException("Flat slowness model not yet implemented.");
+        }
+
+        SlownessModel.DEBUG = TauPConfig.DEBUG;
+        SphericalSModel sMod = new SphericalSModel(vMod,
+                Double.parseDouble(toolProps.getProperty("taup.create.minDeltaP",
+                        "0.1")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDeltaP",
+                        "11.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDepthInterval",
+                        "115.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxRangeInterval",
+                        "2.5")) *Math.PI/180,
+                Double.parseDouble(toolProps.getProperty("taup.create.maxInterpError",
+                        "0.05")),
+                Boolean.parseBoolean(toolProps.getProperty("taup.create.allowInnerCoreS",
+                        "true")),
+                SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+        if(TauPConfig.VERBOSE) {
+            Alert.debug("Parameters are:");
+            Alert.debug("taup.create.minDeltaP = "
+                    + sMod.getMinDeltaP() + " sec / radian");
+            Alert.debug("taup.create.maxDeltaP = "
+                    + sMod.getMaxDeltaP() + " sec / radian");
+            Alert.debug("taup.create.maxDepthInterval = "
+                    + sMod.getMaxDepthInterval() + " kilometers");
+            Alert.debug("taup.create.maxRangeInterval = "
+                    + sMod.getMaxRangeInterval() + " degrees");
+            Alert.debug("taup.create.maxInterpError = "
+                    + sMod.getMaxInterpError() + " seconds");
+            Alert.debug("taup.create.allowInnerCoreS = "
+                    + sMod.isAllowInnerCoreS());
+            Alert.debug("Slow model "
+                    + " " + sMod.getNumLayers(true) + " P layers,"
+                    + sMod.getNumLayers(false) + " S layers");
+        }
+        if(TauPConfig.DEBUG) {
+            Alert.debug(sMod.toString());
+        }
+        TauModel.DEBUG = TauPConfig.DEBUG;
+        SlownessModel.DEBUG = TauPConfig.DEBUG;
+        // Creates tau model from slownesses
+        return new TauModel(sMod);
+    }
     
     protected static TauModel loadFromCache(String modelName) {
         SoftReference<TauModel> sr = tModCache.get(modelName);
         if (sr != null) {
             TauModel out = sr.get();
             if (out == null) {
+                System.err.println("cache empty softref for "+modelName);
                 tModCache.remove(modelName);
             }
             return out;
         }
+        for (String m : tModCache.keySet()) {
+            System.err.println("cache: "+m);
+        }
         return null;
     }
     
-    static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<String, SoftReference<TauModel>>();
+    static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<>();
 
     public static void clearCache() {
         tModCache.clear();

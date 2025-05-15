@@ -1,0 +1,1704 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 656.0 656.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup refltransplot -o stdout &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;svg </command>
+      <version>3.0.0</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps text {
+          fill: green;
+          stroke: transparent;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .Rsp {
+          stroke: mediumslateblue;
+        }
+        .Rsp.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rsp {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rsp text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .Rss {
+          stroke: red;
+        }
+        .Rss.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rss {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rss text {
+          fill: red;
+          stroke: transparent;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .Rshsh {
+          stroke: orange;
+        }
+        .Rshsh.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rshsh {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rshsh text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .RppEnergy {
+          stroke: blue;
+        }
+        .RppEnergy.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppEnergy {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppEnergy text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppEnergy {
+          stroke: cyan;
+        }
+        .TppEnergy.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppEnergy {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppEnergy text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsEnergy {
+          stroke: green;
+        }
+        .RpsEnergy.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsEnergy {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsEnergy text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsEnergy {
+          stroke: gold;
+        }
+        .TpsEnergy.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsEnergy {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsEnergy text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspEnergy {
+          stroke: mediumslateblue;
+        }
+        .RspEnergy.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspEnergy {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspEnergy text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspEnergy {
+          stroke: magenta;
+        }
+        .TspEnergy.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspEnergy {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspEnergy text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssEnergy {
+          stroke: red;
+        }
+        .RssEnergy.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssEnergy {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssEnergy text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssEnergy {
+          stroke: grey;
+        }
+        .TssEnergy.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssEnergy {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssEnergy text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshEnergy {
+          stroke: orange;
+        }
+        .RshshEnergy.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshEnergy {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshEnergy text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshEnergy {
+          stroke: violet;
+        }
+        .TshshEnergy.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshEnergy {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshEnergy text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .FreeRecFuncPr {
+          stroke: darkblue;
+        }
+        .FreeRecFuncPr.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .FreeRecFuncPr {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .FreeRecFuncPr text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .FreeRecFuncSvr {
+          stroke: firebrick;
+        }
+        .FreeRecFuncSvr.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .FreeRecFuncPz {
+          stroke: cyan;
+        }
+        .FreeRecFuncPz.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .FreeRecFuncPz {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .FreeRecFuncPz text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .FreeRecFuncSvz {
+          stroke: magenta;
+        }
+        .FreeRecFuncSvz.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .FreeRecFuncSvz {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .FreeRecFuncSvz text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .FreeRecFuncSh {
+          stroke: red;
+        }
+        .FreeRecFuncSh.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .FreeRecFuncSh {
+          stroke: red;
+          fill: red;
+        }
+        .legend .FreeRecFuncSh text {
+          fill: red;
+          stroke: transparent;
+        }
+        .RpAngle {
+          stroke: blue;
+        }
+        .RpAngle.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RpAngle text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .RsAngle {
+          stroke: firebrick;
+        }
+        .RsAngle.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .RsAngle text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .TpAngle {
+          stroke: darkblue;
+        }
+        .TpAngle.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .TpAngle text {
+          fill: darkblue;
+          stroke: transparent;
+        }
+        .TsAngle {
+          stroke: magenta;
+        }
+        .TsAngle.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TsAngle text {
+          fill: magenta;
+          stroke: transparent;
+        }
+
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="397.99722">0.0</text>
+<line class="tick" x1="0" y1="397.99722" x2="-10.0" y2="397.99722" />
+<text class="ytick" font-size="12" x="-12.0" y="372.0994">0.2</text>
+<line class="tick" x1="0" y1="372.0994" x2="-10.0" y2="372.0994" />
+<text class="ytick" font-size="12" x="-12.0" y="346.20157">0.4</text>
+<line class="tick" x1="0" y1="346.20157" x2="-10.0" y2="346.20157" />
+<text class="ytick" font-size="12" x="-12.0" y="320.3037">0.6</text>
+<line class="tick" x1="0" y1="320.3037" x2="-10.0" y2="320.3037" />
+<text class="ytick" font-size="12" x="-12.0" y="294.40588">0.8</text>
+<line class="tick" x1="0" y1="294.40588" x2="-10.0" y2="294.40588" />
+<text class="ytick" font-size="12" x="-12.0" y="268.50806">1.0</text>
+<line class="tick" x1="0" y1="268.50806" x2="-10.0" y2="268.50806" />
+<text class="ytick" font-size="12" x="-12.0" y="242.61021">1.2</text>
+<line class="tick" x1="0" y1="242.61021" x2="-10.0" y2="242.61021" />
+<text class="ytick" font-size="12" x="-12.0" y="216.71237">1.4</text>
+<line class="tick" x1="0" y1="216.71237" x2="-10.0" y2="216.71237" />
+<text class="ytick" font-size="12" x="-12.0" y="190.81454">1.6</text>
+<line class="tick" x1="0" y1="190.81454" x2="-10.0" y2="190.81454" />
+<text class="ytick" font-size="12" x="-12.0" y="164.9167">1.8</text>
+<line class="tick" x1="0" y1="164.9167" x2="-10.0" y2="164.9167" />
+<text class="ytick" font-size="12" x="-12.0" y="139.01886">2.0</text>
+<line class="tick" x1="0" y1="139.01886" x2="-10.0" y2="139.01886" />
+<text class="ytick" font-size="12" x="-12.0" y="113.12103">2.2</text>
+<line class="tick" x1="0" y1="113.12103" x2="-10.0" y2="113.12103" />
+<text class="ytick" font-size="12" x="-12.0" y="87.223175">2.4</text>
+<line class="tick" x1="0" y1="87.223175" x2="-10.0" y2="87.223175" />
+<text class="ytick" font-size="12" x="-12.0" y="61.325348">2.6</text>
+<line class="tick" x1="0" y1="61.325348" x2="-10.0" y2="61.325348" />
+<text class="ytick" font-size="12" x="-12.0" y="35.42752">2.8</text>
+<line class="tick" x1="0" y1="35.42752" x2="-10.0" y2="35.42752" />
+<text class="ytick" font-size="12" x="-12.0" y="9.529663">3.0</text>
+<line class="tick" x1="0" y1="9.529663" x2="-10.0" y2="9.529663" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Incident Angle (deg)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="46.222269058274996" y="438.0">10.0</text>
+<line class="tick" x1="46.222269058274996" y1="416.0" x2="46.222269058274996" y2="426.0" />
+<text class="xtick" font-size="12" x="92.44453811654999" y="438.0">20.0</text>
+<line class="tick" x1="92.44453811654999" y1="416.0" x2="92.44453811654999" y2="426.0" />
+<text class="xtick" font-size="12" x="138.66680717482498" y="438.0">30.0</text>
+<line class="tick" x1="138.66680717482498" y1="416.0" x2="138.66680717482498" y2="426.0" />
+<text class="xtick" font-size="12" x="184.88907623309998" y="438.0">40.0</text>
+<line class="tick" x1="184.88907623309998" y1="416.0" x2="184.88907623309998" y2="426.0" />
+<text class="xtick" font-size="12" x="231.111345291375" y="438.0">50.0</text>
+<line class="tick" x1="231.111345291375" y1="416.0" x2="231.111345291375" y2="426.0" />
+<text class="xtick" font-size="12" x="277.33361434964996" y="438.0">60.0</text>
+<line class="tick" x1="277.33361434964996" y1="416.0" x2="277.33361434964996" y2="426.0" />
+<text class="xtick" font-size="12" x="323.55588340792497" y="438.0">70.0</text>
+<line class="tick" x1="323.55588340792497" y1="416.0" x2="323.55588340792497" y2="426.0" />
+<text class="xtick" font-size="12" x="369.77815246619997" y="438.0">80.0</text>
+<line class="tick" x1="369.77815246619997" y1="416.0" x2="369.77815246619997" y2="426.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(4.6222267,129.48918)" >
+<g transform="translate(-0.0, 0.1390291)">
+    <g class="Rpp" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.16884148
+1.0  0.16878632
+2.0  0.16862106
+3.0  0.16834638
+4.0  0.16796342
+5.0  0.16747376
+6.0  0.1668795
+7.0  0.16618317
+8.0  0.1653878
+9.0  0.16449693
+10.0  0.16351461
+11.0  0.16244544
+12.0  0.16129458
+13.0  0.16006775
+14.0  0.15877134
+15.0  0.15741237
+16.0  0.15599854
+17.0  0.15453835
+18.0  0.15304105
+19.0  0.1515168
+20.0  0.14997669
+21.0  0.14843287
+22.0  0.14689861
+23.0  0.14538848
+24.0  0.14391847
+25.0  0.14250611
+26.0  0.14117077
+27.0  0.13993384
+28.0  0.13881904
+29.0  0.13785276
+30.0  0.13706449
+31.0  0.13648733
+32.0  0.13615865
+33.0  0.1361208
+34.0  0.13642216
+35.0  0.1371183
+36.0  0.13827352
+37.0  0.1399629
+38.0  0.14227478
+39.0  0.14531423
+40.0  0.1492075
+41.0  0.15410824
+42.0  0.16020596
+43.0  0.16773824
+44.0  0.17700833
+45.0  0.18841167
+46.0  0.20247722
+47.0  0.21993491
+48.0  0.24183176
+49.0  0.26974693
+50.0  0.30622885
+51.0  0.3558118
+52.0  0.42791802
+53.0  0.5489747
+53.94552  0.9893951
+54.0  0.98906934
+55.0  0.98334426
+56.0  0.97812283
+57.0  0.97342694
+58.0  0.96926457
+59.0  0.96563256
+60.0  0.96251905
+61.0  0.9599058
+62.0  0.95777
+63.0  0.9560859
+64.0  0.9548263
+65.0  0.9539631
+66.0  0.95346844
+67.0  0.9533152
+68.0  0.95347714
+69.0  0.95392936
+70.0  0.9546484
+71.0  0.9556122
+72.0  0.9568003
+73.0  0.9581935
+74.0  0.95977414
+75.0  0.9615258
+76.0  0.9634332
+77.0  0.9654823
+78.0  0.9676599
+79.0  0.9699538
+80.0  0.9723525
+81.0  0.97484547
+82.0  0.97742254
+83.0  0.9800742
+84.0  0.98279136
+85.0  0.98556525
+86.0  0.9883876
+87.0  0.9912502
+88.0  0.99414504
+89.0  0.99706423
+89.99991  0.9999997
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Tpp" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.8311585
+1.0  0.8311898
+2.0  0.83128375
+3.0  0.8314408
+4.0  0.83166146
+5.0  0.83194673
+6.0  0.8322976
+7.0  0.8327155
+8.0  0.83320224
+9.0  0.8337596
+10.0  0.83439
+11.0  0.835096
+12.0  0.83588064
+13.0  0.8367473
+14.0  0.83769965
+15.0  0.8387421
+16.0  0.83987933
+17.0  0.8411166
+18.0  0.84246
+19.0  0.8439159
+20.0  0.8454918
+21.0  0.8471959
+22.0  0.84903735
+23.0  0.85102636
+24.0  0.8531744
+25.0  0.8554943
+26.0  0.8580005
+27.0  0.8607093
+28.0  0.86363906
+29.0  0.86681044
+30.0  0.8702473
+31.0  0.8739765
+32.0  0.87802917
+33.0  0.8824408
+34.0  0.88725275
+35.0  0.892513
+36.0  0.89827794
+37.0  0.904614
+38.0  0.91160005
+39.0  0.91933095
+40.0  0.92792153
+41.0  0.9375124
+42.0  0.9482782
+43.0  0.96043867
+44.0  0.9742757
+45.0  0.99015796
+46.0  1.0085796
+47.0  1.0302236
+48.0  1.0560706
+49.0  1.0875992
+50.0  1.1271944
+51.0  1.1790942
+52.0  1.2520874
+53.0  1.3707525
+53.94552  1.7846724
+54.0  1.7803837
+55.0  1.7020717
+56.0  1.6248451
+57.0  1.5490932
+58.0  1.4751165
+59.0  1.4031359
+60.0  1.3333038
+61.0  1.2657142
+62.0  1.2004118
+63.0  1.137402
+64.0  1.0766591
+65.0  1.018132
+66.0  0.96175134
+67.0  0.90743387
+68.0  0.85508657
+69.0  0.80460966
+70.0  0.7558994
+71.0  0.7088499
+72.0  0.6633547
+73.0  0.61930794
+74.0  0.57660514
+75.0  0.5351438
+76.0  0.49482372
+77.0  0.45554733
+78.0  0.41721967
+79.0  0.37974855
+80.0  0.34304428
+81.0  0.30701974
+82.0  0.2715901
+83.0  0.23667274
+84.0  0.20218693
+85.0  0.16805363
+86.0  0.13419531
+87.0  0.100535706
+88.0  0.06699953
+89.0  0.03351228
+89.99991  3.0594776E-6
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Rps" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.0
+1.0  -0.0053880317
+2.0  -0.010765423
+3.0  -0.01612154
+4.0  -0.021445774
+5.0  -0.026727535
+6.0  -0.031956274
+7.0  -0.037121486
+8.0  -0.04221272
+9.0  -0.047219586
+10.0  -0.052131757
+11.0  -0.05693899
+12.0  -0.061631117
+13.0  -0.06619806
+14.0  -0.07062982
+15.0  -0.07491652
+16.0  -0.07904835
+17.0  -0.08301561
+18.0  -0.08680871
+19.0  -0.09041813
+20.0  -0.093834445
+21.0  -0.09704832
+22.0  -0.10005048
+23.0  -0.102831714
+24.0  -0.10538283
+25.0  -0.10769466
+26.0  -0.10975802
+27.0  -0.11156365
+28.0  -0.1131022
+29.0  -0.114364125
+30.0  -0.115339674
+31.0  -0.11601873
+32.0  -0.11639074
+33.0  -0.11644455
+34.0  -0.11616824
+35.0  -0.115548864
+36.0  -0.11457218
+37.0  -0.11322229
+38.0  -0.1114811
+39.0  -0.1093277
+40.0  -0.10673752
+41.0  -0.10368109
+42.0  -0.10012245
+43.0  -0.09601684
+44.0  -0.09130729
+45.0  -0.08591958
+46.0  -0.07975439
+47.0  -0.07267447
+48.0  -0.06448266
+49.0  -0.05488132
+50.0  -0.043390013
+51.0  -0.029154904
+52.0  -0.010406711
+53.0  0.017791374
+53.94552  0.10495139
+54.0  0.10665912
+55.0  0.13254474
+56.0  0.15138692
+57.0  0.16563271
+58.0  0.1764734
+59.0  0.18461697
+60.0  0.19053783
+61.0  0.19457987
+62.0  0.1970063
+63.0  0.19802645
+64.0  0.1978113
+65.0  0.19650346
+66.0  0.19422354
+67.0  0.19107482
+68.0  0.18714651
+69.0  0.18251632
+70.0  0.17725232
+71.0  0.17141458
+72.0  0.16505636
+73.0  0.15822515
+74.0  0.15096354
+75.0  0.14330994
+76.0  0.13529915
+77.0  0.12696293
+78.0  0.1183304
+79.0  0.10942843
+80.0  0.10028201
+81.0  0.0909145
+82.0  0.0813479
+83.0  0.07160306
+84.0  0.06169993
+85.0  0.051657695
+86.0  0.041494977
+87.0  0.03122997
+88.0  0.020880604
+89.0  0.01046468
+89.99991  -8.1788716E-7
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Tps" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.0
+1.0  -0.0029329525
+2.0  -0.0058653844
+3.0  -0.008796772
+4.0  -0.011726586
+5.0  -0.01465429
+6.0  -0.017579336
+7.0  -0.020501161
+8.0  -0.023419188
+9.0  -0.02633282
+10.0  -0.029241433
+11.0  -0.032144383
+12.0  -0.035040997
+13.0  -0.037930567
+14.0  -0.04081235
+15.0  -0.04368557
+16.0  -0.0465494
+17.0  -0.04940297
+18.0  -0.052245367
+19.0  -0.05507561
+20.0  -0.05789267
+21.0  -0.06069545
+22.0  -0.06348279
+23.0  -0.066253446
+24.0  -0.06900609
+25.0  -0.07173934
+26.0  -0.07445167
+27.0  -0.07714149
+28.0  -0.079807095
+29.0  -0.08244663
+30.0  -0.08505814
+31.0  -0.08763949
+32.0  -0.09018841
+33.0  -0.09270241
+34.0  -0.09517883
+35.0  -0.09761472
+36.0  -0.10000688
+37.0  -0.10235173
+38.0  -0.10464533
+39.0  -0.106883176
+40.0  -0.10906016
+41.0  -0.11117034
+42.0  -0.11320667
+43.0  -0.11516062
+44.0  -0.11702158
+45.0  -0.11877592
+46.0  -0.12040545
+47.0  -0.12188488
+48.0  -0.12317715
+49.0  -0.12422442
+50.0  -0.12492897
+51.0  -0.12510674
+52.0  -0.12434795
+53.0  -0.12140503
+53.94552  -0.10139398
+54.0  0.10273419
+55.0  0.1234007
+56.0  0.13871635
+57.0  0.15036964
+58.0  0.15924695
+59.0  0.16589804
+60.0  0.17070115
+61.0  0.17393504
+62.0  0.1758152
+63.0  0.17651387
+64.0  0.17617205
+65.0  0.17490722
+66.0  0.1728186
+67.0  0.16999085
+68.0  0.16649686
+69.0  0.16239987
+70.0  0.1577551
+71.0  0.15261114
+72.0  0.14701098
+73.0  0.14099297
+74.0  0.13459155
+75.0  0.12783788
+76.0  0.12076038
+77.0  0.113385186
+78.0  0.10573655
+79.0  0.09783715
+80.0  0.08970839
+81.0  0.08137063
+82.0  0.072843425
+83.0  0.064145654
+84.0  0.055295724
+85.0  0.046311688
+86.0  0.03721134
+87.0  0.028012352
+88.0  0.018732345
+89.0  0.00938897
+89.99991  -6.8538657E-7
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Rsp" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  -0.0
+1.0  -0.005386774
+2.0  -0.010755334
+3.0  -0.016087353
+4.0  -0.021364268
+5.0  -0.026567154
+6.0  -0.031676576
+7.0  -0.036672425
+8.0  -0.041533716
+9.0  -0.04623835
+10.0  -0.05076281
+11.0  -0.055081785
+12.0  -0.05916769
+13.0  -0.06299005
+14.0  -0.06651461
+15.0  -0.06970231
+16.0  -0.07250764
+17.0  -0.07487651
+18.0  -0.07674311
+19.0  -0.07802527
+20.0  -0.07861731
+21.0  -0.07837871
+22.0  -0.07711502
+23.0  -0.07454403
+24.0  -0.0702305
+25.0  -0.06344671
+26.0  -0.052824825
+27.0  -0.035249535
+28.0  1.062437E-5
+28.610695  0.09272374
+29.0  0.118249886
+30.0  0.16486108
+31.0  0.19778475
+32.0  0.22271168
+33.0  0.24212812
+34.0  0.25755832
+35.0  0.27016973
+36.0  0.28142384
+36.320942  0.28664166
+37.0  0.24779058
+38.0  0.23433152
+39.0  0.22784694
+40.0  0.224057
+41.0  0.2215925
+42.0  0.21982266
+43.0  0.21840172
+44.0  0.21711855
+45.0  0.21583413
+46.0  0.21445134
+47.0  0.2128989
+48.0  0.2111219
+49.0  0.20907596
+50.0  0.20672314
+51.0  0.20402895
+52.0  0.20095994
+53.0  0.19748189
+54.0  0.19355915
+55.0  0.18915851
+56.0  0.18426952
+57.0  0.17900048
+58.0  0.17413452
+59.0  0.17837025
+59.24648  0.21071938
+60.0  0.45024052
+61.0  0.52574295
+62.0  0.5305863
+63.0  0.5099775
+64.0  0.4816657
+65.0  0.4521494
+66.0  0.42364663
+67.0  0.39679262
+68.0  0.37164688
+69.0  0.348072
+70.0  0.32587746
+71.0  0.30487317
+72.0  0.28488758
+73.0  0.26577204
+74.0  0.2474
+75.0  0.22966425
+76.0  0.21247405
+77.0  0.19575238
+78.0  0.17943348
+79.0  0.16346096
+80.0  0.14778602
+81.0  0.1323662
+82.0  0.11716414
+83.0  0.1021468
+84.0  0.08728454
+85.0  0.072550565
+86.0  0.057920337
+87.0  0.043371093
+88.0  0.02888145
+89.0  0.0144310035
+89.99991  -1.315763E-6
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Tsp" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.0
+1.0  0.0029971437
+2.0  0.0060029672
+3.0  0.00902628
+4.0  0.012076152
+5.0  0.015162061
+6.0  0.01829405
+7.0  0.021482904
+8.0  0.024740372
+9.0  0.02807941
+10.0  0.0315145
+11.0  0.035062026
+12.0  0.03874078
+13.0  0.042572584
+14.0  0.046583127
+15.0  0.050803076
+16.0  0.055269603
+17.0  0.06002853
+18.0  0.065137364
+19.0  0.07066983
+20.0  0.07672274
+21.0  0.083426975
+22.0  0.09096571
+23.0  0.099606805
+24.0  0.10976488
+25.0  0.12213355
+26.0  0.13801351
+27.0  0.1603527
+28.0  0.19922683
+28.610695  0.2890089
+29.0  0.28590947
+30.0  0.27633083
+31.0  0.26493144
+32.0  0.25218016
+33.0  0.23826574
+34.0  0.22294103
+35.0  0.20498131
+36.0  0.1781909
+36.320942  0.15082315
+37.0  0.13697213
+38.0  0.13719895
+39.0  0.13972388
+40.0  0.14293545
+41.0  0.14644751
+42.0  0.15013458
+43.0  0.15395772
+44.0  0.15791532
+45.0  0.16202644
+46.0  0.16632506
+47.0  0.17085935
+48.0  0.17569344
+49.0  0.18091185
+50.0  0.18662706
+51.0  0.19299154
+52.0  0.2002181
+53.0  0.20861495
+54.0  0.21865067
+55.0  0.23108526
+56.0  0.2472686
+57.0  0.26995453
+58.0  0.30632624
+59.0  0.39302984
+59.24648  0.5008562
+60.0  0.58759904
+61.0  0.5449814
+62.0  0.47471565
+63.0  0.40837377
+64.0  0.35260686
+65.0  0.3069284
+66.0  0.269439
+67.0  0.23832951
+68.0  0.21216376
+69.0  0.18985617
+70.0  0.17059377
+71.0  0.15376453
+72.0  0.13890256
+73.0  0.12564856
+74.0  0.11372156
+75.0  0.10289886
+76.0  0.09300164
+77.0  0.0838845
+78.0  0.07542774
+79.0  0.06753168
+80.0  0.060112346
+81.0  0.053098146
+82.0  0.04642737
+83.0  0.040046167
+84.0  0.033906955
+85.0  0.027967166
+86.0  0.02218817
+87.0  0.016534412
+88.0  0.010972661
+89.0  0.005471352
+89.99991  -4.9851457E-7
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Rss" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  -0.1390291
+1.0  -0.13878548
+2.0  -0.13805479
+3.0  -0.13683766
+4.0  -0.13513511
+5.0  -0.13294855
+6.0  -0.13027975
+7.0  -0.1271308
+8.0  -0.12350414
+9.0  -0.119402386
+10.0  -0.11482836
+11.0  -0.10978498
+12.0  -0.10427514
+13.0  -0.09830156
+14.0  -0.091866635
+15.0  -0.08497212
+16.0  -0.07761887
+17.0  -0.06980627
+18.0  -0.06153165
+19.0  -0.052789252
+20.0  -0.043568745
+21.0  -0.03385289
+22.0  -0.023613676
+23.0  -0.012805536
+24.0  -0.0013524194
+25.0  0.0108794775
+26.0  0.024148922
+27.0  0.039051306
+28.0  0.05762564
+28.610695  0.08236036
+29.0  0.085371755
+30.0  0.0921035
+31.0  0.09780853
+32.0  0.102961525
+33.0  0.10796472
+34.0  0.11315477
+35.0  0.11886826
+36.0  0.1258992
+36.320942  0.13026425
+37.0  0.14938806
+38.0  0.16493635
+39.0  0.17845197
+40.0  0.19097115
+41.0  0.20276122
+42.0  0.21390395
+43.0  0.22441041
+44.0  0.23425691
+45.0  0.24339887
+46.0  0.25177693
+47.0  0.25931972
+48.0  0.26594558
+49.0  0.27156502
+50.0  0.2760857
+51.0  0.279425
+52.0  0.28153938
+53.0  0.28249598
+54.0  0.28264743
+55.0  0.28308412
+56.0  0.2868801
+57.0  0.30285203
+58.0  0.35899645
+59.0  0.6010152
+59.24648  1.0
+60.0  1.0
+61.0  1.0
+62.0  1.0
+63.0  1.0
+64.0  1.0
+65.0  1.0
+66.0  1.0
+67.0  1.0
+68.0  1.0
+69.0  1.0
+70.0  1.0
+71.0  1.0
+72.0  1.0
+73.0  1.0
+74.0  1.0
+75.0  1.0
+76.0  1.0
+77.0  1.0
+78.0  1.0
+79.0  1.0
+80.0  1.0
+81.0  1.0
+82.0  1.0
+83.0  1.0
+84.0  1.0
+85.0  1.0
+86.0  1.0
+87.0  1.0
+88.0  1.0
+89.0  1.0
+89.99991  1.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Tss" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.8609709
+1.0  0.86099297
+2.0  0.86105925
+3.0  0.8611699
+4.0  0.8613251
+5.0  0.86152524
+6.0  0.8617708
+7.0  0.86206234
+8.0  0.8624005
+9.0  0.86278594
+10.0  0.8632196
+11.0  0.8637024
+12.0  0.86423546
+13.0  0.8648199
+14.0  0.8654569
+15.0  0.8661478
+16.0  0.8668941
+17.0  0.8676973
+18.0  0.8685589
+19.0  0.8694806
+20.0  0.8704642
+21.0  0.87151164
+22.0  0.87262523
+23.0  0.87380815
+24.0  0.8750654
+25.0  0.8764074
+26.0  0.87785935
+27.0  0.8795
+28.0  0.8817093
+28.610695  0.8865355
+29.0  0.8845533
+30.0  0.8804405
+31.0  0.8779734
+32.0  0.8773286
+33.0  0.8786178
+34.0  0.8820105
+35.0  0.88799137
+36.0  0.8988245
+36.320942  0.9090099
+37.0  0.9092751
+38.0  0.91132766
+39.0  0.9138664
+40.0  0.91683304
+41.0  0.9202692
+42.0  0.9242515
+43.0  0.9288815
+44.0  0.9342866
+45.0  0.94062334
+46.0  0.9480857
+47.0  0.9569156
+48.0  0.9674192
+49.0  0.97999066
+50.0  0.99514896
+51.0  1.0135949
+52.0  1.0363051
+53.0  1.0646951
+54.0  1.1009202
+55.0  1.1484839
+56.0  1.2136264
+57.0  1.3091199
+58.0  1.4684167
+59.0  1.8632243
+59.24648  2.3680623
+60.0  3.0735943
+61.0  2.9854512
+62.0  2.6821518
+63.0  2.3626664
+64.0  2.0797613
+65.0  1.8399707
+66.0  1.6379396
+67.0  1.4665866
+68.0  1.3196851
+69.0  1.1922737
+70.0  1.0805094
+71.0  0.98142797
+72.0  0.89272934
+73.0  0.81261146
+74.0  0.73964554
+75.0  0.6726854
+76.0  0.61079997
+77.0  0.55322427
+78.0  0.49932224
+79.0  0.44855905
+80.0  0.40047982
+81.0  0.35469347
+82.0  0.31085977
+83.0  0.26867935
+84.0  0.22788563
+85.0  0.1882383
+86.0  0.1495177
+87.0  0.11152053
+88.0  0.0740557
+89.0  0.03694102
+89.99991  3.3662618E-6
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Rshsh" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  -0.1390291
+1.0  -0.13900267
+2.0  -0.13892323
+3.0  -0.13879058
+4.0  -0.13860428
+5.0  -0.13836373
+6.0  -0.13806821
+7.0  -0.13771674
+8.0  -0.13730818
+9.0  -0.13684124
+10.0  -0.13631435
+11.0  -0.13572575
+12.0  -0.13507348
+13.0  -0.1343553
+14.0  -0.1335687
+15.0  -0.13271089
+16.0  -0.13177878
+17.0  -0.13076891
+18.0  -0.12967747
+19.0  -0.12850025
+20.0  -0.1272326
+21.0  -0.12586933
+22.0  -0.12440475
+23.0  -0.12283253
+24.0  -0.12114568
+25.0  -0.119336426
+26.0  -0.11739616
+27.0  -0.11531528
+28.0  -0.1130831
+28.610695  -0.11164046
+29.0  -0.110687695
+30.0  -0.10811569
+31.0  -0.10535208
+32.0  -0.10238001
+33.0  -0.0991804
+34.0  -0.09573166
+35.0  -0.09200923
+36.0  -0.087985076
+36.320942  -0.08662446
+37.0  -0.08362703
+38.0  -0.07889803
+39.0  -0.07375513
+40.0  -0.06814828
+41.0  -0.062018763
+42.0  -0.055297256
+43.0  -0.04790119
+44.0  -0.039731413
+45.0  -0.030667657
+46.0  -0.020562423
+47.0  -0.009232505
+48.0  0.0035529966
+49.0  0.018090041
+50.0  0.034765616
+51.0  0.054097917
+52.0  0.076801255
+53.0  0.10389649
+54.0  0.13691196
+55.0  0.17828207
+56.0  0.23223948
+57.0  0.30720484
+58.0  0.4245026
+59.0  0.68918693
+59.24648  1.0
+60.0  1.0
+61.0  1.0
+62.0  1.0
+63.0  1.0
+64.0  1.0
+65.0  1.0
+66.0  1.0
+67.0  1.0
+68.0  1.0
+69.0  1.0
+70.0  1.0
+71.0  1.0
+72.0  1.0
+73.0  1.0
+74.0  1.0
+75.0  1.0
+76.0  1.0
+77.0  1.0
+78.0  1.0
+79.0  1.0
+80.0  1.0
+81.0  1.0
+82.0  1.0
+83.0  1.0
+84.0  1.0
+85.0  1.0
+86.0  1.0
+87.0  1.0
+88.0  1.0
+89.0  1.0
+89.99991  1.0
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="Tshsh" tauplabel=""  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.0  0.8609709
+1.0  0.8609973
+2.0  0.8610768
+3.0  0.86120945
+4.0  0.8613957
+5.0  0.8616363
+6.0  0.8619318
+7.0  0.8622833
+8.0  0.8626918
+9.0  0.86315876
+10.0  0.86368567
+11.0  0.86427426
+12.0  0.8649265
+13.0  0.8656447
+14.0  0.8664313
+15.0  0.8672891
+16.0  0.8682212
+17.0  0.8692311
+18.0  0.8703225
+19.0  0.8714997
+20.0  0.8727674
+21.0  0.87413067
+22.0  0.8755953
+23.0  0.87716746
+24.0  0.87885433
+25.0  0.8806636
+26.0  0.8826038
+27.0  0.88468474
+28.0  0.8869169
+28.610695  0.88835955
+29.0  0.8893123
+30.0  0.8918843
+31.0  0.8946479
+32.0  0.89761996
+33.0  0.9008196
+34.0  0.9042683
+35.0  0.90799075
+36.0  0.9120149
+36.320942  0.91337556
+37.0  0.91637295
+38.0  0.921102
+39.0  0.92624485
+40.0  0.93185174
+41.0  0.93798125
+42.0  0.94470274
+43.0  0.9520988
+44.0  0.9602686
+45.0  0.96933234
+46.0  0.9794376
+47.0  0.9907675
+48.0  1.003553
+49.0  1.01809
+50.0  1.0347656
+51.0  1.0540979
+52.0  1.0768013
+53.0  1.1038965
+54.0  1.136912
+55.0  1.178282
+56.0  1.2322395
+57.0  1.3072048
+58.0  1.4245026
+59.0  1.6891869
+59.24648  2.0
+60.0  1.8993652
+61.0  1.7771401
+62.0  1.6657324
+63.0  1.5633451
+64.0  1.4685677
+65.0  1.380275
+66.0  1.2975553
+67.0  1.2196609
+68.0  1.145971
+69.0  1.0759645
+70.0  1.0092003
+71.0  0.94530106
+72.0  0.8839414
+73.0  0.82483876
+74.0  0.76774555
+75.0  0.71244353
+76.0  0.6587388
+77.0  0.60645795
+78.0  0.5554451
+79.0  0.50555855
+80.0  0.45666948
+81.0  0.4086592
+82.0  0.3614181
+83.0  0.314844
+84.0  0.26884106
+85.0  0.22331868
+86.0  0.17819054
+87.0  0.13337383
+88.0  0.0887884
+89.0  0.04435608
+89.99991  4.043964E-6
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end  -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+</svg>

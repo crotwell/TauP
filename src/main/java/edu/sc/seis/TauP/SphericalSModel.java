@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class SphericalSModel extends SlownessModel implements Serializable {
 
-    public SphericalSModel(VelocityModel vMod) throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException {
+    public SphericalSModel(VelocityModel vMod) throws NoSuchLayerException, SlownessModelException {
         this(vMod, 
              0.1, 11.0, 115.0, 2.5*Math.PI/180, 0.05, true,
              SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
@@ -55,7 +55,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                            double maxInterpError,
                            boolean allowInnerCoreS,
                            double slownessTolerance)
-            throws NoSuchMatPropException, NoSuchLayerException,
+            throws NoSuchLayerException,
             SlownessModelException {
         super(vMod,
               minDeltaP,
@@ -135,12 +135,8 @@ public class SphericalSModel extends SlownessModel implements Serializable {
 
     /**
      * Converts a velocity layer into a slowness layer.
-     * 
-     * @exception SlownessModelException
-     *                if velocity layer is malformed.
      */
-    public SlownessLayer toSlownessLayer(VelocityLayer vLayer, boolean isPWave)
-            throws SlownessModelException {
+    public SlownessLayer toSlownessLayer(VelocityLayer vLayer, boolean isPWave) {
         return new SlownessLayer(vLayer, true, radiusOfEarth, isPWave);
     }
 
@@ -167,7 +163,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
              * should equally space the depths. ???? This probably won't happen,
              * but...
              */
-            depth = Double.MAX_VALUE;
             throw new SlownessModelException("Neg velocity gradient "
                     + "just balances the earth flattening!"
                     + " What should I do?!?!?!? topDepth= " + topDepth);
@@ -200,11 +195,11 @@ public class SphericalSModel extends SlownessModel implements Serializable {
         if(sphericalRayParam > Math.min(sphericalLayer.getTopP(),
                                         sphericalLayer.getBotP())) {
             if(DEBUG) {
-                System.out.println("Ray Turns in layer, velocities: "
+                Alert.debug("Ray Turns in layer, velocities: "
                         + topRadius / sphericalRayParam + " " + topRadius
                         / sphericalLayer.getTopP() + " " + botRadius
                         / sphericalLayer.getBotP());
-                System.out.println("depths        top "
+                Alert.debug("depths        top "
                         + sphericalLayer.getTopDepth() + "  bot "
                         + sphericalLayer.getBotDepth());
             }
@@ -295,7 +290,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
             distRadian = Math.PI / 2.0;
             time = sphericalLayer.getTopP();
             if(DEBUG) {
-                System.out.println("Center of Earth: dist " + distRadian
+                Alert.debug("Center of Earth: dist " + distRadian
                         + " time " + time);
             }
             if(distRadian < 0.0 || time < 0.0
@@ -402,12 +397,9 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                  * radiusOfEarth.
                  */
                 if(prevDepth > radiusOfEarth) {
-                    isOK = false;
                     throw new SlownessModelException("Slowness layer has a depth larger than the radius of "
                             + "the earth in a spherical model. max depth = "
                             + prevDepth + " radiusOfEarth = " + radiusOfEarth);
-                } else {
-                    isOK |= true;
                 }
             }
         }
@@ -416,7 +408,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
     }
 
     public String toString() {
-        String desc = "spherical model:\n" + super.toString();
-        return desc;
+        return "spherical model:\n" + super.toString();
     }
 }

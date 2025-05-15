@@ -1,7 +1,10 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.PhaseSymbols.isExclusiveDowngoingSymbol;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -66,29 +69,52 @@ public class ReceiverAtDepth {
             upFlippedPhase = SeismicPhaseFactory.createPhase(reversedName.toLowerCase().replace("i", "y"), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
             endsDowngoingFlippedPhase = null;
         }
+        if (receiverDepth != 0) {
+            // where we end up, depending on if we end going down or up
+            int upgoingRecBranch = tMod.findBranch(receiverDepth);
+            int downgoingRecBranch = upgoingRecBranch - 1; // one branch shallower
+            if (phase.getFinalPhaseSegment().isDownGoing ) {
+                // downgoing at receiver
+                assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(downgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam(),
+                        "max "+phase.getFinalPhaseSegment().maxRayParam
+                                +" mod "+tMod.getTauBranch(downgoingRecBranch,
+                                phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam());
+            } else {
+                // upgoing at receiver
+                assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(upgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getTopRayParam(),
+                        phase.getName()+" "+phase.getFinalPhaseSegment().maxRayParam+"  "+
+                                tMod.getTauBranch(upgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getTopRayParam()
+                        );
+            }
+
+        }
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
             String pre = phaseName+" sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
-            List<Arrival> phaseArrivals = phase.calcTime(degrees);
+            DistanceRay distanceRay = DistanceRay.ofDegrees(degrees);
+            List<Arrival> phaseArrivals = distanceRay.calculate(phase);
             if (upPhase != null) {
-                phaseArrivals.addAll(upPhase.calcTime(degrees));
+                phaseArrivals.addAll(distanceRay.calculate(upPhase));
             }
             if (endsDowngoingPhase != null) {
-                phaseArrivals.addAll(endsDowngoingPhase.calcTime(degrees));
+                phaseArrivals.addAll(distanceRay.calculate(endsDowngoingPhase));
             }
-            List<Arrival> flippedArrivals = flippedPhase.calcTime(degrees);
+            List<Arrival> flippedArrivals = distanceRay.calculate(flippedPhase);
             if (endsDowngoingFlippedPhase != null) {
-                flippedArrivals.addAll(endsDowngoingFlippedPhase.calcTime(degrees));
+                flippedArrivals.addAll(distanceRay.calculate(endsDowngoingFlippedPhase));
             }
             if (upFlippedPhase != null) {
-                flippedArrivals.addAll(upFlippedPhase.calcTime(degrees));
+                flippedArrivals.addAll(distanceRay.calculate(upFlippedPhase));
             }
             assertEquals(  phaseArrivals.size(), flippedArrivals.size(), pre+" arrival size "+phase.getName()+" "+flippedPhase.getName());
             for (int i = 0; i < phaseArrivals.size(); i++) {
                 Arrival a = phaseArrivals.get(i);
                 Arrival f = flippedArrivals.get(i);
                 assertEquals(  a.getTime(), f.getTime(), 0.0001, a+" "+f);
-                assertEquals(  a.getTakeoffAngle(), f.getIncidentAngle(), 0.0001);
-                assertEquals(  a.getIncidentAngle(), f.getTakeoffAngle(), 0.0001);
+                assertEquals(  a.getTakeoffAngleDegree(), f.getIncidentAngleDegree(), 0.0001);
+                assertEquals(  a.getIncidentAngleDegree(), f.getTakeoffAngleDegree(), 0.0001);
                 assertEquals(  a.getDist(), f.getDist(), 0.0001);
                 assertEquals(  a.getRayParam(), f.getRayParam(), 0.0001);
             }
@@ -132,9 +158,9 @@ public class ReceiverAtDepth {
         SeismicPhase p = SeismicPhaseFactory.createPhase("p", flippedMod, flippedMod.getSourceDepth(), 0);
         SeismicPhase PcP200 = SeismicPhaseFactory.createPhase("Pcp", tModRecDepth, tModRecDepth.getSourceDepth(), recDepth);
         double degrees = 0;
-        List<Arrival> PcPArrivals = PcP.calcTime(degrees);
-        List<Arrival> pArrivals = p.calcTime(degrees);
-        List<Arrival> PcP200Arrivals = PcP200.calcTime(degrees);
+        List<Arrival> PcPArrivals = DistanceRay.ofDegrees(degrees).calculate(PcP);
+        List<Arrival> pArrivals = DistanceRay.ofDegrees(degrees).calculate(p);
+        List<Arrival> PcP200Arrivals = DistanceRay.ofDegrees(degrees).calculate(PcP200);
         String pre = "PcP "+recDepth;
 
         Arrival aPcP = PcPArrivals.get(0);
@@ -148,8 +174,8 @@ public class ReceiverAtDepth {
     
     @Test
     public void testCloseDepths()  throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 2.4f;
+        double srcDepth = 2.39;
+        double recDepth = 2.4;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -164,8 +190,8 @@ public class ReceiverAtDepth {
 
     @Test
     public void testOuterCoreRec() throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 3000f;
+        double srcDepth = 2.39;
+        double recDepth = 3000;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -180,8 +206,8 @@ public class ReceiverAtDepth {
 
     @Test
     public void testInnerCoreRec() throws Exception {
-        float srcDepth = 2.39f;
-        float recDepth = 5500f;
+        double srcDepth = 2.39;
+        double recDepth = 5500;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         TauModel tModDepth = tMod.depthCorrect(srcDepth);
@@ -192,5 +218,20 @@ public class ReceiverAtDepth {
         check(tModRecDepth, flippedMod, "PKI", .1);
         System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
         check(tModRecDepth, flippedMod, "SKI", .1);
+    }
+
+    @Test
+    public void testInnerCoreRecConvPhase() throws Exception {
+        double srcDepth = 2.39;
+        double recDepth = 6000;
+        double surfaceRecDepth = 0;
+        String modelName = "outerCoreDiscon.nd";
+        VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
+        TauModel tModDepth = tMod.depthCorrect(srcDepth);
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+        assertTrue(SeismicPhaseFactory.createPhase("PKIed5500Jed", tModRecDepth, srcDepth, recDepth).hasArrivals());
+        assertTrue(SeismicPhaseFactory.createPhase("PKIed5500I", tModRecDepth, srcDepth, recDepth).hasArrivals());
+        assertTrue(SeismicPhaseFactory.createPhase("PKI5500jkp", tModRecDepth, srcDepth, surfaceRecDepth).hasArrivals());
     }
 }

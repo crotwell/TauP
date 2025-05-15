@@ -1,0 +1,22 @@
+Usage: taup discon [--debug] [--help] [--verbose] [-o=<outFile>]
+                   [--prop=<toolPropsFilename>] [--mod=model [--mod=model]... |
+                   --nd=model [--nd=model]... | --tvel=model [--tvel=model]...]
+                   [--json | --text]
+List velocity discontinuities for a model.
+
+Options:
+
+      --debug                enable debugging output
+      --help                 display this help message
+  -o, --output=<outFile>     output to file, default is stdout.
+      --prop=<toolPropsFilename>
+                             load defaults from properties file
+      --verbose              enable verbose output
+Velocity Model
+      --mod, --model=model   use velocity model "modelname" for calculations,
+                               format is guessed.
+      --nd=model             "named discontinuities" velocity file
+      --tvel=model           ".tvel" velocity file, ala ttimes
+Output Type:
+      --json                 outputs as JSON
+      --text                 outputs as Text

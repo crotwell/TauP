@@ -16,20 +16,9 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.io.StreamCorruptedException;
+import java.io.*;
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -40,9 +29,10 @@ import java.util.HashMap;
  */
 public class TauModel implements Serializable {
 
-    public TauModel(SlownessModel sMod) throws NoSuchLayerException,
-            NoSuchMatPropException, SlownessModelException, TauModelException {
-        this.sMod = (SlownessModel)sMod;
+
+    public TauModel(SlownessModel sMod) throws
+            SlownessModelException, TauModelException {
+        this.sMod = sMod;
         calcTauIncFrom();
     }
 
@@ -77,7 +67,7 @@ public class TauModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    transient public static boolean DEBUG = ToolRun.DEBUG;
+    public static boolean DEBUG = TauPConfig.DEBUG;
 
     /** True if this is a spherical slowness model. False if flat. */
     protected boolean spherical = true;
@@ -96,6 +86,8 @@ public class TauModel implements Serializable {
      * discontinuity then then it is not included.
      */
     protected double[] noDisconDepths = new double[0];
+
+    protected double surfaceDepth = 0;
 
     /** Depth of the moho. */
     protected double mohoDepth;
@@ -124,7 +116,7 @@ public class TauModel implements Serializable {
      * an event at depth. This is normally be set when the tau model is
      * generated to be a clone of the slowness model.
      */
-    private SlownessModel sMod;
+    private final SlownessModel sMod;
 
     /**
      * ray parameters used to construct the tau branches. This may only be a
@@ -193,8 +185,83 @@ public class TauModel implements Serializable {
         return false;
     }
 
+    public boolean isFluidBranch(int branchNum) {
+        return getSlownessModel().depthInFluid(getTauBranch(branchNum, false).getTopDepth());
+    }
+
+    /**
+     * True if a boundary can generate a head wave, must be a discontinuity and an increase in velocity with depth.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return head wave possible
+     * @throws NoSuchLayerException
+     */
+    public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+        double topDepth = getTauBranch(branchNum, false).getTopDepth();
+        int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
+        int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
+        VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
+        if (isPWave) {
+            return above.getBotPVelocity() < below.getTopPVelocity();
+        } else {
+            return above.getBotSVelocity() < below.getTopSVelocity();
+        }
+    }
+
+    /**
+     * True if a boundary can generate a diffracted wave, currently just ensure a discontinuity.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return diffracted wave possible
+     */
+    public boolean isDiffractionBranch(int branchNum, boolean isPWave) {
+        return isDiscontinuityBranch(branchNum, isPWave);
+    }
+
+    /**
+     * True if a boundary at top of branch is a discontinuity for the given phase type in the velocity model.
+     * Branch 0 is always a discontinuity, free surface. Center of earth is never a discon, so we do not need
+     * to search the bottom of a branch.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return if a velocity discontinuity
+     */
+    public boolean isDiscontinuityBranch(int branchNum, boolean isPWave) {
+        if (branchNum==0) {
+            // free surface is always a discon
+            return true;
+        }
+        double topDepth = getTauBranch(branchNum, isPWave).getTopDepth();
+        int aboveIdx;
+        try {
+            aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        } catch (NoSuchLayerException e) {
+            // no above means free surface, so is discon
+            return true;
+        }
+        VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
+        int belowIdx;
+        try {
+            belowIdx = getVelocityModel().layerNumberBelow(topDepth);
+        } catch (NoSuchLayerException e) {
+            // no layer below means center of earth, so not discon
+            return false;
+        }
+        VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
+        if (isPWave) {
+            return above.getBotPVelocity() != below.getTopPVelocity();
+        } else {
+            return above.getBotSVelocity() != below.getTopSVelocity();
+        }
+    }
+
     /**
      * Is the given depth a "noDisconDepth"?
+     * Usually because model was split at the source or receiver depth, or an added depth used by taup pierce.
      */
     public boolean isNoDisconDepth(double noDisconDepth) {
         for(int i = 0; i < noDisconDepths.length; i++) {
@@ -247,6 +314,42 @@ public class TauModel implements Serializable {
     }
 
     /**
+     * Check if crust is missing, moho at surface
+     * @return
+     */
+    public boolean isDegenerateCrust() {
+        // degenerate case, moho at surface
+        return getMohoDepth() == 0;
+    }
+
+    /**
+     * Check if mantle is missing, model is only core, cmb at surface
+     * @return
+     */
+    public boolean isDegenerateCrustMantle() {
+        // degenerate case, cmb is surface
+        return getCmbDepth() == 0;
+    }
+
+    /**
+     * Check if inner core is missing, iocb at center of earth
+     * @return
+     */
+    public boolean isDegenerateInnerCore() {
+        return getIocbDepth() == getRadiusOfEarth() ;
+        // degenerate case, IOCB is at center, so model without an inner core
+    }
+
+    /**
+     * Check if outer core is missing, iocb at cmb
+     * @return
+     */
+    public boolean isDegenerateOuterCore() {
+        return getIocbDepth() == getCmbDepth() ;
+        // degenerate case, IOCB is at CMB, so model without an outer core
+    }
+
+    /**
      * @return the radius of the Earth in km, usually input from the velocity
      *          model.
      */
@@ -261,7 +364,7 @@ public class TauModel implements Serializable {
      *          zones (low velocity zones).
      */
     public double[] getRayParams() {
-        return (double[])rayParams.clone();
+        return rayParams.clone();
     }
 
     public double getOneRayParam(int i) {
@@ -270,6 +373,18 @@ public class TauModel implements Serializable {
 
     public int getNumBranches() {
         return tauBranches[0].length;
+    }
+
+
+    /**
+     * Gets the branch that either has the depth as its top boundary, or
+     * strictly contains the depth. Also, we allow the bottommost branch to
+     * contain its bottom depth, so that the center if the earth is contained
+     * within the bottom branch.
+     */
+    public TauBranch getTauBranchAtDepth(double depth, boolean isPWave) throws TauModelException {
+        int idx = findBranch(depth);
+        return getTauBranch(idx, isPWave);
     }
 
     public TauBranch getTauBranch(int branchNum, boolean isPWave) {
@@ -320,15 +435,15 @@ public class TauModel implements Serializable {
      *                distance without a layer.
      */
     private void calcTauIncFrom() throws SlownessModelException,
-            NoSuchLayerException, TauModelException, NoSuchMatPropException {
-        SlownessLayer topSLayer, botSLayer, currSLayer;
+            TauModelException {
+        SlownessLayer topSLayer, botSLayer, currSLayer, prevSLayer;
         int topCritLayerNum, botCritLayerNum;
         /*
          * First, we must have at least 1 slowness layer to calculate a
          * distance. Otherwise we must signal an exception.
          */
         if(DEBUG) {
-            System.out.println("Size of slowness model:"
+            Alert.debug("Size of slowness model:"
                     + " sMod.getNumLayers('P') = " + sMod.getNumLayers(true)
                     + ", sMod.getNumLayers('S') = " + sMod.getNumLayers(false));
         }
@@ -358,48 +473,65 @@ public class TauModel implements Serializable {
          * been constructed to be a subset of the S samples.
          */
         int rayNum = 0;
-        double minPSoFar = sMod.getSlownessLayer(0, false).getTopP();
         double[] tempRayParams = new double[2 * sMod.getNumLayers(false)
                 + sMod.getNumCriticalDepths()];
-        // make sure we get the top slowness of the very top layer
-        tempRayParams[rayNum] = minPSoFar;
-        rayNum++;
+        currSLayer = null;
         for(int layerNum = 0; layerNum < sMod.getNumLayers(false); layerNum++) {
+            prevSLayer = currSLayer;
             currSLayer = sMod.getSlownessLayer(layerNum, false);
             /*
              * Add the top if it is strictly less than the last sample added.
              * Note that this will not be added if the slowness is continuous
              * across the layer boundary.
              */
-            if(currSLayer.getTopP() < minPSoFar) {
+            if(prevSLayer == null || currSLayer.getTopP() != prevSLayer.getBotP()) {
                 tempRayParams[rayNum] = currSLayer.getTopP();
                 rayNum++;
-                minPSoFar = currSLayer.getTopP();
             }
             /*
              * Add the bottom if it is strictly less than the last sample added.
              * This will always happen unless we are within a high slowness
              * zone.
              */
-            if(currSLayer.getBotP() < minPSoFar) {
-                tempRayParams[rayNum] = currSLayer.getBotP();
-                rayNum++;
-                minPSoFar = currSLayer.getBotP();
-            }
+            tempRayParams[rayNum] = currSLayer.getBotP();
+            rayNum++;
         }
         /* Copy tempRayParams to rayParams so the the size is exactly right. */
-        rayParams = new double[rayNum];
-        System.arraycopy(tempRayParams, 0, rayParams, 0, rayNum);
-        tempRayParams = null;
+        double[] temptemprayParams = new double[rayNum];
+        System.arraycopy(tempRayParams, 0, temptemprayParams, 0, rayNum);
+        tempRayParams = temptemprayParams;
+        // sort
+        Arrays.sort(tempRayParams);
+        // and remove duplicates
+        int numUnique = 1;
+        for (int i = 1; i < tempRayParams.length; i++) {
+            if (tempRayParams[i-1] != tempRayParams[i]) {
+                numUnique++;
+            }
+        }
+        rayParams = new double[numUnique];
+        int n = 0;
+        rayParams[n] = tempRayParams[0];
+        n++;
+        for (int i = 1; i < tempRayParams.length; i++) {
+            if (tempRayParams[i-1] != tempRayParams[i]) {
+                rayParams[n] = tempRayParams[i];
+                n++;
+            }
+        }
+        // reverse sort so large to small
+        for (int i = 0; i < rayParams.length/2; i++) {
+            double tmp = rayParams[i];
+            rayParams[i] = rayParams[rayParams.length-i-1];
+            rayParams[rayParams.length-i-1] = tmp;
+        }
         if(DEBUG) {
-            System.out.println("Number of slowness samples for tau =" + rayNum);
+            Alert.debug("Number of slowness samples for tau =" + numUnique);
         }
         CriticalDepth topCritDepth, botCritDepth;
         int waveNum;
         boolean isPWave;
         for(waveNum = 0, isPWave = true; waveNum < 2; waveNum++, isPWave = false) {
-            // The minimum slowness seen so far
-            minPSoFar = sMod.getSlownessLayer(0, isPWave).getTopP();
             // loop over critical slowness layers since they form the branches
             for(int critNum = 0; critNum < sMod.getNumCriticalDepths() - 1; critNum++) {
                 topCritDepth = sMod.getCriticalDepth(critNum);
@@ -407,17 +539,16 @@ public class TauModel implements Serializable {
                 botCritDepth = sMod.getCriticalDepth(critNum + 1);
                 botCritLayerNum = botCritDepth.getLayerNum(isPWave) - 1;
                 if(DEBUG) {
-                    System.out.println("Calculating " + (isPWave ? "P" : "S")
+                    Alert.debug("Calculating " + (isPWave ? "P" : "S")
                             + " tau branch for branch " + critNum
-                            + " topCritLayerNum=" + topCritLayerNum
-                            + " botCritLayerNum=" + botCritLayerNum);
+                            + " topCritLayerNum=" + topCritLayerNum+" ("+topCritDepth.getDepth()+")"
+                            + " botCritLayerNum=" + botCritLayerNum+" ("+botCritDepth.getDepth()+")");
                 }
-                tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.getDepth(),
-                                                              botCritDepth.getDepth(),
-                                                              isPWave);
-                tauBranches[waveNum][critNum].DEBUG = DEBUG;
-                tauBranches[waveNum][critNum].createBranch(sMod,
-                                                           rayParams);
+                tauBranches[waveNum][critNum] =
+                        TauBranch.createBranch(sMod,
+                                rayParams, topCritDepth.getDepth(),
+                                botCritDepth.getDepth(),
+                                isPWave, DEBUG);
                 /*
                  * update minPSoFar. Note that the new minPSoFar could be at the
                  * start of a discontinuty over a high slowness zone, so we need
@@ -426,12 +557,9 @@ public class TauModel implements Serializable {
                  */
                 topSLayer = sMod.getSlownessLayer(topCritLayerNum, isPWave);
                 botSLayer = sMod.getSlownessLayer(botCritLayerNum, isPWave);
-                minPSoFar = Math.min(minPSoFar, Math.min(topSLayer.getTopP(),
-                                                         botSLayer.getBotP()));
                 botSLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(botCritDepth.getDepth(),
                                                                         isPWave),
                                                   isPWave);
-                minPSoFar = Math.min(minPSoFar, botSLayer.getBotP());
             }
         }
         /*
@@ -443,7 +571,7 @@ public class TauModel implements Serializable {
         double bestCmb = Double.MAX_VALUE;
         double bestIocb = Double.MAX_VALUE;
         for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
-            TauBranch tBranch = (TauBranch)tauBranches[0][branchNum];
+            TauBranch tBranch = tauBranches[0][branchNum];
             if(Math.abs(tBranch.getTopDepth() - sMod.vMod.getMohoDepth()) <= bestMoho) {
                 mohoBranch = branchNum;
                 bestMoho = Math.abs(tBranch.getTopDepth()
@@ -461,7 +589,7 @@ public class TauModel implements Serializable {
             }
         }
         // check bottom of last layer, zero radius, in case no core for cmb and iocb
-        TauBranch tBranch = (TauBranch)tauBranches[0][tauBranches[0].length-1];
+        TauBranch tBranch = tauBranches[0][tauBranches[0].length-1];
         if(Math.abs(tBranch.getBotDepth() - sMod.vMod.getCmbDepth()) < bestCmb) {
             cmbBranch = tauBranches[0].length;
             cmbDepth = tBranch.getBotDepth();
@@ -544,11 +672,32 @@ public class TauModel implements Serializable {
         if (depthCorrected == null) {
             depthCorrected = splitBranch(depth);
             depthCorrected.sourceDepth = depth;
-            depthCorrected.sourceBranch = depthCorrected.findBranch(depth);
+            /* Check to see if depth is center of earth. */
+            if(depthCorrected.tauBranches[0][depthCorrected.tauBranches[0].length - 1].getBotDepth() == depth) {
+                depthCorrected.sourceBranch = depthCorrected.tauBranches[0].length; // one past bottom
+            } else {
+                depthCorrected.sourceBranch = depthCorrected.findBranch(depth);
+            }
             depthCorrected.validate();
-            depthCache.put(depth, new SoftReference<TauModel>(depthCorrected));
+            depthCache.put(depth, new SoftReference<>(depthCorrected));
         }
         return depthCorrected;
+    }
+
+    /**
+     * Checks to see if the given depth is a boundary depth. This could be because it is a discontinuity in the
+     * velocity model, or because the layer has been split for the source or reciever.
+     * @param depth
+     * @return
+     */
+    public boolean isBranchDepth(double depth) {
+        for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
+            if (tauBranches[0][branchNum].getTopDepth() == depth
+                    || tauBranches[0][branchNum].getBotDepth() == depth) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -562,24 +711,21 @@ public class TauModel implements Serializable {
              * first check to see if depth is already a branch boundary. If so
              * then we need only return this.
              */
-            for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
-                if(tauBranches[0][branchNum].getTopDepth() == depth
-                        || tauBranches[0][branchNum].getBotDepth() == depth) {
-                    return new TauModel(spherical,
-                                        getSourceDepth(),
-                                        getSourceBranch(),
-                                        noDisconDepths,
-                                        mohoDepth,
-                                        mohoBranch,
-                                        cmbDepth,
-                                        cmbBranch,
-                                        iocbDepth,
-                                        iocbBranch,
-                                        radiusOfEarth,
-                                        sMod,
-                                        rayParams,
-                                        tauBranches);
-                }
+            if (isBranchDepth(depth)) {
+                return new TauModel(spherical,
+                        getSourceDepth(),
+                        getSourceBranch(),
+                        noDisconDepths,
+                        mohoDepth,
+                        mohoBranch,
+                        cmbDepth,
+                        cmbBranch,
+                        iocbDepth,
+                        iocbBranch,
+                        radiusOfEarth,
+                        sMod,
+                        rayParams,
+                        tauBranches);
             }
             /*
              * depth is not a branch boundary, so we must modify the tau model.
@@ -651,8 +797,8 @@ public class TauModel implements Serializable {
             int branchToSplit = findBranch(depth);
             TauBranch[][] newtauBranches = new TauBranch[2][getNumBranches() + 1];
             for(int i = 0; i < branchToSplit; i++) {
-                newtauBranches[0][i] = (TauBranch)tauBranches[0][i].clone();
-                newtauBranches[1][i] = (TauBranch)tauBranches[1][i].clone();
+                newtauBranches[0][i] = tauBranches[0][i].clone();
+                newtauBranches[1][i] = tauBranches[1][i].clone();
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave
                     // slowness layer to both the P and S wave Tau branches
@@ -667,11 +813,12 @@ public class TauModel implements Serializable {
                 }
             }
             for(int pOrS = 0; pOrS < 2; pOrS++) {
-                newtauBranches[pOrS][branchToSplit] = new TauBranch(tauBranches[pOrS][branchToSplit].getTopDepth(),
-                                                                    depth,
-                                                                    pOrS == 0);
-                newtauBranches[pOrS][branchToSplit].createBranch(outSMod,
-                                                                 outRayParams);
+                newtauBranches[pOrS][branchToSplit] =
+                        TauBranch.createBranch(outSMod,
+                                outRayParams,
+                                tauBranches[pOrS][branchToSplit].getTopDepth(),
+                                depth,
+                                pOrS == 0, DEBUG);
                 newtauBranches[pOrS][branchToSplit + 1] = tauBranches[pOrS][branchToSplit].difference(newtauBranches[pOrS][branchToSplit],
                                                                                                       indexP,
                                                                                                       indexS,
@@ -768,9 +915,8 @@ public class TauModel implements Serializable {
     }
 
     public static TauModel readModel(String filename)
-            throws FileNotFoundException, IOException,
-            StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
+            throws IOException,
+            ClassNotFoundException {
         TauModel tMod;
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
         try {
@@ -782,12 +928,10 @@ public class TauModel implements Serializable {
     }
 
     public static TauModel readModelFromStream(InputStream inStream)
-            throws InvalidClassException, IOException,
-            StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
+            throws IOException,
+            ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(inStream);
-        TauModel tMod = (TauModel)in.readObject();
-        return tMod;
+        return (TauModel)in.readObject();
     }
 
     /*
@@ -833,7 +977,7 @@ public class TauModel implements Serializable {
     public boolean validate() {
         for(int i = 0; i < rayParams.length - 1; i++) {
             if(rayParams[i + 1] >= rayParams[i]) {
-                System.err.println("RayParams are not monotonically decreasing. "
+                Alert.warning("RayParams are not monotonically decreasing. "
                         + "rayParams["
                         + i
                         + "]="
@@ -843,41 +987,36 @@ public class TauModel implements Serializable {
             }
         }
         if(tauBranches[0].length != tauBranches[1].length) {
-            System.err.println("TauBranches for P and S are not equal. "
+            Alert.warning("TauBranches for P and S are not equal. "
                     + tauBranches[0].length + " " + tauBranches[1].length);
             return false;
         }
         if(tauBranches[0][0].getTopDepth() != 0
                 || tauBranches[1][0].getTopDepth() != 0) {
-            System.err.println("branch 0 topDepth != 0");
-            return false;
-        }
-        // this is only for S wave (tauBranches[1][])
-        if(tauBranches[1][0].getMaxRayParam() != rayParams[0]) {
-            System.err.println("branch 0 maxRayParam != rayParams[0]");
+            Alert.warning("branch 0 topDepth != 0");
             return false;
         }
         for(int i = 1; i < getNumBranches(); i++) {
             if(tauBranches[0][i].getTopDepth() != tauBranches[1][i].getTopDepth()) {
-                System.err.println("branch " + i + " P topDepth != S topDepth");
+                Alert.warning("branch " + i + " P topDepth != S topDepth");
                 return false;
             }
             if(tauBranches[0][i].getBotDepth() != tauBranches[1][i].getBotDepth()) {
-                System.err.println("branch " + i + " P botDepth != S botDepth");
+                Alert.warning("branch " + i + " P botDepth != S botDepth");
                 return false;
             }
             if(tauBranches[0][i].getTopDepth() != tauBranches[0][i - 1].getBotDepth()) {
-                System.err.println("branch " + i + " topDepth != botDepth of "
+                Alert.warning("branch " + i + " topDepth != botDepth of "
                         + (i - 1));
                 return false;
             }
         }
         if(tauBranches[0][getNumBranches() - 1].getMinRayParam() != 0) {
-            System.err.println("branch tauBranches[0].length-1 minRayParam != 0");
+            Alert.warning("branch tauBranches[0].length-1 minRayParam != 0");
             return false;
         }
         if(tauBranches[1][getNumBranches() - 1].getMinRayParam() != 0) {
-            System.err.println("branch tauBranches[1].length-1 minRayParam != 0");
+            Alert.warning("branch tauBranches[1].length-1 minRayParam != 0");
             return false;
         }
         return true;
@@ -886,28 +1025,45 @@ public class TauModel implements Serializable {
     public void print() {
         double deg, time;
         if(DEBUG)
-            System.out.println("Starting print() in TauModel");
-        System.out.println("Delta tau for each slowness sample and layer.");
+            Alert.debug("Starting print() in TauModel");
+        Alert.debug("Delta tau for each slowness sample and layer.");
         for(int j = 0; j < rayParams.length; j++) {
             deg = 0;
             time = 0;
             for(int i = 0; i < getNumBranches(); i++) {
                 deg += tauBranches[0][i].getDist(j) * 180 / Math.PI;
                 time += tauBranches[0][i].time[j];
-                System.out.println(" i " + i + " j " + j + " rayParam "
+                Alert.debug(" i " + i + " j " + j + " rayParam "
                         + rayParams[j] + " tau " + tauBranches[0][i].tau[j]
                         + " time " + tauBranches[0][i].time[j] + " dist "
                         + tauBranches[0][i].getDist(j) + " degrees "
                         + (tauBranches[0][i].getDist(j) * 180 / Math.PI));
             }
-            System.out.println();
-            System.out.println("deg= " + deg + "  time=" + time);
+            Alert.debug("");
+            Alert.debug("deg= " + deg + "  time=" + time);
         }
     }
 
     public String toString() {
+        return branchesToString().toString();
+    }
+
+    public StringBuilder branchesToString() {
+        StringBuilder sb = new StringBuilder(getModelName()).append("\n");
+        for(int i = 0; i < tauBranches[0].length; i++) {
+            TauBranch pBranch = tauBranches[0][i];
+            TauBranch sBranch = tauBranches[1][i];
+            sb.append(i).append(" P ").append(pBranch.getTopDepth()).append(" ").append(pBranch.getBotDepth());
+            sb.append(" ").append(pBranch.getTopRayParam()).append(" ").append(pBranch.getBotRayParam()).append("\n");
+            sb.append(i).append(" S ").append(sBranch.getTopDepth()).append(" ").append(sBranch.getBotDepth());
+            sb.append(" ").append(sBranch.getTopRayParam()).append(" ").append(sBranch.getBotRayParam()).append("\n");
+        }
+        return sb;
+    }
+
+    public String dumpToString() {
         if(DEBUG)
-            System.out.println("Starting toString() in TauModel");
+            Alert.debug("Starting toString() in TauModel");
         String desc = "Delta tau for each slowness sample and layer.\n";
         for(int j = 0; j < rayParams.length; j++) {
             for(int i = 0; i < tauBranches[0].length; i++) {
@@ -934,6 +1090,6 @@ public class TauModel implements Serializable {
         return null;
     }
     
-    private HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<Double, SoftReference<TauModel>>();
+    private final HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<>();
 
 }

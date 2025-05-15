@@ -40,6 +40,17 @@ public enum PhaseInteraction {
     DIFFRACT,
 
     /**
+     * Used by addToBranch when the path transmits up across a boundary then diffracts along that boundary.
+     */
+    TRANSUPDIFFRACT,
+
+    /**
+     * An upward turn after a flat diffracted segment, such as the upward leg of Pdiff. Similar to TURN, but
+     * must ray start at bottom of layer.
+     */
+    DIFFRACTTURN,
+
+    /**
      * Used by addToBranch when the path is head wave along a boundary.
      */
     HEAD,
@@ -102,5 +113,78 @@ public enum PhaseInteraction {
      */
     REFLECT_TOPSIDE_CRITICAL,
 
-    FAIL
+    FAIL;
+
+
+    public static boolean isUpgoingActionBefore(PhaseInteraction endAction) {
+        return ! isDowngoingActionBefore(endAction);
+    }
+
+    public static boolean isDowngoingActionBefore(PhaseInteraction endAction) {
+        boolean isDowngoing;
+        switch (endAction) {
+            case TRANSUP:
+            case REFLECT_UNDERSIDE:
+            case REFLECT_UNDERSIDE_CRITICAL:
+            case END:
+                isDowngoing = false;
+                break;
+            case TURN:
+            case TRANSDOWN:
+            case REFLECT_TOPSIDE:
+            case REFLECT_TOPSIDE_CRITICAL:
+            case END_DOWN:
+                isDowngoing = true;
+                break;
+            case FAIL:
+            case START:
+                throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
+            default:
+                throw new IllegalArgumentException("End action case not yet impl: "+endAction);
+        }
+        return isDowngoing;
+    }
+
+    public static boolean isUpgoingActionAfter(PhaseInteraction endAction) {
+        return ! isDowngoingActionAfter(endAction);
+    }
+
+    public static boolean isDowngoingActionAfter(PhaseInteraction endAction) {
+        boolean isDowngoing;
+        switch (endAction) {
+            case TRANSUP:
+            case REFLECT_TOPSIDE:
+            case REFLECT_TOPSIDE_CRITICAL:
+            case TURN:
+            case DIFFRACTTURN:
+            case END:
+                isDowngoing = false;
+                break;
+            case TRANSDOWN:
+            case REFLECT_UNDERSIDE:
+            case REFLECT_UNDERSIDE_CRITICAL:
+            case END_DOWN:
+                isDowngoing = true;
+                break;
+            case FAIL:
+            case START:
+                throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
+            default:
+                throw new IllegalArgumentException("End action case not yet impl: "+endAction);
+        }
+        return isDowngoing;
+    }
+
+    public static int endOffset(PhaseInteraction endAction) {
+        switch (endAction) {
+            case TRANSUP:
+            case TRANSUPDIFFRACT:
+                return -1;
+            case TRANSDOWN:
+            case HEAD:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 }

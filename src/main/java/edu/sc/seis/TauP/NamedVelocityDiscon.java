@@ -1,8 +1,19 @@
 package edu.sc.seis.TauP;
 
+import com.google.gson.JsonObject;
+
 import java.io.Serializable;
 
+/**
+ * Allows the naming of velocity discontinuities in a model, like moho or cmb.
+ */
 public class NamedVelocityDiscon implements Cloneable, Serializable {
+
+    public NamedVelocityDiscon(double depth) {
+        // unnamed discon
+        this.name = null;
+        this.depth = depth;
+    }
 
     public NamedVelocityDiscon(String name, double depth) {
         if (name == null ) {
@@ -13,6 +24,13 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         if (name.equalsIgnoreCase(MANTLE)) { this.preferredName = MOHO;}
         if (name.equalsIgnoreCase(OUTERCORE)) { this.preferredName = CMB;}
         if (name.equalsIgnoreCase(INNERCORE)) { this.preferredName = ICOCB;}
+    }
+
+    public boolean hasPreferredName() {
+        if (preferredName != null) {
+            return true;
+        }
+        return false;
     }
 
     public String getPreferredName() {
@@ -42,11 +60,34 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         return this.name + pf_name + this.depth;
     }
 
+    public NamedVelocityDiscon clone() throws CloneNotSupportedException {
+        return (NamedVelocityDiscon) super.clone();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getDepth() {
+        return depth;
+    }
+
+    public JsonObject asJSON() {
+        JsonObject json = new JsonObject();
+        json.addProperty(JSONLabels.NAME, getName());
+        if (preferredName != null) {
+            json.addProperty(JSONLabels.PREFNAME, getName());
+        }
+        json.addProperty(JSONLabels.DEPTH, (float)getDepth());
+        return json;
+    }
+
     String name;
     String preferredName = null;
     double depth;
 
     // common names
+    public static final String SURFACE = "surface";
     public static final String ICE = "ice";
     public static final String ICEBED = "ice-ocean";
     public static final String ICECRUST = "ice-crust";
@@ -59,9 +100,10 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
     public static final String CMB = "cmb";
     public static final String INNERCORE = "inner-core";
     public static final String ICOCB = "icocb";
+    public static final String IOCB = "iocb";
 
     public static final String[] knownDisconNames = {
-            ICE, ICEBED, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB
+            SURFACE, ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB, IOCB
     };
 
     public static boolean isIceBed(String name) {
@@ -86,6 +128,7 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
 
     public static boolean isIcocb(String name) {
         return name != null && ( name.equalsIgnoreCase(NamedVelocityDiscon.ICOCB) ||
+                name.equalsIgnoreCase(NamedVelocityDiscon.IOCB) ||
                 name.equalsIgnoreCase(NamedVelocityDiscon.INNERCORE));
     }
 }

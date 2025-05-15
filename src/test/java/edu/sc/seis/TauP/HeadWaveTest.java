@@ -21,8 +21,8 @@ public class HeadWaveTest {
     public void checkHeadWave(String phaseName, int numHeadLegs, double distDeg, boolean isLongWay) throws TauModelException {
         double receiverDepth = 0;
         SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
-        assertEquals(numHeadLegs, phase.headOrDiffractSeq.size());
-        List<Arrival> arrivalList = phase.calcTime(distDeg);
+        assertEquals(numHeadLegs, phase.countFlatLegs(), phaseName);
+        List<Arrival> arrivalList = DistanceRay.ofDegrees(distDeg).calculate(phase);
         double longWayDist = -1*(360-distDeg);
         double shoutWayDist = distDeg;
         double searchDist = (isLongWay ? longWayDist : shoutWayDist) *Math.PI/180;
@@ -35,6 +35,11 @@ public class HeadWaveTest {
             assertEquals(searchDist, path_td[path_td.length-1].getDistRadian(), 0.000000001);
             assertEquals(a.getTime(), path_td[path_td.length-1].getTime(), 0.000001);
         }
+    }
+
+    @Test
+    public void pierce_P20n() throws TauModelException {
+        checkHeadWave("P20n", 1, 10, false);
     }
 
     @Test

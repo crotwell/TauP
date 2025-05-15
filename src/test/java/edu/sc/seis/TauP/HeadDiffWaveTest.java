@@ -16,13 +16,13 @@ public class HeadDiffWaveTest {
     double depth = 0;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
     SimpleSeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
-    assertEquals(1, pnPhase.headOrDiffractSeq.size());
+    assertEquals(1, pnPhase.countFlatLegs());
     SimpleSeismicPhase pdiffPhase = SeismicPhaseFactory.createPhase("Pdiff", tMod);
-    assertEquals(1, pdiffPhase.headOrDiffractSeq.size());
+    assertEquals(1, pdiffPhase.countFlatLegs());
     SimpleSeismicPhase pdiffpdiffPhase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod);
-    assertEquals(2, pdiffpdiffPhase.headOrDiffractSeq.size());
+    assertEquals(2, pdiffpdiffPhase.countFlatLegs());
     SeismicPhase pvmppnPhase = SeismicPhaseFactory.createPhase("PvmpPn", tMod);
-    assertEquals(1, pnPhase.headOrDiffractSeq.size());
+    assertEquals(1, pnPhase.countFlatLegs());
   }
 
   @Test
@@ -32,7 +32,7 @@ public class HeadDiffWaveTest {
     TauModel tModDepth = tMod.depthCorrect(depth);
     SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tModDepth);
 
-    List<Arrival> arrivals = pnPhase.calcTime(deg);
+    List<Arrival> arrivals = DistanceRay.ofDegrees(deg).calculate(pnPhase);
     assertEquals(1, arrivals.size());
     Arrival a = arrivals.get(0);
     TimeDist[] pierce = a.getPierce();
@@ -53,9 +53,9 @@ public class HeadDiffWaveTest {
     double deg = 30;
     TauModel tModDepth = tMod.depthCorrect(depth);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tModDepth, "410");
     SeismicPhase diffPhase = SeismicPhaseFactory.createPhase("P410diff", tModDepth);
-    List<Arrival> arrivals = diffPhase.calcTime(deg);
+    List<Arrival> arrivals = DistanceRay.ofDegrees(deg).calculate(diffPhase);
     assertEquals(1, arrivals.size());
     Arrival a = arrivals.get(0);
     assertEquals(tMod.getTauBranch(disconBranch - 1, true).getMinTurnRayParam(), a.getRayParam());
@@ -70,13 +70,20 @@ public class HeadDiffWaveTest {
 
   }
   @Test
+  public void testNoHeadWave() throws TauModelException {
+    SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase("P2889n", tMod);
+    assertFalse(phase.phasesExistsInModel());
+  }
+
+  @Test
   public void test_P410n() throws TauModelException {
     double depth = 0;
     double deg = 30;
     TauModel tModDepth = tMod.depthCorrect(depth);
-    int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tModDepth, "410");
     SeismicPhase headPhase = SeismicPhaseFactory.createPhase("P410n", tModDepth);
-    List<Arrival> headarrivals = headPhase.calcTime(deg);
+    assertTrue(headPhase.phasesExistsInModel());
+    List<Arrival> headarrivals = DistanceRay.ofDegrees(deg).calculate(headPhase);
     assertEquals(1, headarrivals.size());
     Arrival headArr = headarrivals.get(0);
     assertEquals(tMod.getTauBranch(disconBranch, true).getMaxRayParam(), headArr.getRayParam());
@@ -96,7 +103,7 @@ public class HeadDiffWaveTest {
     double deg = 90;
     TauModel tModDepth = tMod.depthCorrect(depth);
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiff", tModDepth);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
@@ -105,13 +112,15 @@ public class HeadDiffWaveTest {
   @Test
   public void test_SedPdiffKP() throws TauModelException {
     double deg = 150;
+    DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiffKs", tMod);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    List<Arrival> SedPdiff_arrivals = distanceRay.calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
     SeismicPhase SKPdiffs_Phase = SeismicPhaseFactory.createPhase("SKPdiffs", tMod);
-    List<Arrival> SKPdiffs_arrivals = SKPdiffs_Phase.calcTime(deg);
+    assertEquals(1, SKPdiffs_Phase.countFlatLegs());
+    List<Arrival> SKPdiffs_arrivals = distanceRay.calculate(SKPdiffs_Phase);
     assertEquals(1, SKPdiffs_arrivals.size());
     Arrival SKPdiffs_Arr = SKPdiffs_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SKPdiffs_Arr.getRayParam());
@@ -119,19 +128,32 @@ public class HeadDiffWaveTest {
   }
 
   @Test
-  public void test_PK3000diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+  public void test_SedK3000diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-    TauP_Create taupCreate = new TauP_Create();
-    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
-    double deg = 150;
-    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
+    double deg = 120;
+    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SK3000diffs", tMod_OCD);
+    List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tMod, "3000");
-    assertEquals(tMod_OCD.getTauBranch(disconBranch-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod_OCD, "3000");
+    assertEquals(tMod_OCD.getTauBranch(disconBranch - 1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
+  }
+
+  @Test
+  public void test_PK3000diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+    String modelName = "outerCoreDiscon.nd";
+    VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+    TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
+    double deg = 150;
+
+    SeismicPhase SK3000diffP_Phase = SeismicPhaseFactory.createPhase("SK3000diffP", tMod_OCD);
+    assertTrue(SK3000diffP_Phase.isFail(), "diffract rp can't be P in mantle, only S");
+
+    SeismicPhase K3000diffP_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
+    assertTrue(K3000diffP_Phase.isFail(), "3000 km is in shadow for PK, so cannot diffract");
 
 }
 
@@ -142,15 +164,14 @@ public class HeadDiffWaveTest {
     // outerCoreDiscon has discon at 3000 in outer core and at 5500 in inner core
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-    TauP_Create taupCreate = new TauP_Create();
-    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+    TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
     double deg = 150;
     SeismicPhase ic_diff_Phase = SeismicPhaseFactory.createPhase("PKI5500diffKP", tMod_OCD);
-    List<Arrival> ic_diff_arrivals = ic_diff_Phase.calcTime(deg);
+    List<Arrival> ic_diff_arrivals = DistanceRay.ofDegrees(deg).calculate(ic_diff_Phase);
     assertEquals(1, ic_diff_arrivals.size());
     Arrival ic_diff_Arr = ic_diff_arrivals.get(0);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tMod_OCD, "5500");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod_OCD, "5500");
     TauBranch tBranch = tMod_OCD.getTauBranch(disconBranch-1, true);
     assertEquals(5500, tBranch.getBotDepth());
     assertEquals(tBranch.getMinTurnRayParam(), ic_diff_Arr.getRayParam());
@@ -159,6 +180,18 @@ public class HeadDiffWaveTest {
     SeismicPhase reflectPhase = SeismicPhaseFactory.createPhase("PKIv5500ykp", tMod_OCD);
     Arrival reflectArrr = reflectPhase.getEarliestArrival(25);
     assertNotNull(reflectArrr);
+  }
+
+  @Test
+  public void undersideReflectionBetweenDiff() throws TauModelException {
+    SeismicPhase reflectPhase = SeismicPhaseFactory.createPhase("P20diffP20diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("P660diffP660diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("P660diff^410P660diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("Pdiff^410Pdiff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
   }
 
 

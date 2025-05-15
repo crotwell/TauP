@@ -1,0 +1,9 @@
+Usage: taup generate-completion [-hV]
+Generate bash/zsh completion script for taup.
+Run the following command to give `taup` TAB completion in the current shell:
+
+  source <(taup generate-completion)
+
+Options:
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.

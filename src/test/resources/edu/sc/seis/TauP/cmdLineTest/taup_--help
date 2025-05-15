@@ -1,4 +1,33 @@
-Usage: taup <tool> <options>
- where tool is one of [gui, create, curve, path, phase, pierce, setsac, slowplot, table, time, velplot, velmerge, wavefront]
- taup <tool> --help
- for help with a particular tool.
+Usage: taup [-V] [--help] [COMMAND]
+The TauP Toolkit
+      --help      display this help message
+  -V, --version   display version info
+Commands:
+  create               Create .taup file from a velocity model.
+  curve                Plot travel time vs. distance and other curves for
+                         seismic phases.
+  distaz               Calc distance, az and baz for event lat,lon and station
+                         lat,lon pairs.
+  discon               List velocity discontinuities for a model.
+  find                 Find seismic phases in an earth model.
+  path                 Plot ray paths, distance vs. depth, through the earth.
+  phase                Describe a seismic phase in the current model.
+  pierce               Calculate pierce points for phases at discontinuities in
+                         the model.
+  refltrans            Plot reflection and transmission coefficients for a
+                         discontinuity.
+  setms3               Save travel times in the extra header of miniseed3 files.
+  setsac               Set headers to travel times of phases using depth and
+                         distance from SAC files.
+  spikes               Calculate spike seismograms
+  table                Create a table of travel times for a range of depths and
+                         distances.
+  time                 Calculate travel times for seismic phases in an earth
+                         model.
+  velmerge             Merge part of one model into another.
+  velplot              Plot velocity vs depth for a model.
+  wavefront            Plot wavefronts of seismic phases at steps in time.
+  web                  Web based gui for the TauP Toolkit.
+  generate-completion  Generate bash/zsh completion script for taup.
+  version              Print the version.
+  help                 Display help information about the specified command.

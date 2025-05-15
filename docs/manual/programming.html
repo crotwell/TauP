@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Programmatic Access &#8212; TauP 3.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bibliography" href="bibliography.html" />
+    <link rel="prev" title="Rays and Distances" href="distances.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Programmatic Access</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#java">Java</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#http-access">HTTP Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graalvm-and-graalpy">Graalvm and Graalpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="distances.html" title="previous chapter">Rays and Distances</a></li>
+      <li>Next: <a href="bibliography.html" title="next chapter">Bibliography</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="programmatic-access">
+<h1>Programmatic Access<a class="headerlink" href="#programmatic-access" title="Link to this heading">¶</a></h1>
+<p>TauP can be used as a library in addition to the command line tools. The web
+interface provides an alternative for non-JVM languages.</p>
+<section id="java">
+<h2>Java<a class="headerlink" href="#java" title="Link to this heading">¶</a></h2>
+<p>As it is written in Java, TauP is most easily used by other Java programs. A
+very simple Java program to calculate arrival times is below. The general flow
+is that you start with a VelocityModel and convert to a TauModel, unless using
+one of the built in TauModels. Then create SeismicPhase objects for each phase
+of interest from the model. Lastly, use the phase to calculate Arrival objects
+for a distance.</p>
+<p>Javadocs for the package are at available at
+<a class="reference external" href="https://javadoc.io/doc/edu.sc.seis/TauP">javadoc.io</a>.</p>
+<p>While the TauP jar and its dependencies are included in the distribution, it is
+often easier to depend on the publication within the
+<a class="reference external" href="https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview">Maven Central</a>
+repository
+as this facilitates download and updates and provides for automatic dependency
+resolution when using a build tool like maven or gradle.</p>
+<p>Converting the initial model for a source depth is more costly than calculating
+arrivals at a distance, so it is usually more efficient to process all stations
+for each earthquake rather than all earthquakes for a station.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">edu.sc.seis.example</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">edu.sc.seis.TauP.*</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TimeExample</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">calcTimes</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">TauPException</span><span class="p">,</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// A standard model can be loaded by name</span>
+<span class="w">        </span><span class="n">TauModel</span><span class="w"> </span><span class="n">ak135Model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TauModelLoader</span><span class="p">.</span><span class="na">load</span><span class="p">(</span><span class="s">&quot;ak135&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// or a custom velocity model, from a file in current directory, can be</span>
+<span class="w">        </span><span class="c1">// loaded and then turned into a TauModel</span>
+<span class="w">        </span><span class="n">VelocityModel</span><span class="w"> </span><span class="n">vMod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TauModelLoader</span><span class="p">.</span><span class="na">loadVelocityModel</span><span class="p">(</span><span class="s">&quot;mymodel.nd&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">TauModel</span><span class="w"> </span><span class="n">tMod</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TauModelLoader</span><span class="p">.</span><span class="na">createTauModel</span><span class="p">(</span><span class="n">vMod</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// A seismic phase for a phase name like &#39;P&#39; can be created for that model</span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">sourceDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">  </span><span class="c1">// earthquake depth in kilometers</span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">receiverDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// seismometer depth in kilometers if not at the surface</span>
+<span class="w">        </span><span class="n">SeismicPhase</span><span class="w"> </span><span class="n">P_phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SeismicPhaseFactory</span><span class="p">.</span><span class="na">createPhase</span><span class="p">(</span><span class="s">&quot;P&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tMod</span><span class="p">,</span><span class="w"> </span><span class="n">sourceDepth</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">//</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Arrival</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrivalList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistanceRay</span><span class="p">.</span><span class="na">ofDegrees</span><span class="p">(</span><span class="mi">45</span><span class="p">).</span><span class="na">calculate</span><span class="p">(</span><span class="n">P_phase</span><span class="p">);</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Arrival</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">arrivalList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">a</span><span class="p">.</span><span class="na">getDistDeg</span><span class="p">()</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">a</span><span class="p">.</span><span class="na">getTime</span><span class="p">());</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TimeExample</span><span class="w"> </span><span class="n">ex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TimeExample</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ex</span><span class="p">.</span><span class="na">calcTimes</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="http-access">
+<h2>HTTP Access<a class="headerlink" href="#http-access" title="Link to this heading">¶</a></h2>
+<p>While using Java, or perhaps another language that can run on the JVM, is the
+most computationally efficient way to access TauP,
+it does limit the languages available. For
+other languages, the simplest way is to make use of the built in web access within
+TauP to access the tools via an HTTP request returning JSON.</p>
+<p>Running <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">web</span></code> in the distribution will start up a web server
+on port 7409 to allow this type of access, although only from connections on the
+local machine.</p>
+<p>An example in Python using the
+<a class="reference external" href="https://docs.python-requests.org/en/latest/user/quickstart/">Requests library</a>
+is below. Each of the normal command line tools are available via this web
+interface, and almost all command line arguments can be sent
+via a corresponding URL query parameter by removing leading dashes.
+For example to calculate the at a distance in kilometers, where the command
+line tool uses ‘–km 100’, the URL would include ‘km=100’ like:</p>
+<p><a class="reference external" href="http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json">http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json</a></p>
+<p>Boolean command line flags, like ‘–amp’, can be given a true value as in
+‘amp=true’. Many options have default values, just as in the command line
+tools. It may be helpful to experiment with the web gui at</p>
+<p><a class="reference external" href="http://localhost:7409/taup.html">http://localhost:7409/taup.html</a></p>
+<p>to see how the URL is encoded and what the results are. Note that the web form
+does not yet include all possible parameters that the web tools support.</p>
+</section>
+<section id="python">
+<h2>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h2>
+<p>A slightly less efficient, but perhaps good enough for most uses is to execute
+the command line tools within another script, and then parse output of the
+tool from json. This has the disadvantage that a new subprocess must start
+for each call to get times, and so can be slower, but has the advantage of
+access to all of the command line arguments available.</p>
+<p>An example that gets travel times via Python show how this could be done.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+
+<span class="k">def</span> <span class="nf">getTauPAsJson</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets results for a TauP command via json. The --json parameter is</span>
+<span class="sd">    automatically appended to the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">splitCmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">splitCmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--json&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitCmd</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">splitCmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">check_returncode</span><span class="p">()</span> <span class="c1"># will raise CalledProcessError if not ok</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;taup.out&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">taupjson</span>
+
+<span class="k">def</span> <span class="nf">taup_time</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">sourcedepth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates arrivals for the phases.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    degrees - either a single distance or a list of distances</span>
+<span class="sd">    phases  - comma separated list of phases, or list of phases</span>
+<span class="sd">    sourcedepth - optional source depth, defaults to zero</span>
+
+<span class="sd">    Returns dict parsed from the json containing &#39;arrivals&#39; with a list of the</span>
+<span class="sd">    Arrival objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">degrees</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">degrees</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="n">phases</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;taup time --deg </span><span class="si">{</span><span class="n">deg</span><span class="si">}</span><span class="s2"> -p </span><span class="si">{</span><span class="n">ph</span><span class="si">}</span><span class="s2"> -h </span><span class="si">{</span><span class="n">sourcedepth</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="c1">#cmd = f&quot;{TAUP_PATH}/taup time --deg {deg} -p {ph} -h {sourcedepth}&quot;</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --mod </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">amp</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; --amp&quot;</span>
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">getTauPAsJson</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">taupjson</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># calculate travel times and parse the output json.</span>
+    <span class="c1"># Note that taup must be on your PATH env var</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="mi">35</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="s2">&quot;P,S,SKKKS&quot;</span>
+
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">taup_time</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">taupjson</span><span class="p">[</span><span class="s1">&#39;arrivals&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> arrivals:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">taupjson</span><span class="p">[</span><span class="s2">&quot;arrivals&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> arrives at </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> and traveled </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;puristdist&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> deg.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="graalvm-and-graalpy">
+<h2>Graalvm and Graalpy<a class="headerlink" href="#graalvm-and-graalpy" title="Link to this heading">¶</a></h2>
+<p>It is also possible for python code to interact more directly with
+TauP’s Java code by using Graalvm and
+Graalpy. We are considering how best to leverage these tools.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/programming.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>

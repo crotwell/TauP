@@ -42,7 +42,12 @@ public class NoSuchLayerException extends VelocityModelException {
     public int layerNumber;
 
     public NoSuchLayerException(double radius) {
-        super("No layer contains radius " + radius + " in this velocity model.");
+        this(radius, "No layer contains radius " + radius + " in this velocity model.");
+    }
+
+
+    public NoSuchLayerException(double radius, String message) {
+        super(message);
         this.radius = radius;
     }
 

@@ -25,6 +25,10 @@
  */
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Holds the ray parameter, time and distance increments, and optionally a
  * depth, for a ray passing through some layer.
@@ -37,13 +41,13 @@ package edu.sc.seis.TauP;
  */
 public class TimeDist implements Cloneable {
 
-    private double p;
+    private final double p;
 
-    private double depth;
+    private final double depth;
 
-    private double time;
+    private final double time;
 
-    private double distRadian;
+    private final double distRadian;
 
     public TimeDist() {
         this.p = 0;
@@ -87,10 +91,17 @@ public class TimeDist implements Cloneable {
                 getDepth());
     }
 
+    public static List<TimeDist> negateDistance(List<TimeDist> pierce) {
+        List<TimeDist> out = new ArrayList<>();
+        for (TimeDist td : pierce) {
+            out.add(td.negateDistance());
+        }
+        return out;
+    }
+
     public String toString() {
-        String desc = "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
+        return "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
                 + depth;
-        return desc;
     }
 
     
@@ -102,7 +113,6 @@ public class TimeDist implements Cloneable {
     public double getDepth() {
         return depth;
     }
-
     
     public double getTime() {
         return time;
@@ -114,8 +124,48 @@ public class TimeDist implements Cloneable {
     }
     
     public double getDistDeg() {
-        return Arrival.RtoD * getDistRadian();
+        return SphericalCoords.RtoD * getDistRadian();
     }
+
+    /**
+     * Linearly interpolates two TimeDist objects using depth as the interpolation variable.
+     *
+     * @param tdA
+     * @param tdB
+     * @param depth
+     * @return
+     */
+    public static TimeDist linearInterpOnDepth(TimeDist tdA, TimeDist tdB, double depth) {
+        double distConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getDistRadian(),
+                tdB.getDepth(), tdB.getDistRadian(), depth);
+        double raypConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getP(),
+                tdB.getDepth(), tdB.getP(), depth);
+        double timeConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getTime(),
+                tdB.getDepth(), tdB.getTime(), depth);
+        TimeDist disconInterp = new TimeDist(raypConnect, timeConnect, distConnect, depth);
+        return disconInterp;
+    }
+
+    /**
+     * Linearly interpolates two TimeDist objects using time as the interpolation variable.
+     *
+     * @param tdA first TimeDist
+     * @param tdB second TimeDist
+     * @param time interp time
+     * @return
+     */
+    public static TimeDist linearInterpOnTime(TimeDist tdA, TimeDist tdB, double time) {
+        double distConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getDistRadian(),
+                tdB.getTime(), tdB.getDistRadian(), time);
+        double depthConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getDepth(),
+                tdB.getTime(), tdB.getDepth(), time);
+        double raypConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getP(),
+                tdB.getTime(), tdB.getP(), time);
+        TimeDist disconInterp = new TimeDist(raypConnect, time, distConnect, depthConnect);
+        return disconInterp;
+    }
+
+
 
     public Object clone() {
         try {
@@ -124,5 +174,18 @@ public class TimeDist implements Cloneable {
             // Can't happen, but...
             throw new InternalError(e.toString());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeDist timeDist = (TimeDist) o;
+        return Double.compare(timeDist.p, p) == 0 && Double.compare(timeDist.depth, depth) == 0 && Double.compare(timeDist.time, time) == 0 && Double.compare(timeDist.distRadian, distRadian) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(p, depth, time, distRadian);
     }
 }

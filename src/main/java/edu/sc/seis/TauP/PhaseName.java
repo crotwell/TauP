@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.TauP_SetSac;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -48,26 +50,36 @@ public class PhaseName implements Serializable {
     public int sacTNum = -1;
 
     /** list of sac t headers to be associated with the phase, including n triplications */
-    public ArrayList<Integer> sacTNumTriplication = new ArrayList<Integer>();
+    public ArrayList<Integer> sacTNumTriplication = new ArrayList<>();
 
-    public PhaseName(String name) throws TauModelException {
+    public static PhaseName parseName(String name) throws PhaseParseException {
+        String[] phaseAndHeader = name.split("-");
+        if (phaseAndHeader.length == 1) {
+            /* no optional dash argument, so just add the name. */
+            return new PhaseName(phaseAndHeader[0]);
+        } else {
+            return new PhaseName(phaseAndHeader[0], phaseAndHeader[1]);
+        }
+    }
+
+    public PhaseName(String name) throws PhaseParseException {
         this.name = name;
         // check name is valid
         LegPuller.legPuller(name);
     }
 
-    public PhaseName(String name, int sacTNum) throws TauModelException {
+    public PhaseName(String name, int sacTNum) throws PhaseParseException {
         this(name);
         this.sacTNum = sacTNum;
         sacTNumTriplication.add(sacTNum);
     }
 
-    public PhaseName(String name, String sacTNumList) throws TauModelException {
+    public PhaseName(String name, String sacTNumList) throws PhaseParseException {
         this(name);
         parseSacTNums(sacTNumList);
     }
 
-    void parseSacTNums(String sacTNumList) throws TauModelException {
+    void parseSacTNums(String sacTNumList) throws PhaseParseException {
         for (int j = 0; j < sacTNumList.length(); j++) {
             char c = sacTNumList.charAt(j);
             int intForChar;
@@ -89,25 +101,21 @@ public class PhaseName implements Serializable {
                  */
                 intForChar = TauP_SetSac.SKIP_HEADER;
             } else {
-                throw new TauModelException("Problem with phase=" + name +
-                        ", unknown SAC header TNum: "+c);
+                throw new PhaseParseException("Problem with phase=" + name +
+                        ", unknown SAC header TNum: "+c, name, j);
             }
             if (sacTNumTriplication.contains(intForChar)) {
-                throw new TauModelException("SAC TNum is duplicated for phase "+name+", in "+sacTNumList);
+                throw new PhaseParseException("SAC TNum is duplicated for phase "+name+", in "+sacTNumList, name, j);
             }
             sacTNumTriplication.add(intForChar);
         }
-        if (sacTNumTriplication.size() > 0) {
+        if (!sacTNumTriplication.isEmpty()) {
             sacTNum = sacTNumTriplication.get(0);
         }
     }
 
     public boolean equals(PhaseName obj) {
-        if(obj.name.equals(this.name) && obj.sacTNum == this.sacTNum) {
-            return true;
-        } else {
-            return false;
-        }
+        return obj.name.equals(this.name) && obj.sacTNum == this.sacTNum;
     }
 
     public String getName() {
@@ -118,7 +126,7 @@ public class PhaseName implements Serializable {
      * Gets sac header for the index triplication. Zero is the first arrival, 1 is next arrival, etc.
      * Index zero should be same as this.sacTNum.
      *
-     * @param index
+     * @param index triplication index
      * @return index arrival for the phase
      */
     public int sacTNumForTriplication(int index) {
