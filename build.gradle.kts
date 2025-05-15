@@ -223,6 +223,7 @@ tasks.named("sourcesJar") {
 
 tasks.named("makeVersionClass") {
   inputs.files("src/main/")
+  inputs.files("build.gradle.kts")
 }
 
 tasks.register<Checksum>("checksumDist") {
