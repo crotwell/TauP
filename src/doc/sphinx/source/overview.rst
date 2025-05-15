@@ -41,7 +41,7 @@ If you find TauP useful and would like to cite it, please use the following:
 
   Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.
 
-  Crotwell, H. P. (2025). The TauP Toolkit (3.0.0). Zenodo. https://doi.org/10.5281/zenodo.15116393
+  Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.5281/zenodo.15426279
 
 I really enjoy writing software that others find useful. And while the journey
 is its own reward, it is nice to hear from people that use and like TauP. If you

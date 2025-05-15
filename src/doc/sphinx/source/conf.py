@@ -11,7 +11,7 @@ with open("cmdLineHelp/VERSION.json", "r") as vf:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'TauP'
-copyright = '2024, Philip Crotwell'
+copyright = '2025, Philip Crotwell'
 author = 'Philip Crotwell'
 version = verjson['version'][0:3]
 release = verjson['version']

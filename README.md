@@ -28,9 +28,9 @@ Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/lat
 If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160,
 as well as the
-[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.15116393)
+[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.15426279)
 for the version you are using.
-Crotwell, H. P. (2025). The TauP Toolkit (3.0.0). Zenodo. https://doi.org/10.5281/zenodo.15116393
+Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.5281/zenodo.15426279
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
@@ -63,7 +63,7 @@ sudo snap install taup --channel=latest/edge
 ## Manually
 
 Download tarball from Zenodo here:
-https://zenodo.org/records/15116393
+https://zenodo.org/records/15426279
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 

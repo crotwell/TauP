@@ -43,7 +43,9 @@ get new DOI
 update cite, version in
   README.md
   overview.rst
+  distribution.rst
   docs/index.md
+
 
 update CITATION.cff via
   https://citation-file-format.github.io/cff-initializer-javascript/
