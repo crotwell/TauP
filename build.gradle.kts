@@ -23,7 +23,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.0.1"
+version = "3.0.2-SNAPSHOT"
 val zenodo_rel_id = "15426279"
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
@@ -154,6 +154,11 @@ distributions {
       }
     }
   }
+}
+
+tasks.withType<Tar>() {
+    compression=Compression.GZIP
+    archiveExtension="tgz"
 }
 
 tasks.withType<JavaCompile>().configureEach {
