@@ -36,7 +36,7 @@ Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
 ### Install
 
-## Macintosh
+## [Macintosh](https://docs.brew.sh/Installation) (or [Linux or Windows Subsystem for Linux](https://docs.brew.sh/Homebrew-on-Linux)
 
 Using [homebrew](https://brew.sh/):
 ```
@@ -46,6 +46,8 @@ taup --help
 ```
 
 ## Linux
+
+Warning, I have not uploaded TauP3.0 to snap yet...
 
 Using [snap](https://snapcraft.io):
 ```
