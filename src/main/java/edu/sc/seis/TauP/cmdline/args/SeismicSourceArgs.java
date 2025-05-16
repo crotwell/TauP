@@ -155,7 +155,8 @@ public class SeismicSourceArgs {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
         }
         if (modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
-            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+            throw new TauModelException("model "+modelArgs.getModelName()
+                    +" does not include Q, but amplitude requires Q. Please choose a different model.");
         }
         if (getStrikeDipRake() != null) {
             for (RayCalculateable rc : rayList) {

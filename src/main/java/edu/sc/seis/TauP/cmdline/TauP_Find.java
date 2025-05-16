@@ -350,7 +350,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
         }
         if (isWithAmplitude() && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
-            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+            throw new TauModelException("model "+modelArgs.getModelName()
+                    +" does not include Q, but amplitude requires Q. Please choose a differet model.");
         }
         sourceArgs.validateArguments();
         if (sourceArgs.hasStrikeDipRake() && azimuth == null) {

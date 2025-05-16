@@ -515,7 +515,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but "+xAxisType+"/"+yAxisType+" requires density.");
         }
         if ((AxisType.needsQ(xAxisType) || AxisType.needsQ(yAxisType)) && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
-            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but "+xAxisType+"/"+yAxisType+" requires Q.");
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but "
+                    +xAxisType+"/"+yAxisType+" requires Q. Please choose a different model.");
         }
         sourceArgs.validateArguments();
         if (sourceArgs.hasStrikeDipRake() && azimuth == null) {
