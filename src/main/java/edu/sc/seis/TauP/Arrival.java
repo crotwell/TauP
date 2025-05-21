@@ -1030,8 +1030,8 @@ public class Arrival {
                 + Outputs.formatDistance(getTakeoffAngleDegree()).trim() + sep
                 + Outputs.formatDistance(getIncidentAngleDegree()).trim() + sep
                 + Outputs.formatDistance(getDistDeg()).trim() + sep
-                + getPuristName().trim()
-                + receiverDepth;
+                + getPuristName().trim() + sep
+                + Outputs.formatDepth(receiverDepth);
         return line;
     }
 
