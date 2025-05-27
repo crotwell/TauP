@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 10 -p P,S,PedOP &#45;&#45;scatter 200 -5 &#45;&#45;deg 40 </command>
-      <version>3.0.0</version>
+      <version>3.0.2-SNAPSHOT_2025-05-27T114310</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -363,7 +363,7 @@ circle.discontinuity.iocb {
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
   <g class="autocolor" >
 <g>
-    <desc>   40.00    10.0   P    454.86     8.305     25.71    25.67    40.00 187   = P</desc>
+    <desc>   40.00    10.0   P    454.86     8.305     25.71    25.67    40.00   = P</desc>
     <g>
       <desc>seg 1/2 P of P at   454.86 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.305 s/deg. in crust/mantle</desc>
       <polyline class="path phase_P pwave" points="
@@ -588,7 +588,7 @@ circle.discontinuity.iocb {
     </g>
 </g>
 <g>
-    <desc>   40.00    10.0   PedOP    548.50     7.872     41.88    24.24    40.00 99   = PedOP</desc>
+    <desc>   40.00    10.0   PedOP    548.50     7.872     41.88    24.24    40.00   = PedOP</desc>
     <g>
       <desc>seg 1/1 Ped of PedOP at   548.50 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    7.872 s/deg. in crust/mantle</desc>
       <polyline class="path phase_PedOP pwave" points="
@@ -845,7 +845,7 @@ circle.discontinuity.iocb {
     </g>
 </g>
 <g>
-    <desc>   40.00    10.0   S    820.36    14.970     27.81    27.76    40.00 179   = S</desc>
+    <desc>   40.00    10.0   S    820.36    14.970     27.81    27.76    40.00   = S</desc>
     <g>
       <desc>seg 1/2 S of S at   820.36 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam   14.970 s/deg. in crust/mantle</desc>
       <polyline class="path phase_S swave" points="
