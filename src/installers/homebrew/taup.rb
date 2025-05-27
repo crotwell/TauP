@@ -3,8 +3,8 @@ class Taup < Formula
   homepage "https://www.seis.sc.edu/TauP/"
   url "https://zenodo.org/records/15426279/files/TauP-3.0.1.zip"
   sha256 "569a5e1d5d9268e57e6f08ace451946b8264474a951d64bf77283523bac3f1be"
-  revision 1
   license "LGPL-3.0-or-later"
+  revision 2
   depends_on "openjdk"
 
   def install
