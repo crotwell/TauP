@@ -168,7 +168,8 @@ Primary sources of time errors include:
   earth is elliptical. Depending on the relative location of the earthquake and
   station, this will have more or less of an effect both via the source to
   station distance and on the actual travel time calculation. TauP can
-  distances using an elliptical flattening value, but does not try to
+  calculate distances using an elliptical flattening value,
+  via the :code:`--geodetic` parameter, but does not try to
   correct for the second effect. There are external routines to
   calculate a correction to the travel time for this.
 
