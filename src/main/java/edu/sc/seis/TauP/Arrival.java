@@ -909,7 +909,7 @@ public class Arrival {
         String desc =  Outputs.formatDistance(moduloDistDeg) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
                 + "  " + Outputs.formatDistance(getTakeoffAngleDegree()) + " " + Outputs.formatDistance(getIncidentAngleDegree())
-                + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();
+                + " " + Outputs.formatDistance(getDistDeg());
         if (getName().equals(getPuristName())) {
             desc += "   = ";
         } else {
