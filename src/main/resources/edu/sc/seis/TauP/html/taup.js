@@ -669,8 +669,8 @@ export function form_url() {
     }
   }
   let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
-  if ((isAmplitude && (toolname === "time" || toolname === "find"))
-      || toolname === 'curve' || toolname === 'spikes') {
+  if ((isAmplitude && (toolname === "time" || toolname === "find")
+      || toolname === 'curve' || toolname === 'spikes')) {
     if (toolname === "time" || toolname === "find") {
       url += `&amp=true`;
     }
