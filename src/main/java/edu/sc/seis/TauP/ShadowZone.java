@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import com.google.gson.JsonObject;
-
 /**
  * Represents a shadow zone within a phase.
  */

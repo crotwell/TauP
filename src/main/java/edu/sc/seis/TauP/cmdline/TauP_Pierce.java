@@ -22,7 +22,6 @@ import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;

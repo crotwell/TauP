@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
-import edu.sc.seis.TauP.TimeResult;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;

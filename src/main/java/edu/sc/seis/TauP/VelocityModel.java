@@ -29,9 +29,6 @@
  */
 package edu.sc.seis.TauP;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

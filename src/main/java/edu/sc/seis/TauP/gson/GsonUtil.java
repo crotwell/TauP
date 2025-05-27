@@ -5,8 +5,6 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import edu.sc.seis.seisFile.Location;
 
-import java.lang.reflect.Type;
-
 public class GsonUtil {
 
     public static String toJson(Object obj) {

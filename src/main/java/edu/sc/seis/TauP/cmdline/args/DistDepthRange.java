@@ -4,8 +4,6 @@ import edu.sc.seis.TauP.DepthAxisType;
 import edu.sc.seis.TauP.DistanceAxisType;
 import picocli.CommandLine;
 
-import java.util.List;
-
 public class DistDepthRange {
 
     public double[] getDistAxisMinMax() {

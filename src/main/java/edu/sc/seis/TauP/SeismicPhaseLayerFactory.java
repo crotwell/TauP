@@ -5,7 +5,6 @@ import java.util.List;
 import static edu.sc.seis.TauP.LegPuller.extractBoundaryId;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
-import static edu.sc.seis.TauP.PhaseSymbols.isDiffractedDown;
 
 /**
  * Factor for calculating seismic phase from phase name within a major section of the model, like mantle or inner core.

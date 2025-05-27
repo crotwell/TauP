@@ -4,14 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import edu.sc.seis.TauP.Isochron;
 import edu.sc.seis.TauP.JSONLabels;
-import edu.sc.seis.TauP.PhaseDescribeResult;
 import edu.sc.seis.TauP.WavefrontResult;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WavefrontSerializer implements JsonSerializer<WavefrontResult> {
     @Override

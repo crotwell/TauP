@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -16,7 +13,6 @@ import java.util.Objects;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
-import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TEXT;
 
 /**
  * Creates plots of a velocity model.

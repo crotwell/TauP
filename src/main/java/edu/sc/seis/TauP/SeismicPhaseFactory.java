@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
-import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 

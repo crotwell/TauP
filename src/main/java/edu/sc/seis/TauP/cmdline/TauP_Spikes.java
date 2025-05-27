@@ -28,7 +28,6 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.Arrival;
-import edu.sc.seis.TauP.BuildVersion;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;

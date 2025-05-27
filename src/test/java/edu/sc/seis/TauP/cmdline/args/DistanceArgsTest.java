@@ -2,9 +2,7 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.TauP_Time;
-import org.junit.jupiter.api.Test;
 
-import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.TauP_Find;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
