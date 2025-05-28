@@ -36,17 +36,16 @@ public class SeismicPhaseLayerFactory {
     }
 
     public static SeismicPhaseLayerFactory crustMantleFactory(SeismicPhaseFactory baseFactory) {
-        String layerName = "crust/mantle";
         if (baseFactory.tMod.isDegenerateCrustMantle()) {
             // no crust or mantle, so no P or S
             String reason = "Model with no mantle, cmb at surface";
-            return new SeismicPhaseLayerFactoryAllFail(baseFactory, layerName,
+            return new SeismicPhaseLayerFactoryAllFail(baseFactory, CRUST_MANTLE,
                     -1,
                     -1,
                     reason);
         }
         SeismicPhaseLayerFactory factory = new SeismicPhaseLayerFactory(baseFactory,
-                layerName,
+                CRUST_MANTLE,
                 0,
                 baseFactory.tMod.getCmbBranch()-1);
         factory.p_leg = PhaseSymbols.P;
@@ -57,16 +56,15 @@ public class SeismicPhaseLayerFactory {
     }
 
     public static SeismicPhaseLayerFactory outerCoreFactory(SeismicPhaseFactory baseFactory) {
-        String layerName = "outer core";
         if (baseFactory.tMod.isDegenerateOuterCore()) {
             // cmb is center of earth, no core
             String reason = "Model with no core, cmb at iocb";
-            return new SeismicPhaseLayerFactoryAllFail(baseFactory, layerName,
+            return new SeismicPhaseLayerFactoryAllFail(baseFactory, OUTER_CORE,
                     baseFactory.tMod.getCmbBranch(),
                     baseFactory.tMod.getIocbBranch()-1, reason);
         }
         SeismicPhaseLayerFactory factory = new SeismicPhaseLayerFactory(baseFactory,
-                layerName,
+                OUTER_CORE,
                 baseFactory.tMod.getCmbBranch(),
                 baseFactory.tMod.getIocbBranch()-1);
         factory.p_leg = PhaseSymbols.K;
@@ -77,16 +75,15 @@ public class SeismicPhaseLayerFactory {
     }
 
     public static SeismicPhaseLayerFactory innerCoreFactory(SeismicPhaseFactory baseFactory) {
-        String layerName = "inner core";
         if (baseFactory.tMod.isDegenerateInnerCore()) {
             String reason = "Model with no inner core, iocb at center of earth";
-            return new SeismicPhaseLayerFactoryAllFail(baseFactory, layerName,
+            return new SeismicPhaseLayerFactoryAllFail(baseFactory, INNER_CORE,
                     baseFactory.tMod.getIocbBranch(),
                     baseFactory.tMod.getNumBranches()-1,
                     reason);
         }
         SeismicPhaseLayerFactory factory = new SeismicPhaseLayerFactory(baseFactory,
-                layerName,
+                INNER_CORE,
                 baseFactory.tMod.getIocbBranch(),
                 baseFactory.tMod.getNumBranches()-1);
         factory.p_leg = PhaseSymbols.I;
@@ -101,13 +98,13 @@ public class SeismicPhaseLayerFactory {
         SeismicPhaseLayerFactory outerCore = outerCoreFactory(baseFactory);
         SeismicPhaseLayerFactory innerCore = innerCoreFactory(baseFactory);
         List<SeismicPhaseLayerFactory> factoryList = List.of(crustMantle, outerCore, innerCore);
-        crustMantle.aboveLayerFactory = new SeismicPhaseLayerFactoryAllFail(baseFactory, "surface of earth",
+        crustMantle.aboveLayerFactory = new SeismicPhaseLayerFactoryAllFail(baseFactory, SURFACE_OF_EARTH,
                 0, 0, "No layers above surface");
         crustMantle.belowLayerFactory = outerCore;
         outerCore.aboveLayerFactory = crustMantle;
         outerCore.belowLayerFactory = innerCore;
         innerCore.aboveLayerFactory = outerCore;
-        innerCore.belowLayerFactory = new SeismicPhaseLayerFactoryAllFail(baseFactory, "center of earth",
+        innerCore.belowLayerFactory = new SeismicPhaseLayerFactoryAllFail(baseFactory, CENTER_OF_EARTH,
                 baseFactory.tMod.getNumBranches(), baseFactory.tMod.getNumBranches(), "No layers below inner core");
         return List.of(crustMantle, outerCore, innerCore);
     }
@@ -129,7 +126,7 @@ public class SeismicPhaseLayerFactory {
             proto = currLegIsDiffracted(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else if (isHead(currLeg)) {
             currLegIsHead(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-        } else if ((is(currLeg, "Pg") || is(currLeg, "Sg"))) {
+        } else if (layerName==CRUST_MANTLE && (is(currLeg, "Pg") || is(currLeg, "Sg"))) {
             // dumb special case crustal P and S
             proto = currLegIs_Pg_Sg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else {
@@ -1109,6 +1106,12 @@ public class SeismicPhaseLayerFactory {
     }
 
     String layerName;
+
+    public static final String SURFACE_OF_EARTH = "surface of earth";
+    public static final String CRUST_MANTLE = "crust/mantle";
+    public static final String OUTER_CORE = "outer core";
+    public static final String INNER_CORE = "inner core";
+    public static final String CENTER_OF_EARTH = "center of earth";
     public static final char EMPTY = ' ';
     char p_leg = EMPTY;
     char up_p_leg = EMPTY;
