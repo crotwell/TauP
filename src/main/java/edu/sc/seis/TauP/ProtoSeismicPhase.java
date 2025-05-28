@@ -1466,10 +1466,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     if (next != null && next.endAction == TRANSDOWN) {
                         diff = "diffdn";
                     }
-                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
-                        name += diff;
-                    } else {
-                        name += (int) (botDepth)+diff;
+                    if (seg.endAction==DIFFRACT) {
+                        if ( botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                            name += diff;
+                        } else {
+                            name += (int) (botDepth)+diff;
+                        }
+                    } else if( seg.endAction==TRANSUPDIFFRACT) {
+                        if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
+                            name += diff;
+                        } else {
+                            name += (int) (topDepth) + diff;
+                        }
                     }
                     break;
                 case END:
@@ -1514,7 +1522,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         for (Integer i : branchNumSeg()) {
             out += i+" ";
         }
-        return out;
+        return out.trim();
     }
 
     public String branchNumSeqStrWithSegBreaks() {

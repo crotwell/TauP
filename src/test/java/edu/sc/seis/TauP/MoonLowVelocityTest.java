@@ -29,7 +29,7 @@ public class MoonLowVelocityTest {
         ProtoSeismicPhase proto = ProtoSeismicPhase.startEmpty("P", tmod, 0);
         proto.addToBranch(3, true, true, PhaseInteraction.TURN, "P");
         proto.addToBranch(0, true, true, PhaseInteraction.END, "P");
-        assertEquals("0 1 2 3 3 2 1 0 ", proto.branchNumSeqStr());
+        assertEquals("0 1 2 3 3 2 1 0", proto.branchNumSeqStr());
         List<ShadowOrProto> hszSplitProtoList = proto.splitForAllHighSlowness();
         assertEquals(3, hszSplitProtoList.size());
     }
@@ -60,8 +60,8 @@ public class MoonLowVelocityTest {
         SimpleContigSeismicPhase P_phase_below = compPhase.getSubPhaseList().get(1);
         System.err.println("below HSZ: "+P_phase_below.describe());
 
-        assertEquals("0 1 1 0 ", P_phase_above.proto.branchNumSeqStr());
-        assertEquals("0 1 2 3 3 2 1 0 ", P_phase_below.proto.branchNumSeqStr());
+        assertEquals("0 1 1 0", P_phase_above.proto.branchNumSeqStr());
+        assertEquals("0 1 2 3 3 2 1 0", P_phase_below.proto.branchNumSeqStr());
         assertEquals(P_phase_above.minRayParam, P_phase_below.maxRayParam);
 
         assertEquals(P_phase_above.maxRayParam, P_phase_above.getRayParams(0));
@@ -165,6 +165,13 @@ public class MoonLowVelocityTest {
         List<TimeDist> pierce = List.of(aList.get(0).getPierce());
         assertEquals(deg, aList.get(0).getDistDeg(), 0.0001);
         assertEquals(deg, pierce.get(pierce.size()-1).getDistDeg(), 0.002);
+
+        SeismicPhase Pcp1554diffp = SeismicPhaseFactory.createPhase("Pcp1554diffp", tmod);
+        assertTrue(Pcp1554diffp.phasesExistsInModel());
+        assertEquals("0 1 2 3 4 4 3 3 2 1 0", ((SimpleContigSeismicPhase)Pcp1554diffp).proto.branchNumSeqStr());
+        assertEquals("Pcp1554diffp", Pcp1554diffp.getPuristName());
+        SeismicPhase Pcp1554diffs = SeismicPhaseFactory.createPhase("Pcp1554diffs", tmod);
+        assertTrue(Pcp1554diffs.phasesExistsInModel());
     }
 
     @Test

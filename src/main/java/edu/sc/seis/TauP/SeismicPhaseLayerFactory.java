@@ -276,9 +276,6 @@ public class SeismicPhaseLayerFactory {
             return baseFactory.failWithMessage(proto," p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
-        } else if(is(nextLeg, up_p_leg) || is(nextLeg, up_s_leg)) {
-            return baseFactory.failWithMessage(proto, " Phase not recognized (2): "
-                    + currLeg + " followed by " + nextLeg);
         } else if (isUpDiffracted(currLeg, 0)){
             String depthString = extractBoundaryId(currLeg, 1, false);
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
@@ -294,7 +291,7 @@ public class SeismicPhaseLayerFactory {
                         endAction,
                         currLeg);
             }
-            proto.addFlatBranch(isPWave, TRANSUPDIFFRACT, TRANSUP, currLeg);
+            proto.addFlatBranch(isPWave, TRANSUPDIFFRACT, DIFFRACTTURN, currLeg);
 
             // diff acts kind of like turn, so may need to add more
             if(is(nextLeg, END_CODE)) {
@@ -397,6 +394,10 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
 
+
+        } else if(is(nextLeg, up_p_leg) || is(nextLeg, up_s_leg)) {
+            return baseFactory.failWithMessage(proto, " Phase not recognized (2): "
+                    + currLeg + " followed by " + nextLeg);
         } else if(belowLayerFactory.isLayerLeg(nextLeg)) {
             return baseFactory.failWithMessage(proto," Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", must be upgoing and so cannot hit lower layers.");
