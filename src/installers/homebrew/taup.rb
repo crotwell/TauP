@@ -4,21 +4,16 @@ class Taup < Formula
   url "https://zenodo.org/records/15426279/files/TauP-3.0.1.zip"
   sha256 "569a5e1d5d9268e57e6f08ace451946b8264474a951d64bf77283523bac3f1be"
   license "LGPL-3.0-or-later"
-  revision 2
+  revision 3
   depends_on "openjdk"
 
   def install
     rm Dir["bin/*.bat"]
     libexec.install %w[bin docs lib src]
-    env = if Hardware::CPU.arm?
-      Language::Java.overridable_java_home_env("11")
-    else
-      Language::Java.overridable_java_home_env
-    end
+    env = Language::Java.overridable_java_home_env
     (bin/"taup").write_env_script libexec/"bin/taup", env
     cp "./taup_completion", "./taup_completion.bash"
     bash_completion.install "./taup_completion.bash"
-    zsh_completion.install "./taup_completion" => "_taup"
   end
 
   test do
