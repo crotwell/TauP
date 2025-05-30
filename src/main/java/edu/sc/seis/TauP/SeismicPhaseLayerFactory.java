@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import java.util.List;
+import java.util.Objects;
 
 import static edu.sc.seis.TauP.LegPuller.extractBoundaryId;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
@@ -97,7 +98,6 @@ public class SeismicPhaseLayerFactory {
         SeismicPhaseLayerFactory crustMantle = crustMantleFactory(baseFactory);
         SeismicPhaseLayerFactory outerCore = outerCoreFactory(baseFactory);
         SeismicPhaseLayerFactory innerCore = innerCoreFactory(baseFactory);
-        List<SeismicPhaseLayerFactory> factoryList = List.of(crustMantle, outerCore, innerCore);
         crustMantle.aboveLayerFactory = new SeismicPhaseLayerFactoryAllFail(baseFactory, SURFACE_OF_EARTH,
                 0, 0, "No layers above surface");
         crustMantle.belowLayerFactory = outerCore;
@@ -126,7 +126,7 @@ public class SeismicPhaseLayerFactory {
             proto = currLegIsDiffracted(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else if (isHead(currLeg)) {
             currLegIsHead(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-        } else if (layerName==CRUST_MANTLE && (is(currLeg, "Pg") || is(currLeg, "Sg"))) {
+        } else if (Objects.equals(layerName, CRUST_MANTLE) && (is(currLeg, "Pg") || is(currLeg, "Sg"))) {
             // dumb special case crustal P and S
             proto = currLegIs_Pg_Sg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else {
@@ -787,7 +787,7 @@ public class SeismicPhaseLayerFactory {
         } else {
             // we are below at the right branch to diffract???
             return baseFactory.failWithMessage(proto,"Unable to diffract, below the right branch to diffract " + currBranch +" of "+proto.phaseName
-                    +" "+ (disconBranch - 1) + " " + baseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+prevSegment.endsAtTop());
+                    +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+prevSegment.endsAtTop());
         }
 
         if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {

@@ -21,8 +21,6 @@ public class ShadowZone {
      */
     Arrival preArrival;
 
-    boolean isPWave;
-
     public ShadowZone(double rayParam, TauBranch hszBranch) {
         this.rayParam = rayParam;
         this.hszBranch = hszBranch;

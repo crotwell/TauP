@@ -84,7 +84,7 @@ public class TauModelLoader {
     }
 
     public static void addToCache(String modelName, TauModel tMod) {
-        tModCache.put(modelName, new SoftReference<TauModel>(tMod));
+        tModCache.put(modelName, new SoftReference<>(tMod));
     }
 
     public static TauModel internalLoad(String modelName,
@@ -107,7 +107,6 @@ public class TauModelLoader {
         File modelFile;
         /* is model in configured otherVelocityModels */
         if (otherVelocityModels.containsKey(modelName)) {
-            VelocityModel vMod = otherVelocityModels.get(modelName);
             try {
                 VelocityModel vmod = loadVelocityModel(modelName);
                 if (vmod != null) {

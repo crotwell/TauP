@@ -977,7 +977,7 @@ public class VelocityModel implements Cloneable, Serializable {
         } else if(modelFilename.endsWith(".nd")) {
             modelName = modelFilename.substring(0, modelFilename.length() - 3);
         } else if(modelFilename.startsWith("GB.")) {
-            modelName = modelFilename.substring(3, modelFilename.length());
+            modelName = modelFilename.substring(3);
         } else {
             modelName = modelFilename;
         }
@@ -1102,7 +1102,7 @@ public class VelocityModel implements Cloneable, Serializable {
             tokenIn.nextToken();
         }
         VelocityLayer lastZeroThickLayer = null;
-        List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
+        List<VelocityLayer> layers = new ArrayList<>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             botDepth = tokenIn.nval;
@@ -1307,7 +1307,7 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
-        List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
+        List<VelocityLayer> layers = new ArrayList<>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             if (tokenIn.ttype == StreamTokenizer.TT_EOL) {
@@ -1493,7 +1493,7 @@ public class VelocityModel implements Cloneable, Serializable {
             iocbMin = Math.abs(iocbDepth - belowLayer.getBotDepth());
         }
         // make sure all named discontinuties are actual discontinuities
-        if (unverifiedNamedDiscon.size() != 0) {
+        if (!unverifiedNamedDiscon.isEmpty()) {
             throw new VelocityModelException("Named Discontinuity not at actual model discontinuity: "+unverifiedNamedDiscon.get(0));
         }
         for (NamedVelocityDiscon nl : namedDiscon) {
@@ -1527,7 +1527,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public VelocityModel earthFlattenTransform() {
         VelocityLayer newLayer, oldLayer;
         boolean spherical = false;
-        List<VelocityLayer> layers = new ArrayList<VelocityLayer>(vectorLength);
+        List<VelocityLayer> layers = new ArrayList<>(vectorLength);
         for(int i = 0; i < getNumLayers(); i++) {
             oldLayer = getVelocityLayer(i);
             newLayer = new VelocityLayer(i,

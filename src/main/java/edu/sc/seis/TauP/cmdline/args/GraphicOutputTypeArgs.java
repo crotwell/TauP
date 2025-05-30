@@ -17,8 +17,6 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
     /** ps filename for use within gmt script. Usually named after the tool that created the output. */
     public String psFile = null;
 
-    public boolean gmtScript = false;
-
     @CommandLine.Option(names="--mapwidth", description = "plot width in units from --mapwidthunit.")
     public Float mapwidth = 6f;
 

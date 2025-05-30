@@ -60,7 +60,7 @@ public class SeismicSourceArgs {
             arity = "3",
             description = "fault strike, dip and rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
     public void setStrikeDipRake(List<Float> sdr) {
-        if (sdr.size() == 0) {
+        if (sdr.isEmpty()) {
             // unset by picocli, as no default value
             this.strikeDipRake = null;
         } else if (sdr.size() != 3) {

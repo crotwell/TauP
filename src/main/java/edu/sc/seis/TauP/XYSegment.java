@@ -62,13 +62,13 @@ public class XYSegment {
                     }
                     outX.add( x[i]);
                     outY.add( y[i]);
-                } else if (outX.size()>0) {
+                } else if (!outX.isEmpty()) {
                     if (i>0) {
                         if ( x[i-1] > xAxisMinMax[0] && xAxisMinMax[0] > x[i]) {
                             outX.add(xAxisMinMax[0]);
                             double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[0]);
                             outY.add(yInterp);
-                        } else if (x[i-i] < xAxisMinMax[1] && xAxisMinMax[1] < x[i]) {
+                        } else if (x[i-1] < xAxisMinMax[1] && xAxisMinMax[1] < x[i]) {
                             double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[1]);
                             outX.add(xAxisMinMax[1]);
                             outY.add(yInterp);

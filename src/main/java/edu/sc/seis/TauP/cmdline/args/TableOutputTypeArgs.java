@@ -68,8 +68,6 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         return calcExt;
     }
 
-    String outFileBase = "taup_table";
-
     static class TableOutputType {
         @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as Text")
         boolean _isText = true;

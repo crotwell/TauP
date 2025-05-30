@@ -49,7 +49,7 @@ public class TauP_Version extends TauP_Tool {
         writer.close();
     }
 
-    public void printResult(PrintWriter out) throws IOException {
+    public void printResult(PrintWriter out) {
         if (outputTypeArgs.isJSON()) {
             printResultJSON(out);
         } else {

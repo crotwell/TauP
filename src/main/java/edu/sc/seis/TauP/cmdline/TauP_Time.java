@@ -196,7 +196,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     @Override
-    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
             GsonBuilder gsonBld = createGsonBuilder();
@@ -210,8 +210,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         printArrivalsAsText(out, arrivalList,
                 modelArgs.getModelName(),
-                modelArgs.getSourceDepths(),
-                modelArgs.getReceiverDepths(),
                 getScatterer(),
                 onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs,
@@ -221,8 +219,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public static void printArrivalsAsText(PrintWriter out,
                                            List<Arrival> arrivalList,
                                            String modelName,
-                                           List<Double> sourceDepthList,
-                                           List<Double>  receiverDepthList,
                                            Scatterer scatterer,
                                            boolean onlyPrintTime, boolean onlyPrintRayP,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
@@ -286,9 +282,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             out.println(lineOne);
             out.println(lineTwo);
             StringBuilder dashes = new StringBuilder();
-            for(int i = 0; i < Math.max(lineOne.length(), lineTwo.length()); i++) {
-                dashes.append("-");
-            }
+            dashes.append("-".repeat(Math.max(lineOne.length(), lineTwo.length())));
             out.write(dashes.append("\n").toString());
             for (Arrival arrival : arrivalList) {
                 currArrival = arrival;

@@ -27,8 +27,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     boolean negDistance = false;
 
-    boolean doInteractive = false;
-
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 

@@ -803,7 +803,7 @@ public abstract class SlownessModel implements Serializable {
                                   SlownessLayer newBotLayer,
                                   List<CriticalDepth> criticalDepths,
                                   boolean isPWave) throws SlownessModelException {
-        List<SlownessLayer> out = new ArrayList<SlownessLayer>();
+        List<SlownessLayer> out = new ArrayList<>();
         out.addAll(otherLayers);
         int otherIndex = otherLayers.indexOf(changedLayer);
         // now make sure we keep the sampling consistant
@@ -1154,7 +1154,7 @@ public abstract class SlownessModel implements Serializable {
                     Alert.debug("  "+highSlownessLayerDepthsP.get(layerNum));
                 }
             }
-            if (highSlownessLayerDepthsS.size() != 0) {
+            if (!highSlownessLayerDepthsS.isEmpty()) {
                 Alert.debug("high slowness layer depths S: ");
                 for (int layerNum = 0; layerNum < highSlownessLayerDepthsS.size(); layerNum++) {
                     Alert.debug("  "+highSlownessLayerDepthsS.get(layerNum));

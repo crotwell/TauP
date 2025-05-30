@@ -292,7 +292,7 @@ public class LegPuller {
         if (boundId.isEmpty()) {
             throw new PhaseParseException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name, name, offset);
         }
-        if (boundId.endsWith(DIFF) || boundId.endsWith(DIFFDOWN) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
+        if (boundId.endsWith(DIFF) || boundId.endsWith(DIFFDOWN) || boundId.endsWith(HEAD_CODE)) {
             // like Pn, Pdiff or P410diff, add as single leg
             legs.add(phaseChar+boundId);
             idx += boundId.length();

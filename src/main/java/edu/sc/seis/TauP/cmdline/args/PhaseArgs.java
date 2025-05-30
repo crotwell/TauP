@@ -171,6 +171,7 @@ public class PhaseArgs {
                 for (String prev : phaseNames) {
                     if (prev.equals(ph)) {
                         found = true;
+                        break;
                     }
                 }
                 if (!found) {

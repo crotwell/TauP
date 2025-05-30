@@ -386,10 +386,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String describeShort() {
-        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
+        return getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
                 + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km,"
                 + " scatter: "+getScattererDepth()+" km,"+getScattererDistanceDeg()+" deg";
-        return desc;
     }
 
     @Override
@@ -400,7 +399,10 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public String failReason() {
         if (isFail()) {
-
+            if (inboundArrival == null) {
+                return "No inbound arrival to scatterer";
+            }
+            return scatteredPhase.failReason();
         }
         return "";
     }

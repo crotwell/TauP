@@ -726,7 +726,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             description = "Depth in model to get boundary parameters, may be number or name like moho.")
     public void setDepth(String depthOrName) {
         try {
-            Double d = Double.parseDouble(depthOrName);
+            double d = Double.parseDouble(depthOrName);
             setDepth(d);
         } catch (NumberFormatException e ) {
             // try to find by name later?

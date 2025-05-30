@@ -182,6 +182,11 @@ public class Arrival {
 
     private Arrival relativeToArrival = null;
 
+    /**
+     * Sorts arrivals by time in place.
+     * @param arrivals sorted
+     * @return same list passed in
+     */
     public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
         arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
         return arrivals;
@@ -190,7 +195,7 @@ public class Arrival {
     public static List<Arrival> onlyFirst(List<Arrival> arrivalList) {
         List<Arrival> first = new ArrayList<>();
         List<Arrival> copyList = new ArrayList<>(arrivalList);
-        copyList = Arrival.sortArrivals(copyList);
+        Arrival.sortArrivals(copyList);
         while (!copyList.isEmpty()) {
             Arrival early = copyList.get(0);
             first.add(early);
@@ -371,9 +376,8 @@ public class Arrival {
      * Geometrical spreading factor for amplitude, sqrt of energy spreading.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.19.
      *
-     * @throws TauModelException
      */
-    public double getAmplitudeGeometricSpreadingFactor() throws TauModelException {
+    public double getAmplitudeGeometricSpreadingFactor() {
         double d = getEnergyGeometricSpreadingFactor();
         if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
         return Math.sqrt(getEnergyGeometricSpreadingFactor());
@@ -701,9 +705,7 @@ public class Arrival {
         if (pierce == null) {
             try {
                 this.pierce = getPhase().interpPierceTimeDist(this).toArray(new TimeDist[0]);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
         }
@@ -832,11 +834,7 @@ public class Arrival {
         if (pathSegments == null) {
             try {
                 this.pathSegments = getPhase().calcSegmentPaths(this);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (SlownessModelException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | SlownessModelException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
 
@@ -852,11 +850,7 @@ public class Arrival {
         if (pathSegments == null) {
             try {
                 pathSegments = getPhase().calcSegmentPaths(this);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (SlownessModelException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | SlownessModelException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
         }

@@ -455,7 +455,7 @@ public class TauP_Table extends TauP_Tool {
                 arrivals.addAll(shoot.calculate(phase));
             }
         }
-        arrivals = Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
         return arrivals;
     }
 

@@ -26,7 +26,7 @@ public class AbstractPhaseResult {
         this.model = model;
         this.sourcedepthlist = sourcedepthlist;
         this.receiverdepthlist = receiverdepthlist;
-        this.phases = phases.stream().map(phaseName -> phaseName.getName()).collect(toList());;
+        this.phases = phases.stream().map(phaseName -> phaseName.getName()).collect(toList());
         this.scatter = scatterer;
         if (withAmp) {
             this.sourceArg = sourceArgs;

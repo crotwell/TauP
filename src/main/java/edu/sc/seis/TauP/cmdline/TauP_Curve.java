@@ -96,7 +96,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     }
                 } else {
                     SeismicPhase interpolatedPhase = phase.interpolatePhase(
-                            Double.parseDouble((String)(toolProps.getProperty("taup.curve.maxPathInc", "2"))));
+                            Double.parseDouble(toolProps.getProperty("taup.curve.maxPathInc", "2")));
                     List<double[]> xData = calculatePlotForType(interpolatedPhase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(interpolatedPhase, yAxisType, ensure180);
                     List<XYSegment> segments = XYSegment.createFromLists(xData, yData);

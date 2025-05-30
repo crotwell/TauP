@@ -10,6 +10,7 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
@@ -43,7 +44,6 @@ public class TauP_DistAz extends TauP_Tool {
 
     @Override
     public void start() throws IOException, TauPException {
-        double kmToDeg = 180.0 / Math.PI * radiusOfEarth;
 
         List<Location> eventLocs = new ArrayList<>();
         eventLocs.addAll(latLonArgs.getEventLocations());
@@ -100,9 +100,7 @@ public class TauP_DistAz extends TauP_Tool {
                 distList.add(dr);
             }
         }
-        distList.sort((lhs, rhs) -> {
-            return Double.compare(lhs.getDegrees(), rhs.getDegrees());
-        });
+        distList.sort(Comparator.comparingDouble(DistanceAngleRay::getDegrees));
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";

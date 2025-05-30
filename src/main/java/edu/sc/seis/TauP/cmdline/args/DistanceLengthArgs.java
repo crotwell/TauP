@@ -13,7 +13,7 @@ import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeKm;
 
 public class DistanceLengthArgs {
 
-    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) throws TauPException {
+    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getLengthDistances());
         if (sourceArgs != null) {
@@ -27,8 +27,7 @@ public class DistanceLengthArgs {
     }
 
 
-    public List<DistanceRay> getLengthDistances() throws TauPException {
-        List<DistanceRay> out = new ArrayList<>();
+    public List<DistanceRay> getLengthDistances() {
         List<DistanceRay> simpleDistanceList = new ArrayList<>();
         for (Double d : degreesList) {
             simpleDistanceList.add(DistanceRay.ofDegrees(d));

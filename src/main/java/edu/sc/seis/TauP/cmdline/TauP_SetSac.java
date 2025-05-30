@@ -70,7 +70,6 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "setsac",
         description = "Set headers to travel times of phases using depth and distance from SAC files.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_AbstractPhaseTool {
 

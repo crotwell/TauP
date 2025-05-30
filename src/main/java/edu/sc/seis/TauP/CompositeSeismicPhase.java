@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Seismic Phase that is simple, but may contain shadow zones due to high slowness layers (low velocity zones) in the model.
@@ -29,7 +30,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
                 if (prev.tMod != subphase.tMod) {
                     throw new IllegalArgumentException("subphases must all have same TauModel "+prev.tMod.getModelName()+" "+subphase.tMod.getModelName());
                 }
-                if (prev.getName() != subphase.getName()) {
+                if (!Objects.equals(prev.getName(), subphase.getName())) {
                     throw new IllegalArgumentException("subphases must all have same name "+prev.getName()+" "+subphase.getName());
                 }
                 if (prev.getMinRayParam() != subphase.getMaxRayParam()) {
@@ -494,7 +495,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double calcTstar(Arrival arrival) throws NoArrivalException {
+    public double calcTstar(Arrival arrival) {
         return arrival.getSimpleContigSeismicPhase().calcTstar(arrival);
     }
 
@@ -504,7 +505,6 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
         for (SimpleContigSeismicPhase sp : simplePhaseList) {
             out += sp.getNumRays();
         }
-        out = out;
         return out;
     }
 

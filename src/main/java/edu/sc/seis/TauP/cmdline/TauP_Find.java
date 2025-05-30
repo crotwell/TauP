@@ -173,7 +173,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
 
-    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             FindTimeResult result = createTimeResult(arrivalList, modelArgs.getTauModel());
             out.println(GsonUtil.toJson(result));
@@ -183,8 +183,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             List<String> relativePhaseName = new ArrayList<>();
             TauP_Time.printArrivalsAsText(out, arrivalList,
                     modelArgs.getModelName(),
-                    modelArgs.getSourceDepths(),
-                    modelArgs.getReceiverDepths(),
                     getScatterer(),
                     onlyPrintTime, onlyPrintRayP,
                     isWithAmplitude(), sourceArgs,
@@ -279,7 +277,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         writer.flush();
     }
-    public FindTimeResult createTimeResult(List<Arrival> arrivals, TauModel optTauModel) throws TauPException {
+    FindTimeResult createTimeResult(List<Arrival> arrivals, TauModel optTauModel) throws TauPException {
         TauModel tMod = optTauModel;
         if (!arrivals.isEmpty()) {
             tMod = arrivals.get(0).getTauModel();
@@ -288,7 +286,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         for (double d : getExcludedDepths(tMod)) {
             excludeList.add((float) d);
         }
-        List<String> phases = new ArrayList();
+        List<String> phases = new ArrayList<>();
         FindTimeResult result = new FindTimeResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
                 getPhaseArgs().parsePhaseNameList(), getScatterer(),
                 false, sourceArgs,
@@ -296,7 +294,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 maxActions, excludeList, phases);
         return result;
     }
-    public FindResult createResult(List<ProtoSeismicPhase> walk, TauModel optTauModel) throws TauPException {
+    FindResult createResult(List<ProtoSeismicPhase> walk, TauModel optTauModel) throws TauPException {
         TauModel tMod = optTauModel;
         if (!walk.isEmpty()) {
             tMod = walk.get(0).gettMod();

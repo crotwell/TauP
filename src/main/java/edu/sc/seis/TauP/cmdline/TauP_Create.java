@@ -33,6 +33,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.Properties;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
@@ -142,7 +143,7 @@ public class TauP_Create extends TauP_Tool {
     }
 
     public VelocityModel loadVMod() throws IOException, VelocityModelException {
-        String file_sep = System.getProperty("file.separator");
+        String file_sep = FileSystems.getDefault().getSeparator();
         // Read the velocity model file.
         String filename = directory + file_sep + inputFileArgs.getModelFilename();
         File f = new File(filename);
@@ -184,7 +185,7 @@ public class TauP_Create extends TauP_Tool {
             if (isVerbose()) {
                 Alert.debug("TauP_Create starting...");
             }
-            String file_sep = System.getProperty("file.separator");
+            String file_sep = FileSystems.getDefault().getSeparator();
             TauModel tMod = TauModelLoader.createTauModel(vMod, toolProps);
 
             if(isDEBUG())

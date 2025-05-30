@@ -827,7 +827,7 @@ public class TauModel implements Serializable {
             }
             for(int i = branchToSplit + 1; i < tauBranches[0].length; i++) {
                 for(int pOrS = 0; pOrS < 2; pOrS++) {
-                    newtauBranches[pOrS][i + 1] = (TauBranch)tauBranches[pOrS][i].clone();
+                    newtauBranches[pOrS][i + 1] = tauBranches[pOrS][i].clone();
                 }
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave

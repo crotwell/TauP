@@ -131,13 +131,12 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             for (double receiverDepth : getReceiverDepths()) {
                 List<SeismicPhase> phaseList = calcSeismicPhases(sourceDepth,
                         List.of(receiverDepth), modelArgs.getScatterer());
-                spikeRecords.addAll(calcSpikes(degreesList, phaseList, sourceDepth, receiverDepth));
+                spikeRecords.addAll(calcSpikes(degreesList, phaseList));
             }
         }
         return spikeRecords;
     }
-    public List<MSeed3Record> calcSpikes(List<RayCalculateable> rayList, List<SeismicPhase> phaseList,
-                                         double sourceDepth, double receiverDepth) throws TauPException {
+    public List<MSeed3Record> calcSpikes(List<RayCalculateable> rayList, List<SeismicPhase> phaseList) throws TauPException {
 
         List<MSeed3Record> spikeRecords = new ArrayList<>();
         List<DistanceRay> degreesList = new ArrayList<>();
@@ -636,7 +635,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return outputTypeArgs.getOutFileExtension();
     }
 
-    public List<RayCalculateable> getRayCalculatables() throws TauPException {
+    public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = distanceArgs.getRayCalculatables(sourceArgs);
         if (latLonArgs.hasAzimuth()) {
             for (RayCalculateable rc : out) {

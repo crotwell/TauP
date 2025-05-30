@@ -40,7 +40,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static ProtoSeismicPhase startEmpty(String phaseName, TauModel tMod, double receiverDepth) {
-        ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<SeismicPhaseSegment>(), receiverDepth, phaseName);
+        ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<>(), receiverDepth, phaseName);
         proto.phaseName = phaseName;
         proto.tMod = tMod;
         if (tMod == null) {throw new IllegalArgumentException("TauModel cannot be null");}
@@ -1543,7 +1543,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public SimpleSeismicPhase asSeismicPhase() throws TauModelException {
-        return SeismicPhaseFactory.sumBranches(tMod, this);
+        return SeismicPhaseFactory.sumBranches(this);
 
     }
 
