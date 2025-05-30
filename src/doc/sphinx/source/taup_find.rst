@@ -7,7 +7,9 @@ TauP Find
 TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
-given constraints. The output is either a simple list of possible phase names or
+given constraints. It does not yet include diffracted or head waves, but these
+can be added manually via the :code:`-p` argument. 
+The output is either a simple list of possible phase names or
 travel times in the same format as :code:`taup time`.
 
 

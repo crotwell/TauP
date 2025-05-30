@@ -35,11 +35,9 @@ You may also get the lastest development version via::
 Manually
 --------
 
-Download `tarball here <https://www.seis.sc.edu/downloads/TauP/TauP-3.0.0.tgz>`_
-or from the `releases <https://github.com/crotwell/TauP/releases>`_
-page on Github. Then::
+Download tarball from |zenodo_url|_. Then::
 
-  tar zxf TauP-3.0.0.tgz
+unzip |dist_zip|
 
 and add the bin directory to your PATH.
 
@@ -56,19 +54,38 @@ you do, you can build it using the Gradle wrapper script::
 will rebuild TauP into the build/install directory.
 
 
-
-Tab completion
+Tab Completion
 --------------
 
-TauP is distributed with a command line completion file for the Bash and ZSH
-Unix shells, named taup_completion. By sourcing this file either in your
-.bashrc or .zshrc file you can use <TAB><TAB> to autocomplete command line
-arguments. The TauP tool also can output this completion file as needed.
+New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
+:code:`taup generate-completion` will provide hints
+for the shell when hitting the tab key for bash or zsh. You can enable it
+with running this command:
 
-For Bash add this to your .bashrc file in your home directory, and
-for ZSH add to you .zshrc file::
+:code:`source <(taup generate-completion)`
 
-  source <(/path/to/taup generate-completion)
+Adding this to your .bash_profile or .zshrc will enable it for future logins.
 
-This runs the taup command to generate the completion file on the fly, making
-sure it is the latest version.
+Note, for bash 3.2, which the default verion on OSX, there is a bug that
+prevents this from working. The alterantive is to save it as a file like:
+
+:code:`taup generate-completion > taup_completion`
+
+and then source the file:
+
+:code:`source taup_completion`
+
+Once sourced, you will be able to get hints or completion for most arguments
+within TauP. For example typing:
+
+:code:`taup time -`
+
+and then hitting the tab key will display all of the possible command line
+flags. Continuing to type
+
+:code:`taup time --mod`
+
+and then hitting the tab key will display the models available for the
+:code:`--mod` command line argument:
+
+:code:`ak135        ak135favg    ak135fcont   ak135fsyngine  iasp91       prem`

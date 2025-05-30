@@ -46,7 +46,7 @@ Tools included with the TauP package:
 :ref:`setsac <taup_setsac>`         puts theoretical arrival times into sac header variables.
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
-:ref:`discon <taup_discon>`      list discontinuities in a velocity model.
+:ref:`discon <taup_discon>`         list discontinuities in a velocity model.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
 :ref:`spikes <taup_spikes>`         create spike seismogram.
 :ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.
@@ -74,43 +74,6 @@ or simply use the script that does the same thing,
 
 Each tool has a :code:`--help` flag that will print a usage summary, as well
 as a :code:`--version` flag that will print the version.
-
-Tab Completion
---------------
-
-New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
-:code:`taup generate-completion` will provide hints
-for the shell when hitting the tab key for bash or zsh. You can enable it
-with running this command:
-
-:code:`source <(taup generate-completion)`
-
-Adding this to your .bash_profile or .zshrc will enable it for future logins.
-
-Note, for bash 3.2, which the default verion on OSX, there is a bug that
-prevents this from working. The alterantive is to save it as a file like:
-
-:code:`taup generate-completion > taup_completion`
-
-and then source the file:
-
-:code:`source taup_completion`
-
-Once sourced, you will be able to get hints or completion for most arguments
-within TauP. For example typing:
-
-:code:`taup time -`
-
-and then hitting the tab key will display all of the possible command line
-flags. Continuing to type
-
-:code:`taup time --mod`
-
-and then hitting the tab key will display the models available for the
-:code:`--mod` command line argument:
-
-:code:`ak135          ak135favg      ak135fcont     ak135fsyngine  iasp91         prem
-`
 
 
 .. include:: default_params

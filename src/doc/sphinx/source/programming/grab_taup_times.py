@@ -16,7 +16,11 @@ def getTauPAsJson(cmd):
     print(" ".join(splitCmd))
     result = subprocess.run(splitCmd, capture_output=True)
     result.check_returncode() # will raise CalledProcessError if not ok
-    return json.loads(result.stdout)
+    out = result.stdout
+    with open("taup.out", "wb") as f:
+        f.write(out)
+    taupjson = json.loads(out)
+    return taupjson
 
 def taup_time(degrees, phases, sourcedepth=0, model=None, amp=False):
     """

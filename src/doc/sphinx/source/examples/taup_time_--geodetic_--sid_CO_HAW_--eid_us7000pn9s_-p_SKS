@@ -1,0 +1,7 @@
+
+Model: iasp91
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist Description
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name             
+-------------------------------------------------------------------------------------------------------
+  124.90    10.0   SKS     1563.06     3.159      5.49     5.48      0.0   124.90   * SKs   2025-03-28T06:20:52 7.7 Mww 22.00/95.92 to CO.HAW 33.36/-81.61
+

@@ -15,9 +15,12 @@ release_year = verjson['date'][0:4]
 
 # create text substitutions
 rst_epilog = f'''
+.. |fullversion| replace:: {verjson['version']}
 .. |release_year| replace:: {release_year}
 .. |zenodo_id_num| replace:: {zenodo_doi_text}
-.. |zenodo_url| replace:: {zenodo_url}
+.. |zenodo_url| replace:: Zenodo
+.. _zenodo_url: {zenodo_url}
+.. |dist_zip| replace:: TauP-{verjson['version'][0:5]}.zip
 .. |zenodo_doi| replace:: 10.5281/zenodo.{zenodo_doi_text}
 '''
 
