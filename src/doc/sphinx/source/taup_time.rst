@@ -52,6 +52,8 @@ web services to get the station and event locations and depth. For example:
   :language: text
 
 gives you arrival times for SKS for this earthquake at station CO_HAW.
+Note this should not be called repeatedly as it is slow and puts undo
+strain on these web services.
 
 .. literalinclude:: examples/taup_time_--geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS
   :language: text
