@@ -1002,7 +1002,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                 || tauBranch.getMinTurnRayParam() >= tMod.getTauBranch(bNum+1, isPWave).getTopRayParam())) {
                     // tau branch is high slowness, so turn is not possible, and
                     // no critical reflect, so do not add these branches
-                    if (true || TauPConfig.DEBUG) {
+                    if (TauPConfig.DEBUG) {
                         Alert.debug("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer "+tauBranch.getBotDepth());
                     }
                     endBranch = bNum-1;
