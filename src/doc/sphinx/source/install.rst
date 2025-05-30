@@ -4,7 +4,10 @@ Installation
 ============
 
 Macintosh
----------
+---------------------------------------------------
+
+Homebrew originally was just for Macintosh, but also supports
+Linux and Windows via Windows Subsystem for Linux.
 
 Using `homebrew <https://brew.sh/>`_::
 
