@@ -151,6 +151,7 @@ public class CmdLineOutputTest {
 
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
+            "taup time --geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
             "taup find --max 2 -h 100 --exclude 210",
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
