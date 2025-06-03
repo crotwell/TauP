@@ -121,17 +121,23 @@ public class TauP_WebServe extends TauP_Tool {
                         Alert.debug("load via single: "+toolname);
                     }
                 }
-                if (wsNamespace.equals(namespace) && wsServiceName.equals(service)
-                        && wsServiceVersion.equals(version)) {
-                    if (toolname.equals(MODEL_NAMES)) {
-                        handleKnownModels(exchange);
-                    } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
-                        TauP_Tool tool = createTool(cmdLineToolname);
-                        handleCmdLine(tool, exchange);
-                    } else if (toolname.equals(PARAM_HELP)) {
-                        handleParamHelp(exchange);
-                    } else if (ToolRun.isKnownToolName(toolname)) {
-                        handleTauPTool(exchange, namespace, service, version, toolname);
+                if (wsNamespace.equals(namespace) && wsServiceName.equals(service)) {
+                    if (wsServiceVersion.equals(version)) {
+                        if (toolname.equals(MODEL_NAMES)) {
+                            handleKnownModels(exchange);
+                        } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
+                            TauP_Tool tool = createTool(cmdLineToolname);
+                            handleCmdLine(tool, exchange);
+                        } else if (toolname.equals(PARAM_HELP)) {
+                            handleParamHelp(exchange);
+                        } else if (ToolRun.isKnownToolName(toolname)) {
+                            handleTauPTool(exchange, namespace, service, version, toolname);
+                        }
+                    } else {
+                        Alert.info("Unknown version: "+version);
+
+                        new ResponseCodeHandler(404).handleRequest(exchange);
+                        exchange.getResponseSender().send(createVersionsPage("Tool Version "+version+" unknown"));
                     }
                 }
             }
@@ -199,10 +205,20 @@ public class TauP_WebServe extends TauP_Tool {
             @Override
             public void handleRequest(HttpServerExchange exchange) throws Exception {
                 String path = exchange.getRequestPath();
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
                 if (path.endsWith("/")) {
                     path = path.substring(0, path.length()-1);
                 }
-                if (path.equals("/"+wsNamespace+"/"+wsServiceName)) {
+                String[] splitPath = path.split("/");
+                if (splitPath.length > 2 ) {
+                    String version = splitPath[2];
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("serviceVersionList Version "+version+" unknown"));
+                    return;
+                }
+                if (path.equals(wsNamespace+"/"+wsServiceName)) {
                     String versionsPage = "<!DOCTYPE html>\n<html><head><title>Service Versions</title></head><body>"
                             + "<h3><a href=\"/"+wsNamespace+"\">"+wsNamespace+"</a>/"+wsServiceName+" Service Versions:</h3>\n";
 
@@ -211,6 +227,9 @@ public class TauP_WebServe extends TauP_Tool {
                             + "</body></html>";
                     exchange.getResponseSender().send(versionsPage);
                     return;
+
+                } else if (TauPConfig.DEBUG) {
+                    Alert.debug("serviceVersionList No handle "+path+"  expect: "+"/"+wsNamespace+"/"+wsServiceName);
                 }
             }
         };
@@ -218,18 +237,24 @@ public class TauP_WebServe extends TauP_Tool {
             @Override
             public void handleRequest(HttpServerExchange exchange) throws Exception {
                 String path = exchange.getRequestPath();
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
                 if (path.endsWith("/")) {
                     path = path.substring(0, path.length()-1);
                 }
-                if (path.equals("/"+wsNamespace)) {
+                if (path.equals(wsNamespace)) {
                     String servicesPage = "<!DOCTYPE html>\n<html><head><title>Services</title></head><body>"
                             + "<h3>Known "+wsNamespace+" Services:</h3>\n";
 
                     servicesPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName  + "\">"
                             + "/" + wsNamespace + "/" + wsServiceName  + "</a>\n"
                             + "</body></html>";
+                    configContentType(OutputTypes.HTML, exchange);
                     exchange.getResponseSender().send(servicesPage);
                     return;
+                } else if (TauPConfig.VERBOSE){
+                    Alert.debug("servicesList No handle "+path+"  expect: "+"/"+wsNamespace);
                 }
             }
         };
@@ -257,9 +282,25 @@ public class TauP_WebServe extends TauP_Tool {
 
     }
 
+    public String createVersionsPage(String errorMessage) {
+        String versionsPage = "<!DOCTYPE html>\n<html><head><title>Unknown Service Version</title></head><body>";
+        if (errorMessage != null ) {
+            versionsPage+="<h1>Error: "+errorMessage+"</h1>\n";
+        }
+        versionsPage+= "<h3><a href=\"/"+wsNamespace+"\">"+wsNamespace+"</a>/"+wsServiceName+" Service Versions:</h3>\n";
+
+        versionsPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "\">"
+                + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "</a>\n"
+                + "</body></html>";
+        return versionsPage;
+    }
+
     public void configContentType(String format, HttpServerExchange exchange) throws TauPException {
         String contentType;
         switch (format) {
+            case OutputTypes.HTML:
+                contentType = "text/html";
+                break;
             case OutputTypes.TEXT:
             case OutputTypes.GMT:
             case OutputTypes.ND:

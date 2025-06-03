@@ -90,7 +90,9 @@ public class Alert {
      * @param message message to print
      */
     public static void debug(String message) {
-        System.err.println(message);
+        if(TauPConfig.DEBUG) {
+            System.err.println(message);
+        }
     }
 
     public static void setGUI(boolean newGUI) {
