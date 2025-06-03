@@ -104,6 +104,10 @@ public class TauP_WebServe extends TauP_Tool {
                     service = splitPath[1];
                     version = splitPath[2];
                     toolname = splitPath[3];
+                    if (toolname == "query") {
+                        // map query to time for compatibility with FDSN style ws
+                        toolname = "time";
+                    }
                     if (splitPath.length>=5) {
                         cmdLineToolname = splitPath[4];
                     }
@@ -404,7 +408,7 @@ public class TauP_WebServe extends TauP_Tool {
                 Alert.warning(unarg);
             }
             Alert.warning(spec.commandLine().getUsageMessage());
-            throw new TauPException("Unknown parameter: "+qp+" value:"+qpList.getFirst());
+            throw new TauPException("Unknown parameter: '"+qp+"' value: '"+qpList.getFirst()+"'");
         }
         return out;
     }
