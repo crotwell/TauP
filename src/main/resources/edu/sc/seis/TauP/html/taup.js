@@ -24,6 +24,7 @@ export function setup() {
     localmode = true;
   } else {
     localmode = false;
+    base_path = pathSplit[0];
   }
   return createModelNamesRadios().then(() => {
     setupListeners();
