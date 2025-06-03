@@ -126,7 +126,7 @@ public class MoonLowVelocityTest {
     }
 
     @Test
-    public void testMoonKhan_JGR_2014() throws SlownessModelException, VelocityModelException, IOException, TauModelException {
+    public void testMoonKhan_JGR_2014() throws SlownessModelException, IOException, TauModelException {
         String lunarModelFile = "MoonKhan_JGR_2014_mod1.nd";
         VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
         SlownessModel smod = new SphericalSModel(vmod);
@@ -183,7 +183,7 @@ public class MoonLowVelocityTest {
         SimpleContigSeismicPhase P_phase = (SimpleContigSeismicPhase)SeismicPhaseFactory.createPhase("P", tmod);
         double deg = 70;
         List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(P_phase);
-        assertTrue(aList.size()>0);
+        assertTrue(!aList.isEmpty());
 
         ProtoSeismicPhase proto = ProtoSeismicPhase.startNewPhase(tmod, true, PhaseInteraction.TRANSDOWN, true, 0);
         proto.addToBranch(4, true, true, PhaseInteraction.TURN, "P");
