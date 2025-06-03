@@ -33,7 +33,12 @@ public class TauP_Web implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            TauP_WebServe tool = new TauP_WebServe();
+            TauP_WebServe tool;
+            if (base_path == LOCAL_WS) {
+                tool = new TauP_WebServe();
+            } else {
+                tool = new TauP_WebServe(base_path);
+            }
             tool.port = port;
             tool.host = host;
             for (String modName : extraModelNames) {
@@ -71,6 +76,11 @@ public class TauP_Web implements Callable<Integer> {
 
     @CommandLine.Option(names = {"--host"}, defaultValue = "localhost", description = "host to expose port on, defaults to ${DEFAULT-VALUE}")
     String host = "localhost";
+
+    public static final String LOCAL_WS = "localws";
+
+    @CommandLine.Option(names = {"--namespace"}, defaultValue = LOCAL_WS, description = "base path in url, /<path>/taup/3, defaults to ${DEFAULT-VALUE}")
+    String base_path = LOCAL_WS;
 
     @CommandLine.Option(names = {"--models"},
             arity = "1..*",

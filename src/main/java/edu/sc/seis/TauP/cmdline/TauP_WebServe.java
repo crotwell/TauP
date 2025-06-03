@@ -28,9 +28,21 @@ import java.util.regex.Pattern;
 
 public class TauP_WebServe extends TauP_Tool {
 
-
+    /**
+     * Default for local usage, no prefix to urls
+     *
+     */
     public TauP_WebServe() {
         super(null);
+    }
+
+    /**
+     * Default for local usage, no prefix to urls
+     *
+     */
+    public TauP_WebServe(String wsNamespace) {
+        super(null);
+        this.wsNamespace = wsNamespace;
     }
 
     @Override
@@ -95,7 +107,7 @@ public class TauP_WebServe extends TauP_Tool {
                     if (splitPath.length>=5) {
                         cmdLineToolname = splitPath[4];
                     }
-                    Alert.debug("load via split: "+namespace+" "+service+" "+version+" "+toolname);
+                    Alert.debug("load via split: ns: "+namespace+" ser: "+service+" ver: "+version+" tool: "+toolname);
                 } else if (splitPath.length >= 1) {
                     // simple url where tool is whole path
                     namespace = wsNamespace;
@@ -111,15 +123,15 @@ public class TauP_WebServe extends TauP_Tool {
                 }
                 if (wsNamespace.equals(namespace) && wsServiceName.equals(service)
                         && wsServiceVersion.equals(version)) {
-                    if (ToolRun.isKnownToolName(toolname)) {
-                        handleTauPTool(exchange, namespace, service, version, toolname);
-                    } else if (toolname.equals(MODEL_NAMES)) {
+                    if (toolname.equals(MODEL_NAMES)) {
                         handleKnownModels(exchange);
                     } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
                         TauP_Tool tool = createTool(cmdLineToolname);
                         handleCmdLine(tool, exchange);
                     } else if (toolname.equals(PARAM_HELP)) {
                         handleParamHelp(exchange);
+                    } else if (ToolRun.isKnownToolName(toolname)) {
+                        handleTauPTool(exchange, namespace, service, version, toolname);
                     }
                 }
             }
@@ -169,7 +181,7 @@ public class TauP_WebServe extends TauP_Tool {
         resHandler.setMimeMappings(nmm);
         resHandler.addWelcomeFiles("index.html");
         PathHandler pathHandler = new PathHandler(resHandler);
-        String prefix = wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion+"/";
+        String prefix = "/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion;
         HttpHandler toolAndResHandler = new HttpHandler() {
             @Override
             public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -183,8 +195,50 @@ public class TauP_WebServe extends TauP_Tool {
                 resHandler.handleRequest(exchange);
             }
         };
+        HttpHandler serviceVersionList = new HttpHandler() {
+            @Override
+            public void handleRequest(HttpServerExchange exchange) throws Exception {
+                String path = exchange.getRequestPath();
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length()-1);
+                }
+                if (path.equals("/"+wsNamespace+"/"+wsServiceName)) {
+                    String versionsPage = "<!DOCTYPE html>\n<html><head><title>Service Versions</title></head><body>"
+                            + "<h3><a href=\"/"+wsNamespace+"\">"+wsNamespace+"</a>/"+wsServiceName+" Service Versions:</h3>\n";
+
+                    versionsPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "\">"
+                            + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "</a>\n"
+                            + "</body></html>";
+                    exchange.getResponseSender().send(versionsPage);
+                    return;
+                }
+            }
+        };
+        HttpHandler servicesList = new HttpHandler() {
+            @Override
+            public void handleRequest(HttpServerExchange exchange) throws Exception {
+                String path = exchange.getRequestPath();
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length()-1);
+                }
+                if (path.equals("/"+wsNamespace)) {
+                    String servicesPage = "<!DOCTYPE html>\n<html><head><title>Services</title></head><body>"
+                            + "<h3>Known "+wsNamespace+" Services:</h3>\n";
+
+                    servicesPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName  + "\">"
+                            + "/" + wsNamespace + "/" + wsServiceName  + "</a>\n"
+                            + "</body></html>";
+                    exchange.getResponseSender().send(servicesPage);
+                    return;
+                }
+            }
+        };
         // add taup tools at ws path like /uscws/taup/3/time?deg=35&p=P
         pathHandler.addPrefixPath(prefix, toolAndResHandler);
+        // services
+        pathHandler.addPrefixPath("/"+wsNamespace, servicesList);
+        // versions
+        pathHandler.addPrefixPath("/"+wsNamespace+"/"+wsServiceName, serviceVersionList);
         // also add taup tools at root, like /time?deg=35&p=P
         pathHandler.addPrefixPath("/", toolAndResHandler);
         Undertow server = Undertow.builder()
