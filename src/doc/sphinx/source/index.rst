@@ -19,7 +19,6 @@ Release |release|, created |today|.
 
     overview
     install
-    distribution
     tools
     calculations
     phaseNaming
