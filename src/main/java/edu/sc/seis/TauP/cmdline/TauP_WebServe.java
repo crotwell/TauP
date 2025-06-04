@@ -104,7 +104,7 @@ public class TauP_WebServe extends TauP_Tool {
                     service = splitPath[1];
                     version = splitPath[2];
                     toolname = splitPath[3];
-                    if (toolname == "query") {
+                    if (Objects.equals(toolname, "query")) {
                         // map query to time for compatibility with FDSN style ws
                         toolname = "time";
                     }

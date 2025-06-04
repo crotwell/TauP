@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
@@ -31,7 +32,7 @@ public class TauP_Web implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             TauP_WebServe tool;
-            if (base_path == LOCAL_WS) {
+            if (Objects.equals(base_path, LOCAL_WS)) {
                 tool = new TauP_WebServe();
             } else {
                 tool = new TauP_WebServe(base_path);
