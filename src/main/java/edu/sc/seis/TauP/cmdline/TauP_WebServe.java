@@ -54,6 +54,8 @@ public class TauP_WebServe extends TauP_Tool {
     public void start() {
         System.out.println();
         System.out.println("   http://localhost:"+port);
+        System.out.println("or");
+        System.out.println("   http://localhost:"+port+"/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion);
         System.out.println();
 
         HttpHandler taupToolHandler = new HttpHandler() {
@@ -143,6 +145,10 @@ public class TauP_WebServe extends TauP_Tool {
                         new ResponseCodeHandler(404).handleRequest(exchange);
                         exchange.getResponseSender().send(createVersionsPage("Tool Version "+version+" unknown"));
                     }
+                } else {
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("Namespace "+namespace+" or servicename "+service+" unknown"));
+
                 }
             }
 
@@ -589,7 +595,7 @@ public class TauP_WebServe extends TauP_Tool {
     public static final String CMD_LINE = "cmdline";
     public static final String MODEL_NAMES = "modelnames";
 
-    public static final String DEFAULT_SERVICE_NAMESPACE = "uscws";
+    public static final String DEFAULT_SERVICE_NAMESPACE = "localws";
     public static final String DEFAULT_SERVICE = "taup";
     public static final String DEFAULT_SERVICE_VERSION = "3";
 
