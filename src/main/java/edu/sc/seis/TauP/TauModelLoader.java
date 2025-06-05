@@ -355,13 +355,9 @@ public class TauModelLoader {
         if (sr != null) {
             TauModel out = sr.get();
             if (out == null) {
-                System.err.println("cache empty softref for "+modelName);
                 tModCache.remove(modelName);
             }
             return out;
-        }
-        for (String m : tModCache.keySet()) {
-            System.err.println("cache: "+m);
         }
         return null;
     }
