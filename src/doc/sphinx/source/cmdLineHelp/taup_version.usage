@@ -1,5 +1,5 @@
 Usage: taup version [--debug] [--help] [--verbose] [-o=<outFile>]
-                    [--prop=<toolPropsFilename>] [--json | --text]
+                    [--prop=<toolPropsFilename>] [--html | --json | --text]
 Print the version.
 
 Options:
@@ -11,5 +11,6 @@ Options:
                            load defaults from properties file
       --verbose            enable verbose output
 Output Type:
+      --html               outputs as HTML
       --json               outputs as JSON
       --text               outputs as Text

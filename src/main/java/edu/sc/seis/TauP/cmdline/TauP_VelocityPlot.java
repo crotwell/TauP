@@ -107,7 +107,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public void printResult(PrintWriter writer, XYPlotOutput xyOut) {
+    public void printResult(PrintWriter writer, XYPlotOutput xyOut) throws TauPException {
         if (getOutputTypeArgs().isJSON()) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputTypeArgs().isText()) {
@@ -119,6 +119,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else if (getOutputTypeArgs().isSVG()) {
             // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
+                    SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
+        } else if (getOutputTypeArgs().isHTML()) {
+            // coloring is auto as we have populated list with blue/red where needed
+            xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
                     SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
         } else {

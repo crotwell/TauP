@@ -114,6 +114,23 @@ public class TauP_DistAz extends TauP_Tool {
                         +"      "+(dr.hasDescription() ? dr.getDescription() : "")
                 );
             }
+        } else if (outputTypeArgs.isHTML()) {
+            String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
+            List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Description   ("+geoditic+")  ");
+            List<List<String>> values = new ArrayList<>();
+            for (DistanceAngleRay dr : distList) {
+                List<String> row = List.of(Outputs.formatDistance(dr.getDegrees()),
+                        Outputs.formatKilometer (dr.getKilometers(radiusOfEarth)),
+                        Outputs.formatDistance(dr.getNormalizedAzimuth()),
+                        Outputs.formatDistance(dr.getNormalizedBackAzimuth()),
+                        (dr.hasDescription() ? dr.getDescription() : "")
+                );
+                values.add(row);
+            }
+            HTMLUtil.createHtmlStart(out, "TauP Distaz", HTMLUtil.createTableCSS(), false);
+            out.println(HTMLUtil.createBasicTable(head, values));
+            HTMLUtil.addSortTableJS(out);
+            out.println(HTMLUtil.createHtmlEnding());
         } else if (outputTypeArgs.isJSON()){
             Result result = new Result();
             result.calctype = geodeticArgs.getCalcType();

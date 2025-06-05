@@ -1,7 +1,7 @@
 Usage: taup discon [--debug] [--help] [--verbose] [-o=<outFile>]
                    [--prop=<toolPropsFilename>] [--mod=model [--mod=model]... |
                    --nd=model [--nd=model]... | --tvel=model [--tvel=model]...]
-                   [--json | --text]
+                   [--html | --json | --text]
 List velocity discontinuities for a model.
 
 Options:
@@ -18,5 +18,6 @@ Velocity Model
       --nd=model             "named discontinuities" velocity file
       --tvel=model           ".tvel" velocity file, ala ttimes
 Output Type:
+      --html                 outputs as HTML
       --json                 outputs as JSON
       --text                 outputs as Text

@@ -186,49 +186,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp));
 			out.println(gsonBuilder.create().toJson(result));
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
-			float pixelWidth = outputTypeArgs.getPixelWidth();
-			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
-			if (coloring.getColoring() == ColorType.auto){
-				SvgUtil.startAutocolorG(out);
-			}
-			for (Arrival arrival : arrivalList) {
-				out.println("<g>");
-				out.println("    <desc>" + arrival.toString() + "</desc>");
-				for (ArrivalPathSegment seg : arrival.getPathSegments()) {
-					ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
-					if (distDepthRange.distAxisType == null && distDepthRange.depthAxisType == null) {
-						interpSeg.writeSVGCartesian(out);
-					} else {
-						throw new CommandLine.ParameterException(spec.commandLine(), "other dist, depth axis types not impl for --svg output");
-					}
-				}
-				out.println("</g>");
-			}
-			if (coloring.getColoring() == ColorType.auto) {
-				SvgUtil.endAutocolorG(out);
-			}
-			if (isLabel) {
-				labelPathsSVG(out, arrivalList);
-			}
-			SvgEarth.printSvgEndZoom(out);
-
-			if (isLegend) {
-				float xtrans = (int)(pixelWidth*.01);
-				float ytrans = (int) (pixelWidth*.05);
-				switch (coloring.getColoring()) {
-					case auto:
-					case phase:
-						SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
-						break;
-					case wavetype:
-						SvgUtil.createWavetypeLegend(out, false, xtrans, ytrans);
-						break;
-					case none:
-					default:
-						// no op
-				}
-			}
-			SvgEarth.printSvgEnd(out);
+			printResultSVG(out, arrivalList);
+		} else if (getOutputFormat().equals(OutputTypes.HTML)) {
+			printResultHtml(out, arrivalList);
 		} else {
 			// text/gmt
 			if (getGraphicOutputTypeArgs().isGMT()) {
@@ -265,6 +225,57 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		out.flush();
 	}
 
+	public void printResultHtml(PrintWriter writer, List<Arrival> arrivalList) throws TauPException {
+		HTMLUtil.createHtmlStart(writer, "TauP Path", "", false);
+		printResultSVG(writer, arrivalList);
+		writer.println(HTMLUtil.createHtmlEnding());
+	}
+
+	public void printResultSVG(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+		float pixelWidth = outputTypeArgs.getPixelWidth();
+		printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
+		if (coloring.getColoring() == ColorType.auto){
+			SvgUtil.startAutocolorG(out);
+		}
+		for (Arrival arrival : arrivalList) {
+			out.println("<g>");
+			out.println("    <desc>" + arrival.toString() + "</desc>");
+			for (ArrivalPathSegment seg : arrival.getPathSegments()) {
+				ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
+				if (distDepthRange.distAxisType == null && distDepthRange.depthAxisType == null) {
+					interpSeg.writeSVGCartesian(out);
+				} else {
+					throw new CommandLine.ParameterException(spec.commandLine(), "other dist, depth axis types not impl for --svg output");
+				}
+			}
+			out.println("</g>");
+		}
+		if (coloring.getColoring() == ColorType.auto) {
+			SvgUtil.endAutocolorG(out);
+		}
+		if (isLabel) {
+			labelPathsSVG(out, arrivalList);
+		}
+		SvgEarth.printSvgEndZoom(out);
+
+		if (isLegend) {
+			float xtrans = (int)(pixelWidth*.01);
+			float ytrans = (int) (pixelWidth*.05);
+			switch (coloring.getColoring()) {
+				case auto:
+				case phase:
+					SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
+					break;
+				case wavetype:
+					SvgUtil.createWavetypeLegend(out, false, xtrans, ytrans);
+					break;
+				case none:
+				default:
+					// no op
+			}
+		}
+		SvgEarth.printSvgEnd(out);
+	}
 
 	public void printLabelsGMT(PrintWriter out, List<Arrival> arrivalList) {
 		// label paths with phase name

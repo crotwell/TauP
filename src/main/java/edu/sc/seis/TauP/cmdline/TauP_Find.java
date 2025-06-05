@@ -103,17 +103,20 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 }
             }
         }
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if((!distanceValues.isEmpty())) {
-            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
             printResult(writer, arrivalList);
             writer.flush();
         } else {
             if (outputTypeArgs.isText()) {
-                printResultText(allwalk);
+                printResultText(writer, allwalk);
             } else if (outputTypeArgs.isJSON()) {
-                printResultJson(allwalk);
+                printResultJson(writer, allwalk);
+            } else if (outputTypeArgs.isHTML()) {
+                printResultHtml(writer, allwalk);
             }
         }
+        writer.close();
     }
 
     public List<Arrival> findForDist(List<ProtoSeismicPhase> walk,
@@ -181,12 +184,20 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             boolean onlyPrintTime = false;
             boolean onlyPrintRayP = false;
             List<String> relativePhaseName = new ArrayList<>();
-            TauP_Time.printArrivalsAsText(out, arrivalList,
-                    modelArgs.getModelName(),
-                    getScatterer(),
-                    onlyPrintTime, onlyPrintRayP,
-                    isWithAmplitude(), sourceArgs,
-                    relativePhaseName);
+            if (getOutputFormat().equals(OutputTypes.HTML)) {
+                TauP_Time.printArrivalsAsHtml(out, arrivalList,
+                        modelArgs.getModelName(),
+                        getScatterer(),
+                        isWithAmplitude(), sourceArgs,
+                        relativePhaseName, "Find");
+            } else {
+                TauP_Time.printArrivalsAsText(out, arrivalList,
+                        modelArgs.getModelName(),
+                        getScatterer(),
+                        onlyPrintTime, onlyPrintRayP,
+                        isWithAmplitude(), sourceArgs,
+                        relativePhaseName);
+            }
         }
         out.flush();
     }
@@ -247,8 +258,32 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         return out;
     }
 
-    public void printResultText(List<ProtoSeismicPhase> walk) throws IOException {
-        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+    public void printResultHtml(PrintWriter writer, List<ProtoSeismicPhase> walk) throws TauPException {
+        List<String> head = new ArrayList<>();
+        head.add("Phase");
+        if (showrayparam) {
+            head.addAll(List.of("Min", "Max (s/deg)"));
+        }
+        List<List<String>> values = new ArrayList<>();
+        for (ProtoSeismicPhase segList : walk) {
+            SeismicPhaseSegment endSeg = segList.get(segList.size() - 1);
+            List<String> row = new ArrayList<>();
+            row.add(segList.phaseNameForSegments());
+            if (showrayparam) {
+                row.add(Outputs.formatRayParam(endSeg.getMinRayParam() / RtoD));
+                row.add(Outputs.formatRayParam(endSeg.getMaxRayParam() / RtoD));
+            }
+            values.add(row);
+        }
+
+        HTMLUtil.createHtmlStart(writer, "TauP Find", HTMLUtil.createTableCSS(), true);
+        writer.println(HTMLUtil.createBasicTable(head, values));
+        HTMLUtil.addSortTableJS(writer);
+        writer.println(HTMLUtil.createHtmlEnding());
+        writer.flush();
+    }
+
+    public void printResultText(PrintWriter writer, List<ProtoSeismicPhase> walk) throws IOException {
         int maxNameLength = 1;
         for (ProtoSeismicPhase segList : walk) {
             maxNameLength = Math.max(maxNameLength,
@@ -313,11 +348,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         );
         return result;
     }
-    public void printResultJson(List<ProtoSeismicPhase> walk) throws IOException, TauPException {
+    public void printResultJson(PrintWriter writer, List<ProtoSeismicPhase> walk) throws IOException, TauPException {
         FindResult result = createResult(walk, modelArgs.getTauModel());
         Gson gson = GsonUtil.createGsonBuilder().create();
 
-        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         writer.println(gson.toJson(result));
         writer.flush();
     }

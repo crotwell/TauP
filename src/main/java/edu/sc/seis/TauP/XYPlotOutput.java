@@ -200,12 +200,15 @@ public class XYPlotOutput {
     }
 
 
-
-    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs, String extraCSS, boolean isLegend) {
-        writer.println("<!DOCTYPE html>");
-        writer.println("<html><body>");
-        printAsSvg(writer, toolname, cmdLineArgs, 1000, extraCSS, isLegend);
-        writer.println("</body></html>");
+    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs,
+                            CharSequence extraCSS, boolean isLegend) throws TauPException {
+        printAsHtml(writer, toolname, cmdLineArgs, 1000, extraCSS, isLegend);
+    }
+    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs,
+                            float pixelWidth, CharSequence extraCSS, boolean isLegend) throws TauPException {
+        HTMLUtil.createHtmlStart(writer, "TauP "+toolname, "", false);
+        printAsSvg(writer, toolname, cmdLineArgs, pixelWidth, extraCSS, isLegend);
+        writer.println(HTMLUtil.createHtmlEnding());
     }
 
     public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs,

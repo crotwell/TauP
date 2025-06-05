@@ -1,8 +1,8 @@
 Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
-                  [-o=<outFile>] [--prop=<toolPropsFilename>] [--csv | --json |
-                  --locsat | --text] [[--mod=<modelName>] [--stadepth=depth[,
-                  depth...]]... [--scat=depth deg]...] [[-p=phase[,
-                  phase...]]... [--phasefile=<phaseFiles>]...]
+                  [-o=<outFile>] [--prop=<toolPropsFilename>] [--csv | --html |
+                  --json | --locsat | --text] [[--mod=<modelName>]
+                  [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
 Create a table of travel times for a range of depths and distances.
 
 Options:
@@ -18,6 +18,7 @@ Options:
       --verbose            enable verbose output
 Output Type:
       --csv                outputs as CSV
+      --html               outputs as HTML
       --json               outputs as JSON
       --locsat             outputs as Locsat
       --text, --generic    outputs as Text

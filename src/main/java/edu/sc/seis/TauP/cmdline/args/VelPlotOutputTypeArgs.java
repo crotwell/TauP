@@ -30,6 +30,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
 
         if (isGMT()) return GMT;
         if (isSVG()) return SVG;
+        if (isHTML()) return HTML;
         if (isJSON()) return JSON;
         if (isCSV()) return CSV;
         if (isND()) return ND;
@@ -46,6 +47,8 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         }
         if (isSVG()) {
             ext = SVG;
+        } else if (isHTML()) {
+            ext = HTML;
         } else if (isJSON()) {
             ext = JSON;
         } else if (isGMT()) {
@@ -133,9 +136,8 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
     public boolean isText() {
         return outputType._isText;
     }
-    public boolean isSVG() {
-        return outputType._isSVG;
-    }
+    public boolean isSVG() { return outputType._isSVG; }
+    public boolean isHTML() { return outputType._isHTML; }
     public boolean isGMT() {
         return outputType._isGMT;
     }
@@ -164,6 +166,8 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         boolean _isGMT = false;
         @CommandLine.Option(names = {"--svg"}, required = true, description = "outputs as SVG")
         boolean _isSVG = false;
+        @CommandLine.Option(names = {"--html"}, required = true, description = "outputs as SVG inside HTML")
+        boolean _isHTML = false;
 
         @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
         boolean _isCsv = false;

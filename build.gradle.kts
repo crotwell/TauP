@@ -239,6 +239,7 @@ tasks.named("sourcesJar") {
 tasks.named("makeVersionClass") {
   inputs.files("src/main/")
   inputs.files("build.gradle.kts")
+  dependsOn("copyJavascriptResources")
 }
 
 tasks.register<Checksum>("checksumDist") {
@@ -471,6 +472,24 @@ tasks.jar {
     }
     mustRunAfter("sphinx")
 }
+
+tasks.register<Exec>("createJavascriptResources") {
+  workingDir("src/web")
+  commandLine("npm", "run", "esstandalone")
+  outputs.files(//fileTree("src/web/dist"),
+    file("src/web/node_modules/sortable-tablesort/dist/sortable.js"),
+    file("src/web/node_modules/sortable-tablesort/dist/sortable.css"))
+  inputs.file("src/web/package.json")
+}
+tasks.register<Sync>("copyJavascriptResources") {
+  from(tasks.named("createJavascriptResources"))
+  into("src/main/resources/edu/sc/seis/TauP/html/js")
+  exclude("_sources")
+  exclude(".buildinfo")
+}
+tasks.get("processResources").dependsOn("copyJavascriptResources")
+
+
 tasks.get("installDist").mustRunAfter("sphinx")
 tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
 tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")

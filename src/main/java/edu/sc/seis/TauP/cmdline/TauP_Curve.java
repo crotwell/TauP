@@ -461,7 +461,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             xyOut.printAsGmtText(writer);
         } else if (outputTypeArgs.isGMT()) {
             xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, isLegend);
-        } else if (outputTypeArgs.isSVG()) {
+        } else if (outputTypeArgs.isSVG() || outputTypeArgs.isHTML()) {
             String cssExtra = "";
             switch (coloring.getColoring()) {
                 case auto:
@@ -475,9 +475,15 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 default:
                     cssExtra += SvgUtil.createNoneColorCSS(coloring);
             }
-            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                    outputTypeArgs.getPixelWidth(),
-                    cssExtra, isLegend);
+            if (outputTypeArgs.isSVG()) {
+                xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                        outputTypeArgs.getPixelWidth(),
+                        cssExtra, isLegend);
+            } else {
+                xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                        outputTypeArgs.getPixelWidth(),
+                        cssExtra, isLegend);
+            }
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }

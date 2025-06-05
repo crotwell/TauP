@@ -201,6 +201,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
             TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
             GsonBuilder gsonBld = createGsonBuilder();
             out.println(gsonBld.create().toJson(result));
+        } else if (getOutputFormat().equals(OutputTypes.HTML)) {
+            printResultHtml(out, arrivalList);
         } else {
             printResultText(out, arrivalList);
         }
@@ -214,6 +216,65 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs,
                 relativePhaseName);
+    }
+
+    public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        printArrivalsAsHtml(out, arrivalList,
+                modelArgs.getModelName(),
+                getScatterer(),
+                isWithAmplitude(), sourceArgs,
+                relativePhaseName, "Time");
+    }
+
+    public static List<List<String>> createHeaderLines(List<Arrival> arrivalList,
+                                                       String modelName,
+                                                       Scatterer scatterer,
+                                                       boolean withAmplitude, SeismicSourceArgs sourceArgs,
+                                                       List<String> relativePhaseName,
+                                                       String phaseFormat,
+                                                       String phasePuristFormat) {
+        List<String> modelLine = new ArrayList<>(List.of("Model: ", modelName));
+
+        if (scatterer != null && scatterer.depth != 0.0) {
+            modelLine.addAll(List.of("  Scatter Depth: ", scatterer.depth+" km", " Dist: ", scatterer.getDistanceDegree()+" deg"));
+        }
+        List<String> lineOne = new ArrayList<>(List.of("Distance   ", "Depth   ",
+                String.format(phaseFormat, "Phase")+ "   ",
+                "Travel    ", "Ray Param  ", "Takeoff  ", "Incident ", "Station   ", "Purist   ",
+                "", String.format(phasePuristFormat, "Purist")));
+        List<String> lineTwo = new ArrayList<>(List.of("  (deg)    ", " (km)   ",
+                String.format(phaseFormat, "Name ")+ "   ",
+                "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance  ",
+                "", String.format(phasePuristFormat, "Name ")));
+        if (withAmplitude) {
+            lineOne.addAll(List.of("    Amp  ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  "));
+            lineTwo.addAll(List.of("  Factor PSv", "   Sh"));
+        }
+        if (!relativePhaseName.isEmpty()) {
+            String allRelPhase = "";
+            for (String s : relativePhaseName) {
+                allRelPhase += s+",";
+            }
+            allRelPhase = allRelPhase.substring(0, allRelPhase.length()-1);
+            lineOne.add(" Relative");
+            String space = " ";
+            lineTwo.add(space.repeat((11-allRelPhase.length())/2)+"  "+String.format(phaseFormat, allRelPhase));
+            lineOne.add(" to");
+            lineTwo.add("");
+        }
+        for (Arrival arrival : arrivalList) {
+            if (arrival.getRayCalculateable().hasDescription()) {
+                lineOne.add(" Description");
+                lineTwo.add("            ");
+                break;
+            }
+        }
+        for (int i = 0; i < lineOne.size(); i++) {
+            if (lineOne.get(i).length() != lineTwo.get(i).length()) {
+                System.err.println("now same length: "+i+" '"+lineOne.get(i)+"' '"+lineTwo.get(i)+"'"+" "+lineOne.get(i).length()+" != "+lineTwo.get(i).length());
+            }
+        }
+        return List.of(modelLine, lineOne, lineTwo);
     }
 
     public static void printArrivalsAsText(PrintWriter out,
@@ -241,91 +302,27 @@ public class TauP_Time extends TauP_AbstractRayTool {
         //Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         String phasePuristFormat = "%-" + maxPuristNameLength + "s";
         if(!(onlyPrintRayP || onlyPrintTime)) {
-            String modelLine =  "\nModel: " + modelName;
-
-            if (scatterer != null && scatterer.depth != 0.0) {
-                modelLine += "  Scatter Depth: "+ scatterer.depth+" km Dist: "+ scatterer.getDistanceDegree();
-            }
+            List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
+                    withAmplitude, sourceArgs, relativePhaseName,
+                    phaseFormat, phasePuristFormat);
             if (withAmplitude) {
                 out.println(AmplitudeArgs.AMPLITUDE_WARNING);
             }
-            out.println(modelLine);
-            String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident Station   Purist   "
-                    + String.format(phasePuristFormat, "Purist");
-            String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  "
-                    + String.format(phasePuristFormat, "Name");
-            if (withAmplitude) {
-                lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
-                lineTwo += "  Factor PSv   Sh";
-            }
-            if (!relativePhaseName.isEmpty()) {
-                String allRelPhase = "";
-                for (String s : relativePhaseName) {
-                    allRelPhase += s+",";
-                }
-                allRelPhase = allRelPhase.substring(0, allRelPhase.length()-1);
-                lineOne += " Relative to";
-                for (int s=0; s<(11-allRelPhase.length())/2;s++) {
-                    lineTwo += " ";
-                }
-                lineTwo += "  "+String.format(phaseFormat, allRelPhase);
-            }
-            for (Arrival arrival : arrivalList) {
-                if (arrival.getRayCalculateable().hasDescription()) {
-                    lineOne += " Description";
-                    lineTwo += "            ";
-                    break;
-                }
-            }
+            String modelLine = String.join("", headLines.get(0));
+            out.println("\n"+modelLine);
+            String lineOne = String.join("", headLines.get(1));
             out.println(lineOne);
+            String lineTwo = String.join("", headLines.get(2));
             out.println(lineTwo);
             StringBuilder dashes = new StringBuilder();
             dashes.append("-".repeat(Math.max(lineOne.length(), lineTwo.length())));
             out.write(dashes.append("\n").toString());
             for (Arrival arrival : arrivalList) {
                 currArrival = arrival;
-                out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
-                out.print(Outputs.formatDepth(currArrival.getPhase().getSourceDepth()) + "   ");
-                out.print(String.format(phaseFormat, currArrival.getName()));
-                out.print("  "
-                        + Outputs.formatTime(currArrival.getTime())
-                        + "  "
-                        + Outputs.formatRayParam(currArrival.getRayParam() / SphericalCoords.RtoD) + "  ");
-                out.print(Outputs.formatDistance(currArrival.getTakeoffAngleDegree()) + " ");
-                out.print(Outputs.formatDistance(currArrival.getIncidentAngleDegree()) + " ");
-                out.print(Outputs.formatDepth(currArrival.getReceiverDepth()) + " ");
-                out.print(Outputs.formatDistance(currArrival.getDistDeg()));
-                if (currArrival.getName().equals(currArrival.getPuristName())) {
-                    out.print("   = ");
-                } else {
-                    out.print("   * ");
-                }
-                out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
-                if (withAmplitude) {
-                    try {
-                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
-                        double ampFactorSH = currArrival.getAmplitudeFactorSH();
-                        out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
-                    } catch (SlownessModelException | TauModelException e) {
-                        throw new RuntimeException("Should not happen", e);
-                    }
-                }
-
-                if (!relativePhaseName.isEmpty()) {
-                    if (currArrival.isRelativeToArrival()) {
-                        out.print(" " + Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
-                        out.print(" +" + String.format(phaseFormat, currArrival.getRelativeToArrival().getName()));
-                    } else {
-                        out.print(String.format(phaseFormat, " no arrival"));
-                    }
-                }
-                if (arrival.getRayCalculateable().hasDescription()) {
-                    out.print(" "+arrival.getRayCalculateable().getDescription());
-                }
-
-                out.println();
+                List<String> lineItems = arrival.asStringList(false,
+                        phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty());
+                // fix indentation
+                out.println(String.join("", lineItems));
             }
         } else if(onlyPrintTime) {
             for (Arrival arrival : arrivalList) {
@@ -343,6 +340,38 @@ public class TauP_Time extends TauP_AbstractRayTool {
             out.println();
         }
         out.println();
+        out.flush();
+    }
+
+    public static void printArrivalsAsHtml(PrintWriter out,
+                                           List<Arrival> arrivalList,
+                                           String modelName,
+                                           Scatterer scatterer,
+                                           boolean withAmplitude, SeismicSourceArgs sourceArgs,
+                                           List<String> relativePhaseName, String toolname) throws TauPException {
+        Arrival currArrival;
+        //Format phaseFormat = new Format("%-" + maxNameLength + "s");
+        String phaseFormat = "%s";
+        //Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
+        String phasePuristFormat = phaseFormat;
+        List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
+                withAmplitude, sourceArgs, relativePhaseName,
+                phaseFormat, phasePuristFormat);
+
+        HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
+        if (withAmplitude) {
+            out.println("<p>"+AmplitudeArgs.AMPLITUDE_WARNING+"</p>");
+        }
+        List<List<String>> values = new ArrayList<>();
+        for (Arrival arrival : arrivalList) {
+            List<String> lineItems = arrival.asStringList(false,
+                    phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty());
+            values.add(lineItems);
+        }
+
+        out.println(HTMLUtil.createBasicTableMoHeaders(headLines, values));
+        HTMLUtil.addSortTableJS(out);
+        out.println(HTMLUtil.createHtmlEnding());
         out.flush();
     }
 

@@ -1005,28 +1005,83 @@ public class Arrival {
         return latestArrival;
     }
 
-    public static String CSVHeader() {
-        return "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
+    public static List<String> headerNames(boolean tableStyle) {
+        List<String> common = List.of("Distance (deg)","Depth (km)","Phase","Time (s)","RayParam (deg/s)",
+                "Takeoff Angle","Incident Angle","Recv Depth","Purist Distance","Purist Name");
+        if (tableStyle) {
+            List<String> line = new ArrayList<>(List.of("Model"));
+            line.addAll(common);
+            return line;
+        }
+        return common;
     }
+    public static String CSVHeader() {
+        return String.join(",", headerNames(true));
+    }
+
+    /**
+     * Creates a List of Strings, each corresponding to the headers via headerNames() for this arrival.
+     * @return arrival for printing
+     */
+    public List<String> asStringList(boolean tableStyle, String phaseFormat, String phasePuristFormat,
+                                     boolean withAmp, boolean withRelPhase) {
+        List<String> line = new ArrayList<>();
+        if (tableStyle) {
+            String modelName = getTauModel().getModelName().replaceAll("\"", " ");
+            if (modelName.contains(",")) {
+                modelName = "\"" + modelName + "\"";
+            }
+            line.add(modelName);
+        }
+        line.addAll(List.of(
+                Outputs.formatDistance(tableStyle ? getModuloDistDeg() : getSearchDistDeg()),
+                Outputs.formatDepth(getSourceDepth()) ,
+                "   "+String.format(phaseFormat, getName()),
+                "  "+Outputs.formatTime(getTime()),
+                "  "+Outputs.formatRayParam(getRayParamDeg()),
+                "  "+Outputs.formatDistance(getTakeoffAngleDegree()),
+                " "+Outputs.formatDistance(getIncidentAngleDegree()),
+                " "+Outputs.formatDepth(getReceiverDepth()),
+                " "+Outputs.formatDistance(getDistDeg())));
+        if (! tableStyle) {
+            String puristSame = (getName().equals(getPuristName())?"   = " : "   * ");
+            line.add(puristSame);
+        }
+        line.add(String.format(phasePuristFormat, getPuristName()));
+        if (withAmp) {
+            try {
+                double ampFactorPSV = getAmplitudeFactorPSV();
+                double ampFactorSH = getAmplitudeFactorSH();
+                line.addAll(List.of(" " + Outputs.formatAmpFactor(ampFactorPSV),
+                        " " + Outputs.formatAmpFactor(ampFactorSH)));
+            } catch (SlownessModelException | TauModelException e) {
+                throw new RuntimeException("Should not happen", e);
+            }
+        }
+        if (withRelPhase) {
+            if (isRelativeToArrival()) {
+                line.add(" " + Outputs.formatTime(getTime() - getRelativeToArrival().getTime()));
+                line.add(" +" + String.format(phaseFormat, getRelativeToArrival().getName()));
+            } else {
+                line.add(String.format(phaseFormat, " no arrival"));
+                line.add("");
+            }
+        }
+        if (getRayCalculateable().hasDescription()) {
+            line.add(" "+getRayCalculateable().getDescription());
+        }
+        return line;
+    }
+
 
     public String asCSVRow() {
         String sep = ",";
-        String modelName = getTauModel().getModelName().replaceAll("\"", " ");
-        if (modelName.contains(",")) {
-            modelName = "\""+modelName+"\"";
+        StringBuilder sb = new StringBuilder();
+        for (String s : asStringList(true, "%s", "%s", false, false)) {
+            sb.append(s.trim()).append(sep);
         }
-        String line = modelName + sep
-                + Outputs.formatDistance(getModuloDistDeg()).trim() + sep
-                + Outputs.formatDepth(getSourceDepth()).trim() + sep
-                + getName().trim() + sep
-                + Outputs.formatTime(getTime()).trim() + sep
-                + Outputs.formatRayParam(getRayParamDeg()).trim() + sep
-                + Outputs.formatDistance(getTakeoffAngleDegree()).trim() + sep
-                + Outputs.formatDistance(getIncidentAngleDegree()).trim() + sep
-                + Outputs.formatDistance(getDistDeg()).trim() + sep
-                + getPuristName().trim() + sep
-                + Outputs.formatDepth(receiverDepth);
-        return line;
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
     public RayCalculateable getRayCalculateable() {

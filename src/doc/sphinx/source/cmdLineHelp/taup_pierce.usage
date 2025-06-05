@@ -24,7 +24,7 @@ Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
-                   [--json | --text]
+                   [--html | --json | --text]
 Calculate pierce points for phases at discontinuities in the model.
 
 Options:
@@ -158,5 +158,6 @@ Lat,Lon influenced by:
                              station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:
+      --html                 outputs as HTML
       --json                 outputs as JSON
       --text                 outputs as Text

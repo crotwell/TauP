@@ -4,9 +4,10 @@ Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--qml=<quakemlFilename>] [--radius=<radiusOfEarth>]
                    [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
                    [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
-                   lon]... [--json | --text] [[--deg=d[,d...]]... [--km=km[,
-                   km...]]... [--degreerange=[step][min max][min max step]]...
-                   [--kilometerrange=[step][min max][min max step]]...]...
+                   lon]... [--html | --json | --text] [[--deg=d[,d...]]...
+                   [--km=km[,km...]]... [--degreerange=[step][min max][min max
+                   step]]... [--kilometerrange=[step][min max][min max
+                   step]]...]...
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -49,6 +50,7 @@ Options:
                               longitudes from
       --verbose             enable verbose output
 Output Type:
+      --html                outputs as HTML
       --json                outputs as JSON
       --text                outputs as Text
 Optional distance is given by:

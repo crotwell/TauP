@@ -174,6 +174,77 @@ public class TauP_Pierce extends TauP_Time {
         }
     }
 
+
+    @Override
+    public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        printPierceAsHtml(out, arrivalList);
+    }
+
+    public void printPierceAsHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        HTMLUtil.createHtmlStart(out, "TauP Pierce", HTMLUtil.createTableCSS(), true);
+
+        List<String> headers = new ArrayList<>();
+        headers.addAll(List.of("Distance (deg)", "Depth (km)", "Time (s)"));
+
+        boolean latLon = false;
+        for (Arrival arrival : arrivalList) {
+            if (arrival.isLatLonable()) {
+                latLon = true;
+                break;
+            }
+        }
+        if (latLon) {
+            headers.addAll(List.of("Lat", "Lon"));
+        }
+
+        double prevDepth, nextDepth;
+        for (Arrival arrival : arrivalList) {
+
+            TimeDist[] pierce = arrival.getPierce();
+            prevDepth = pierce[0].getDepth();
+            List<List<String>> values = new ArrayList<>();
+            for (int j = 0; j < pierce.length; j++) {
+                List<String> row = new ArrayList<>();
+                double calcDist = pierce[j].getDistDeg();
+                if (j < pierce.length - 1) {
+                    nextDepth = pierce[j + 1].getDepth();
+                } else {
+                    nextDepth = pierce[j].getDepth();
+                }
+                if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
+                        || (onlyRevPoints
+                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getTauModel().getRadiusOfEarth()))
+                )
+                        || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
+                        || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
+                        * (pierce[j].getDepth() - nextDepth) < 0))
+                        || (onlyTurnPoints && j != 0
+                        && ((prevDepth - pierce[j].getDepth()) <= 0
+                        && (pierce[j].getDepth() - nextDepth) >= 0))
+                        || (onlyUnderPoints && j != 0 && j != pierce.length-1
+                        && ((prevDepth - pierce[j].getDepth()) >= 0
+                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
+                    row.add(Outputs.formatDistance(calcDist));
+                    row.add(Outputs.formatDepth(pierce[j].getDepth()));
+                    row.add(Outputs.formatTime(pierce[j].getTime()));
+                    if (arrival.isLatLonable()) {
+                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+                        row.add( Outputs.formatLatLon(latlon[0]));
+                        row.add(Outputs.formatLatLon(latlon[1]));
+                    }
+                }
+                prevDepth = pierce[j].getDepth();
+                values.add(row);
+            }
+
+            out.println("<details open=\"true\">");
+            out.println("  <summary>"+arrival.getCommentLine()+"</summary>");
+            out.println(HTMLUtil.createBasicTable(headers, values));
+            out.println("</details>");
+        }
+        out.println(HTMLUtil.createHtmlEnding());
+    }
     /**
      * checks to see if the given depth has been "added" as a pierce point.
      */

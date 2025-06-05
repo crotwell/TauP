@@ -236,6 +236,7 @@ public class CmdLineOutputTest {
         out.close();
         usageToDocSrc();
         regenSavedJsonOutput();
+        regenSavedHtmlOutput();
     }
 
     public List<String> allCmdsAsJson() {
@@ -284,6 +285,22 @@ public class CmdLineOutputTest {
                 System.err.println(jsonCmd);
                 String filename = fileizeCmd(jsonCmd);
                 saveTestOutputToFile( jsonCmd, testJsonOutputDir, filename);
+            }
+        }
+    }
+    /**
+     * regenerating html of the cmd line output test resources.
+     * new text files will be in cmdLineHtml in build
+     *
+     * @throws Exception
+     */
+    public void regenSavedHtmlOutput() throws Exception {
+        List<String> allList = Arrays.asList(HtmlOutputTest.htmlTestCmds);
+        for (String jsonCmd : allList) {
+            if (jsonCmd.contains("--json")) {
+                String htmlCmd = jsonCmd.replace("--json", "--html");
+                String filename = fileizeCmd(htmlCmd);
+                saveTestOutputToFile( htmlCmd, testHtmlOutputDir, filename);
             }
         }
     }
@@ -728,6 +745,7 @@ public class CmdLineOutputTest {
     File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
     File testJsonOutputDir = new File("build/cmdLineTestJson");
+    File testHtmlOutputDir = new File("build/cmdLineTestHtml");
     File helpOutputDir = new File("build/cmdLineHelp");
 
     public void saveTestOutputToFile(String cmd) throws Exception {

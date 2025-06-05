@@ -73,6 +73,9 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
     public boolean isSVG() {
         return outputType._isSVG;
     }
+    public boolean isHTML() {
+        return outputType._isHTML;
+    }
     public boolean isGMT() {
         return outputType._isGMT;
     }
@@ -85,6 +88,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         outputType._isJSON = false;
         outputType._isGMT = false;
         outputType._isSVG = false;
+        outputType._isHTML = false;
         if (oType.equalsIgnoreCase(OutputTypes.TEXT)) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.JSON)) {
@@ -94,8 +98,12 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
             if (mapwidth == null ) {
                 mapwidth = 6.0f;
             }
-        } else if (oType.equalsIgnoreCase(OutputTypes.SVG)) {
-            outputType._isSVG = true;
+        } else if (oType.equalsIgnoreCase(OutputTypes.SVG) || oType.equalsIgnoreCase(OutputTypes.HTML)) {
+            if (oType.equalsIgnoreCase(OutputTypes.SVG)) {
+                outputType._isSVG = true;
+            } else {
+                outputType._isHTML = true;
+            }
             if (mapwidth == null ) {
                 mapwidth = 1000.0f;
             }
@@ -107,6 +115,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
     public String getOutputFormat() {
         if (isGMT()) return OutputTypes.GMT;
         if (isSVG()) return OutputTypes.SVG;
+        if (isHTML()) return OutputTypes.HTML;
         if (isJSON()) return OutputTypes.JSON;
         return OutputTypes.TEXT;
     }
@@ -120,6 +129,8 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         }
         if (isSVG()) {
             ext = OutputTypes.SVG;
+        } else if (isHTML()) {
+            ext = OutputTypes.HTML;
         } else if (isJSON()) {
             ext = OutputTypes.JSON;
         } else if (isGMT()) {
@@ -157,5 +168,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         boolean _isGMT = false;
         @CommandLine.Option(names = {"--svg"}, required = true, description = "outputs as SVG")
         boolean _isSVG = false;
+        @CommandLine.Option(names = {"--html"}, required = true, description = "outputs as SVG in HTML")
+        boolean _isHTML = false;
     }
 }

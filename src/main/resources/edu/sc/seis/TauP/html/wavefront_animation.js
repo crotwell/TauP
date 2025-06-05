@@ -124,16 +124,18 @@ export class Animator {
 
 let animator = null;
 
-export function startAnimation(animateBtn) {
-  const timestepEl = document.querySelector('input[name="timestep"]');
+export function startAnimation(animateBtn, timestep) {
+  if (timestep==null) {
+    const timestepEl = document.querySelector('input[name="timestep"]');
+    timestep = parseFloat(timestepEl.value);
+  }
   const timeEl = document.querySelector('input[name="wavefronttime"]');
-  let timestep = parseFloat(timestepEl.value);
   animator = new Animator("svg", timestep, timeEl, animateBtn);
   return animator;
 }
 
-export function setupAnimation() {
+export function setupAnimation(timestep) {
   let animateBtn = document.querySelector("button#animate");
   if (!animateBtn) {console.log("animate button missing");}
-  let animator = startAnimation(animateBtn);
+  let animator = startAnimation(animateBtn, timestep);
 }
