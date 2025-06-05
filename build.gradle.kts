@@ -487,7 +487,7 @@ tasks.register<Sync>("copyJavascriptResources") {
   exclude("_sources")
   exclude(".buildinfo")
 }
-tasks.get("processResources").dependsOn("copyJavascriptResources")
+tasks.get("processResources").mustRunAfter("copyJavascriptResources")
 
 
 tasks.get("installDist").mustRunAfter("sphinx")
