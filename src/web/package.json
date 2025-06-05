@@ -1,0 +1,21 @@
+{
+  "name": "taup_web",
+  "version": "3.0.2",
+  "description": "HTML helpers for TauP",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "esstandalone": "npx esbuild index.js --bundle --outfile=dist/taup_web_${npm_package_version}_standalone.mjs  --target=es2020 --format=esm",
+    "clean": "echo No"
+  },
+  "author": "Philip Crotwell",
+  "license": "LGPL-3.0-or-later",
+  "dependencies": {
+    "seisplotjs": "^3.1.4",
+    "sortable-tablesort": "^4.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5",
+    "jest": "^29.7.0"
+  }
+}
