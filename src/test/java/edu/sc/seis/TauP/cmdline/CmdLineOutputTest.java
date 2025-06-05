@@ -206,7 +206,7 @@ public class CmdLineOutputTest {
      * @throws Exception
      */
     public void regenSavedOutput() throws Exception {
-        List<String> allList = new ArrayList<String>();
+        List<String> allList = new ArrayList<>();
         allList.addAll(Arrays.asList(helpTestCmds));
         allList.addAll(Arrays.asList(timeTestCmds));
         allList.addAll(Arrays.asList(pierceTestCmds));
@@ -240,8 +240,8 @@ public class CmdLineOutputTest {
     }
 
     public List<String> allCmdsAsJson() {
-        List<String> outList = new ArrayList<String>();
-        List<String> allList = new ArrayList<String>();
+        List<String> outList = new ArrayList<>();
+        List<String> allList = new ArrayList<>();
         allList.addAll(Arrays.asList(timeTestCmds));
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
@@ -295,7 +295,7 @@ public class CmdLineOutputTest {
      * @throws Exception
      */
     public void regenSavedHtmlOutput() throws Exception {
-        List<String> allList = Arrays.asList(HtmlOutputTest.htmlTestCmds);
+        String[] allList = HtmlOutputTest.htmlTestCmds;
         for (String jsonCmd : allList) {
             if (jsonCmd.contains("--json")) {
                 String htmlCmd = jsonCmd.replace("--json", "--html");
@@ -527,7 +527,7 @@ public class CmdLineOutputTest {
         indexOut.println("<h3>Comparison of Reflection and Transmission Coefficients</h3>");
         indexOut.println("<table>");
         indexOut.println("<tr><th>TauP SVG</th><th>Command Line</th><th>Reference Image</th></tr>");
-        List<String> sortedKeys = new ArrayList<String>();
+        List<String> sortedKeys = new ArrayList<>();
         sortedKeys.addAll(fmgsFigureTestCmds.keySet());
         Collections.sort(sortedKeys);
         for (String key : sortedKeys) {
@@ -773,7 +773,7 @@ public class CmdLineOutputTest {
         fileOut.close();
     }
 
-    public static BufferedReader getPriorOutput(String cmd) throws IOException {
+    public static BufferedReader getPriorOutput(String cmd) {
         String resource = "edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd);
         URL res = CmdLineOutputTest.class.getClassLoader().getResource(resource);
         assertNotNull( res, "Resource " + resource + " for " + cmd + " not found.");
