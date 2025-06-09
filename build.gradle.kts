@@ -239,7 +239,7 @@ tasks.named("sourcesJar") {
 tasks.named("makeVersionClass") {
   inputs.files("src/main/")
   inputs.files("build.gradle.kts")
-  dependsOn("copyJavascriptResources")
+  mustRunAfter("copyJavascriptResources")
 }
 
 tasks.register<Checksum>("checksumDist") {
