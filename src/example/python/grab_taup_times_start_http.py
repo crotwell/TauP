@@ -1,4 +1,5 @@
 
+from threading  import Thread, Event
 import subprocess
 import time
 import random
@@ -25,23 +26,46 @@ with subprocess.Popen(cmd,
         line = line.strip()
         if line.startswith("http"):
             print("startup ok")
+            # set
+
+    # thread just to pull taup stdout and print it to our output
+    def copyStdOut(out, stop_event):
+        try:
+            while not stop_event.is_set():
+                print(out.readline().decode("utf-8"))
+        except Exception as err:
+            print('exception, quitting copy to stdou')
+            print(err)
+            return
+    stop_event=Event()
+    t = Thread(target=copyStdOut, daemon=True, args=(taup.stdout, stop_event))
+    t.start()
 
     # now repeated process earthquakes, distances, etc...
 
-    for eqdepth in range(0, 500, 50):
+    # list of distances to the stations
+    deglist = ",".join(str(d) for d in range(180))
+    print("deglist")
+    print(deglist)
+
+
+    for eqdepth in range(0, 500, 5):
+        print(f"depth= {eqdepth}")
         params = {
             'model':'ak135',
             'evdepth':eqdepth,
             'phase':'P,S',
-            'degree':35,
+            'degree':deglist,
             'format':'json'
         }
 
-        r = requests.get(f'http://localhost:{port}/time', params=params)
+        r = requests.get(f'http://localhost:{port}/time', params=params, timeout=3)
+        print("got response")
 
         jsonTimes = r.json()
         for a in jsonTimes["arrivals"]:
-            print(f"{a['phase']} {a['distdeg']} {a['time']}")
+            print(f"{a['phase']} {a['sourcedepth']} {a['distdeg']} {a['time']}")
 
     # close down the web server
     taup.terminate()
+    stop_event.set()
