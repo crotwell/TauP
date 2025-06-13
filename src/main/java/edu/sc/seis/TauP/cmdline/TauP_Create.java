@@ -106,14 +106,6 @@ public class TauP_Create extends TauP_Tool {
         this.inputFileArgs.setVelFileType(type);
     }
 
-    public void setDEBUG(boolean DEBUG) {
-        super.setDEBUG(DEBUG);
-    }
-
-    public boolean getDEBUG() {
-        return isDEBUG();
-    }
-
     public void setVelocityModel(VelocityModel vMod) {
         this.vMod = vMod;
     }
