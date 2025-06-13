@@ -244,8 +244,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 "", String.format(phasePuristFormat, "Purist")));
         List<String> lineTwo = new ArrayList<>(List.of("  (deg)    ", " (km)   ",
                 String.format(phaseFormat, "Name ")+ "   ",
-                "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance  ",
-                "", String.format(phasePuristFormat, "Name ")));
+                "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance ",
+                "", String.format(phasePuristFormat, "Name  ")));
         if (withAmplitude) {
             lineOne.addAll(List.of("    Amp  ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  "));
             lineTwo.addAll(List.of("  Factor PSv", "   Sh"));
@@ -286,7 +286,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            List<String> relativePhaseName) {
         Arrival currArrival;
         int maxNameLength = 5;
-        int maxPuristNameLength = 5;
+        int maxPuristNameLength = 6;
         for (Arrival arrival : arrivalList) {
             if (arrival.getName().length() > maxNameLength) {
                 maxNameLength = arrival.getName()
@@ -350,9 +350,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName, String toolname) throws TauPException {
         Arrival currArrival;
-        //Format phaseFormat = new Format("%-" + maxNameLength + "s");
         String phaseFormat = "%s";
-        //Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         String phasePuristFormat = phaseFormat;
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
