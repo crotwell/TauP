@@ -4,6 +4,7 @@ import subprocess
 import time
 import random
 import requests
+import sys
 
 """
 Slightly more advanced python script. This starts the 'taup web' process
@@ -20,6 +21,9 @@ with subprocess.Popen(cmd,
     print(f"starting... {' '.join(cmd)}")
     time.sleep(1)
     # read a line, makes sure service has had time to start
+    # we should see a line with the url like
+    # http://localhost:7409
+    # once the server has had a chance to be fully started up
     for i in range(3):
         line = taup.stdout.readline().decode("utf-8")
         print(line)
@@ -32,7 +36,7 @@ with subprocess.Popen(cmd,
     def copyStdOut(out, stop_event):
         try:
             while not stop_event.is_set():
-                print(out.readline().decode("utf-8"))
+                print(out.readline().decode("utf-8"), file=sys.stderr)
         except Exception as err:
             print('exception, quitting copy to stdou')
             print(err)
@@ -41,14 +45,16 @@ with subprocess.Popen(cmd,
     t = Thread(target=copyStdOut, daemon=True, args=(taup.stdout, stop_event))
     t.start()
 
+    #####################################################
     # now repeated process earthquakes, distances, etc...
 
-    # list of distances to the stations
-    deglist = ",".join(str(d) for d in range(180))
+    # list of distances to the stations, lets be crazy and do all 0,1,2,...,180 degrees
+    deglist = ",".join(str(d) for d in range(181))
     print("deglist")
     print(deglist)
 
-
+    # loop over depths. Alternatively, we could send in one huge request
+    # for all the depths, but more complex to deal with the reaults if too big
     for eqdepth in range(0, 500, 5):
         print(f"depth= {eqdepth}")
         params = {
