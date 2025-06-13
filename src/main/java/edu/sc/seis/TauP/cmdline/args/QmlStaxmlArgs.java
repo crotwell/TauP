@@ -123,6 +123,15 @@ public class QmlStaxmlArgs {
                         allChans.add(cLoc);
                     }
                 }
+                if (sta.getChannelList().isEmpty()) {
+                    // no channels, maybe was retrieved with level=Station, add station location at surface
+                    Location staLoc = new Location(sta);
+                    String desc = sta.getNetworkCode()+"."+sta.getStationCode()
+                            +" " + Outputs.formatLatLon(staLoc.getLatitude()).trim()
+                            + "/" + Outputs.formatLatLon(staLoc.getLongitude()).trim();
+                    staLoc.setDescription(desc);
+                    allChans.add(staLoc);
+                }
                 staList.addAll(allChans);
             }
         }
