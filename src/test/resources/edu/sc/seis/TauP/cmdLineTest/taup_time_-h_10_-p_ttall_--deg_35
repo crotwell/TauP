@@ -1,8 +1,8 @@
 
 Model: iasp91
 Distance   Depth   Phase        Travel    Ray Param  Takeoff  Incident Station   Purist   Purist    
-  (deg)     (km)   Name         Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name      
------------------------------------------------------------------------------------------------------
+  (deg)     (km)   Name         Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance Name      
+----------------------------------------------------------------------------------------------------
    35.00    10.0   P             412.43     8.613     26.74    26.70      0.0    35.00   = P         
    35.00    10.0   pP            415.51     8.618    153.24    26.71      0.0    35.00   = pP        
    35.00    10.0   sP            416.85     8.617    164.88    26.71      0.0    35.00   = sP        
