@@ -109,45 +109,42 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> rayCalcList) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
         for (SeismicPhase phase : phaseList) {
-            List<Arrival> phaseArrivals = new ArrayList<>();
             for (RayCalculateable rayCalc : rayCalcList) {
                 if (( ! rayCalc.hasSourceDepth() || rayCalc.getSourceDepth() == phase.getSourceDepth())
                         && ( ! rayCalc.hasReceiverDepth() || rayCalc.getReceiverDepth() == phase.getReceiverDepth())) {
-                    phaseArrivals.addAll(rayCalc.calculate(phase));
-                }
-            }
-            if (!onlyFirst) {
-                arrivals.addAll(phaseArrivals);
-            } else {
-                if (!phaseArrivals.isEmpty()) {
-                    arrivals.add(phaseArrivals.get(0));
+                    List<Arrival> rayArrivals = rayCalc.calculate(phase);
+                    Arrival.sortArrivals(rayArrivals);
+                    if (onlyFirst && ! rayArrivals.isEmpty()) {
+                        rayArrivals = List.of(rayArrivals.get(0));
+                    }
+                    arrivals.addAll(rayArrivals);
                 }
             }
         }
 
-        if(!relativePhaseList.isEmpty()) {
+        if(!relativePhaseList.isEmpty() && ! arrivals.isEmpty()) {
+            Arrival.sortArrivalsBySourceReceiverDepth(arrivals);
             Set<Double> distList = new HashSet<>();
-            for (Arrival arr : arrivals) {
-                distList.add(arr.getModuloDist());
-            }
-            HashMap<Double, List<Arrival>> earliestAtDist = new HashMap<>();
-            for (Double dist : distList) {
-                DistanceRay distRay = DistanceRay.ofRadians(dist);
-                distRay.setSourceArgs(sourceArgs);
+            double calcDepth = -1;
+            double calcRecDepth = -1;
+            List<SeismicPhase> relPhaseList = new ArrayList<>();
+            for (Arrival arrival : arrivals) {
+                if (calcDepth != arrival.getSourceDepth() || calcRecDepth != arrival.getReceiverDepth()) {
+                    // not same source depth or receiver depth, so need to recalc relative phases
+                    relPhaseList = calcRelativeSeismicPhases(arrival.getTauModel(),
+                            arrival.getReceiverDepth(),
+                            getScatterer());
+                    calcDepth = arrivals.get(0).getSourceDepth();
+                    calcRecDepth = arrivals.get(0).getReceiverDepth();
+                }
+                DistanceRay distRay = DistanceRay.ofRadians(arrival.getModuloDist());
                 List<Arrival> relativeArrivals = new ArrayList<>();
-                for (SeismicPhase relPhase : relativePhaseList) {
+                for (SeismicPhase relPhase : relPhaseList) {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
                 }
-                Arrival.sortArrivals(relativeArrivals);
-                earliestAtDist.put(dist, relativeArrivals);
-            }
-            for (Arrival arrival : arrivals) {
-                List<Arrival> relativeArrivals = earliestAtDist.get(arrival.getModuloDist());
-                for (Arrival relArrival : relativeArrivals) {
-                    if (relArrival.getSourceDepth() == arrival.getSourceDepth() && relArrival.getReceiverDepth() == arrival.getReceiverDepth()) {
-                        arrival.setRelativeToArrival(relArrival);
-                        break;
-                    }
+                if ( ! relativeArrivals.isEmpty()) {
+                    Arrival.sortArrivals(relativeArrivals);
+                    arrival.setRelativeToArrival(relativeArrivals.get(0));
                 }
             }
         }
@@ -187,6 +184,29 @@ public class TauP_Time extends TauP_AbstractRayTool {
             }
         }
         return phaseList;
+    }
+
+    public List<SeismicPhase> calcRelativeSeismicPhases(TauModel tauModel, double receiverDepth, Scatterer scatterer) throws TauModelException {
+        List<SeismicPhase> relativePhaseList = new ArrayList<>();
+        for (String sName : relativePhaseName) {
+            try {
+                List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                        sName,
+                        tauModel,
+                        tauModel.getSourceDepth(),
+                        receiverDepth,
+                        modelArgs.getScatterer(),
+                        isDEBUG());
+                relativePhaseList.addAll(calcRelPhaseList);
+            } catch (ScatterArrivalFailException e) {
+                Alert.warning(e.getMessage(),
+                        "    Skipping this relative phase");
+                if (isVerbose() || isDEBUG()) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return relativePhaseList;
     }
 
     public GsonBuilder createGsonBuilder() {
