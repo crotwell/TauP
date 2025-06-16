@@ -109,7 +109,8 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         for (Arrival a : arrivals) {
             a.setSearchValue(this);
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
@@ -134,7 +135,8 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
             }
             scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
         }
-        return Arrival.sortArrivals(scatArrivals);
+        Arrival.sortArrivals(scatArrivals);
+        return scatArrivals;
     }
 
     public abstract double getDegrees(double radius);

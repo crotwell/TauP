@@ -151,7 +151,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 }
             }
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
     /**

@@ -165,7 +165,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		for (Arrival arrival : arrivals) {
 			arrival.getPath(); // side effect of calculating path
 		}
-		return Arrival.sortArrivals(arrivals);
+		Arrival.sortArrivals(arrivals);
+		return arrivals;
 	}
 
 	@Override

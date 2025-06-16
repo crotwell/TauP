@@ -48,7 +48,8 @@ public class ExactDistanceRay extends DistanceRay {
             a.setSearchValue(scatRay);
             scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
         }
-        return Arrival.sortArrivals(scatArrivals);
+        Arrival.sortArrivals(scatArrivals);
+        return scatArrivals;
     }
 
     public void copyFrom(DistanceRay dr) {

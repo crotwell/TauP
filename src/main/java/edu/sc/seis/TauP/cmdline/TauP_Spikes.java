@@ -616,7 +616,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 arrivals.add(phaseArrivals.get(0));
             }
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
     @Override

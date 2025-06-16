@@ -187,9 +187,18 @@ public class Arrival {
      * @param arrivals sorted
      * @return same list passed in
      */
-    public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
+    public static void sortArrivals(List<Arrival> arrivals) {
         arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
-        return arrivals;
+    }
+
+    /**
+     * Sorts arrivals by source and receiver depth in place. Used when calc rel phases for efficiency.
+     * @param arrivals sorted
+     * @return same list passed in
+     */
+    public static void sortArrivalsBySourceReceiverDepth(List<Arrival> arrivals) {
+        arrivals.sort(Comparator.comparingDouble(Arrival::getReceiverDepth));
+        arrivals.sort(Comparator.comparingDouble(Arrival::getSourceDepth));
     }
 
     public static List<Arrival> onlyFirst(List<Arrival> arrivalList) {
