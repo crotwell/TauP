@@ -21,11 +21,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 
 public class QmlStaxmlArgs {
 
+
+    public static final String staSourceIdRegExString =
+            "FDSN:([A-Z0-9]{1,8})_"      // net
+                    +"([A-Z0-9-]{1,8})"; // sta
+    public static final Pattern staSourceIdRegEx = Pattern.compile(staSourceIdRegExString);
 
     public static List<Location> loadStationsForSid(List<String> sidList) throws FDSNSourceIdException, FDSNWSException {
         if (sidList.isEmpty()) {
@@ -37,6 +44,13 @@ public class QmlStaxmlArgs {
 
         for (String sid : sidList) {
             if (sid.startsWith(FDSNSourceId.FDSN_PREFIX)) {
+                Matcher m = staSourceIdRegEx.matcher(sid);
+                if (m.matches()) {
+                    // looks like FDSH:XX_STATION so station id
+                    staQP.appendToNetwork(m.group(1));
+                    staQP.appendToStation(m.group(2));
+                    continue;
+                }
                 FDSNSourceId fdsn = FDSNSourceId.parse(sid);
                 staQP.appendToNetwork(fdsn.getNetworkCode());
                 staQP.appendToStation(fdsn.getStationCode());
