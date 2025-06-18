@@ -153,6 +153,10 @@ public abstract class TauP_Tool implements Callable<Integer> {
             toolName = "taup velmerge";
         } else if (toolClass.equals(TauP_PhaseDescribe.class) ) {
             toolName = "taup phase";
+        } else if (toolClass.equals(TauP_VelocityDison.class) ) {
+            toolName = "taup discon";
+        } else if (toolClass.equals(TauP_ReflTransPlot.class) ) {
+            toolName = "taup refltrans";
         } 
         
         return toolName.toLowerCase();

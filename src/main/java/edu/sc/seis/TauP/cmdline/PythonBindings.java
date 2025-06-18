@@ -175,9 +175,9 @@ public class PythonBindings {
     public static void main(String[] args) {
         try {
             File dir = new File(".");
-            for (String tool : knownTools()) {
-                BufferedWriter out = new BufferedWriter(new FileWriter(new File(dir, tool + ".py")));
-                out.write(createPython(ToolRun.getToolForName("time")));
+            for (String toolname : knownTools()) {
+                BufferedWriter out = new BufferedWriter(new FileWriter(new File(dir, toolname + ".py")));
+                out.write(createPython(ToolRun.getToolForName(toolname)));
                 out.close();
             }
             knownTools();
