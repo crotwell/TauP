@@ -495,6 +495,20 @@ tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
 tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
 tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
 
+
+
+tasks.register<JavaExec>("genPythonBindings") {
+  description = "generate TauP python binding files"
+  dependsOn += tasks.getByName("classes")
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  getMainClass().set("edu.sc.seis.TauP.cmdline.PythonBindings")
+  args = listOf("edu.sc.seis.TauP.cmdline.Time")
+  dependsOn += tasks.getByName("compileJava")
+  workingDir = File("build/python")
+  outputs.files(fileTree("build/python"))
+}
+
+
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
     allTasks
