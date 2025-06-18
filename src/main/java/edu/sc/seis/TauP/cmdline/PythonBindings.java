@@ -180,6 +180,21 @@ public class PythonBindings {
                 out.write(createPython(ToolRun.getToolForName(toolname)));
                 out.close();
             }
+            File initFile = new File(dir, "__init__.py");
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
+            for (String toolname : knownTools()) {
+                String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
+                out.println("from ." + toolname + " import " + capToolname + "Query");
+            }
+            out.println();
+            out.println("__all__ = [");
+            for (String toolname : knownTools()) {
+                String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
+                out.println("    \"" + capToolname + "Query\"");
+            }
+            out.println("]");
+
+            out.close();
             knownTools();
         } catch (Exception e) {
             throw new RuntimeException(e);
