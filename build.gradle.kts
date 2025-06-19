@@ -182,7 +182,7 @@ java {
 }
 
 dependencies {
-    implementation("org.json:json:20250107")
+    implementation("org.json:json:20250517")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("edu.sc.seis:seisFile:2.3.0")
 
@@ -197,8 +197,8 @@ dependencies {
     implementation("io.undertow:undertow-core:2.3.18.Final")
 
         // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
