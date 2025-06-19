@@ -158,7 +158,6 @@ public class HTMLUtil {
         InputStream inStream = HTMLUtil.class
                 .getClassLoader()
                 .getResourceAsStream(resource);
-        System.err.println("Load "+resource);
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         return in;
     }
