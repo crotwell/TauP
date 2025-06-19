@@ -20,11 +20,11 @@ export function start() {
 export function setup() {
   const pathSplit = location.pathname.substring(1).split('/');
   console.log(`location path split: ${pathSplit.length} for ${location.pathname}`)
-  if (pathSplit.length === 1) {
-    localmode = true;
-  } else {
+  if (pathSplit.length === 3 && pathSplit[1] === 'taup' && pathSplit[2] === '3') {
     localmode = false;
     base_path = pathSplit[0];
+  } else {
+      localmode = true;
   }
   return createModelNamesRadios().then(() => {
     setupListeners();
@@ -1019,7 +1019,7 @@ export function loadParamHelp(toolname) {
   }).then( response => {
     if (!response.ok) {
       return response.text().then( errMsg => {
-        let message = `Parameter help response not ok: ${response.statusText}`;
+        let message = `Parameter help response not ok: ${response.statusText} ${paramHelpUrl}`;
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
       return {};
