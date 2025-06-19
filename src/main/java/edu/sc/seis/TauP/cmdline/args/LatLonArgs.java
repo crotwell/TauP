@@ -23,7 +23,9 @@ public class LatLonArgs {
     public List<Location> getStationLocations() {
         List<Location> out = new ArrayList<>();
         for (int i = 0; i < stationLatLonList.size(); i += 2) {
-            out.add(new Location(stationLatLonList.get(i), stationLatLonList.get(i + 1)));
+            Location loc = new Location(stationLatLonList.get(i), stationLatLonList.get(i + 1));
+            loc.setDescription(QmlStaxmlArgs.createDescription(loc));
+            out.add(loc);
         }
         return out;
     }
@@ -46,7 +48,9 @@ public class LatLonArgs {
     public List<Location> getEventLocations() {
         List<Location> out = new ArrayList<>();
         for (int i = 0; i < eventLatLonList.size(); i += 2) {
-            out.add(new Location(eventLatLonList.get(i), eventLatLonList.get(i + 1)));
+            Location loc = new Location(eventLatLonList.get(i), eventLatLonList.get(i + 1));
+            loc.setDescription(QmlStaxmlArgs.createDescription(loc));
+            out.add(loc);
         }
         return out;
     }
