@@ -162,7 +162,7 @@ public class ToolRun {
 
 	public static void configLogging() {
 		BasicConfigurator.configure();
-		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.INFO);
+		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.WARN);
 	}
 
 	public static int mainWithExitCode(String[] args) {
