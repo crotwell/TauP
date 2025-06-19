@@ -19,3 +19,4 @@ tmp
 /src/doc/sphinx/source/_static/StdModels
 /src/web/node_modules
 /test
+/docs/manual/.buildinfo.bak

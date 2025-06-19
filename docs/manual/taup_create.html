@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Create &#8212; TauP 3.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=08bfcbec"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <title>TauP Create &#8212; TauP 3.0.2-SNAPSHOT_2025-06-19T135846 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
+    <script src="_static/documentation_options.js?v=1617ac80"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -25,7 +26,7 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="index.html">
@@ -36,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.1</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.2-SNAPSHOT_2025-06-19T135846</p>
 
 
 
@@ -50,12 +51,20 @@
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
@@ -78,8 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
@@ -102,16 +110,6 @@
   </ul></li>
 </ul>
 </div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -151,35 +149,31 @@ currently used by the latest ttimes package, <span id="id2">Kennett <em>et al.</
 <p>The output will be a file named after the name of the
 velocity file, followed by <code class="code docutils literal notranslate"><span class="pre">.taup</span></code>. For example</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">create</span> <span class="pre">-nd</span> <span class="pre">mymodel.nd</span></code></p>
-<p>produces the file <code class="code docutils literal notranslate"><span class="pre">mymodel.taup</span></code> which can be used later like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">taup</span> <span class="n">time</span> <span class="o">--</span><span class="n">mod</span> <span class="n">mymodel</span><span class="o">.</span><span class="n">taup</span> <span class="o">--</span><span class="n">deg</span> <span class="mi">35</span> <span class="o">-</span><span class="n">p</span> <span class="n">P</span><span class="p">,</span><span class="n">S</span>
-</pre></div>
-</div>
+<p>produces the file <code class="code docutils literal notranslate"><span class="pre">mymodel.taup</span></code> which can be used later like</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--mod</span> <span class="pre">mymodel.taup</span> <span class="pre">--deg</span> <span class="pre">35</span> <span class="pre">-p</span> <span class="pre">P,S</span></code></p>
 <p>The usage is:</p>
-<blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">taup</span> <span class="n">create</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">verbose</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">prop</span><span class="o">=&lt;</span><span class="n">toolPropsFilename</span><span class="o">&gt;</span><span class="p">]</span>
-                   <span class="p">(</span><span class="o">--</span><span class="n">mod</span><span class="o">=&lt;</span><span class="n">modelName</span><span class="o">&gt;</span> <span class="o">|</span> <span class="o">--</span><span class="n">nd</span><span class="o">=&lt;</span><span class="n">nDModelFilename</span><span class="o">&gt;</span> <span class="o">|</span>
-                   <span class="o">--</span><span class="n">tvel</span><span class="o">=&lt;</span><span class="n">tvelModelFilename</span><span class="o">&gt;</span><span class="p">)</span>
-<span class="n">Create</span> <span class="o">.</span><span class="n">taup</span> <span class="n">file</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">velocity</span> <span class="n">model</span><span class="o">.</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup create [--debug] [--help] [--verbose] [--prop=&lt;toolPropsFilename&gt;]
+                   (--mod=&lt;modelName&gt; | --nd=&lt;nDModelFilename&gt; |
+                   --tvel=&lt;tvelModelFilename&gt;)
+Create .taup file from a velocity model.
 
-<span class="n">Options</span><span class="p">:</span>
+Options:
 
-      <span class="o">--</span><span class="n">debug</span>     <span class="n">enable</span> <span class="n">debugging</span> <span class="n">output</span>
-      <span class="o">--</span><span class="n">help</span>      <span class="n">display</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span>
-      <span class="o">--</span><span class="n">prop</span><span class="o">=&lt;</span><span class="n">toolPropsFilename</span><span class="o">&gt;</span>
-                  <span class="n">load</span> <span class="n">defaults</span> <span class="kn">from</span> <span class="nn">properties</span> <span class="n">file</span>
-      <span class="o">--</span><span class="n">verbose</span>   <span class="n">enable</span> <span class="n">verbose</span> <span class="n">output</span>
-<span class="n">Velocity</span> <span class="n">Model</span>
-      <span class="o">--</span><span class="n">mod</span><span class="p">,</span> <span class="o">--</span><span class="n">model</span><span class="o">=&lt;</span><span class="n">modelName</span><span class="o">&gt;</span>
-                  <span class="n">use</span> <span class="n">velocity</span> <span class="n">model</span> <span class="s2">&quot;modelname&quot;</span> <span class="k">for</span> <span class="n">calculations</span><span class="p">,</span> <span class="nb">format</span> <span class="ow">is</span>
-                    <span class="n">guessed</span><span class="o">.</span>
-      <span class="o">--</span><span class="n">nd</span><span class="o">=&lt;</span><span class="n">nDModelFilename</span><span class="o">&gt;</span>
-                  <span class="s2">&quot;named discontinuities&quot;</span> <span class="n">velocity</span> <span class="n">file</span>
-      <span class="o">--</span><span class="n">tvel</span><span class="o">=&lt;</span><span class="n">tvelModelFilename</span><span class="o">&gt;</span>
-                  <span class="s2">&quot;.tvel&quot;</span> <span class="n">velocity</span> <span class="n">file</span><span class="p">,</span> <span class="n">ala</span> <span class="n">ttimes</span>
+      --debug     enable debugging output
+      --help      display this help message
+      --prop=&lt;toolPropsFilename&gt;
+                  load defaults from properties file
+      --verbose   enable verbose output
+Velocity Model
+      --mod, --model=&lt;modelName&gt;
+                  use velocity model &quot;modelname&quot; for calculations, format is
+                    guessed.
+      --nd=&lt;nDModelFilename&gt;
+                  &quot;named discontinuities&quot; velocity file
+      --tvel=&lt;tvelModelFilename&gt;
+                  &quot;.tvel&quot; velocity file, ala ttimes
 </pre></div>
 </div>
-</div></blockquote>
 </section>
 
 
@@ -193,8 +187,8 @@ velocity file, followed by <code class="code docutils literal notranslate"><span
       &#169;2025, Philip Crotwell.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/taup_create.rst.txt"
