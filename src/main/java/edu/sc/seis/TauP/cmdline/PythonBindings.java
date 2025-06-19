@@ -49,22 +49,12 @@ public class PythonBindings {
                 continue;
             }
             doneOptions.add(op.longestName());
-            String name = op.longestName();
-            if (name.startsWith("--")) {
-                name = name.substring(2);
-            } else if (name.startsWith("-")) {
-                name = name.substring(1);
-            }
+            String name =dashlessArgName( op.longestName());
             if (ignoreOptions.contains(name)) {
                 continue;
             }
 
-            String shortestName = op.shortestName();
-            if (shortestName.startsWith("--")) {
-                shortestName = shortestName.substring(2);
-            } else if (shortestName.startsWith("-")) {
-                shortestName = shortestName.substring(1);
-            }
+            String shortestName = dashlessArgName(op.shortestName());
             // constructor, default values
             String simpleType = typeFromJavaType(op.typeInfo().getClassName());
             knownSimpleTypes.add(simpleType);
@@ -74,28 +64,7 @@ public class PythonBindings {
             }
             writer.println(IN+"self._"+name+"="+defVal);
             // body, methods
-            bodyWriter.println("  @property");
-            bodyWriter.println("  def "+name+"(self):");
-            bodyWriter.println("    \"\"\"");
-            bodyWriter.println("    "+simpleType);
-            bodyWriter.println("    "+op.descriptionKey());
-            for (String descStr : op.description()) {
-                bodyWriter.println("    " + descStr);
-            }
-            if ( ! shortestName.equals(name)) {
-                bodyWriter.println("    Also known as " + op.shortestName()+ " and "+op.longestName()+" in command line.");
-            }
-            bodyWriter.println("    \"\"\"");
-            bodyWriter.println("    return self._"+name);
-            bodyWriter.println();
-            bodyWriter.println("  @"+name+".setter");
-            bodyWriter.println("  def "+name+"(self, val):");
-            if (simpleType.equals("List")) {
-                bodyWriter.println("    if not hasattr(val, \"__getitem__\"):");
-                bodyWriter.println("      raise Exception(f\"{"+name+"} must be a list, not {val}\")");
-            }
-            bodyWriter.println("    self._"+name+" = val");
-            bodyWriter.println();
+            createGetSet(bodyWriter, op);
 
             if (simpleType.equals("List")) {
                 paramsWriter.println("    if len(self._" + name + ") > 0:");
@@ -129,6 +98,56 @@ public class PythonBindings {
         return swConstructor.toString()+swBody.toString()+swParams.toString();
     }
 
+    public static void createGetSet(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op ) {
+        String varname =dashlessArgName( op.longestName());
+        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+        for (String opname : op.names()) {
+            opname = dashlessArgName(opname);
+            bodyWriter.println("  def get_" + opname + "(self):");
+            bodyWriter.println("    \"\"\"");
+            bodyWriter.println("    returns current value of "+varname+" as a " + simpleType);
+            bodyWriter.println("    \"\"\"");
+            bodyWriter.println("    return self._" + varname);
+            bodyWriter.println();
+            bodyWriter.println("  def " + opname + "(self, val):");
+
+            bodyWriter.println("    \"\"\"");
+            bodyWriter.print("    Sets the "+varname+" parameter, of type " + simpleType);
+            if (op.typeInfo().getActualGenericTypeArguments().size() > 0) {
+                bodyWriter.println(" of " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0)));
+            }
+            if (simpleType.equals("List") && op.arity().max() == 1 ) {
+                bodyWriter.println("    If a single " +typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0))
+                        +" is passed in, it is automatically wrapped in a list. So ");
+                bodyWriter.println("    x."+opname+"( value )");
+                bodyWriter.println("    and ");
+                bodyWriter.println("    .x"+opname+"( [ value ] )");
+                bodyWriter.println("    are equivalent. ");
+            }
+            bodyWriter.println("    " + op.descriptionKey());
+            for (String descStr : op.description()) {
+                bodyWriter.println("    " + descStr);
+            }
+            if (!opname.equals(varname)) {
+                bodyWriter.println("    Also known as " + op.longestName() + " in command line.");
+            }
+            bodyWriter.println();
+            bodyWriter.println("    :param val: value to set "+varname+" to");
+            bodyWriter.println("    \"\"\"");
+            if (simpleType.equals("List") ) {
+                bodyWriter.println("    if not hasattr(val, \"__getitem__\"):");
+                if (op.arity().max() == 1 ) {
+                    bodyWriter.println("      val = [ val ]");
+                } else {
+                    bodyWriter.println("      raise Exception(f\""+opname+"() requires a list, not {val}\")");
+                }
+            }
+            bodyWriter.println("    self._" + varname + " = val");
+            bodyWriter.println("    return self");
+            bodyWriter.println();
+        }
+    }
+
     public static List<String> ignoreOptions = List.of(
       "help", "version", "debug", "verbose", "prop",
             "json", "html", "text", "svg", "gmt", "csv", "output"
@@ -152,6 +171,15 @@ public class PythonBindings {
                 return "Boolean";
         }
         return type;
+    }
+
+    public static String dashlessArgName(String argName) {
+        if (argName.startsWith("--")) {
+            argName = argName.substring(2);
+        } else if (argName.startsWith("-")) {
+            argName = argName.substring(1);
+        }
+        return argName;
     }
 
     public static List<String> ignoreCommands = List.of("help", "web", "generate-completion",
