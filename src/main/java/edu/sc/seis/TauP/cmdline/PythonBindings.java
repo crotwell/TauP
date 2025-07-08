@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
+import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -75,9 +76,37 @@ public class PythonBindings {
 
         writer.println();
         writer.println("  def calc(self, taupServer):");
+        writer.println("    \"\"\"");
+        writer.println("    Sends all params to the server, returns the result parsed from JSON.");
+        writer.println("    \"\"\"");
         writer.println("    params = self.create_params()");
         writer.println("    return taupServer.queryJson(params, self.toolname)");
         writer.println();
+
+        List<String> doneFormats = new ArrayList<>();
+        for (String format : outputFormatOptions) {
+            if (format.equals("json")) {
+                // json special as parsed
+                continue;
+            }
+            for (CommandLine.Model.OptionSpec op : sortedOptions) {
+                for (String opname : op.names()) {
+                    // check if tool supports this output format
+                    if (opname.equals("--" + format) && ! doneFormats.contains(format)) {
+                        doneFormats.add(format);
+                        System.err.println("Found format: "+format+" for "+op.longestName()+" name: "+opname );
+                        writer.println();
+                        writer.println("  def calc" + capitalize(format) + "(self, taupServer):");
+                        writer.println("    \"\"\"");
+                        writer.println("    Sends all params to the server, returns the result as a text version of " + format + ".");
+                        writer.println("    \"\"\"");
+                        writer.println("    params = self.create_params()");
+                        writer.println("    return taupServer.query" + capitalize(format) + "(params, self.toolname)");
+                        writer.println();
+                    }
+                }
+            }
+        }
 
         paramsWriter.println("    return params");
         paramsWriter.println();
@@ -200,10 +229,26 @@ public class PythonBindings {
         return false;
     }
 
-    public static List<String> ignoreOptions = List.of(
-      "help", "version", "debug", "verbose", "prop",
-            "json", "html", "text", "svg", "gmt", "csv", "output"
+    public static List<String> outputFormatOptions = List.of(
+            OutputTypes.GMT,
+            OutputTypes.HTML,
+            OutputTypes.JSON,
+            OutputTypes.CSV,
+            OutputTypes.SVG,
+            OutputTypes.TEXT,
+            OutputTypes.LOCSAT,
+            OutputTypes.MS3,
+            OutputTypes.SAC,
+            OutputTypes.TAUP,
+            "nameddiscon" // arg for OutputTypes.ND
     );
+
+    public static List<String> ignoreOptions = new ArrayList<>(List.of(
+      "help", "version", "debug", "verbose", "prop", "output", "nd", "tvel"
+    ));
+    static {
+        ignoreOptions.addAll(outputFormatOptions);
+    }
 
     public static String typeFromJavaType(String type) {
         switch (type) {
