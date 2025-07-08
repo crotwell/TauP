@@ -382,8 +382,22 @@ public class TauP_WebServe extends TauP_Tool {
                     out.add(dashedQP);
                     if (op.splitRegex().trim().isEmpty()) {
                         // default split is whitespace, so split on comma
+                        List<String> paramItems = new ArrayList<>();
                         for (String p : qpList) {
-                            out.addAll(Arrays.asList(p.split(",")));
+                            paramItems.addAll(Arrays.asList(p.split(",")));
+                        }
+                        if (op.isMultiValue() && op.arity().min()>1 && op.arity().min() == op.arity().max() && paramItems.size() % op.arity().max()==0) {
+                            // many of arity, like --station lat lon
+                            int idx = 0;
+                            for (String p : paramItems) {
+                                out.add(p);
+                                if (idx <= paramItems.size()-op.arity().max() && idx % op.arity().max() == op.arity().max()-1) {
+                                    out.add(dashedQP);
+                                }
+                                idx++;
+                            }
+                        } else {
+                            out.addAll(paramItems);
                         }
                     } else if (op.splitRegex().trim().equals(",")) {
                         String commaList = "";
