@@ -3,10 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PythonBindings {
 
@@ -24,7 +21,7 @@ public class PythonBindings {
         if (toolname.startsWith("taup ")) {
             toolname = toolname.substring(5);
         }
-        String capToolname = toolname.substring(0,1).toUpperCase()+toolname.substring(1);
+        String capToolname = capitalize(toolname);
         String IN = "    ";
         writer.println("class "+capToolname+"Query:");
         writer.println("  def __init__(self):");
@@ -43,7 +40,9 @@ public class PythonBindings {
         Set<String> knownSimpleTypes = new HashSet<>();
 
         List<String> doneOptions = new ArrayList<>();
-        for (CommandLine.Model.OptionSpec op : spec.options()) {
+        List<CommandLine.Model.OptionSpec> sortedOptions = new ArrayList<>(spec.options());
+        sortedOptions.sort(Comparator.comparing(CommandLine.Model.OptionSpec::longestName));
+        for (CommandLine.Model.OptionSpec op : sortedOptions) {
             if (doneOptions.contains(op.longestName())) {
                 System.err.println("Found duplicate op: "+op);
                 continue;
@@ -54,7 +53,6 @@ public class PythonBindings {
                 continue;
             }
 
-            String shortestName = dashlessArgName(op.shortestName());
             // constructor, default values
             String simpleType = typeFromJavaType(op.typeInfo().getClassName());
             knownSimpleTypes.add(simpleType);
@@ -95,7 +93,7 @@ public class PythonBindings {
         for (String s : knownSimpleTypes) {
             System.err.println(s);
         }
-        return swConstructor.toString()+swBody.toString()+swParams.toString();
+        return swConstructor.toString()+ swBody + swParams;
     }
 
     public static void createGetSet(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op ) {
@@ -109,43 +107,97 @@ public class PythonBindings {
             bodyWriter.println("    \"\"\"");
             bodyWriter.println("    return self._" + varname);
             bodyWriter.println();
-            bodyWriter.println("  def " + opname + "(self, val):");
+            if ( ! specialSetter(bodyWriter, op, opname)) {
+                // normal setter
+                bodyWriter.println("  def " + opname + "(self, val):");
+                desc(bodyWriter, op, opname);
 
-            bodyWriter.println("    \"\"\"");
-            bodyWriter.print("    Sets the "+varname+" parameter, of type " + simpleType);
-            if (op.typeInfo().getActualGenericTypeArguments().size() > 0) {
-                bodyWriter.println(" of " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0)));
-            }
-            if (simpleType.equals("List") && op.arity().max() == 1 ) {
-                bodyWriter.println("    If a single " +typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0))
-                        +" is passed in, it is automatically wrapped in a list. So ");
-                bodyWriter.println("    x."+opname+"( value )");
-                bodyWriter.println("    and ");
-                bodyWriter.println("    .x"+opname+"( [ value ] )");
-                bodyWriter.println("    are equivalent. ");
-            }
-            bodyWriter.println("    " + op.descriptionKey());
-            for (String descStr : op.description()) {
-                bodyWriter.println("    " + descStr);
-            }
-            if (!opname.equals(varname)) {
-                bodyWriter.println("    Also known as " + op.longestName() + " in command line.");
-            }
-            bodyWriter.println();
-            bodyWriter.println("    :param val: value to set "+varname+" to");
-            bodyWriter.println("    \"\"\"");
-            if (simpleType.equals("List") ) {
-                bodyWriter.println("    if not hasattr(val, \"__getitem__\"):");
-                if (op.arity().max() == 1 ) {
-                    bodyWriter.println("      val = [ val ]");
-                } else {
-                    bodyWriter.println("      raise Exception(f\""+opname+"() requires a list, not {val}\")");
+                if (simpleType.equals("List")) {
+                    bodyWriter.println("    if not hasattr(val, \"__getitem__\"):");
+                    if (op.arity().max() == 1) {
+                        bodyWriter.println("      val = [ val ]");
+                    } else {
+                        bodyWriter.println("      raise Exception(f\"" + opname + "() requires a list, not {val}\")");
+                    }
+                }
+                bodyWriter.println("    self._" + varname + " = val");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
+                if (simpleType.equals("List")) {
+
+                    bodyWriter.println();
+                    bodyWriter.println("  def and" + capitalize(opname) + "(self, val):");
+                    desc(bodyWriter, op, opname);
+
+                    bodyWriter.println("    self._" + varname + ".append(val)");
+                    bodyWriter.println("    return self");
+                    bodyWriter.println();
                 }
             }
-            bodyWriter.println("    self._" + varname + " = val");
+        }
+    }
+
+    public static void desc(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
+        String varname =dashlessArgName( op.longestName());
+        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+
+        bodyWriter.println("    \"\"\"");
+        bodyWriter.print("    Sets the " + varname + " parameter, of type " + simpleType);
+        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty()) {
+            bodyWriter.println(" of " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0)));
+        }
+        if (simpleType.equals("List")) {
+            if (op.arity().max() == 1) {
+                bodyWriter.println("    If a single " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0))
+                        + " is passed in, it is automatically wrapped in a list. So ");
+                bodyWriter.println("    x." + opname + "( value )");
+                bodyWriter.println("    and ");
+                bodyWriter.println("    .x" + opname + "( [ value ] )");
+                bodyWriter.println("    are equivalent. ");
+            } else if (varname.endsWith("range")) {
+
+            }
+        }
+        bodyWriter.println("    " + op.descriptionKey());
+        for (String descStr : op.description()) {
+            bodyWriter.println("    " + descStr);
+        }
+        if (!opname.equals(varname)) {
+            bodyWriter.println("    Also known as " + op.longestName() + " in command line.");
+        }
+        bodyWriter.println();
+        bodyWriter.println("    :param val: value to set " + varname + " to");
+        bodyWriter.println("    \"\"\"");
+    }
+
+    public static boolean specialSetter(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
+        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+        String varname =dashlessArgName( op.longestName());
+        if (varname.equals("scatter")) {
+
+            bodyWriter.println("  def " + opname + "(self, depth, degree):");
+            desc(bodyWriter, op, opname);
+
+            bodyWriter.println("    self._" + varname + " = [depth, degree]");
             bodyWriter.println("    return self");
             bodyWriter.println();
+            return true;
+        } else if (varname.equals("station") || varname.equals("event")) {
+            bodyWriter.println("  def " + opname + "(self, lat, lon):");
+            desc(bodyWriter, op, opname);
+
+            bodyWriter.println("    self._" + varname + " = [lat, lon]");
+            bodyWriter.println("    return self");
+            bodyWriter.println();
+            bodyWriter.println("  def and" + capitalize(opname) + "(self, lat, lon):");
+            desc(bodyWriter, op, opname);
+
+            bodyWriter.println("    self._" + varname + " += [lat, lon]");
+            bodyWriter.println("    return self");
+            bodyWriter.println();
+            return true;
         }
+        return false;
     }
 
     public static List<String> ignoreOptions = List.of(
@@ -182,18 +234,21 @@ public class PythonBindings {
         return argName;
     }
 
+    public static String capitalize(String s) {
+        return s.substring(0,1).toUpperCase()+s.substring(1);
+    }
+
     public static List<String> ignoreCommands = List.of("help", "web", "generate-completion",
             "setsac", "setms3", "create", "spikes");
+
 
     public static List<String> knownTools() {
         CommandLine cmd = new CommandLine(new ToolRun());
         cmd.setOut(new PrintWriter(System.out)); // ???
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
         List<String> out = new ArrayList<>();
-        System.err.println("Subcommands:");
         for (String subcmd : spec.subcommands().keySet()) {
             if (! ignoreCommands.contains(subcmd)) {
-                System.err.println("  " + subcmd);
                 out.add(subcmd);
             }
         }
