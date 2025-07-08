@@ -249,7 +249,9 @@ public class PythonBindings {
     );
 
     public static List<String> ignoreOptions = new ArrayList<>(List.of(
-      "help", "version", "debug", "verbose", "prop", "output", "nd", "tvel"
+            "help", "version", "debug", "verbose",
+            "prop", "output", "nd", "tvel",
+            "quakeml", "staxml", "phasefile", "sid", "eid"
     ));
     static {
         ignoreOptions.addAll(outputFormatOptions);
