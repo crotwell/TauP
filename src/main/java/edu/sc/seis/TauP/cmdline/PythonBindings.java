@@ -191,6 +191,11 @@ public class PythonBindings {
         for (String descStr : op.description()) {
             bodyWriter.println("    " + descStr);
         }
+        for (String n : op.names()) {
+            if ( opname.equals( dashlessArgName(n))) {
+                bodyWriter.println("    Known as " + n + " in command line.");
+            }
+        }
         if (!opname.equals(varname)) {
             bodyWriter.println("    Also known as " + op.longestName() + " in command line.");
         }
