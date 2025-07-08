@@ -179,41 +179,41 @@ public class Outputs {
 
     public static String formatDepth(double depth) {
 
-        return String.format(Locale.ROOT, depthFormat, depth);
+        return String.format(locale, depthFormat, depth);
     }
 
     public static String formatDistance(double distance) {
 
-        return String.format(Locale.ROOT,  distanceFormat, distance);
+        return String.format(locale,  distanceFormat, distance);
     }
 
     public static String formatKilometer(double kilometers) {
-        return String.format(Locale.ROOT,  depthFormat, kilometers);
+        return String.format(locale,  depthFormat, kilometers);
     }
 
     public static String formatTime(double time) {
 
-        return String.format(Locale.ROOT,  timeFormat, time);
+        return String.format(locale,  timeFormat, time);
     }
 
     public static String formatDistanceNoPad(double distance) {
 
-        return String.format(Locale.ROOT,  distanceFormatNoPad, distance);
+        return String.format(locale,  distanceFormatNoPad, distance);
     }
 
     public static String formatTimeNoPad(double time) {
 
-        return String.format(Locale.ROOT,  timeFormat, time);
+        return String.format(locale,  timeFormat, time);
     }
 
     public static String formatRayParam(double rayParam) {
 
-        return String.format(Locale.ROOT,  rayParamFormat, rayParam);
+        return String.format(locale,  rayParamFormat, rayParam);
     }
 
     public static String formatLatLon(double latlon) {
 
-        return String.format(Locale.ROOT, latLonFormat, latlon);
+        return String.format(locale, latLonFormat, latlon);
     }
 
     public static String formatAmpFactor(double ampFactor) {
@@ -221,10 +221,12 @@ public class Outputs {
         if (ampFactor < 0) { space = "";}
         if (ampFactor == 0) {
             // so not extra minus in -0.0e+00
-            return space+String.format(Locale.ROOT, ampFactorFormat, 0.0);
+            return space+String.format(locale, ampFactorFormat, 0.0);
         }
-        return space+String.format(Locale.ROOT, ampFactorFormat, ampFactor);
+        return space+String.format(locale, ampFactorFormat, ampFactor);
     }
+
+    public static Locale locale = Locale.ROOT;
 
     public static String depthFormat = "%8.1f";
 
