@@ -265,15 +265,19 @@ public class PythonBindings {
             }
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
+            out.println("__version__ = \"0.0.1-dev\"");
+            out.println();
+            out.println("from .http_server import TauPServer");
             for (String toolname : knownTools()) {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
             out.println();
             out.println("__all__ = [");
+            out.println("    \"TauPServer\",");
             for (String toolname : knownTools()) {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
-                out.println("    \"" + capToolname + "Query\"");
+                out.println("    \"" + capToolname + "Query\",");
             }
             out.println("]");
 
