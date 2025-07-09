@@ -55,7 +55,7 @@ public class PythonBindings {
             }
 
             // constructor, default values
-            String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+            String simpleType = typeFromJavaType(op);
             knownSimpleTypes.add(simpleType);
             String defVal = "None";
             if (simpleType.equals("List")) {
@@ -127,7 +127,7 @@ public class PythonBindings {
 
     public static void createGetSet(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op ) {
         String varname =dashlessArgName( op.longestName());
-        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+        String simpleType = typeFromJavaType(op);
         for (String opname : op.names()) {
             opname = dashlessArgName(opname);
             bodyWriter.println("  def get_" + opname + "(self):");
@@ -168,22 +168,32 @@ public class PythonBindings {
 
     public static void desc(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
         String varname =dashlessArgName( op.longestName());
-        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
+        String simpleType = typeFromJavaType(op);
 
         bodyWriter.println("    \"\"\"");
-        bodyWriter.print("    Sets the " + varname + " parameter, of type " + simpleType);
-        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty()) {
-            bodyWriter.println(" of " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0)));
+        bodyWriter.print("    Sets the " + varname + " parameter, ");
+
+        if (op.typeInfo().isEnum()) {
+            List<String> enums = op.typeInfo().getEnumConstantNames();
+            bodyWriter.println("a choice of one of:");
+            bodyWriter.print("     "+String.join(", ",enums));
+        } else {
+            bodyWriter.print("of type " + simpleType);
         }
+        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty()) {
+            bodyWriter.print(" of " + subtypeFromJavaType(op));
+        }
+        bodyWriter.println();
         if (simpleType.equals("List")) {
             if (op.arity().max() == 1) {
-                bodyWriter.println("    If a single " + typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0))
+                bodyWriter.println("    If a single " + subtypeFromJavaType(op)
                         + " is passed in, it is automatically wrapped in a list. So ");
                 bodyWriter.println("    x." + opname + "( value )");
                 bodyWriter.println("    and ");
                 bodyWriter.println("    .x" + opname + "( [ value ] )");
                 bodyWriter.println("    are equivalent. ");
-            } else if (varname.endsWith("range")) {
+            } else if (varname.endsWith("range") && op.arity().max() == 3) {
+                bodyWriter.println("    step or min,max or min,max,step");
 
             }
         }
@@ -191,6 +201,7 @@ public class PythonBindings {
         for (String descStr : op.description()) {
             bodyWriter.println("    " + descStr);
         }
+        bodyWriter.println();
         for (String n : op.names()) {
             if ( opname.equals( dashlessArgName(n))) {
                 bodyWriter.println("    Known as " + n + " in command line.");
@@ -205,7 +216,6 @@ public class PythonBindings {
     }
 
     public static boolean specialSetter(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
-        String simpleType = typeFromJavaType(op.typeInfo().getClassName());
         String varname =dashlessArgName( op.longestName());
         if (varname.equals("scatter")) {
 
@@ -257,6 +267,17 @@ public class PythonBindings {
         ignoreOptions.addAll(outputFormatOptions);
     }
 
+    public static String subtypeFromJavaType(CommandLine.Model.OptionSpec op) {
+        String subtype = "";
+        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty()) {
+            subtype = typeFromJavaType(op.typeInfo().getActualGenericTypeArguments().get(0));
+        }
+        return subtype;
+    }
+    public static String typeFromJavaType(CommandLine.Model.OptionSpec op) {
+        String type = op.typeInfo().getClassName();
+        return typeFromJavaType(type);
+    }
     public static String typeFromJavaType(String type) {
         switch (type) {
             case "java.lang.String":
@@ -269,6 +290,7 @@ public class PythonBindings {
             case "java.lang.Double":
             case "double":
                 return "Double";
+            case "java.lang.Integer":
             case "int":
                 return "Integer";
             case "boolean":
