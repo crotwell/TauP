@@ -248,7 +248,7 @@ tasks.register<Checksum>("checksumDist") {
   inputs.files(tasks.getByName("distTar").outputs.files)
   inputs.files(tasks.getByName("distZip").outputs.files)
   outputs.dir(layout.buildDirectory.dir("distributions"))
-  algorithm = Checksum.Algorithm.SHA512
+  checksumAlgorithm.set(Checksum.Algorithm.SHA512)
 }
 
 publishing {
