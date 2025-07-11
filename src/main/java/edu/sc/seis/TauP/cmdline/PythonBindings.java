@@ -399,6 +399,12 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
+            out.println("from .dataclass import (");
+            out.println("    Amplitude, Arrival, Fault, PathSegment,");
+            out.println("    RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
+            out.println("    Isochron, Wavefront, WavefrontResult");
+            out.println(")");
+
             out.println();
             out.println("__all__ = [");
             out.println("    \"TAUP_VERSION\",");
@@ -407,6 +413,18 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("    \"" + capToolname + "Query\",");
             }
+            out.println("    \"Amplitude\",");
+            out.println("    \"Arrival\",");
+            out.println("    \"Fault\",");
+            out.println("    \"PathSegment\",");
+            out.println("    \"RelativeArrival\",");
+            out.println("    \"Scatter\",");
+            out.println("    \"Source\",");
+            out.println("    \"TimeDist\",");
+            out.println("    \"TimeResult\",");
+            out.println("    \"Isochron\",");
+            out.println("    \"Wavefront\",");
+            out.println("    \"WavefrontResult\"");
             out.println("]");
 
             out.close();
