@@ -84,6 +84,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
         outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
     }
 
+
+    /**
+     * placeholder, should add to output type args
+     @CommandLine.Option(names="--csv")
+     */
+    public boolean isCsv = false;
+
     public TauP_Time(TauModel tMod)  {
         this();
         setTauModel(tMod);
@@ -224,6 +231,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
             out.println(gsonBld.create().toJson(result));
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {
             printResultHtml(out, arrivalList);
+        } else if (isCsv) {
+            printResultCsv(out, arrivalList);
         } else {
             printResultText(out, arrivalList);
         }
@@ -391,6 +400,67 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.println(HTMLUtil.createBasicTableMoHeaders(headLines, values));
         HTMLUtil.addSortTableJS(out);
         out.println(HTMLUtil.createHtmlEnding());
+        out.flush();
+    }
+
+
+    public void printResultCsv(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        printArrivalsAsCsv(out, arrivalList,
+                modelArgs.getModelName(),
+                getScatterer(),
+                isWithAmplitude(), sourceArgs,
+                relativePhaseName, "Time");
+    }
+
+    public static void printArrivalsAsCsv(PrintWriter out,
+                                           List<Arrival> arrivalList,
+                                           String modelName,
+                                           Scatterer scatterer,
+                                           boolean withAmplitude, SeismicSourceArgs sourceArgs,
+                                           List<String> relativePhaseName, String toolname) throws TauPException {
+        String phaseFormat = "%s";
+        String phasePuristFormat = phaseFormat;
+        List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
+                withAmplitude, sourceArgs, relativePhaseName,
+                phaseFormat, phasePuristFormat);
+        // modelline, head1, head2
+        List<String> head1 = headLines.get(1);
+        List<String> head2 = headLines.get(2);
+
+        String comma = ",";
+        for (int i = 0; i < head1.size(); i++) {
+            String val = head1.get(i).trim()+" "+head2.get(i).trim();
+            if (val.contains("\"") || val.contains(",")) {
+                val = "\""+val.replaceAll("\"", "\"\"");
+            }
+            if (i != 0) {
+                out.print(comma);
+            }
+            out.print(val);
+        }
+        // print model lines as more columns in header???
+        for (String v : headLines.get(0)) {
+            out.print(comma);
+            out.print(v.trim());
+        }
+        out.println();
+
+        for (Arrival arrival : arrivalList) {
+            comma = ",";
+            List<String> lineItems = arrival.asStringList(false,
+                    phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty());
+            for (int i = 0; i < lineItems.size(); i++) {
+                String val = lineItems.get(i).trim();
+                if (val.contains("\"") || val.contains(",")) {
+                    val = "\""+val.replaceAll("\"", "\"\"");
+                }
+                if (i != 0) {
+                    out.print(comma);
+                }
+                out.print(val);
+            }
+            out.println();
+        }
         out.flush();
     }
 
