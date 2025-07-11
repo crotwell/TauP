@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.Isochron;
-import edu.sc.seis.TauP.JSONLabels;
-import edu.sc.seis.TauP.ScatteredSeismicPhase;
-import edu.sc.seis.TauP.WavefrontPathSegment;
+import edu.sc.seis.TauP.*;
 
 import java.lang.reflect.Type;
 
@@ -15,20 +12,23 @@ public class IsochronSerializer implements JsonSerializer<Isochron> {
         JsonObject obj =  new JsonObject();
         obj.addProperty(JSONLabels.TIME, src.getTime());
         JsonArray wavefrontArr = new JsonArray(src.getWavefront().size());
-        for (WavefrontPathSegment seg : src.getWavefront()) {
+        for (PhaseIsochron phaseIsochron : src.getWavefront()) {
             JsonObject jsonObject = new JsonObject();
             wavefrontArr.add(jsonObject);
-            jsonObject.addProperty(JSONLabels.TIME, seg.getTimeVal());
-            jsonObject.addProperty(JSONLabels.PHASE, seg.getPhase().getName());
-            jsonObject.addProperty(JSONLabels.MODEL, seg.getPhase().getTauModel().getModelName());
-            jsonObject.addProperty(JSONLabels.SOURCEDEPTH, seg.getPhase().getSourceDepth());
-            jsonObject.addProperty(JSONLabels.RECEIVERDEPTH, seg.getPhase().getReceiverDepth());
-            if (seg.getPhase() instanceof ScatteredSeismicPhase) {
-                ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase) seg.getPhase();
+            jsonObject.addProperty(JSONLabels.TIME, phaseIsochron.getTime());
+            jsonObject.addProperty(JSONLabels.PHASE, phaseIsochron.getPhase().getName());
+            jsonObject.addProperty(JSONLabels.MODEL, phaseIsochron.getPhase().getTauModel().getModelName());
+            jsonObject.addProperty(JSONLabels.SOURCEDEPTH, phaseIsochron.getPhase().getSourceDepth());
+            jsonObject.addProperty(JSONLabels.RECEIVERDEPTH, phaseIsochron.getPhase().getReceiverDepth());
+            if (phaseIsochron.getPhase() instanceof ScatteredSeismicPhase) {
+                ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase) phaseIsochron.getPhase();
                 jsonObject.add(JSONLabels.SCATTER, context.serialize(scatPhase.getScatterer()));
             }
-            jsonObject.addProperty(JSONLabels.WAVETYPE, seg.getWavetypeStr());
-            jsonObject.add(JSONLabels.SEGMENTS, seg.asJsonObject());
+            JsonArray segmentArr = new JsonArray(src.getWavefront().size());
+            for (WavefrontPathSegment seg : phaseIsochron.getWavefront()) {
+                segmentArr.add(seg.asJsonObject());
+            }
+            jsonObject.add(JSONLabels.SEGMENTS, segmentArr);
         }
         obj.add(JSONLabels.WAVEFRONT, wavefrontArr);
         return obj;

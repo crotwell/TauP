@@ -3,7 +3,7 @@ package edu.sc.seis.TauP;
 import java.util.List;
 
 public class Isochron {
-    public Isochron(double time, List<WavefrontPathSegment> wavefront) {
+    public Isochron(double time, List<PhaseIsochron> wavefront) {
         this.time = time;
         this.wavefront = wavefront;
     }
@@ -12,11 +12,11 @@ public class Isochron {
         return time;
     }
 
-    public List<WavefrontPathSegment> getWavefront() {
+    public List<PhaseIsochron> getWavefront() {
         return wavefront;
     }
 
     double time;
-    List<WavefrontPathSegment> wavefront;
+    List<PhaseIsochron> wavefront;
 
 }

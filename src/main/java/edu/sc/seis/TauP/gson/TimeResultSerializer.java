@@ -19,11 +19,8 @@ public class TimeResultSerializer implements JsonSerializer<TimeResult> {
         out.add(JSONLabels.RECEIVERDEPTH_LIST, context.serialize(src.getReceiverdepthlist()));
         out.add(JSONLabels.PHASE_LIST, context.serialize(src.getPhases()));
         out.add(JSONLabels.SCATTER, context.serialize(src.getScatter()));
-        //out.add(JSONLabels.SCATTERER, context.serialize(src.scatter));
-        out.add(JSONLabels.SOURCEDEPTH_LIST, context.serialize(src.getSourcedepthlist()));
         if (src.getSourceArg() != null) {
             out.add(JSONLabels.SOURCE, context.serialize(src.getSourceArg()));
-
         }
         return out;
     }
