@@ -30,6 +30,12 @@ public class PythonBindings {
         if (timeResultTools.contains(toolname)) {
             writer.println("from .dataclass import TimeResult");
             writer.println();
+        } else if (toolname.equals("curve")) {
+            writer.println("from .dataclass import CurveResult");
+            writer.println();
+        } else if (toolname.equals("wavefront")) {
+            writer.println("from .dataclass import WavefrontResult");
+            writer.println();
         }
 
         String capToolname = capitalize(toolname);
@@ -84,14 +90,20 @@ public class PythonBindings {
 
         }
 
-        if (timeResultTools.contains(toolname) ) {
+        if (timeResultTools.contains(toolname) ||  toolname.equals("curve") || toolname.equals("wavefront")) {
             writer.println();
             writer.println("  def calc(self, taupServer):");
             writer.println("    \"\"\"");
             writer.println("    Sends all params to the server, returns the result parsed from JSON into dataclasses.");
             writer.println("    \"\"\"");
             writer.println("    params = self.create_params()");
-            writer.println("    return TimeResult.from_json(self.calcJson(taupServer))");
+            if (timeResultTools.contains(toolname) ) {
+                writer.println("    return TimeResult.from_json(self.calcJson(taupServer))");
+            } else if (toolname.equals("curve")) {
+                writer.println("    return CurveResult.from_json(self.calcJson(taupServer))");
+            } else if (toolname.equals("wavefront")) {
+                writer.println("    return WavefrontResult.from_json(self.calcJson(taupServer))");
+            }
         }
 
         writer.println();
@@ -214,19 +226,19 @@ public class PythonBindings {
         if (simpleType.equals("List")) {
             if (op.arity().max() == 1) {
                 bodyWriter.println("    If a single " + subtypeFromJavaType(op)
-                        + " is passed in, it is automatically wrapped in a list. So ");
-                bodyWriter.println("    x." + opname + "( value )");
-                bodyWriter.println("    and ");
-                bodyWriter.println("    .x" + opname + "( [ value ] )");
-                bodyWriter.println("    are equivalent. ");
+                        + " is passed in, it is automatically wrapped in a list. So");
+                bodyWriter.println("    params." + opname + "( value )");
+                bodyWriter.println("    and");
+                bodyWriter.println("    params." + opname + "( [ value ] )");
+                bodyWriter.println("    are equivalent.");
             } else if (varname.endsWith("range") && op.arity().max() == 3) {
                 bodyWriter.println("    step or min,max or min,max,step");
 
             }
         }
-        bodyWriter.println("    " + op.descriptionKey());
+        bodyWriter.println();
         for (String descStr : op.description()) {
-            bodyWriter.println("    " + descStr);
+            bodyWriter.println("    " + descStr.trim());
         }
         bodyWriter.println();
         for (String n : op.names()) {
@@ -364,10 +376,24 @@ public class PythonBindings {
                 out.write(createPython(ToolRun.getToolForName(toolname)));
                 out.close();
             }
+
+            File taupversionFile = new File(dir, "taupversion.py");
+            PrintWriter taupversion = new PrintWriter(new BufferedWriter(new FileWriter(taupversionFile)));
+            taupversion.println();
+            taupversion.println("# Version of TauP the python code corresponds to. ");
+            taupversion.println("# Use with other versions may not work.");
+            taupversion.println("TAUP_VERSION = \""+BuildVersion.getVersion()+"\"");
+            taupversion.println();
+            taupversion.println("TAUP_DOWNLOAD = \"https://doi.org/10.5281/zenodo.15426279\"");
+            taupversion.println();
+            taupversion.close();
+
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
             out.println("__version__ = \"0.0.1-dev\"");
             out.println();
+
+            out.println("from .taupversion import TAUP_VERSION");
             out.println("from .http_server import TauPServer");
             for (String toolname : knownTools()) {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
@@ -375,6 +401,7 @@ public class PythonBindings {
             }
             out.println();
             out.println("__all__ = [");
+            out.println("    \"TAUP_VERSION\",");
             out.println("    \"TauPServer\",");
             for (String toolname : knownTools()) {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
