@@ -21,8 +21,8 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--exactkilometerrange=[step][min max][min max step]]...
                  [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
-                 [--takeoffrange=[step][min max][min max step]]...]... [--html
-                 | --json | --text]
+                 [--takeoffrange=[step][min max][min max step]]...]... [--csv |
+                 --html | --json | --text]
 Calculate travel times for seismic phases in an earth model.
 
 Options:
@@ -148,6 +148,7 @@ Lat,Lon influenced by:
                              station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:
+      --csv                  outputs as CSV
       --html                 outputs as HTML
       --json                 outputs as JSON
       --text                 outputs as Text
