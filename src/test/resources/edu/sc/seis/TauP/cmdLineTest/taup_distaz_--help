@@ -1,13 +1,13 @@
 Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--baz=<backAzimuth>] [--geodeticflattening=f]
                    [-o=<outFile>] [--prop=<toolPropsFilename>]
-                   [--qml=<quakemlFilename>] [--radius=<radiusOfEarth>]
-                   [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
-                   lon]... [--html | --json | --text] [[--deg=d[,d...]]...
-                   [--km=km[,km...]]... [--degreerange=[step][min max][min max
-                   step]]... [--kilometerrange=[step][min max][min max
-                   step]]...]...
+                   [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
+                   [--eid=evt[,evt...]]... [--sid=sta[,sta...]]... [--evt=lat
+                   lon]... [--sta=lat lon]... [--html | --json | --text]
+                   [[--deg=d[,d...]]... [--km=km[,km...]]... [--degreerange=
+                   [step][min max][min max step]]... [--kilometerrange=[step]
+                   [min max][min max step]]...]... [--mod=<modelName> |
+                   [--radius=<radiusOfEarth>]]
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -31,6 +31,9 @@ Options:
                               calculations when --geodetic, defaults to WGS84 ~
                               298.257. The distance calculation uses 1/x.
       --help                display this help message
+      --mod, --model=<modelName>
+                            use velocity model "modelName" for radius, used
+                              when distance given in km.
   -o, --output=<outFile>    output to file, default is stdout.
       --prop=<toolPropsFilename>
                             load defaults from properties file
