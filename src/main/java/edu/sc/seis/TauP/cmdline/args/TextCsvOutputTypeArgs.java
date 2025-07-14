@@ -2,15 +2,15 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import picocli.CommandLine;
 
-public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
+public class TextCsvOutputTypeArgs extends AbstractOutputTypeArgs {
 
-    public TableOutputTypeArgs(String defaultFormat, String filebase) {
+    public TextCsvOutputTypeArgs(String defaultFormat, String filebase) {
         super(filebase);
         setOutputFormat(defaultFormat);
     }
 
     @CommandLine.ArgGroup(heading = OUTPUTTYPE_HEADING)
-    TableOutputType outputType = new TableOutputType();
+    TextCsvOutputType outputType = new TextCsvOutputType();
 
 
     public boolean isText() {
@@ -25,17 +25,13 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     public boolean isCSV() {
         return outputType._isCSV;
     }
-    public boolean isLocsat() {
-        return outputType._isLocsat;
-    }
 
     public void setOutputFormat(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
         outputType._isHTML = false;
         outputType._isCSV = false;
-        outputType._isLocsat = false;
-        if (oType.equalsIgnoreCase(OutputTypes.TEXT) || oType.equalsIgnoreCase("generic")) {
+        if (oType.equalsIgnoreCase(OutputTypes.TEXT)) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.JSON)) {
             outputType._isJSON = true;
@@ -43,8 +39,6 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
             outputType._isHTML = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.CSV)) {
             outputType._isCSV = true;
-        } else if (oType.equalsIgnoreCase(OutputTypes.LOCSAT)) {
-            outputType._isLocsat = true;
         } else {
             throw new IllegalArgumentException("output type "+oType+" not recognized.");
         }
@@ -54,7 +48,6 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         if (isJSON()) return OutputTypes.JSON;
         if (isCSV()) return OutputTypes.CSV;
         if (isHTML()) return OutputTypes.HTML;
-        if (isLocsat()) return OutputTypes.LOCSAT;
         return OutputTypes.TEXT;
     }
 
@@ -69,24 +62,19 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
             calcExt = OutputTypes.HTML;
         } else if (isCSV()) {
             calcExt = OutputTypes.CSV;
-        } else if (isLocsat()) {
-            calcExt = OutputTypes.LOCSAT;
         }
         return calcExt;
     }
 
-    static class TableOutputType {
-        @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as Text")
-        boolean _isText = true;
+    static class TextCsvOutputType {
+        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as Text")
+        boolean _isText = false;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
         @CommandLine.Option(names = {"--html"}, required = true, description = "outputs as HTML")
         boolean _isHTML = false;
         @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
         boolean _isCSV = false;
-        @CommandLine.Option(names = {"--locsat"}, required = true, description = "outputs as Locsat")
-        boolean _isLocsat = false;
     }
 
 }
-

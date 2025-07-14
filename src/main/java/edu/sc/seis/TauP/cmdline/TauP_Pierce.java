@@ -18,10 +18,16 @@ package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.AmplitudeArgs;
+import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +46,7 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
         description = "Calculate pierce points for phases at discontinuities in the model.",
         optionListHeading = OPTIONS_HEADING,
         usageHelpAutoWidth = true)
-public class TauP_Pierce extends TauP_Time {
+public class TauP_Pierce extends TauP_AbstractRayTool {
 
     protected boolean onlyTurnPoints = false;
 
@@ -51,15 +57,18 @@ public class TauP_Pierce extends TauP_Time {
     protected boolean onlyAddPoints = false;
 
     public TauP_Pierce() {
-        super();
+        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
     }
 
     public TauP_Pierce(TauModel tMod) {
-        super(tMod);
+        this();
+        setTauModel(tMod);
     }
 
     public TauP_Pierce(String modelName) throws TauModelException {
-        super(modelName);
+        this();
+        modelArgs.setModelName(modelName);
     }
 
     // get/set methods
@@ -107,18 +116,45 @@ public class TauP_Pierce extends TauP_Time {
         return out;
     }
 
+    @CommandLine.Mixin
+    TextOutputTypeArgs outputTypeArgs;
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOutputFormat();
+    }
+
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+
+    @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
+    protected boolean onlyFirst = false;
+
+    @CommandLine.Mixin
+    AmplitudeArgs sourceArgs = new AmplitudeArgs();
+
+    public AmplitudeArgs getSourceArgs() {
+        return sourceArgs;
+    }
+
+    public boolean isWithAmplitude() {
+        return getSourceArgs().isWithAmplitude();
+    }
+
     @Override
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> rayCalcList) throws TauPException {
-        List<Arrival> arrivalList = super.calcAll(phaseList, rayCalcList);
+        List<Arrival> arrivalList = TauP_Time.internalCalcAll(phaseList, rayCalcList, onlyFirst);
+
         for (Arrival arrival : arrivalList) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
         return arrivalList;
     }
 
-    @Override
     public GsonBuilder createGsonBuilder() {
-        GsonBuilder gsonBld = super.createGsonBuilder();
+        GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
         gsonBld.registerTypeAdapter(Arrival.class,
                 new ArrivalSerializer(true, false, isWithAmplitude()));
         gsonBld.registerTypeAdapter(ScatteredArrival.class,
@@ -127,6 +163,36 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
+    public void start() throws IOException, TauPException {
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
+        List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
+        if (getDistanceArgs().isAllIndexRays()) {
+            List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
+            arrivalList.addAll(indexArrivalList);
+        }
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+        printResult(writer, arrivalList);
+        writer.close();
+    }
+
+    @Override
+    public void destroy() throws TauPException {
+    }
+
+    @Override
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+        if (getOutputFormat().equals(OutputTypes.JSON)) {
+            TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
+            GsonBuilder gsonBld = createGsonBuilder();
+            out.println(gsonBld.create().toJson(result));
+        } else if (getOutputFormat().equals(OutputTypes.HTML)) {
+            printResultHtml(out, arrivalList);
+        } else {
+            printResultText(out, arrivalList);
+        }
+        out.flush();
+    }
+
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         printPierceAsText(out, arrivalList);
     }
@@ -174,8 +240,6 @@ public class TauP_Pierce extends TauP_Time {
         }
     }
 
-
-    @Override
     public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         printPierceAsHtml(out, arrivalList);
     }

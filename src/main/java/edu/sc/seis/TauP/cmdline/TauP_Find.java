@@ -22,8 +22,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
 
     public TauP_Find() {
-        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
-        outputTypeArgs = (TextOutputTypeArgs) this.abstractOutputTypeArgs;
+        super(new TextCsvOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextCsvOutputTypeArgs) this.abstractOutputTypeArgs;
     }
 
     @Override
@@ -114,6 +114,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 printResultJson(writer, allwalk);
             } else if (outputTypeArgs.isHTML()) {
                 printResultHtml(writer, allwalk);
+            } else if (outputTypeArgs.isCSV()) {
+                printResultCsv(writer, allwalk);
+            } else {
+                throw new TauPException("Unknown output: "+outputTypeArgs.getOutputFormat());
             }
         }
         writer.close();
@@ -283,7 +287,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         writer.flush();
     }
 
-    public void printResultText(PrintWriter writer, List<ProtoSeismicPhase> walk) throws IOException {
+    public void printResultText(PrintWriter writer, List<ProtoSeismicPhase> walk) {
         int maxNameLength = 1;
         for (ProtoSeismicPhase segList : walk) {
             maxNameLength = Math.max(maxNameLength,
@@ -312,6 +316,29 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         writer.flush();
     }
+
+
+    public void printResultCsv(PrintWriter writer, List<ProtoSeismicPhase> walk) {
+        String comma = ",";
+
+        writer.print("Phase");
+        if (showrayparam) {
+            writer.print(",Min RP (s/deg),Max RP (s/deg)");
+        }
+        writer.println();
+        for (ProtoSeismicPhase segList : walk) {
+            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
+
+            writer.print(segList.phaseNameForSegments());
+            if (showrayparam) {
+                writer.print(comma+Outputs.formatRayParam(endSeg.getMinRayParam() / RtoD).trim()
+                                + comma + Outputs.formatRayParam(endSeg.getMaxRayParam() / RtoD).trim());
+            }
+            writer.println();
+        }
+        writer.flush();
+    }
+
     FindTimeResult createTimeResult(List<Arrival> arrivals, TauModel optTauModel) throws TauPException {
         TauModel tMod = optTauModel;
         if (!arrivals.isEmpty()) {
@@ -322,8 +349,12 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             excludeList.add((float) d);
         }
         List<String> phases = new ArrayList<>();
+        List<PhaseName> inputPhases = new ArrayList<>();
+        if ( ! getPhaseArgs().isEmpty()) {
+            inputPhases.addAll(getPhaseArgs().parsePhaseNameList());
+        }
         FindTimeResult result = new FindTimeResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
-                getPhaseArgs().parsePhaseNameList(), getScatterer(),
+                inputPhases, getScatterer(),
                 false, sourceArgs,
                 arrivals,
                 maxActions, excludeList, phases);
@@ -338,17 +369,21 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         for (double d : getExcludedDepths(tMod)) {
             excludeList.add((float) d);
         }
-        List<String> phases = new ArrayList();
+        List<PhaseName> inputPhases = new ArrayList<>();
+        if ( ! getPhaseArgs().isEmpty()) {
+            inputPhases.addAll(getPhaseArgs().parsePhaseNameList());
+        }
+        List<String> phases = new ArrayList<>();
         for (ProtoSeismicPhase segList : walk) {
             phases.add(segList.phaseNameForSegments());
         }
         FindResult result = new FindResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
-                getPhaseArgs().parsePhaseNameList(), getScatterer(),
+                inputPhases, getScatterer(),
                 maxActions, excludeList, phases
         );
         return result;
     }
-    public void printResultJson(PrintWriter writer, List<ProtoSeismicPhase> walk) throws IOException, TauPException {
+    public void printResultJson(PrintWriter writer, List<ProtoSeismicPhase> walk) throws TauPException {
         FindResult result = createResult(walk, modelArgs.getTauModel());
         Gson gson = GsonUtil.createGsonBuilder().create();
 
@@ -396,7 +431,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Mixin
-    TextOutputTypeArgs outputTypeArgs;
+    TextCsvOutputTypeArgs outputTypeArgs;
 
     @CommandLine.Option(names = "--showrayparam", description = "show min and max ray parameter for each phase name")
     boolean showrayparam = false;
@@ -569,7 +604,7 @@ class FindResult extends AbstractPhaseResult {
     }
 
     int maxactions;
-    List<Float> exclude = new ArrayList<>();
+    List<Float> exclude;
     List<String> foundphases;
 }
 
@@ -587,6 +622,6 @@ class FindTimeResult extends TimeResult {
         this.foundphases = foundphases;
     }
     int maxactions;
-    List<Float> exclude = new ArrayList<>();
+    List<Float> exclude;
     List<String> foundphases;
 }
