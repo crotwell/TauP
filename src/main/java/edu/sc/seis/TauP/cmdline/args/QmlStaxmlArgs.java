@@ -104,8 +104,8 @@ public class QmlStaxmlArgs {
 
     /**
      * Gets station locations via stationxml file or remote loading of station sourceid.
-     * @return List of locations
-     * @throws TauPException
+     * @return List of station locations
+     * @throws TauPException If error parsing xml file.
      */
     public List<Location> getStationLocations() throws TauPException {
         List<Location> staList = new ArrayList<>();
@@ -152,6 +152,13 @@ public class QmlStaxmlArgs {
         return staList;
     }
 
+    /**
+     * Returns a list of event locations as parsed from the command line arguments.
+     *
+     * @throws TauPException If unable to parse files or load remote resources.
+     * @return a {@code List<EventLocation>} representing all parsed event locations,
+     *         or an empty list if none have been specified.
+     */
     public List<Location> getEventLocations() throws TauPException {
         List<Location> eventLocs = new ArrayList<>();
         List<Event> quakes = new ArrayList<>();

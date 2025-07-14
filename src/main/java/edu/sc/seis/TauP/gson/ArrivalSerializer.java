@@ -31,7 +31,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
      *
      * @param arr       the object that needs to be converted to Json.
      * @param typeOfSrc the actual type (fully genericized version) of the source object.
-     * @param context
+     * @param context the serialization context
      * @return a JsonElement corresponding to the specified object.
      */
     @Override

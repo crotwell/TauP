@@ -235,6 +235,7 @@ public class PhaseArgs {
      * end of the line while c style slash-star make a block a comment.
      *
      * @param filename file to read
+     * @throws IOException if problem reading file
      * @return list of phase names from file
      */
     protected List<String> readPhaseFile(String filename) throws IOException {

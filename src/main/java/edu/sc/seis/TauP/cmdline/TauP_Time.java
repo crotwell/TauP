@@ -85,7 +85,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
 
-    /**
+    /*
      * placeholder, should add to output type args
      @CommandLine.Option(names="--csv")
      */
