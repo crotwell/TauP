@@ -803,6 +803,10 @@ public class Arrival {
         return radiationTerm;
     }
 
+    /**
+     * Calculates the path length.
+     * @return path length in kilometers
+     */
     public double calcPathLength() {
         // path length
         double length = 0;
