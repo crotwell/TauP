@@ -42,7 +42,7 @@ public class DistanceAngleRaySerializier implements JsonSerializer<DistanceAngle
             out.add(JSONLabels.SOURCE, locSerial.serialize(src.getSource(), Location.class, context));
         }
         if (src.hasReceiver()) {
-            out.add(JSONLabels.RECEIVER, locSerial.serialize(src.getSource(), Location.class, context));
+            out.add(JSONLabels.RECEIVER, locSerial.serialize(src.getReceiver(), Location.class, context));
         }
         return out;
     }
