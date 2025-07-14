@@ -20,6 +20,7 @@ public class GsonUtil {
     public static void registerSerializers(GsonBuilder gson) {
         gson.registerTypeAdapter(Location.class, new LocationSerializer());
         gson.registerTypeAdapter(DistanceAngleRay.class, new DistanceAngleRaySerializier());
+        gson.registerTypeAdapter(Daz.class, new DazSerializier());
         gson.registerTypeAdapter(SeismicSourceArgs.class, new SourceArgsSerializer());
         gson.registerTypeAdapter(Scatterer.class, new ScattererSerializer());
         gson.registerTypeAdapter(ShadowZone.class, new ShadowZoneSerializer());

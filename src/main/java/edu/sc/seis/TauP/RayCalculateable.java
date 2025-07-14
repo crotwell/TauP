@@ -61,12 +61,21 @@ public abstract class RayCalculateable {
 
     public boolean isGeodetic() { return geodetic;}
 
+    public Double getInvFlattening() {
+        return invFlattening;
+    }
+
     /**
      * Returns azimuth, if available, in the range -180&lt;baz&lt;=180.
      * @return azimuth
      */
     public Double getNormalizedAzimuth() {
         Double az = getAzimuth();
+        return normalizAzimuth(az);
+
+    }
+
+    public static Double normalizAzimuth(Double az) {
         if (az != null ) {
             az = az % 360;
             if (az > 180) {
@@ -114,13 +123,7 @@ public abstract class RayCalculateable {
      */
     public Double getNormalizedBackAzimuth() {
         Double baz = getBackAzimuth();
-        if (baz != null ) {
-            baz = baz % 360;
-            if (baz > 180) {
-                baz = baz - 360;
-            }
-        }
-        return baz;
+        return normalizAzimuth(baz);
     }
     /**
      * Gets azimuth if available, null otherwise.

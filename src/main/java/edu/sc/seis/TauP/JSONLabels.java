@@ -70,6 +70,7 @@ public interface JSONLabels {
     String LAT = "lat";
     String LON = "lon";
     String DEG = "deg";
+    String KM = "km";
     String AZ = "az";
     String BAZ = "baz";
     String FROM = "from";

@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -101,14 +102,19 @@ public class TauP_DistAz extends TauP_Tool {
             }
         }
         distList.sort(Comparator.comparingDouble(DistanceAngleRay::getDegrees));
+        List<Daz> dazList = new ArrayList<>();
+        double radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
+        for (DistanceAngleRay ray : distList) {
+            dazList.add(new Daz(ray, radius));
+        }
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
             out.println("Degrees      Km     Azimuth  BackAzimuth  Description   ("+geoditic+")  ");
             out.println("----------------------------------------------------------------------");
-            for (DistanceAngleRay dr : distList) {
+            for (Daz dr : dazList) {
                 out.println(Outputs.formatDistance(dr.getDegrees())
-                        +" "+Outputs.formatKilometer (dr.getKilometers(radiusOfEarth))
+                        +" "+Outputs.formatKilometer (dr.getKilometers())
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
                         +"      "+(dr.hasDescription() ? dr.getDescription() : "")
@@ -118,9 +124,9 @@ public class TauP_DistAz extends TauP_Tool {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
             List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Description   ("+geoditic+")  ");
             List<List<String>> values = new ArrayList<>();
-            for (DistanceAngleRay dr : distList) {
+            for (Daz dr : dazList) {
                 List<String> row = List.of(Outputs.formatDistance(dr.getDegrees()),
-                        Outputs.formatKilometer (dr.getKilometers(radiusOfEarth)),
+                        Outputs.formatKilometer (dr.getKilometers()),
                         Outputs.formatDistance(dr.getNormalizedAzimuth()),
                         Outputs.formatDistance(dr.getNormalizedBackAzimuth()),
                         (dr.hasDescription() ? dr.getDescription() : "")
@@ -137,9 +143,13 @@ public class TauP_DistAz extends TauP_Tool {
             if (geodeticArgs.isGeodetic()) {
                 result.invflattening = geodeticArgs.getInverseEllipFlattening();
             }
+            result.radius = radius;
+            if (radiusArgs.modelName != null) {
+                result.model = radiusArgs.getModelName();
+            }
             result.sources = eventLocs;
             result.receivers = staList;
-            result.distances = distList;
+            result.distances = dazList;
             Gson gson = GsonUtil.createGsonBuilder().create();
             out.println(gson.toJson(result));
         }
@@ -191,7 +201,7 @@ public class TauP_DistAz extends TauP_Tool {
     }
 
     public Double kmToDeg() {
-        double r = radiusOfEarth != null ? radiusOfEarth : 6371.0;
+        double r = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
         return  180.0 / Math.PI / r; // default radius
     }
 
@@ -210,18 +220,48 @@ public class TauP_DistAz extends TauP_Tool {
     @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Optional distance is given by:%n")
     DistanceLengthArgs distArgs = new DistanceLengthArgs();
 
+    @CommandLine.ArgGroup(exclusive = true)
+    ModelOrRadius radiusArgs = new ModelOrRadius();
+
+}
+
+class ModelOrRadius {
+
+    public Double getRadiusOfEarth() {
+        return radiusOfEarth;
+    }
 
     @CommandLine.Option(names = "--radius",
             defaultValue = "6371",
             description = "radius of earth in km, used when distance given in km")
     protected Double radiusOfEarth = null;
 
+    @CommandLine.Option(names={"--mod", "--model"},
+            description = {"use velocity model \"modelName\" for radius, used when distance given in km. "}
+    )
+    public void setModelName(String modelName) throws TauModelException {
+        if (modelName != null) {
+            TauModel tMod = TauModelLoader.load(modelName);
+            this.radiusOfEarth = tMod.getRadiusOfEarth();
+        }
+        this.modelName = modelName;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    String modelName = null;
+
+    static Properties toolProps = TauP_Tool.configDefaults();
 }
 
 class Result {
+    double radius;
+    String model = null;
     String calctype;
     Double invflattening = null;
     List<Location> sources;
     List<Location> receivers;
-    List<DistanceAngleRay> distances;
+    List<Daz> distances;
 }
