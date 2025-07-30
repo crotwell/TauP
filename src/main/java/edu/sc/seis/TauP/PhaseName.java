@@ -52,6 +52,16 @@ public class PhaseName implements Serializable {
     /** list of sac t headers to be associated with the phase, including n triplications */
     public ArrayList<Integer> sacTNumTriplication = new ArrayList<>();
 
+    /**
+     * Parses phase name of the form name or name-sachdrs where name is a seismic phase name according to the TauP
+     * phase naming convention and sachdrs is one or more sac header numbers, a, x, 0 to 9, into with to set the times
+     * when using taup setsac. The x value in a list means to skip the nth arrival.
+     * The sachrds is ignored for all other tools.
+     *
+     * @param name phase name with optional sac headers
+     * @return parsed phase name
+     * @throws PhaseParseException if unable to parse the name
+     */
     public static PhaseName parseName(String name) throws PhaseParseException {
         String[] phaseAndHeader = name.split("-");
         if (phaseAndHeader.length == 1) {
@@ -62,7 +72,7 @@ public class PhaseName implements Serializable {
         }
     }
 
-    public PhaseName(String name) throws PhaseParseException {
+    PhaseName(String name) throws PhaseParseException {
         this.name = name;
         // check name is valid
         LegPuller.legPuller(name);

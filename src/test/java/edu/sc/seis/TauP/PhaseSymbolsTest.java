@@ -3,8 +3,7 @@ package edu.sc.seis.TauP;
 import org.junit.jupiter.api.Test;
 
 import static edu.sc.seis.TauP.PhaseSymbols.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PhaseSymbolsTest {
 
@@ -46,5 +45,28 @@ public class PhaseSymbolsTest {
         assertTrue(isDiffractedDown("PKdiffdnIKP", 1));
         assertTrue(isDiffractedDown("Pmdiffdn"));
         assertTrue(isDiffractedDown("P1607diffdnPedcP1607.753diff"));
+    }
+
+    @Test
+    public void testPhaseSacHeaderSingle() throws Exception {
+
+        PhaseName pn_single = PhaseName.parseName("P-2");
+        assertEquals("P", pn_single.getName());
+        assertEquals(1, pn_single.sacTNumTriplication.size());
+        assertEquals(2, pn_single.sacTNum);
+    }
+
+    @Test
+    public void testPhaseSacHeaderMultiple() throws Exception {
+        PhaseName pn = PhaseName.parseName("P-234");
+        assertEquals("P", pn.getName());
+        assertEquals(3, pn.sacTNumTriplication.size());
+    }
+
+    @Test
+    public void testPhaseSacHeaderEmpty() throws Exception {
+        PhaseName purename = PhaseName.parseName("P");
+        assertEquals("P", purename.getName());
+        assertEquals(0, purename.sacTNumTriplication.size());
     }
 }

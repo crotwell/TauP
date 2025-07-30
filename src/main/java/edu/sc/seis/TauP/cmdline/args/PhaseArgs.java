@@ -194,11 +194,11 @@ public class PhaseArgs {
         List<PhaseName> phases = new ArrayList<>();
             if (isEmpty()) {
                 for (String pStr : extractPhaseNames(DEFAULT_PHASES)) {
-                    phases.add( new PhaseName(pStr));
+                    phases.add( PhaseName.parseName(pStr));
                 }
             } else {
                 for (String pStr : phaseNames) {
-                    phases.add( new PhaseName(pStr));
+                    phases.add( PhaseName.parseName(pStr));
                 }
                 for (String filename : phaseFileList) {
                     List<String> pList;
@@ -208,7 +208,7 @@ public class PhaseArgs {
                         throw new PhaseParseException("Unable to parse file: " + filename, e);
                     }
                     for (String pStr : pList) {
-                        phases.add( new PhaseName(pStr));
+                        phases.add( PhaseName.parseName(pStr));
                     }
                 }
             }

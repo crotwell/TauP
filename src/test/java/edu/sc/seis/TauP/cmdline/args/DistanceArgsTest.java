@@ -18,7 +18,7 @@ public class DistanceArgsTest {
     public void qmlAndStaxmlTest() throws TauPException {
         TauP_Time time = new TauP_Time();
         time.getDistanceArgs().qmlStaxmlArgs = new MockQmlStaxmlArgs();
-        time.setPhaseNameList(List.of(new PhaseName("P")));
+        time.setPhaseNameList(List.of(PhaseName.parseName("P")));
         List<SeismicPhase> phaseList =  time.getSeismicPhases();
         for (SeismicPhase seismicPhase : phaseList) {
             System.err.println("in test: "+seismicPhase.describeShort());
