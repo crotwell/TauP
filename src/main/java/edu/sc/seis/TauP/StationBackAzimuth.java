@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 
 /**
@@ -7,7 +8,7 @@ import edu.sc.seis.seisFile.Location;
  */
 public class StationBackAzimuth extends LatLonable {
 
-    public StationBackAzimuth(Location staLatLon, Double backAzimuth) {
+    public StationBackAzimuth(LatLonLocatable staLatLon, Double backAzimuth) {
         this.staLatLon = staLatLon;
         this.backAzimuth = backAzimuth;
     }
@@ -18,14 +19,15 @@ public class StationBackAzimuth extends LatLonable {
         if (isGeodetic()) {
             throw new RuntimeException("geodetic not yet");
         }
-        double evtLat = SphericalCoords.latFor(staLatLon.getLatitude(), staLatLon.getLongitude(), backAzimuth, totalDist);
-        double evtLon = SphericalCoords.lonFor(staLatLon.getLatitude(), staLatLon.getLongitude(), backAzimuth, totalDist);
-        double azimuth = SphericalCoords.azimuth(evtLat, evtLon, staLatLon.getLatitude(), staLatLon.getLongitude());
+        Location staLoc = staLatLon.asLocation();
+        double evtLat = SphericalCoords.latFor(staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth, totalDist);
+        double evtLon = SphericalCoords.lonFor(staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth, totalDist);
+        double azimuth = SphericalCoords.azimuth(evtLat, evtLon, staLoc.getLatitude(), staLoc.getLongitude());
         out[0] = SphericalCoords.latFor(evtLat, evtLon, calcDist, azimuth);
         out[1] = SphericalCoords.lonFor(evtLat, evtLon, calcDist, azimuth);
         return out;
     }
 
-    Location staLatLon;
+    LatLonLocatable staLatLon;
     double backAzimuth;
 }

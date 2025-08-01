@@ -26,6 +26,7 @@
 package edu.sc.seis.TauP;
 
 
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 
 /**
@@ -83,6 +84,9 @@ public class SphericalCoords {
                 * Math.sin((lonB - lonA) * dtor)
                 / Math.sin(distance(latA, lonA, latB, lonB) * dtor);
         return rtod * Math.atan2(sinAzimuth, cosAzimuth);
+    }
+    public static double azimuth(LatLonLocatable a, LatLonLocatable b) {
+        return azimuth(a.asLocation(), b.asLocation());
     }
     public static double azimuth(Location a, Location b) {
         return azimuth(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());

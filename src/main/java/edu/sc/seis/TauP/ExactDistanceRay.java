@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.LatLonLocatable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,12 +69,12 @@ public class ExactDistanceRay extends DistanceRay {
     }
 
     @Override
-    public void withEventAzimuth(Location evt, double azimuth) {
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
         distanceRay.withEventAzimuth(evt, azimuth);
     }
 
     @Override
-    public void withStationBackAzimuth(Location sta, double backazimuth) {
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
         distanceRay.withStationBackAzimuth(sta, backazimuth);
     }
 

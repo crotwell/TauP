@@ -220,7 +220,7 @@ public class PhaseArgs {
         // in case of empty phase list
         if (phaseNameList.isEmpty())
             return "";
-        StringBuffer phases = new StringBuffer();
+        StringBuilder phases = new StringBuilder();
         phases.append(phaseNameList.get(0).getName());
         for (PhaseName phaseName : phaseNameList.subList(1, phaseNameList.size())) {
             phases.append(",").append(phaseName.getName());

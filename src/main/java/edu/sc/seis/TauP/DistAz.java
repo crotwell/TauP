@@ -1,9 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
-import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 
 /**
  * Distance, azimuth and back azimuth between two lat,lon pairs.
@@ -16,33 +14,27 @@ public class DistAz {
     public static final double wgs85_meanEarthRadius = 6371.0088;
 
     /**
+     * First location is generally the source/event and second is the receiver/station.
      c getDelta()  Great Circle Arc distance in degrees
-     c getAz()     Azimuth from channel to event in degrees
-     c getBaz()    Back Azimuth from event to channel in degrees
+     c getAz()     Azimuth from loc1 to loc2 in degrees
+     c getBaz()    Back Azimuth from loc2 to loc1 in degrees
      */
-    public DistAz(Event ev, Channel chan){
-        this( ev.getPreferredOrigin(), chan);
+    public DistAz(LatLonLocatable loc1, LatLonLocatable loc2){
+        this(loc1.asLocation(), loc2.asLocation());
     }
 
     /**
+     * First location is generally the source/event and second is the receiver/station.
      c getDelta()  Great Circle Arc distance in degrees
-     c getAz()     Azimuth from channel to origin in degrees
-     c getBaz()    Back Azimuth from origin to channel in degrees
+     c getAz()     Azimuth from loc1 to loc2 in degrees
+     c getBaz()    Back Azimuth from loc2 to loc1 in degrees
      */
-    public DistAz(Origin origin, Channel chan){
-        this(origin.asLocation(), chan.asLocation());
+    public DistAz(LatLonLocatable loc1, LatLonLocatable loc2, double flattening){
+        this(loc1.asLocation(), loc2.asLocation(), flattening);
     }
 
     /**
-     c getDelta()  Great Circle Arc distance in degrees
-     c getAz()     Azimuth from channel to origin in degrees
-     c getBaz()    Back Azimuth from origin to channel in degrees
-     */
-    public DistAz(Location eventLoc, Channel chan){
-        this(eventLoc, chan.asLocation());
-    }
-
-    /**
+     * First location is generally the source/event and second is the receiver/station.
      c getDelta()  Great Circle Arc distance in degrees
      c getAz()     Azimuth from loc1 to loc2 in degrees
      c getBaz()    Back Azimuth from loc2 to loc1 in degrees

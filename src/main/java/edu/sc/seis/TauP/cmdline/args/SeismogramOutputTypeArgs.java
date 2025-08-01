@@ -25,7 +25,8 @@ public class SeismogramOutputTypeArgs extends AbstractOutputTypeArgs {
     @Override
     public String getOutputFormat() {
         if (isSAC()) return SAC;
-        return MS3;
+        if (isMS3()) return MS3;
+        throw new RuntimeException("Unknown output format");
     }
 
     public void setOutputFormat(String oType) {

@@ -2,7 +2,6 @@ package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
 import edu.sc.seis.TauP.Daz;
-import edu.sc.seis.TauP.DistanceAngleRay;
 import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.seisFile.Location;
 

@@ -1,12 +1,12 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.LatLonLocatable;
 
 public class Daz {
     protected double deg;
     protected double km;
-    protected Location staLatLon = null;
-    protected Location evtLatLon = null;
+    protected LatLonLocatable staLatLon = null;
+    protected LatLonLocatable evtLatLon = null;
     protected double azimuth;
     protected double backAzimuth;
     protected boolean geodetic = false;
@@ -42,17 +42,17 @@ public class Daz {
         return deg;
     }
 
-    public Location getStaLatLon() {
+    public LatLonLocatable getStaLatLon() {
         return staLatLon;
     }
-    public Location getSource() {
+    public LatLonLocatable getSource() {
         return getStaLatLon();
     }
 
-    public Location getEvtLatLon() {
+    public LatLonLocatable getEvtLatLon() {
         return evtLatLon;
     }
-    public Location getReceiver() {
+    public LatLonLocatable getReceiver() {
         return getEvtLatLon();
     }
 

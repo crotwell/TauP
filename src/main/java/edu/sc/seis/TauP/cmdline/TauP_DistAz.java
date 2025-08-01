@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import picocli.CommandLine;
 
@@ -12,7 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -46,58 +48,53 @@ public class TauP_DistAz extends TauP_Tool {
     @Override
     public void start() throws IOException, TauPException {
 
-        List<Location> eventLocs = new ArrayList<>();
+        List<LatLonLocatable> eventLocs = new ArrayList<>();
         eventLocs.addAll(latLonArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
 
-        List<Location> staList = new ArrayList<>();
+        List<LatLonLocatable> staList = new ArrayList<>();
         staList.addAll(latLonArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
 
         List<DistanceAngleRay> distList = new ArrayList<>();
 
         if (latLonArgs.hasAzimuth()) {
-            for (Location evtLoc : eventLocs) {
-                String evtDesc = QmlStaxmlArgs.createDescription(evtLoc);
-
+            for (LatLonLocatable evtLoc : eventLocs) {
+                Location eLoc = evtLoc.asLocation();
                 for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(evtLoc, d, latLonArgs.getAzimuth());
-                    double lon = SphericalCoords.lonFor(evtLoc, d, latLonArgs.getAzimuth());
-                    Location loc = new Location(lat, lon);
+                    double lat = SphericalCoords.latFor(eLoc, d, latLonArgs.getAzimuth());
+                    double lon = SphericalCoords.lonFor(eLoc, d, latLonArgs.getAzimuth());
+                    LatLonSimple loc = new LatLonSimple(lat, lon);
                     DistanceAngleRay dr = DistanceRay.ofEventStation(evtLoc, loc);
                     //dr.setAzimuth(latLonArgs.getAzimuth());
-                    dr.setDescription(evtDesc+" to "+QmlStaxmlArgs.createDescription(loc));
+                    dr.setDescription(evtLoc.getLocationDescription()+" to "+loc.getLocationDescription());
                     distList.add(dr);
                 }
-
             }
         }
         if (latLonArgs.hasBackAzimuth()) {
-            for (Location staLoc : staList) {
-                String staDesc = QmlStaxmlArgs.createDescription(staLoc);
+            for (LatLonLocatable staLoc : staList) {
                 for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(staLoc, d, latLonArgs.getBackAzimuth());
-                    double lon = SphericalCoords.lonFor(staLoc, d, latLonArgs.getBackAzimuth());
-                    Location loc = new Location(lat, lon);
+                    double lat = SphericalCoords.latFor(staLoc.asLocation(), d, latLonArgs.getBackAzimuth());
+                    double lon = SphericalCoords.lonFor(staLoc.asLocation(), d, latLonArgs.getBackAzimuth());
+                    LatLonSimple loc = new LatLonSimple(lat, lon);
                     DistanceAngleRay dr = DistanceRay.ofEventStation(loc, staLoc);
                     //dr.setBackAzimuth(latLonArgs.getBackAzimuth());
-                    dr.setDescription(QmlStaxmlArgs.createDescription(loc)+" to "+staDesc);
+                    dr.setDescription(loc.getLocationDescription()+" to "+staLoc.getLocationDescription());
                     distList.add(dr);
                 }
             }
         }
-        for (Location evtLoc : eventLocs) {
-            for (Location staLoc : staList) {
+        for (LatLonLocatable evtLoc : eventLocs) {
+            for (LatLonLocatable staLoc : staList) {
                 DistanceAngleRay dr;
                 if (geodeticArgs.isGeodetic()) {
                     dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getInverseEllipFlattening());
                 } else {
                     dr = DistanceRay.ofEventStation(evtLoc, staLoc);
                 }
-                String staDesc = QmlStaxmlArgs.createDescription(staLoc);
-                String evtDesc = QmlStaxmlArgs.createDescription(evtLoc);
 
-                dr.setDescription(evtDesc+" to "+staDesc);
+                dr.setDescription(evtLoc.getLocationDescription()+" to "+staLoc.getLocationDescription());
                 distList.add(dr);
             }
         }
@@ -147,8 +144,8 @@ public class TauP_DistAz extends TauP_Tool {
             if (radiusArgs.modelName != null) {
                 result.model = radiusArgs.getModelName();
             }
-            result.sources = eventLocs;
-            result.receivers = staList;
+            result.sources = eventLocs.stream().map(LatLonLocatable::asLocation).collect(Collectors.toList());
+            result.receivers = staList.stream().map(LatLonLocatable::asLocation).collect(Collectors.toList());
             result.distances = dazList;
             Gson gson = GsonUtil.createGsonBuilder().create();
             out.println(gson.toJson(result));
@@ -220,7 +217,7 @@ public class TauP_DistAz extends TauP_Tool {
     @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Optional distance is given by:%n")
     DistanceLengthArgs distArgs = new DistanceLengthArgs();
 
-    @CommandLine.ArgGroup(exclusive = true)
+    @CommandLine.ArgGroup()
     ModelOrRadius radiusArgs = new ModelOrRadius();
 
 }
@@ -253,7 +250,6 @@ class ModelOrRadius {
 
     String modelName = null;
 
-    static Properties toolProps = TauP_Tool.configDefaults();
 }
 
 class Result {

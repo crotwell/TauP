@@ -4,6 +4,7 @@ import edu.sc.seis.TauP.BuildVersion;
 import edu.sc.seis.TauP.DistAz;
 import edu.sc.seis.TauP.Outputs;
 import edu.sc.seis.TauP.TauPException;
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.*;
@@ -19,12 +20,9 @@ import picocli.CommandLine;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 
 public class QmlStaxmlArgs {
 
@@ -34,7 +32,7 @@ public class QmlStaxmlArgs {
                     +"([A-Z0-9-]{1,8})"; // sta
     public static final Pattern staSourceIdRegEx = Pattern.compile(staSourceIdRegExString);
 
-    public static List<Location> loadStationsForSid(List<String> sidList) throws FDSNSourceIdException, FDSNWSException {
+    public static List<Station> loadStationsForSid(List<String> sidList) throws FDSNSourceIdException, FDSNWSException {
         if (sidList.isEmpty()) {
             // don't query for empty list
             return List.of();
@@ -55,7 +53,7 @@ public class QmlStaxmlArgs {
                 staQP.appendToNetwork(fdsn.getNetworkCode());
                 staQP.appendToStation(fdsn.getStationCode());
             } else {
-                String[] splitSid = sid.split("[_\\.]");
+                String[] splitSid = sid.split("[_.]");
                 if (splitSid.length >= 2) {
                     staQP.appendToNetwork(splitSid[0]);
                     staQP.appendToStation(splitSid[1]);
@@ -63,7 +61,6 @@ public class QmlStaxmlArgs {
             }
         }
 
-        List<Location> out = new ArrayList<>();
         IRISFedCatQueryParams qp = new IRISFedCatQueryParams(staQP);
         qp.setFormat(IRISFedCatQueryParams.FORMAT_TEXT);
         IRISFedCatQuerier querier = new IRISFedCatQuerier(qp);
@@ -91,62 +88,48 @@ public class QmlStaxmlArgs {
             }
         }
         staList= uniq;
-        for (Station sta : staList) {
-            Location staLoc = sta.asLocation();
-            String desc = sta.getNetworkCode()+"."+sta.getStationCode()
-                    +" " + Outputs.formatLatLon(staLoc.getLatitude()).trim()
-                    + "/" + Outputs.formatLatLon(staLoc.getLongitude()).trim();
-            staLoc.setDescription(desc);
-            out.add(staLoc);
-        }
-        return out;
+        return staList;
     }
 
     /**
      * Gets station locations via stationxml file or remote loading of station sourceid.
-     * @return List of station locations
+     * @return List of station/channel locations
      * @throws TauPException If error parsing xml file.
      */
-    public List<Location> getStationLocations() throws TauPException {
-        List<Location> staList = new ArrayList<>();
+    public List<LatLonLocatable> getStationLocations() throws TauPException {
+        List<LatLonLocatable> staList = new ArrayList<>();
         staList.addAll(getSidLocations());
         staList.addAll(getStationXMLLocations());
         return staList;
     }
 
-    public List<Location> getStationXMLLocations() throws TauPException {
-        List<Location> staList = new ArrayList<>();
+    public List<LatLonLocatable> getStationXMLLocations() throws TauPException {
+        List<LatLonLocatable> staList = new ArrayList<>();
         Map<Network, List<Station>> networks = loadStationXML();
         for (Network net : networks.keySet()) {
             for (Station sta : networks.get(net)) {
-                List<Location> allChans = new ArrayList<>();
+                List<LatLonLocatable> allChans = new ArrayList<>();
                 for (Channel chan : sta.getChannelList()) {
-                    Location cLoc = new Location(chan);
+                    if (sta.asLocation().equals(chan.asLocation())) {
+                        // same as station,
+                        continue;
+                    }
                     boolean found = false;
-                    for (Location prev : allChans) {
-                        if (prev.equals(cLoc)) {
+                    for (LatLonLocatable prev : allChans) {
+                        if (prev.asLocation().equals(chan.asLocation())) {
                             found = true;
                             break;
                         }
                     }
                     if (!found) {
-                        String desc = sta.getNetworkCode()+"."+sta.getStationCode()
-                                +" " + Outputs.formatLatLon(cLoc.getLatitude()).trim()
-                                + "/" + Outputs.formatLatLon(cLoc.getLongitude()).trim();
-                        cLoc.setDescription(desc);
-                        allChans.add(cLoc);
+                        allChans.add(chan);
                     }
                 }
-                if (sta.getChannelList().isEmpty()) {
-                    // no channels, maybe was retrieved with level=Station, add station location at surface
-                    Location staLoc = new Location(sta);
-                    String desc = sta.getNetworkCode()+"."+sta.getStationCode()
-                            +" " + Outputs.formatLatLon(staLoc.getLatitude()).trim()
-                            + "/" + Outputs.formatLatLon(staLoc.getLongitude()).trim();
-                    staLoc.setDescription(desc);
-                    allChans.add(staLoc);
-                }
                 staList.addAll(allChans);
+                if (allChans.isEmpty()) {
+                    // no channels, maybe was retrieved with level=Station, add station location at surface
+                    staList.add(sta);
+                }
             }
         }
         return staList;
@@ -159,37 +142,10 @@ public class QmlStaxmlArgs {
      * @return a {@code List<EventLocation>} representing all parsed event locations,
      *         or an empty list if none have been specified.
      */
-    public List<Location> getEventLocations() throws TauPException {
-        List<Location> eventLocs = new ArrayList<>();
-        List<Event> quakes = new ArrayList<>();
-        quakes.addAll(loadQuakeML());
-        quakes.addAll(loadEventsFromUSGS(getEventIdList()));
-        DateTimeFormatter dformat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(TZ_UTC);
-        for (Event evt : quakes) {
-            Location evtLoc = new Location(evt);
-            Origin origin = evt.getPreferredOrigin();
-            Magnitude mag = evt.getPreferredMagnitude();
-            StringBuilder desc = new StringBuilder();
-            if (origin != null) {
-                desc.append(dformat.format(origin.getTime().asInstant()));
-            }
-            if (mag != null) {
-                if (desc.length()!= 0) {
-                    desc.append(" ");
-                }
-                desc.append(mag.getMag().getValue()).append(" ").append(mag.getType());
-            }
-            if (desc.length() != 0) {
-                desc.append(" ");
-            }
-            desc.append(Outputs.formatLatLon(evtLoc.getLatitude()).trim())
-                    .append("/")
-                    .append(Outputs.formatLatLon(evtLoc.getLongitude()).trim());
-            if ( desc.length()!= 0) {
-                evtLoc.setDescription(desc.toString());
-            }
-            eventLocs.add(evtLoc);
-        }
+    public List<LatLonLocatable> getEventLocations() throws TauPException {
+        List<LatLonLocatable> eventLocs = new ArrayList<>();
+        eventLocs.addAll(loadQuakeML());
+        eventLocs.addAll(loadEventsFromUSGS(getEventIdList()));
         return eventLocs;
     }
 
@@ -288,23 +244,12 @@ public class QmlStaxmlArgs {
         return sidList;
     }
 
-    public List<Location> getSidLocations() throws TauPException {
+    public List<Station> getSidLocations() throws TauPException {
         try {
             return QmlStaxmlArgs.loadStationsForSid(getSidList());
         } catch (FDSNSourceIdException|FDSNWSException e) {
             throw new TauPException("Unable to load station locations from fedcat service", e);
         }
-    }
-
-    public static String createDescription(Location evtLoc) {
-        String evtDesc;
-        if (evtLoc.hasDescription()) {
-            evtDesc = evtLoc.getDescription();
-        } else {
-            evtDesc = Outputs.formatLatLon(evtLoc.getLatitude()).trim()
-                    +"/"+Outputs.formatLatLon(evtLoc.getLongitude()).trim();
-        }
-        return evtDesc;
     }
     
     protected String quakemlFilename = null;
