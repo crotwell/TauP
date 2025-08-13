@@ -13,17 +13,24 @@ plugins {
   signing
   application
   id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.jreleaser") version "1.18.0"
+  id("org.jreleaser") version "1.19.0"
 }
 
 application {
   mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
   applicationName = "taup"
   //applicationName = "taupdev"
+  //
+  // below to address undertow, jboss-threads warning:
+  // WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+  // WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.jboss.threads.JBossExecutors
+  // can be removed if/when undertow upgrades dependency
+  // but this jvm arg not available on java11 or 17, so...
+  // applicationDefaultJvmArgs = listOf("--sun-misc-unsafe-memory-access=allow")
 }
 
 group = "edu.sc.seis"
-version = "3.0.2-SNAPSHOT"
+version = "3.1.0-SNAPSHOT"
 val zenodo_rel_id = "15426279"
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
@@ -81,7 +88,7 @@ jreleaser {
         create("sonatype") {
           setActive("ALWAYS")
           url= "https://central.sonatype.com/api/v1/publisher"
-          stagingRepository("target/staging-deploy")
+          stagingRepository("build/staging-deploy")
         }
       }
     }
@@ -184,7 +191,9 @@ java {
 dependencies {
     implementation("org.json:json:20250517")
     implementation("com.google.code.gson:gson:2.13.1")
-    implementation("edu.sc.seis:seisFile:2.3.0")
+    implementation("edu.sc.seis:seisFile:2.3.1")
+    //implementation("edu.sc.seis:seisFile:2.3.1-SNAPSHOT")
+    implementation("edu.sc.seis:seedCodec:1.2.0")
 
     // temporary use modified picocli to allow sort of ArgGroup options
     // see src/main/java/picocli
@@ -211,8 +220,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven {
-        name = "oss.sonatype.org snapshots"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        url = uri(layout.buildDirectory.dir("staging-deploy"))
     }
 }
 
@@ -289,12 +297,7 @@ publishing {
         url = uri(layout.buildDirectory.dir("repos/test-deploy"))
       }
       maven {
-          val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-          val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-          url = uri(if ( version.toString().lowercase().endsWith("snapshot")) snapshotRepo else releaseRepo)
-          name = "ossrh"
-          // credentials in gradle.properties as ossrhUsername and ossrhPassword
-          credentials(PasswordCredentials::class)
+        url = uri(layout.buildDirectory.dir("staging-deploy"))
       }
     }
 
@@ -473,6 +476,13 @@ tasks.jar {
     mustRunAfter("sphinx")
 }
 
+
+tasks.withType<Javadoc>() {
+  exclude("src/main/picocli/CommandLine.java")
+  exclude("src/main/picocli/AutoComplete.java")
+  //(options as CoreJavadocOptions).addBooleanOption("Xdoclint:none", true)
+}
+
 tasks.register<Exec>("createJavascriptResources") {
   workingDir("src/web")
   commandLine("npm", "run", "esstandalone")
@@ -494,7 +504,8 @@ tasks.get("installDist").mustRunAfter("sphinx")
 tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
 tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
 tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
-
+tasks.get("publish").dependsOn("assemble")
+tasks.get("publish").dependsOn("installDist")
 
 
 tasks.register<JavaExec>("genPythonBindings") {
