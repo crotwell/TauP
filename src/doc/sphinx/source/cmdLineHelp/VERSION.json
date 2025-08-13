@@ -1,15 +1,15 @@
 {
-  "version": "3.0.2-SNAPSHOT_2025-06-19T135846",
+  "version": "3.1.0-SNAPSHOT_2025-08-01T124856",
   "name": "TauP",
   "group": "edu.sc.seis",
-  "date": "2025-06-19T17:58:46Z",
+  "date": "2025-08-01T16:48:56Z",
   "git": {
-    "revision": "2017",
-    "shortsha": "eb2346ab",
-    "sha": "eb2346ab51622f68c754c26a887db05779b6d084",
-    "date": "2025-06-19T12:52:31-04:00",
+    "revision": "2051",
+    "shortsha": "ad76d64d",
+    "sha": "ad76d64d7b48e930d07d2ac44194343dfe6d4c12",
+    "date": "2025-08-01T12:46:29-04:00",
     "lastTag": "v3.0.1",
     "lastTagDate": "2025-05-15T16:46:39-04:00",
-    "commitsSinceLastTag": 68
+    "commitsSinceLastTag": 102
   }
 }
