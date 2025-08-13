@@ -1,27 +1,26 @@
 Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
-                   [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
-                   [--verbose] [--attenuationfreq=<attenuationFreq>]
-                   [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
-                   [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
+                   [--nodiscon] [--rev] [--turn] [--under] [--verbose]
+                   [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
+                   [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                   [--geodeticflattening=f] [--mw=<mw>]
                    [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                    [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                    [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                   [--pierce=depth[,depth...]]... [--rel=phase[,phase...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--evt=lat
-                   lon]... [--sta=lat lon]... [--sta=lat lon]...
-                   [--strikediprake=strike dip rake]... [[--mod=<modelName>]
-                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                   [--phasefile=<phaseFiles>]...] [[--allindex] [--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]... [--degreerange=[step][min max][min max step]]...
-                   [--exactdegreerange=[step][min max][min max step]]...
-                   [--exactkilometerrange=[step][min max][min max step]]...
-                   [--incidentrange=[step][min max][min max step]]...
+                   [--pierce=depth[,depth...]]... [--sid=sta[,sta...]]...
+                   [--evt=lat lon]... [--evt=lat lon]... [--sta=lat lon]...
+                   [--sta=lat lon]... [--strikediprake=strike dip rake]...
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                   [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                   [[--allindex] [--deg=d[,d...]]... [--exactdegree=d[,
+                   d...]]... [--exactkilometer=km[,km...]]... [--incident=deg[,
+                   deg...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
+                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
+                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
+                   [--takeoff=deg[,deg...]]... [--degreerange=[step][min max]
+                   [min max step]]... [--exactdegreerange=[step][min max][min
+                   max step]]... [--exactkilometerrange=[step][min max][min max
+                   step]]... [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
                    [--html | --json | --text]
@@ -63,8 +62,6 @@ Options:
                              load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
                              QuakeML file to load for earthquake origins to use
-      --rayp, --onlyrayp     only output the ray parameter
-      --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
@@ -77,7 +74,6 @@ Options:
                              fault strike, dip and rake for amplitude
                                calculations. If not given radiation pattern is
                                unity in all directions.
-      --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^
       --verbose              enable verbose output

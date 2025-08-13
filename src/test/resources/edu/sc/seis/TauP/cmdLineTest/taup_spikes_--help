@@ -52,7 +52,8 @@ Options:
                               number attenuation frequencies for amplitude
                                calculations, default is 64
   -o, --output=<outFile>     output to file, default is stdout.
-      --otime=<origintime>   event origin time, as ISO8601
+      --otime=<origintime>   event origin time, as ISO8601 yyyy-MM-ddTHH:mm:ss.
+                               SZ, append Z for UTC times
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --pulsewidth=<pulseWidth>

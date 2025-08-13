@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Time &#8212; TauP 3.0.2-SNAPSHOT_2025-06-19T135846 documentation</title>
+    <title>TauP Time &#8212; TauP 3.1.0-SNAPSHOT_2025-08-13T161303 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=1617ac80"></script>
+    <script src="_static/documentation_options.js?v=1c8ef916"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.2-SNAPSHOT_2025-06-19T135846</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.1.0-SNAPSHOT_2025-08-13T161303</p>
 
 
 
@@ -162,12 +162,12 @@ example:</p>
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist Description
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance Name              
 -------------------------------------------------------------------------------------------------------
-   30.61    10.0   P        374.11     8.825     27.46    27.41      0.0    30.61   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.KBS 78.92/11.94
-   38.53    10.0   P        442.46     8.399     26.03    25.98      0.0    38.53   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to CO.JSC 34.28/-81.26
-   57.78    10.0   P        591.23     7.036     21.57    21.53      0.0    57.78   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.TUC 32.31/-110.78
-   30.61    10.0   S        677.16    15.639     28.25    28.20      0.0    30.61   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.KBS 78.92/11.94
-   38.53    10.0   S        799.04    15.082     27.16    27.11      0.0    38.53   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to CO.JSC 34.28/-81.26
-   57.78    10.0   S       1071.16    13.110     23.38    23.34      0.0    57.78   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.TUC 32.31/-110.78
+   30.61    10.0   P        374.11     8.825     27.46    27.41      0.0    30.61   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to IU_KBS 78.92/11.94
+   38.53    10.0   P        442.46     8.399     26.03    25.98      0.0    38.53   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to CO_JSC 34.28/-81.26
+   57.78    10.0   P        591.23     7.036     21.57    21.53      0.0    57.78   = P      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to IU_TUC 32.31/-110.78
+   30.61    10.0   S        677.16    15.639     28.25    28.20      0.0    30.61   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to IU_KBS 78.92/11.94
+   38.53    10.0   S        799.04    15.082     27.16    27.11      0.0    38.53   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to CO_JSC 34.28/-81.26
+   57.78    10.0   S       1071.16    13.110     23.38    23.34      0.0    57.78   = S      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to IU_TUC 32.31/-110.78
 </pre></div>
 </div>
 <p>Even more fun is to give a station id,
@@ -186,7 +186,7 @@ strain on these web services.</p>
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist Description
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance Name              
 -------------------------------------------------------------------------------------------------------
-  124.89    10.0   SKS     1563.03     3.159      5.49     5.48      0.0   124.89   * SKs    2025-03-28T06:20:52 7.7 Mww 22.01/95.94 to CO.HAW 33.36/-81.61
+  124.89    10.0   SKS     1563.03     3.159      5.49     5.48      0.0   124.89   * SKs    2025-03-28T06:20:52 7.7 Mww 22.01/95.94 10.00 km to CO_HAW 33.36/-81.61
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -213,8 +213,8 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
                  [--exactkilometerrange=[step][min max][min max step]]...
                  [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
-                 [--takeoffrange=[step][min max][min max step]]...]... [--html
-                 | --json | --text]
+                 [--takeoffrange=[step][min max][min max step]]...]... [--csv |
+                 --html | --json | --text]
 Calculate travel times for seismic phases in an earth model.
 
 Options:
@@ -340,6 +340,7 @@ Lat,Lon influenced by:
                              station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:
+      --csv                  outputs as CSV
       --html                 outputs as HTML
       --json                 outputs as JSON
       --text                 outputs as Text

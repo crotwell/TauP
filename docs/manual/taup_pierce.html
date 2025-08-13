@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Pierce &#8212; TauP 3.0.2-SNAPSHOT_2025-06-19T135846 documentation</title>
+    <title>TauP Pierce &#8212; TauP 3.1.0-SNAPSHOT_2025-08-13T161303 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=1617ac80"></script>
+    <script src="_static/documentation_options.js?v=1c8ef916"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.2-SNAPSHOT_2025-06-19T135846</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.1.0-SNAPSHOT_2025-08-13T161303</p>
 
 
 
@@ -208,29 +208,28 @@ distance, depth, latitude and longitude, respectively.</p>
 </div>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
-                   [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
-                   [--verbose] [--attenuationfreq=&lt;attenuationFreq&gt;]
-                   [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                   [--baz=&lt;backAzimuth&gt;] [--geodeticflattening=f] [--mw=&lt;mw&gt;]
+                   [--nodiscon] [--rev] [--turn] [--under] [--verbose]
+                   [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
+                   [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+                   [--geodeticflattening=f] [--mw=&lt;mw&gt;]
                    [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
-                   [--pierce=depth[,depth...]]... [--rel=phase[,phase...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--evt=lat
-                   lon]... [--sta=lat lon]... [--sta=lat lon]...
-                   [--strikediprake=strike dip rake]... [[--mod=&lt;modelName&gt;]
-                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]... [--degreerange=[step][min max][min max step]]...
-                   [--exactdegreerange=[step][min max][min max step]]...
-                   [--exactkilometerrange=[step][min max][min max step]]...
-                   [--incidentrange=[step][min max][min max step]]...
+                   [--pierce=depth[,depth...]]... [--sid=sta[,sta...]]...
+                   [--evt=lat lon]... [--evt=lat lon]... [--sta=lat lon]...
+                   [--sta=lat lon]... [--strikediprake=strike dip rake]...
+                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
+                   [[--allindex] [--deg=d[,d...]]... [--exactdegree=d[,
+                   d...]]... [--exactkilometer=km[,km...]]... [--incident=deg[,
+                   deg...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
+                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
+                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
+                   [--takeoff=deg[,deg...]]... [--degreerange=[step][min max]
+                   [min max step]]... [--exactdegreerange=[step][min max][min
+                   max step]]... [--exactkilometerrange=[step][min max][min max
+                   step]]... [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
                    [--html | --json | --text]
@@ -272,8 +271,6 @@ Options:
                              load defaults from properties file
       --qml, --quakeml=&lt;quakemlFilename&gt;
                              QuakeML file to load for earthquake origins to use
-      --rayp, --onlyrayp     only output the ray parameter
-      --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
@@ -286,7 +283,6 @@ Options:
                              fault strike, dip and rake for amplitude
                                calculations. If not given radiation pattern is
                                unity in all directions.
-      --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^
       --verbose              enable verbose output
