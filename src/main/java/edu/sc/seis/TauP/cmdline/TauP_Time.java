@@ -140,14 +140,25 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return arrivals;
     }
 
+    /**
+     * Check if ray source and receiver depths are compatible with the phase, to avoid duplicate results
+     * when using earthquakes or station/channels that have depths.
+     * @param rayCalc ray to check if has source/receiver depths
+     * @param phase phase to see if compatible
+     * @return true if source and receiver depths are compatible
+     */
+    public static boolean isRayOkForPhase(RayCalculateable rayCalc, SeismicPhase phase) {
+        return ( ! rayCalc.hasSourceDepth() || rayCalc.getSourceDepth() == phase.getSourceDepth())
+                && ( ! rayCalc.hasReceiverDepth() || rayCalc.getReceiverDepth() == phase.getReceiverDepth());
+    }
+
     static List<Arrival> internalCalcAll(List<SeismicPhase> phaseList,
                                                 List<RayCalculateable> rayCalcList,
                                                 boolean onlyFirst) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
         for (SeismicPhase phase : phaseList) {
             for (RayCalculateable rayCalc : rayCalcList) {
-                if (( ! rayCalc.hasSourceDepth() || rayCalc.getSourceDepth() == phase.getSourceDepth())
-                        && ( ! rayCalc.hasReceiverDepth() || rayCalc.getReceiverDepth() == phase.getReceiverDepth())) {
+                if (isRayOkForPhase(rayCalc, phase)) {
                     List<Arrival> rayArrivals = rayCalc.calculate(phase);
                     Arrival.sortArrivals(rayArrivals);
                     if (onlyFirst && ! rayArrivals.isEmpty()) {

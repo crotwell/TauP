@@ -159,7 +159,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		List<Arrival> arrivals = new ArrayList<>();
 		for (SeismicPhase phase : phaseList) {
 			for (RayCalculateable shoot : shootables) {
-				arrivals.addAll(shoot.calculate(phase));
+				if (TauP_Time.isRayOkForPhase(shoot, phase)) {
+					arrivals.addAll(shoot.calculate(phase));
+				}
 			}
 		}
 		for (Arrival arrival : arrivals) {

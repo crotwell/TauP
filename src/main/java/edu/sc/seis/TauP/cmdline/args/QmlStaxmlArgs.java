@@ -7,6 +7,7 @@ import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
+import edu.sc.seis.seisFile.SurfaceStation;
 import edu.sc.seis.seisFile.fdsnws.*;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
@@ -108,16 +109,24 @@ public class QmlStaxmlArgs {
         Map<Network, List<Station>> networks = loadStationXML();
         for (Network net : networks.keySet()) {
             for (Station sta : networks.get(net)) {
-                List<LatLonLocatable> allChans = new ArrayList<>();
+                List<Channel> allChans = new ArrayList<>();
                 for (Channel chan : sta.getChannelList()) {
                     if (sta.asLocation().equals(chan.asLocation())) {
                         // same as station,
                         continue;
                     }
                     boolean found = false;
-                    for (LatLonLocatable prev : allChans) {
+                    for (int i = 0; i < allChans.size(); i++) {
+                        Channel prev = allChans.get(i);
                         if (prev.asLocation().equals(chan.asLocation())) {
                             found = true;
+                            if (chan.getChannelCode().endsWith("Z") && (
+                                    !prev.getChannelCode().endsWith("Z")
+                                    || ( !prev.getLocCode().equals("00") && chan.getLocCode().equals("00")))
+                            ) {
+                                // prefer Z component of 00 loc for calc
+                                allChans.set(i , chan);
+                            }
                             break;
                         }
                     }
@@ -125,11 +134,25 @@ public class QmlStaxmlArgs {
                         allChans.add(chan);
                     }
                 }
-                staList.addAll(allChans);
                 if (allChans.isEmpty()) {
                     // no channels, maybe was retrieved with level=Station, add station location at surface
                     staList.add(sta);
+                } else if (allChans.size() == 1) {
+                    Location chL = allChans.get(0).asLocation();
+                    Location stL = sta.asLocation();
+                    if (chL.getLatitude() == stL.getLatitude() &&
+                            chL.getLongitude() == stL.getLongitude() &&
+                            (chL.getDepthMeter() == null || chL.getDepthMeter() < MAX_CHANNEL_DEPTH_SAME_STATION)
+                    ) {
+                        // chan same loc as station, just use station, but with fixed depth of zero
+                        staList.add(new SurfaceStation(sta));
+                    } else {
+                        staList.addAll(allChans);
+                    }
+                } else {
+                    staList.addAll(allChans);
                 }
+
             }
         }
         return staList;
@@ -254,6 +277,8 @@ public class QmlStaxmlArgs {
     
     protected String quakemlFilename = null;
     protected String stationxmlFilename = null;
+
+    public static double MAX_CHANNEL_DEPTH_SAME_STATION = 10.0;
 
     public static String getTaupUserAgent() {
         return BuildVersion.getName()+"/"+ BuildVersion.getVersion();

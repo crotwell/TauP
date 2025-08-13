@@ -170,7 +170,9 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 // have to get Arrivals to find distance to then redo calc
                 List<Arrival> rayArrivals = new ArrayList<>();
                 for (SeismicPhase phase : phaseList) {
-                    rayArrivals.addAll(ray.calculate(phase));
+                    if (TauP_Time.isRayOkForPhase(ray, phase)) {
+                        rayArrivals.addAll(ray.calculate(phase));
+                    }
                 }
                 for (Arrival arr : rayArrivals) {
                     distFromArrival.add(arr.getDist());
