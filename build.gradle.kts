@@ -30,8 +30,8 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.1.0-SNAPSHOT"
-val zenodo_rel_id = "15426279"
+version = "3.1.0"
+val zenodo_rel_id = "10794858"
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
 jreleaser {
