@@ -2,12 +2,14 @@ package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
 import edu.sc.seis.TauP.JSONLabels;
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 
 import java.lang.reflect.Type;
 
-public class LocationSerializer implements JsonSerializer<Location> {
-    public JsonElement serialize(Location loc, Type typeOfSrc, JsonSerializationContext context) {
+public class LocationSerializer implements JsonSerializer<LatLonLocatable> {
+    public JsonElement serialize(LatLonLocatable ll, Type typeOfSrc, JsonSerializationContext context) {
+        Location loc = ll.asLocation();
         JsonObject out = new JsonObject();
         out.add(JSONLabels.LAT, new JsonPrimitive((float)loc.getLatitude()));
         out.add(JSONLabels.LON, new JsonPrimitive((float)loc.getLongitude()));

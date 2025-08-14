@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
-import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 
@@ -292,7 +291,7 @@ public class SeismicPhaseFactory {
         }
 
         if (proto.isSuccessful()) {
-            return sumBranches(tMod, proto);
+            return sumBranches(proto);
         } else {
             return new FailedSeismicPhase(proto);
         }
@@ -620,7 +619,7 @@ public class SeismicPhaseFactory {
      *             within the TauModel. This should never happen and would
      *             indicate an invalid TauModel.
      */
-    protected static SimpleSeismicPhase sumBranches(TauModel tModA, ProtoSeismicPhase proto) throws TauModelException {
+    protected static SimpleSeismicPhase sumBranches(ProtoSeismicPhase proto) throws TauModelException {
         SeismicPhaseSegment endSeg = proto.endSegment();
         TauModel tMod = proto.gettMod();
         double minRayParam = endSeg.minRayParam;
@@ -649,7 +648,7 @@ public class SeismicPhaseFactory {
         if (name.endsWith(KMPS_CODE)) {
             double velocity;
             try {
-                velocity = Double.valueOf(name.substring(0, name.length() - 4));
+                velocity = Double.parseDouble(name.substring(0, name.length() - 4));
             } catch (NumberFormatException e) {
                 proto.failNext(" Illegal surface wave velocity " + name.substring(0, name.length() - 4));
                 return new FailedSeismicPhase(proto);

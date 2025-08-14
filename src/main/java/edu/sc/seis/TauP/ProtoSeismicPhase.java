@@ -40,7 +40,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static ProtoSeismicPhase startEmpty(String phaseName, TauModel tMod, double receiverDepth) {
-        ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<SeismicPhaseSegment>(), receiverDepth, phaseName);
+        ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<>(), receiverDepth, phaseName);
         proto.phaseName = phaseName;
         proto.tMod = tMod;
         if (tMod == null) {throw new IllegalArgumentException("TauModel cannot be null");}
@@ -1002,7 +1002,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                 || tauBranch.getMinTurnRayParam() >= tMod.getTauBranch(bNum+1, isPWave).getTopRayParam())) {
                     // tau branch is high slowness, so turn is not possible, and
                     // no critical reflect, so do not add these branches
-                    if (true || TauPConfig.DEBUG) {
+                    if (TauPConfig.DEBUG) {
                         Alert.debug("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer "+tauBranch.getBotDepth());
                     }
                     endBranch = bNum-1;
@@ -1466,10 +1466,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     if (next != null && next.endAction == TRANSDOWN) {
                         diff = "diffdn";
                     }
-                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
-                        name += diff;
-                    } else {
-                        name += (int) (botDepth)+diff;
+                    if (seg.endAction==DIFFRACT) {
+                        if ( botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                            name += diff;
+                        } else {
+                            name += (int) (botDepth)+diff;
+                        }
+                    } else if( seg.endAction==TRANSUPDIFFRACT) {
+                        if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
+                            name += diff;
+                        } else {
+                            name += (int) (topDepth) + diff;
+                        }
                     }
                     break;
                 case END:
@@ -1514,7 +1522,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         for (Integer i : branchNumSeg()) {
             out += i+" ";
         }
-        return out;
+        return out.trim();
     }
 
     public String branchNumSeqStrWithSegBreaks() {
@@ -1535,7 +1543,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public SimpleSeismicPhase asSeismicPhase() throws TauModelException {
-        return SeismicPhaseFactory.sumBranches(tMod, this);
+        return SeismicPhaseFactory.sumBranches(this);
 
     }
 

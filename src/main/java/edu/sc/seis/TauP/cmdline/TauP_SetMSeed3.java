@@ -6,15 +6,12 @@ import com.google.gson.JsonParser;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
-import edu.sc.seis.TauP.TimeResult;
-import edu.sc.seis.seisFile.Location;
-import edu.sc.seis.seisFile.SeisFileException;
+import edu.sc.seis.seisFile.*;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Quakeml;
 import edu.sc.seis.seisFile.fdsnws.stationxml.*;
 import edu.sc.seis.seisFile.mseed3.*;
-import edu.sc.seis.seisFile.TimeUtils;
 
 import java.io.*;
 
@@ -116,8 +113,8 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     }
 
     public void processRecord(MSeed3Record dr3) throws TauPException {
-        Location staLoc;
-        Location evLoc;
+        LatLonLocatable staLoc;
+        LatLonLocatable evLoc;
         Instant evTime;
 
 
@@ -125,15 +122,14 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         MSeed3EH eh = new MSeed3EH(dr3.getExtraHeaders());
         Channel chan = FDSNStationXML.findChannelBySID(networks, dr3.getSourceId(), dr3.getStartInstant());
         if (chan != null) {
-            staLoc = chan.asLocation();
+            staLoc = chan;
         } else {
             staLoc = eh.channelLocation();
         }
         Event quake = findQuakeInTime(dr3.getStartInstant(), quakeOTimeTol);
         if (quake != null) {
-            Origin o = quake.getPreferredOrigin();
-            evLoc = o.asLocation();
-            evTime = o.getTime().asInstant();
+            evLoc = quake;
+            evTime = quake.getPreferredOrigin().getTime().asInstant();
         } else {
             evLoc = eh.quakeLocation();
             evTime = eh.quakeTime();
@@ -170,15 +166,15 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
         List<Double> receiverDepthList = new ArrayList<>();
         if (staLoc != null) {
-            setSingleReceiverDepth(staLoc.getDepthKm());
-            receiverDepthList.add(staLoc.getDepthKm());
+            setSingleReceiverDepth(staLoc.asLocation().getDepthKm());
+            receiverDepthList.add(staLoc.asLocation().getDepthKm());
         } else {
             setSingleReceiverDepth(0);
             receiverDepthList.add(0.0);
         }
         double depth = 0;
         if (evLoc != null) {
-            depth = evLoc.getDepthKm();
+            depth = evLoc.asLocation().getDepthKm();
         }
         List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, receiverDepthList, modelArgs.getScatterer());
 

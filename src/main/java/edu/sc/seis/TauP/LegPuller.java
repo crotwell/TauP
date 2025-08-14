@@ -78,7 +78,7 @@ public class LegPuller {
                 } else if(isUpgoingSymbol(name, offset)) {
                     // Do the strictly upgoing, easy ones, ie k,y,j,p,s
                     if (isUpDiffracted(name, offset)) {
-                        // upgoind to diffraction? weird but maybe possible
+                        // upgoing to diffraction? weird but maybe possible
                         String diffLeg = name.substring(offset, name.indexOf(DIFF, offset + 1) + DIFF.length());
                         legs.add(diffLeg);
                         offset += diffLeg.length();
@@ -292,7 +292,7 @@ public class LegPuller {
         if (boundId.isEmpty()) {
             throw new PhaseParseException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name, name, offset);
         }
-        if (boundId.endsWith(DIFF) || boundId.endsWith(DIFFDOWN) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
+        if (boundId.endsWith(DIFF) || boundId.endsWith(DIFFDOWN) || boundId.endsWith(HEAD_CODE)) {
             // like Pn, Pdiff or P410diff, add as single leg
             legs.add(phaseChar+boundId);
             idx += boundId.length();
@@ -587,10 +587,14 @@ public class LegPuller {
             if(is(prevToken, PhaseSymbols.END_CODE)) {
                 return "Legs ended but more tokens exist: " + currToken;
             }
-            /* two upgoing crust/mantle legs in a row */
-            if (isUpgoingSymbol(prevToken, 0) && isUpgoingSymbol(currToken, 0)) {
+
+            Pattern upDiffREEx =
+                    Pattern.compile(upDiffRE);
+
+            /* two upgoing crust/mantle legs in a row, but allow if diffract or head? */
+            if (isUpgoingSymbol(prevToken, 0) && ( ! upDiffREEx.matcher(prevToken).matches()) && isUpgoingSymbol(currToken, 0)) {
                 if (isCrustMantleLeg(prevToken, 0) && isCrustMantleLeg(currToken, 0)) {
-                    return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+                    return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken+" ishead: "+upDiffREEx.matcher(prevToken).matches();
                 }
                 if (isOuterCoreLeg(prevToken, 0) && isOuterCoreLeg(currToken, 0)) {
                     return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;

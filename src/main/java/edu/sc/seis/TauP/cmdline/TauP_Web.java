@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
-import edu.sc.seis.TauP.Alert;
-import edu.sc.seis.TauP.TauModelLoader;
-import edu.sc.seis.TauP.VelocityModel;
-import edu.sc.seis.TauP.VelocityModelException;
+import edu.sc.seis.TauP.*;
 import picocli.CommandLine;
 
 import java.awt.Desktop;
@@ -12,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
@@ -33,7 +31,12 @@ public class TauP_Web implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            TauP_WebServe tool = new TauP_WebServe();
+            TauP_WebServe tool;
+            if (Objects.equals(base_path, LOCAL_WS)) {
+                tool = new TauP_WebServe();
+            } else {
+                tool = new TauP_WebServe(base_path);
+            }
             tool.port = port;
             tool.host = host;
             for (String modName : extraModelNames) {
@@ -72,6 +75,11 @@ public class TauP_Web implements Callable<Integer> {
     @CommandLine.Option(names = {"--host"}, defaultValue = "localhost", description = "host to expose port on, defaults to ${DEFAULT-VALUE}")
     String host = "localhost";
 
+    public static final String LOCAL_WS = "localws";
+
+    @CommandLine.Option(names = {"--namespace"}, defaultValue = LOCAL_WS, description = "base path in url, /<path>/taup/3, defaults to ${DEFAULT-VALUE}")
+    String base_path = LOCAL_WS;
+
     @CommandLine.Option(names = {"--models"},
             arity = "1..*",
             description = "List of additional models to use"
@@ -86,4 +94,34 @@ public class TauP_Web implements Callable<Integer> {
 
     @CommandLine.Option(names="--open", defaultValue="false", description = "autoopen web page")
     Boolean autoopen = false;
+
+
+    /**
+     * Turns on debugging output.
+     *
+     * @param debug on or off
+     * */
+    @CommandLine.Option(names="--debug", description="enable debugging output")
+    public void setDEBUG(boolean debug) {
+        TauPConfig.DEBUG = debug;
+    }
+
+    public boolean isDEBUG() {
+        return TauPConfig.DEBUG;
+    }
+
+    /**
+     * Turns on verbose output.
+     *
+     * @param verbose on or off
+     */
+    @CommandLine.Option(names="--verbose", description="enable verbose output")
+    public void setVerbose(boolean verbose) {
+        TauPConfig.VERBOSE = verbose;
+    }
+
+    public boolean isVerbose() {
+        return TauPConfig.VERBOSE || TauPConfig.DEBUG;
+    }
+
 }

@@ -151,6 +151,7 @@ public class CmdLineOutputTest {
 
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
+            "taup time --geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
             "taup find --max 2 -h 100 --exclude 210",
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
@@ -205,7 +206,7 @@ public class CmdLineOutputTest {
      * @throws Exception
      */
     public void regenSavedOutput() throws Exception {
-        List<String> allList = new ArrayList<String>();
+        List<String> allList = new ArrayList<>();
         allList.addAll(Arrays.asList(helpTestCmds));
         allList.addAll(Arrays.asList(timeTestCmds));
         allList.addAll(Arrays.asList(pierceTestCmds));
@@ -235,11 +236,12 @@ public class CmdLineOutputTest {
         out.close();
         usageToDocSrc();
         regenSavedJsonOutput();
+        regenSavedHtmlOutput();
     }
 
     public List<String> allCmdsAsJson() {
-        List<String> outList = new ArrayList<String>();
-        List<String> allList = new ArrayList<String>();
+        List<String> outList = new ArrayList<>();
+        List<String> allList = new ArrayList<>();
         allList.addAll(Arrays.asList(timeTestCmds));
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
@@ -283,6 +285,22 @@ public class CmdLineOutputTest {
                 System.err.println(jsonCmd);
                 String filename = fileizeCmd(jsonCmd);
                 saveTestOutputToFile( jsonCmd, testJsonOutputDir, filename);
+            }
+        }
+    }
+    /**
+     * regenerating html of the cmd line output test resources.
+     * new text files will be in cmdLineHtml in build
+     *
+     * @throws Exception
+     */
+    public void regenSavedHtmlOutput() throws Exception {
+        String[] allList = HtmlOutputTest.htmlTestCmds;
+        for (String jsonCmd : allList) {
+            if (jsonCmd.contains("--json")) {
+                String htmlCmd = jsonCmd.replace("--json", "--html");
+                String filename = fileizeCmd(htmlCmd);
+                saveTestOutputToFile( htmlCmd, testHtmlOutputDir, filename);
             }
         }
     }
@@ -509,7 +527,7 @@ public class CmdLineOutputTest {
         indexOut.println("<h3>Comparison of Reflection and Transmission Coefficients</h3>");
         indexOut.println("<table>");
         indexOut.println("<tr><th>TauP SVG</th><th>Command Line</th><th>Reference Image</th></tr>");
-        List<String> sortedKeys = new ArrayList<String>();
+        List<String> sortedKeys = new ArrayList<>();
         sortedKeys.addAll(fmgsFigureTestCmds.keySet());
         Collections.sort(sortedKeys);
         for (String key : sortedKeys) {
@@ -727,6 +745,7 @@ public class CmdLineOutputTest {
     File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
     File testJsonOutputDir = new File("build/cmdLineTestJson");
+    File testHtmlOutputDir = new File("build/cmdLineTestHtml");
     File helpOutputDir = new File("build/cmdLineHelp");
 
     public void saveTestOutputToFile(String cmd) throws Exception {
@@ -754,7 +773,7 @@ public class CmdLineOutputTest {
         fileOut.close();
     }
 
-    public static BufferedReader getPriorOutput(String cmd) throws IOException {
+    public static BufferedReader getPriorOutput(String cmd) {
         String resource = "edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd);
         URL res = CmdLineOutputTest.class.getClassLoader().getResource(resource);
         assertNotNull( res, "Resource " + resource + " for " + cmd + " not found.");

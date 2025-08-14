@@ -17,13 +17,11 @@ support within the web browser, SVG output from the graphical tools is
 very useful.
 
 By default it runs on port 7409, which kind of looks like T-A-U-P if you squint
-just right. Note that due to the extra dependencies, the web tool uses a
-separate startup script, :code:`taup_web`,
-instead of the usual :code:`taup`.
+just right.
 
 To start, run
 
-:code:`taup_web`
+:code:`taup web`
 
 and then open your favorite web browser
 to `http://localhost:7409 <http://localhost:7409>`_.

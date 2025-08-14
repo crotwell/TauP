@@ -171,6 +171,7 @@ public class PhaseArgs {
                 for (String prev : phaseNames) {
                     if (prev.equals(ph)) {
                         found = true;
+                        break;
                     }
                 }
                 if (!found) {
@@ -193,11 +194,11 @@ public class PhaseArgs {
         List<PhaseName> phases = new ArrayList<>();
             if (isEmpty()) {
                 for (String pStr : extractPhaseNames(DEFAULT_PHASES)) {
-                    phases.add( new PhaseName(pStr));
+                    phases.add( PhaseName.parseName(pStr));
                 }
             } else {
                 for (String pStr : phaseNames) {
-                    phases.add( new PhaseName(pStr));
+                    phases.add( PhaseName.parseName(pStr));
                 }
                 for (String filename : phaseFileList) {
                     List<String> pList;
@@ -207,7 +208,7 @@ public class PhaseArgs {
                         throw new PhaseParseException("Unable to parse file: " + filename, e);
                     }
                     for (String pStr : pList) {
-                        phases.add( new PhaseName(pStr));
+                        phases.add( PhaseName.parseName(pStr));
                     }
                 }
             }
@@ -219,7 +220,7 @@ public class PhaseArgs {
         // in case of empty phase list
         if (phaseNameList.isEmpty())
             return "";
-        StringBuffer phases = new StringBuffer();
+        StringBuilder phases = new StringBuilder();
         phases.append(phaseNameList.get(0).getName());
         for (PhaseName phaseName : phaseNameList.subList(1, phaseNameList.size())) {
             phases.append(",").append(phaseName.getName());
@@ -234,6 +235,7 @@ public class PhaseArgs {
      * end of the line while c style slash-star make a block a comment.
      *
      * @param filename file to read
+     * @throws IOException if problem reading file
      * @return list of phase names from file
      */
     protected List<String> readPhaseFile(String filename) throws IOException {

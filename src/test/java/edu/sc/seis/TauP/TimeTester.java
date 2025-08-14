@@ -25,7 +25,8 @@ public class TimeTester {
             }
             arrivals.addAll(phaseArrivals);
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
 

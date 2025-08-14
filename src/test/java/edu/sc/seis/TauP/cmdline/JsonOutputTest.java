@@ -53,12 +53,16 @@ public class JsonOutputTest {
     public void testOtherCmds() throws Exception {
         List<String> othercmds = new CmdLineOutputTest().allCmdsAsJson();
         for (String cmd : othercmds) {
-            String outContent = CmdLineOutputTest.runCmd(cmd);
-            assertNotNull(outContent);
-            assertNotEquals(0, outContent.length());
-            BufferedReader current = new BufferedReader(new StringReader(outContent));
-            JsonObject currentJson = JsonParser.parseReader(current).getAsJsonObject();
-            assertNotNull(currentJson);
+            try {
+                String outContent = CmdLineOutputTest.runCmd(cmd);
+                assertNotNull(outContent);
+                assertNotEquals(0, outContent.length());
+                BufferedReader current = new BufferedReader(new StringReader(outContent));
+                JsonObject currentJson = JsonParser.parseReader(current).getAsJsonObject();
+                assertNotNull(currentJson);
+            } catch (Exception e) {
+                throw new RuntimeException("Test fail: "+cmd, e);
+            }
         }
     }
 

@@ -59,19 +59,19 @@ in a model that has many crustal and upper mantle layers, from which
 discontinuity does the phase :code:`PvmP` reflect?
 Explicit labeling eliminates potential ambiguity.
 
-=================     =============================================
-Labels                Description
-=================     =============================================
-crust                 top of crust
-mantle, moho          moho, crust-mantle boundary
-outer-core, cmb       mantle-core boundary
-inner-core, icocb     inner outer core boundary
-ice                   top of ice layer
-ice-ocean             ice above ocean boundary
-ice-crust             ice above crust boundary
-ocean                 top of ocean layer
-seabed                ocean above crust boundary
-=================     =============================================
+===================     =============================================
+Labels                  Description
+===================     =============================================
+crust                   top of crust
+mantle, moho            moho, crust-mantle boundary
+outer-core, cmb         mantle-core boundary
+inner-core, icocb       inner outer core boundary
+ice                     top of ice layer
+ice-ocean               ice above ocean boundary
+ice-crust               ice above crust boundary
+ocean                   top of ocean layer
+seabed, ocean-crust     ocean above crust boundary
+===================     =============================================
 
 
 For example a very simplistic model of Europa, showing the use of other

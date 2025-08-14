@@ -7,8 +7,8 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--depthminmax=min max]... [[--mod=<modelName>] [-h=depth
                       [,depth...]]... [--stadepth=depth[,depth...]]...
                       [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                      [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
-                      --text]
+                      [--phasefile=<phaseFiles>]...] [--gmt | --html | --json |
+                      --svg | --text]
 Plot wavefronts of seismic phases at steps in time.
 
 Options:
@@ -61,6 +61,7 @@ Phase Names
                             read list of phase names from file
 Output Type:
       --gmt                 outputs as GMT
+      --html                outputs as SVG in HTML
       --json                outputs as JSON
       --svg                 outputs as SVG
       --text                outputs as Text

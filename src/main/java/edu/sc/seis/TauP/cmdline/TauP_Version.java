@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.BuildVersion;
+import edu.sc.seis.TauP.HTMLUtil;
 import edu.sc.seis.TauP.TauModelException;
 import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
@@ -49,9 +50,13 @@ public class TauP_Version extends TauP_Tool {
         writer.close();
     }
 
-    public void printResult(PrintWriter out) throws IOException {
+    public void printResult(PrintWriter out) throws TauPException {
         if (outputTypeArgs.isJSON()) {
             printResultJSON(out);
+        } else if (outputTypeArgs.isHTML()) {
+            HTMLUtil.createHtmlStart(out, "TauP Version", "", false);
+            printResultText(out);
+            out.println(HTMLUtil.createHtmlEnding());
         } else {
             printResultText(out);
         }

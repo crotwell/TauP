@@ -60,7 +60,7 @@ public class SeismicSourceArgs {
             arity = "3",
             description = "fault strike, dip and rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
     public void setStrikeDipRake(List<Float> sdr) {
-        if (sdr.size() == 0) {
+        if (sdr.isEmpty()) {
             // unset by picocli, as no default value
             this.strikeDipRake = null;
         } else if (sdr.size() != 3) {
@@ -155,7 +155,8 @@ public class SeismicSourceArgs {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
         }
         if (modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
-            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+            throw new TauModelException("model "+modelArgs.getModelName()
+                    +" does not include Q, but amplitude requires Q. Please choose a different model.");
         }
         if (getStrikeDipRake() != null) {
             for (RayCalculateable rc : rayList) {

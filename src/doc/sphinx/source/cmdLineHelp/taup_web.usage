@@ -1,13 +1,18 @@
-Usage: taup web [--nodefaultmodels] [--open] [--host=<host>] [-p=<port>]
+Usage: taup web [--debug] [--nodefaultmodels] [--open] [--verbose]
+                [--host=<host>] [--namespace=<base_path>] [-p=<port>]
                 [--models=<extraModelNames>...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
+      --debug             enable debugging output
       --host=<host>       host to expose port on, defaults to localhost
       --models=<extraModelNames>...
                           List of additional models to use
+      --namespace=<base_path>
+                          base path in url, /<path>/taup/3, defaults to localws
       --nodefaultmodels   Do not include standard models at startup, requires
                             --models
       --open              autoopen web page
   -p, --port=<port>       port to use, defaults to 7409
+      --verbose           enable verbose output

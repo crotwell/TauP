@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import com.google.gson.JsonObject;
-
 /**
  * Represents a shadow zone within a phase.
  */
@@ -22,8 +20,6 @@ public class ShadowZone {
      * low velocity zone.
      */
     Arrival preArrival;
-
-    boolean isPWave;
 
     public ShadowZone(double rayParam, TauBranch hszBranch) {
         this.rayParam = rayParam;

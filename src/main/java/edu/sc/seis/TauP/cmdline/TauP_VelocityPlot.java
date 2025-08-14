@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -16,7 +13,6 @@ import java.util.Objects;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
-import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TEXT;
 
 /**
  * Creates plots of a velocity model.
@@ -111,7 +107,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public void printResult(PrintWriter writer, XYPlotOutput xyOut) {
+    public void printResult(PrintWriter writer, XYPlotOutput xyOut) throws TauPException {
         if (getOutputTypeArgs().isJSON()) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputTypeArgs().isText()) {
@@ -123,6 +119,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else if (getOutputTypeArgs().isSVG()) {
             // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
+                    SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
+        } else if (getOutputTypeArgs().isHTML()) {
+            // coloring is auto as we have populated list with blue/red where needed
+            xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
                     SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
         } else {

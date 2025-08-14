@@ -57,19 +57,20 @@ the depth to an interface involved in an interaction.
 
 2. Symbols that describe interactions with interfaces:
 
-    ============   ================================================================
-    :code:`m`      interaction with the moho
-    :code:`g`      appended to P or S to represent a ray turning in the crust
-    :code:`n`      appended to P or S to represent a head wave, e.g. along the moho
-    :code:`c`      interaction with the core mantle boundary
-    :code:`i`      interaction with the inner core outer core boundary
-    :code:`^`      underside reflection, used primarily for crustal and mantle interfaces
-    :code:`v`      topside reflection, used primarily for crustal and mantle interfaces
-    :code:`V`      critical topside reflection, used primarily for crustal and mantle interfaces
-    :code:`diff`   appended to P or S to represent a diffracted wave, e.g. along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
-    :code:`kmps`   appended to a velocity to represent a horizontal phase velocity
-    :code:`_`      delimits a named discontinuty within a phase
-    ============   ================================================================
+    ==============   ================================================================
+    :code:`m`        interaction with the moho
+    :code:`g`        appended to P or S to represent a ray turning in the crust
+    :code:`n`        appended to phase like P, with an optional boundary, to represent a head wave, e.g. along the moho
+    :code:`c`        interaction with the core mantle boundary
+    :code:`i`        interaction with the inner core outer core boundary
+    :code:`^`        underside reflection, used primarily for crustal and mantle interfaces
+    :code:`v`        topside reflection, used primarily for crustal and mantle interfaces
+    :code:`V`        critical topside reflection, used primarily for crustal and mantle interfaces
+    :code:`diff`     appended to phase like P, with an optional boundary, to represent a diffracted wave, e.g. along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
+    :code:`diffdn`   appended to phase like P, with an optional boundary, to represent a diffracted wave that turns down after diffracting, e.g. PdiffdnKP diffracts along the core-mantle boundary, but then goes down to turn in the outer core
+    :code:`kmps`     appended to a velocity to represent a horizontal phase velocity
+    :code:`_`        delimits a named discontinuty within a phase
+    ==============   ================================================================
 
 3.  Exclusively upgoing and downgoing:
 

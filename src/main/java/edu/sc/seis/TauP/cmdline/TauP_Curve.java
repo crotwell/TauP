@@ -96,7 +96,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     }
                 } else {
                     SeismicPhase interpolatedPhase = phase.interpolatePhase(
-                            Double.parseDouble((String)(toolProps.getProperty("taup.curve.maxPathInc", "2"))));
+                            Double.parseDouble(toolProps.getProperty("taup.curve.maxPathInc", "2")));
                     List<double[]> xData = calculatePlotForType(interpolatedPhase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(interpolatedPhase, yAxisType, ensure180);
                     List<XYSegment> segments = XYSegment.createFromLists(xData, yData);
@@ -461,7 +461,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             xyOut.printAsGmtText(writer);
         } else if (outputTypeArgs.isGMT()) {
             xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, isLegend);
-        } else if (outputTypeArgs.isSVG()) {
+        } else if (outputTypeArgs.isSVG() || outputTypeArgs.isHTML()) {
             String cssExtra = "";
             switch (coloring.getColoring()) {
                 case auto:
@@ -475,9 +475,15 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 default:
                     cssExtra += SvgUtil.createNoneColorCSS(coloring);
             }
-            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                    outputTypeArgs.getPixelWidth(),
-                    cssExtra, isLegend);
+            if (outputTypeArgs.isSVG()) {
+                xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                        outputTypeArgs.getPixelWidth(),
+                        cssExtra, isLegend);
+            } else {
+                xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                        outputTypeArgs.getPixelWidth(),
+                        cssExtra, isLegend);
+            }
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }
@@ -515,7 +521,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but "+xAxisType+"/"+yAxisType+" requires density.");
         }
         if ((AxisType.needsQ(xAxisType) || AxisType.needsQ(yAxisType)) && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
-            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but "+xAxisType+"/"+yAxisType+" requires Q.");
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but "
+                    +xAxisType+"/"+yAxisType+" requires Q. Please choose a different model.");
         }
         sourceArgs.validateArguments();
         if (sourceArgs.hasStrikeDipRake() && azimuth == null) {

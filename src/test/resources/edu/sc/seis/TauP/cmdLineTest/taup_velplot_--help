@@ -3,8 +3,8 @@ Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
                     [-o=<outFile>] [--prop=<toolPropsFilename>] [-x=type]
                     [-y=type] [--xminmax=x x]... [--yminmax=y y]...
                     [--mod=model [--mod=model]... | --nd=model [--nd=model]...
-                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --json |
-                    --nameddiscon | --svg | --text]
+                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --html |
+                    --json | --nameddiscon | --svg | --text]
 Plot velocity vs depth for a model.
 
 Options:
@@ -43,6 +43,7 @@ Velocity Model
 Output Type:
       --csv                  outputs as CSV
       --gmt                  outputs as GMT
+      --html                 outputs as SVG inside HTML
       --json                 outputs as JSON
       --nameddiscon          outputs as .nd named discontinuity model file
       --svg                  outputs as SVG

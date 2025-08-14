@@ -45,14 +45,14 @@ public class ArrivalPathSegment extends AbstractPathSegment {
      */
     public static List<ArrivalPathSegment> adjustPath(List<ArrivalPathSegment> inPath, Arrival arrival) {
         double distRadian = arrival.getDist();
-        if (inPath.size()==0) {
+        if (inPath.isEmpty()) {
             throw new RuntimeException("can adjust empty path for phase "+arrival.getName());
         }
         // start might not be zero is part of scattered phase
         TimeDist firstPoint = inPath.get(0).getPathStart();
         ArrivalPathSegment lastSeg = inPath.get(inPath.size()-1);
         double finalPathDist = lastSeg.getPathEnd().getDistRadian()- firstPoint.getDistRadian();
-        if (!inPath.isEmpty()) {
+        if (finalPathDist != 0.0 && !inPath.isEmpty()) {
             double shifty = calcShiftyForDist(firstPoint, lastSeg.getPathEnd(), arrival);
             if (Math.abs(1.0-shifty) > .02 && Math.abs(1+shifty) > 1e-5 ) {
                 // don't flag shifty that just reflects, ie -1
@@ -63,7 +63,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
             List<ArrivalPathSegment> out = new ArrayList<>();
             TimeDist prevEnd = inPath.get(0).prevEnd;
             for (ArrivalPathSegment seg : inPath) {
-                ArrivalPathSegment shiftySeg = new ArrivalPathSegment(seg.adjustPathForShifty(seg.path, shifty),
+                ArrivalPathSegment shiftySeg = new ArrivalPathSegment(adjustPathForShifty(seg.path, shifty),
                         seg.isPWave, seg.segmentName, prevEnd, seg.arrival,
                         seg.phaseSegment, seg.segmentIndex, seg.totalNumSegments);
                 prevEnd = shiftySeg.getPathEnd();

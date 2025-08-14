@@ -5,11 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Curve &#8212; TauP 3.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=08bfcbec"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <title>TauP Curve &#8212; TauP 3.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
+    <script src="_static/documentation_options.js?v=dd1205ac"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -25,7 +26,7 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="index.html">
@@ -36,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.1</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.1.0</p>
 
 
 
@@ -50,12 +51,20 @@
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
@@ -78,8 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#usage">Usage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
@@ -102,16 +110,6 @@
   </ul></li>
 </ul>
 </div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -155,7 +153,7 @@ The output is put in taup_curve.gmt by default, so to view the results:</p>
   <metadata>
     <taup>
       <command>taup curve &#45;&#45;mod prem -h 500 -p s,S,ScS,Sdiff &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.0.0</version>
+      <version>3.1.0</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="160.87334025390402" ymin="108.95337178722247" ymax="1929.835529979536" />
     </taup>
@@ -1344,7 +1342,7 @@ and <cite>-y</cite> options. For example tau vs ray parameter with:</p>
   <metadata>
     <taup>
       <command>taup curve -x rayparamdeg -y tau &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.0.0</version>
+      <version>3.1.0</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="33.09372816802343" ymin="0.0" ymax="1636.3816586476075" />
     </taup>
@@ -3309,7 +3307,7 @@ related to titles, labels and other image issues.</p>
                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                  [--gmt | --json | --svg | --text]
+                  [--gmt | --html | --json | --svg | --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -3389,6 +3387,7 @@ Phase Names
                            read list of phase names from file
 Output Type:
       --gmt                outputs as GMT
+      --html               outputs as SVG in HTML
       --json               outputs as JSON
       --svg                outputs as SVG
       --text               outputs as Text
@@ -3407,8 +3406,8 @@ Output Type:
       &#169;2025, Philip Crotwell.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/taup_curve.rst.txt"

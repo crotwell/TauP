@@ -406,7 +406,7 @@ public class SeismicPhaseSegment {
 		return desc;
 	}
 
-	public List<TimeDist> calcTimeDist(Arrival currArrival, TimeDist prevEnd, boolean doPath, SeismicPhaseSegment prevSeg) throws SlownessModelException, TauModelException {
+	public List<TimeDist> calcTimeDist(Arrival currArrival, TimeDist prevEnd, boolean doPath, SeismicPhaseSegment prevSeg) throws SlownessModelException {
 		List<TimeDist> pierceList = new ArrayList<>();
 		double rp = currArrival.getRayParam();
 		if ( ! isFlat) {
@@ -504,7 +504,7 @@ public class SeismicPhaseSegment {
 		return pierceList;
 	}
 
-	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhaseSegment prevSeg) throws SlownessModelException, TauModelException {
+	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhaseSegment prevSeg) throws SlownessModelException {
 		List<TimeDist> outPath = calcTimeDist(currArrival, prevEnd, true, prevSeg);
 		outPath = ArrivalPathSegment.trimDuplicates(outPath);
 		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival,

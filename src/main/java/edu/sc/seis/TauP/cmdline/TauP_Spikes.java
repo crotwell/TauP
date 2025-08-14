@@ -28,19 +28,19 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.Arrival;
-import edu.sc.seis.TauP.BuildVersion;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.iris.dmc.seedcodec.*;
+import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Network;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
-import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
-import edu.sc.seis.seisFile.mseed3.MSeed3EH;
-import edu.sc.seis.seisFile.mseed3.MSeed3EHKeys;
-import edu.sc.seis.seisFile.mseed3.MSeed3Record;
+import edu.sc.seis.seisFile.mseed.SeedFormatException;
+import edu.sc.seis.seisFile.mseed3.*;
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
 import edu.sc.seis.seisFile.mseed3.ehbag.Path;
+import edu.sc.seis.seisFile.sac.SacTimeSeries;
 import org.json.JSONObject;
 import picocli.CommandLine;
 
@@ -55,6 +55,7 @@ import java.util.Set;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cmdline.args.OutputTypes.MS3;
+import static edu.sc.seis.TauP.cmdline.args.OutputTypes.SAC;
 
 @CommandLine.Command(name = "spikes",
         description = "Calculate spike seismograms",
@@ -87,7 +88,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (!getOutputFormat().equals(MS3)) {
+        if (!(getOutputFormat().equals(MS3) || getOutputFormat().equals(SAC))) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Unsupported Output Format: " + getOutputFormat());
         }
         if (modelArgs.getSourceDepths().size() > 1) {
@@ -111,12 +112,29 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             List<MSeed3Record> spikeRecords = calcSpikes(rays);
             allRecords.addAll(spikeRecords);
 
-            setOutFileBase("taup_spikes");
-            DataOutputStream dos = getOutputStream();
-            for (MSeed3Record ms3 : allRecords) {
-                dos.write(ms3.asByteBuffer().array());
+            if (outputTypeArgs.isMS3()) {
+                setOutFileBase("taup_spikes");
+                DataOutputStream dos = getOutputStream();
+                for (MSeed3Record ms3 : allRecords) {
+                    dos.write(ms3.asByteBuffer().array());
+                }
+                dos.close();
+            } else if (outputTypeArgs.isSAC()) {
+                try {
+                    for (MSeed3Record ms3r : allRecords) {
+                        SacTimeSeries sac = MSeed3Convert.convert3ToSac(ms3r);
+                        setOutFileBase("taup_spikes_" + sac.getHeader().getGcarc()+"_"+sac.getHeader().getKcmpnm());
+                        DataOutputStream dos = getOutputStream();
+                        sac.write(dos);
+                        dos.close();
+                        this.writer = null;
+                    }
+                } catch (SeedFormatException | edu.iris.dmc.seedcodec.CodecException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new TauPException("Unknown output type: "+getOutputFormat());
             }
-            dos.close();
         } catch (IOException e) {
             throw new TauPException(e);
         }
@@ -132,13 +150,12 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             for (double receiverDepth : getReceiverDepths()) {
                 List<SeismicPhase> phaseList = calcSeismicPhases(sourceDepth,
                         List.of(receiverDepth), modelArgs.getScatterer());
-                spikeRecords.addAll(calcSpikes(degreesList, phaseList, sourceDepth, receiverDepth));
+                spikeRecords.addAll(calcSpikes(degreesList, phaseList));
             }
         }
         return spikeRecords;
     }
-    public List<MSeed3Record> calcSpikes(List<RayCalculateable> rayList, List<SeismicPhase> phaseList,
-                                         double sourceDepth, double receiverDepth) throws TauPException {
+    public List<MSeed3Record> calcSpikes(List<RayCalculateable> rayList, List<SeismicPhase> phaseList) throws TauPException {
 
         List<MSeed3Record> spikeRecords = new ArrayList<>();
         List<DistanceRay> degreesList = new ArrayList<>();
@@ -153,7 +170,9 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 // have to get Arrivals to find distance to then redo calc
                 List<Arrival> rayArrivals = new ArrayList<>();
                 for (SeismicPhase phase : phaseList) {
-                    rayArrivals.addAll(ray.calculate(phase));
+                    if (TauP_Time.isRayOkForPhase(ray, phase)) {
+                        rayArrivals.addAll(ray.calculate(phase));
+                    }
                 }
                 for (Arrival arr : rayArrivals) {
                     distFromArrival.add(arr.getDist());
@@ -211,9 +230,21 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 }
             }
 
-            String staCode = "S"+degrees;
-            staCode = staCode.replace(".", "");
-            if (staCode.length()> 8) { staCode = staCode.substring(8);}
+            String staCode = null;
+            if (dr.hasReceiver()) {
+                if ( dr.getReceiver() instanceof Station) {
+                    Station sta = (Station) dr.getReceiver();
+                    staCode = sta.getStationCode();
+                } else if (dr.getReceiver() instanceof Channel) {
+                    Channel chan = (Channel) dr.getReceiver();
+                    staCode = chan.getStationCode();
+                }
+            }
+            if (staCode == null ) {
+                staCode = "S"+degrees;
+                staCode = staCode.replace(".", "");
+                if (staCode.length()> 8) { staCode = staCode.substring(8);}
+            }
             componentRecords.add(packageMSeed3(vertical, staCode, "SP", "Z", startTime ));
             componentRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
             componentRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
@@ -243,7 +274,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         float olat = 0;
         float olon = 0;
         if (dr.hasSource()) {
-            Location loc = dr.getSource();
+            Location loc = dr.getSource().asLocation();
             olat = (float) loc.getLatitude();
             olon = (float) loc.getLongitude();
         }
@@ -270,8 +301,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         // only add chan if we can get lat,lon
         Station sta = new Station(new Network(sourceId.getNetworkCode()), sourceId.getStationCode());
         if (dr.hasReceiver()) {
-            sta.setLatitude((float) dr.getReceiver().getLatitude());
-            sta.setLongitude((float) dr.getReceiver().getLongitude());
+            sta.setLatitude((float) dr.getReceiver().asLocation().getLatitude());
+            sta.setLongitude((float) dr.getReceiver().asLocation().getLongitude());
         } else if (dr.hasAzimuth()  && !dr.isGeodetic()) {
             sta.setLatitude((float) SphericalCoords.latFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
             sta.setLongitude((float) SphericalCoords.lonFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
@@ -280,20 +311,23 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         }
         Channel chan = new Channel(sta, sourceId.getLocationCode(), sourceId.getChannelCode());
         chan.setSourceId(sourceId.toString());
-        if (dr.hasReceiver() && dr.getReceiver().hasDepth()) {
-            chan.setDepth(dr.getReceiver().getDepthMeter().floatValue());
-            chan.setElevation(-1*dr.getReceiver().getDepthMeter().floatValue());
+        if (dr.hasReceiver() && dr.getReceiver().asLocation().hasDepth()) {
+            chan.setDepth(dr.getReceiver().asLocation().getDepthMeter().floatValue());
+            chan.setElevation(-1 * dr.getReceiver().asLocation().getDepthMeter().floatValue());
         } else {
             chan.setDepth(0);
             chan.setElevation(0);
         }
 
-        if (origin != null && chan.asLocation()!= null) {
-            if (az == null && !dr.isGeodetic()) {
-                az = (float) SphericalCoords.azimuth(origin.asLocation(), chan.asLocation());
-            }
-            if (baz == null && !dr.isGeodetic()) {
-                baz = (float) SphericalCoords.azimuth(chan.asLocation(), origin.asLocation());
+        if (sta.getLatitude() != null && sta.getLongitude()!= null) {
+            // only if sta has loc
+            if (origin != null && chan.asLocation() != null) {
+                if (az == null && !dr.isGeodetic()) {
+                    az = (float) SphericalCoords.azimuth(origin.asLocation(), chan.asLocation());
+                }
+                if (baz == null && !dr.isGeodetic()) {
+                    baz = (float) SphericalCoords.azimuth(chan.asLocation(), origin.asLocation());
+                }
             }
         }
         Path path = new Path(deg, az, baz);
@@ -618,7 +652,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 arrivals.add(phaseArrivals.get(0));
             }
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
     @Override
@@ -637,7 +672,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return outputTypeArgs.getOutFileExtension();
     }
 
-    public List<RayCalculateable> getRayCalculatables() throws TauPException {
+    public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = distanceArgs.getRayCalculatables(sourceArgs);
         if (latLonArgs.hasAzimuth()) {
             for (RayCalculateable rc : out) {
@@ -668,15 +703,15 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return latLonArgs.hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
     }
 
-    public List<Location> getStationLatLon() throws TauPException {
-        List<Location> staList = new ArrayList<>();
+    public List<LatLonLocatable> getStationLatLon() throws TauPException {
+        List<LatLonLocatable> staList = new ArrayList<>();
         staList.addAll(latLonArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
         return staList;
     }
 
-    public List<Location> getEventLatLon() throws TauPException {
-        List<Location> eventLocs = new ArrayList<>();
+    public List<LatLonLocatable> getEventLatLon() throws TauPException {
+        List<LatLonLocatable> eventLocs = new ArrayList<>();
         eventLocs.addAll(latLonArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
         return eventLocs;
@@ -688,7 +723,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
-    @CommandLine.Option(names = "--otime", description = "event origin time, as ISO8601")
+    @CommandLine.Option(names = "--otime", description = "event origin time, as ISO8601 yyyy-MM-ddTHH:mm:ss.SZ, append Z for UTC times")
     ZonedDateTime origintime;
 
     @CommandLine.Mixin

@@ -182,15 +182,27 @@ public class Arrival {
 
     private Arrival relativeToArrival = null;
 
-    public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
+    /**
+     * Sorts arrivals by time in place.
+     * @param arrivals sorted
+     */
+    public static void sortArrivals(List<Arrival> arrivals) {
         arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
-        return arrivals;
+    }
+
+    /**
+     * Sorts arrivals by source and receiver depth in place. Used when calc rel phases for efficiency.
+     * @param arrivals sorted
+     */
+    public static void sortArrivalsBySourceReceiverDepth(List<Arrival> arrivals) {
+        arrivals.sort(Comparator.comparingDouble(Arrival::getReceiverDepth));
+        arrivals.sort(Comparator.comparingDouble(Arrival::getSourceDepth));
     }
 
     public static List<Arrival> onlyFirst(List<Arrival> arrivalList) {
         List<Arrival> first = new ArrayList<>();
         List<Arrival> copyList = new ArrayList<>(arrivalList);
-        copyList = Arrival.sortArrivals(copyList);
+        Arrival.sortArrivals(copyList);
         while (!copyList.isEmpty()) {
             Arrival early = copyList.get(0);
             first.add(early);
@@ -371,9 +383,8 @@ public class Arrival {
      * Geometrical spreading factor for amplitude, sqrt of energy spreading.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.19.
      *
-     * @throws TauModelException
      */
-    public double getAmplitudeGeometricSpreadingFactor() throws TauModelException {
+    public double getAmplitudeGeometricSpreadingFactor() {
         double d = getEnergyGeometricSpreadingFactor();
         if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
         return Math.sqrt(getEnergyGeometricSpreadingFactor());
@@ -701,9 +712,7 @@ public class Arrival {
         if (pierce == null) {
             try {
                 this.pierce = getPhase().interpPierceTimeDist(this).toArray(new TimeDist[0]);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
         }
@@ -794,6 +803,10 @@ public class Arrival {
         return radiationTerm;
     }
 
+    /**
+     * Calculates the path length.
+     * @return path length in kilometers
+     */
     public double calcPathLength() {
         // path length
         double length = 0;
@@ -832,11 +845,7 @@ public class Arrival {
         if (pathSegments == null) {
             try {
                 this.pathSegments = getPhase().calcSegmentPaths(this);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (SlownessModelException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | SlownessModelException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
 
@@ -852,11 +861,7 @@ public class Arrival {
         if (pathSegments == null) {
             try {
                 pathSegments = getPhase().calcSegmentPaths(this);
-            } catch (NoArrivalException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (SlownessModelException e) {
-                throw new RuntimeException("Should never happen "+getName(), e);
-            } catch (TauModelException e) {
+            } catch (NoArrivalException | SlownessModelException | TauModelException e) {
                 throw new RuntimeException("Should never happen "+getName(), e);
             }
         }
@@ -909,7 +914,7 @@ public class Arrival {
         String desc =  Outputs.formatDistance(moduloDistDeg) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
                 + "  " + Outputs.formatDistance(getTakeoffAngleDegree()) + " " + Outputs.formatDistance(getIncidentAngleDegree())
-                + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();
+                + " " + Outputs.formatDistance(getDistDeg());
         if (getName().equals(getPuristName())) {
             desc += "   = ";
         } else {
@@ -1011,28 +1016,83 @@ public class Arrival {
         return latestArrival;
     }
 
-    public static String CSVHeader() {
-        return "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
+    public static List<String> headerNames(boolean tableStyle) {
+        List<String> common = List.of("Distance (deg)","Depth (km)","Phase","Time (s)","RayParam (deg/s)",
+                "Takeoff Angle","Incident Angle","Recv Depth","Purist Distance","Purist Name");
+        if (tableStyle) {
+            List<String> line = new ArrayList<>(List.of("Model"));
+            line.addAll(common);
+            return line;
+        }
+        return common;
     }
+    public static String CSVHeader() {
+        return String.join(",", headerNames(true));
+    }
+
+    /**
+     * Creates a List of Strings, each corresponding to the headers via headerNames() for this arrival.
+     * @return arrival for printing
+     */
+    public List<String> asStringList(boolean tableStyle, String phaseFormat, String phasePuristFormat,
+                                     boolean withAmp, boolean withRelPhase) {
+        List<String> line = new ArrayList<>();
+        if (tableStyle) {
+            String modelName = getTauModel().getModelName().replaceAll("\"", " ");
+            if (modelName.contains(",")) {
+                modelName = "\"" + modelName + "\"";
+            }
+            line.add(modelName);
+        }
+        line.addAll(List.of(
+                Outputs.formatDistance(tableStyle ? getModuloDistDeg() : getSearchDistDeg()),
+                Outputs.formatDepth(getSourceDepth()) ,
+                "   "+String.format(phaseFormat, getName()),
+                "  "+Outputs.formatTime(getTime()),
+                "  "+Outputs.formatRayParam(getRayParamDeg()),
+                "  "+Outputs.formatDistance(getTakeoffAngleDegree()),
+                " "+Outputs.formatDistance(getIncidentAngleDegree()),
+                " "+Outputs.formatDepth(getReceiverDepth()),
+                " "+Outputs.formatDistance(getDistDeg())));
+        if (! tableStyle) {
+            String puristSame = (getName().equals(getPuristName())?"   = " : "   * ");
+            line.add(puristSame);
+        }
+        line.add(String.format(phasePuristFormat, getPuristName()));
+        if (withAmp) {
+            try {
+                double ampFactorPSV = getAmplitudeFactorPSV();
+                double ampFactorSH = getAmplitudeFactorSH();
+                line.addAll(List.of(" " + Outputs.formatAmpFactor(ampFactorPSV),
+                        " " + Outputs.formatAmpFactor(ampFactorSH)));
+            } catch (SlownessModelException | TauModelException e) {
+                throw new RuntimeException("Should not happen", e);
+            }
+        }
+        if (withRelPhase) {
+            if (isRelativeToArrival()) {
+                line.add(" " + Outputs.formatTime(getTime() - getRelativeToArrival().getTime()));
+                line.add(" +" + String.format(phaseFormat, getRelativeToArrival().getName()));
+            } else {
+                line.add(String.format(phaseFormat, " no arrival"));
+                line.add("");
+            }
+        }
+        if (getRayCalculateable().hasDescription()) {
+            line.add(" "+getRayCalculateable().getDescription());
+        }
+        return line;
+    }
+
 
     public String asCSVRow() {
         String sep = ",";
-        String modelName = getTauModel().getModelName().replaceAll("\"", " ");
-        if (modelName.contains(",")) {
-            modelName = "\""+modelName+"\"";
+        StringBuilder sb = new StringBuilder();
+        for (String s : asStringList(true, "%s", "%s", false, false)) {
+            sb.append(s.trim()).append(sep);
         }
-        String line = modelName + sep
-                + Outputs.formatDistance(getModuloDistDeg()).trim() + sep
-                + Outputs.formatDepth(getSourceDepth()).trim() + sep
-                + getName().trim() + sep
-                + Outputs.formatTime(getTime()).trim() + sep
-                + Outputs.formatRayParam(getRayParamDeg()).trim() + sep
-                + Outputs.formatDistance(getTakeoffAngleDegree()).trim() + sep
-                + Outputs.formatDistance(getIncidentAngleDegree()).trim() + sep
-                + Outputs.formatDistance(getDistDeg()).trim() + sep
-                + getPuristName().trim()
-                + receiverDepth;
-        return line;
+        sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
     }
 
     public RayCalculateable getRayCalculateable() {

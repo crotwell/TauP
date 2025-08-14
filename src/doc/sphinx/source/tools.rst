@@ -46,7 +46,7 @@ Tools included with the TauP package:
 :ref:`setsac <taup_setsac>`         puts theoretical arrival times into sac header variables.
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
-:ref:`discon <taup_discon>`      list discontinuities in a velocity model.
+:ref:`discon <taup_discon>`         list discontinuities in a velocity model.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
 :ref:`spikes <taup_spikes>`         create spike seismogram.
 :ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.
@@ -55,63 +55,73 @@ Tools included with the TauP package:
 :ref:`help <taup_help>`             display help information about the specified command.
 =================================   =========================================================================
 
-Startup Script
+Usage
 --------------
 
 Each tool is a subcommand of the overall :code:`taup` Java application which is
-an wrapper to make execution easier: sh scripts
-for *Unix* and
-bat files for windows.  The application are machine independent but the
-wrappers are OS specific.
-For example, to invoke TauP Time under *Unix*, you could type
+a wrapper to make execution easier, and installed with a simple sh script
+for *Unix* and a .bat files for windows. In general the tools are run like
 
-:code:`java -classpath ... edu.sc.seis.TauP.TauP time -mod prem`
+:code:`taup time -p P --deg 35`
 
-or simply use the script that does the same thing,
+where the pattern is :code:`taup <tool> <arg> <arg> <arg>...`.
 
-:code:`taup time -mod prem`
-
+Help and Version
+^^^^^^^^^^^^^^^^
 
 Each tool has a :code:`--help` flag that will print a usage summary, as well
-as a :code:`--version` flag that will print the version.
+as a :code:`--version` flag that will print the version. For help in general,
 
-Tab Completion
---------------
+:code:`taup --help`
 
-New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
-:code:`taup generate-completion` will provide hints
-for the shell when hitting the tab key for bash or zsh. You can enable it
-with running this command:
+gives the tools available while
 
-:code:`source <(taup generate-completion)`
+:code:`taup <tool> --help`
 
-Adding this to your .bash_profile or .zshrc will enable it for future logins.
+gives help for a particular tool.
 
-Note, for bash 3.2, which the default verion on OSX, there is a bug that
-prevents this from working. The alterantive is to save it as a file like:
+Output Formats
+^^^^^^^^^^^^^^
 
-:code:`taup generate-completion > taup_completion`
+Most tools support
+several output formats. Some tools, like time, are textual, while other like
+path can also be graphical. In general, the most commonly useful output format
+is the default, usually :code:`--text` for textual output and :code:`--svg` for
+`SVG <https://developer.mozilla.org/en-US/docs/Web/SVG>`_ graphical output.
+The output formats support by one or more tools are:
 
-and then source the file:
+================ ============
+:code:`--text`   Textual output, usually best for human reading
+:code:`--html`   HTML web page output, also for human reading
+:code:`--json`   `JSON <http://json.org>`_, usually best for parsing
+:code:`--csv`    CSV, comma separated values, sometimes good for parsing
+:code:`--nd`     named discontinuity, velocity model file format
+:code:`--gmt`    `GMT <https://www.generic-mapping-tools.org/>`_ plot style
+:code:`--svg`    `SVG <https://developer.mozilla.org/en-US/docs/Web/SVG>`_ image
+:code:`--ms3`    `Miniseed3 <https://docs.fdsn.org/projects/miniseed3/en/latest/>`_ waveform file
+:code:`--sac`    `SAC <https://ds.iris.edu/ds/nodes/dmc/software/downloads/sac/102-0/>`_ waveform file
+:code:`--locsat` `LOCSAT <https://www.seiscomp.de/doc/apps/global_locsat.html>`_ style traveltime table
+================ ============
 
-:code:`source taup_completion`
+Velocity Model
+^^^^^^^^^^^^^^
 
-Once sourced, you will be able to get hints or completion for most arguments
-within TauP. For example typing:
+Almost all tools require an input velocity model. This can be specified via the
+:code:`--mod` argument, and TauP will search for either an already created
+`.taup` model file, or a `.nd` named discontinuities model file or a `.tvel`
+ttimes style model file. The `.taup` file, being already interpolated, is usually
+faster, especially for repeated uses, but being able to read, interpolate and
+calculate a `.nd` or `.tvel` file is very useful.
 
-:code:`taup time -`
+Distances
+^^^^^^^^^
 
-and then hitting the tab key will display all of the possible command line
-flags. Continuing to type
+Many of the tools require a way to specify the ray to be calculated, either
+via some parameter of the ray or of a distance. See the
+:ref:`Distances <distances>` section for more on the various arguments used to specify this.
 
-:code:`taup time --mod`
-
-and then hitting the tab key will display the models available for the
-:code:`--mod` command line argument:
-
-:code:`ak135          ak135favg      ak135fcont     ak135fsyngine  iasp91         prem
-`
-
+Also see the :ref:`Calculations <calculations>` section for important information
+on how distances are calculated internally.
 
 .. include:: default_params
 .. include:: taup_time

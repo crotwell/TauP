@@ -40,6 +40,23 @@ gives you arrival times for S and P for these earthquakes at those stations.
 .. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic_-p_P_S
   :language: text
 
+Even more fun is to give a station id,
+like :code:`--sid CO_HAW` or a
+USGS event id, like :code:`--eid us7000pn9s`, and TauP will use the
+`IRIS FedCat <https://service.iris.edu/irisws/fedcatalog/1/>`_ and
+`USGS FDSN Event <https://earthquake.usgs.gov/fdsnws/event/1/>`_
+web services to get the station and event locations and depth. For example:
+
+
+.. literalinclude:: examples/taup_time_--geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS.cmd
+  :language: text
+
+gives you arrival times for SKS for this earthquake at station CO_HAW.
+Note this should not be called repeatedly as it is slow and puts undo
+strain on these web services.
+
+.. literalinclude:: examples/taup_time_--geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS
+  :language: text
 
 The usage is:
 

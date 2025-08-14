@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.sc.seis.TauP.PhaseName;
 import edu.sc.seis.TauP.SetSacException;

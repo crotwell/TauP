@@ -12,4 +12,5 @@ public interface OutputTypes {
     String LOCSAT = "locsat";
     String ND = "nd";
     String SAC = "sac";
+    String HTML = "html";
 }

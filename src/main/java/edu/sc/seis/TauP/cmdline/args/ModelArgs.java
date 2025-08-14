@@ -31,7 +31,7 @@ public class ModelArgs {
     }
 
     public static String depthsToString(List<Double> depths) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         boolean first = true;
         for (Double d : depths) {
             if ( ! first) {

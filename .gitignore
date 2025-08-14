@@ -17,4 +17,6 @@ tmp
 /src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/*.svg
 /src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/index.html
 /src/doc/sphinx/source/_static/StdModels
+/src/web/node_modules
 /test
+/docs/manual/.buildinfo.bak

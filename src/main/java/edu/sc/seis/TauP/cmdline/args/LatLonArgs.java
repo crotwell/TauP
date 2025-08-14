@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP.cmdline.args;
 
+import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import picocli.CommandLine;
 
@@ -20,10 +22,11 @@ public class LatLonArgs {
         stationLatLonList = stationLatLon;
     }
 
-    public List<Location> getStationLocations() {
-        List<Location> out = new ArrayList<>();
+    public List<LatLonLocatable> getStationLocations() {
+        List<LatLonLocatable> out = new ArrayList<>();
         for (int i = 0; i < stationLatLonList.size(); i += 2) {
-            out.add(new Location(stationLatLonList.get(i), stationLatLonList.get(i + 1)));
+            LatLonSimple loc = new LatLonSimple(stationLatLonList.get(i), stationLatLonList.get(i + 1));
+            out.add(loc);
         }
         return out;
     }
@@ -43,10 +46,11 @@ public class LatLonArgs {
         eventLatLonList = eventLatLon;
     }
 
-    public List<Location> getEventLocations() {
-        List<Location> out = new ArrayList<>();
+    public List<LatLonLocatable> getEventLocations() {
+        List<LatLonLocatable> out = new ArrayList<>();
         for (int i = 0; i < eventLatLonList.size(); i += 2) {
-            out.add(new Location(eventLatLonList.get(i), eventLatLonList.get(i + 1)));
+            LatLonSimple loc = new LatLonSimple(eventLatLonList.get(i), eventLatLonList.get(i + 1));
+            out.add(loc);
         }
         return out;
     }
@@ -56,15 +60,15 @@ public class LatLonArgs {
     }
 
     public void validateArguments() {
-        for (Location loc : getEventLocations()) {
-            if (loc.getLatitude() < -90 || loc.getLatitude() > 90) {
-                String desc = loc.getDescription();
-                desc = (desc != null) ? desc : loc.getLatitude()+"/"+loc.getLongitude();
+        for (LatLonLocatable loc : getEventLocations()) {
+            if (loc.asLocation().getLatitude() < -90 || loc.asLocation().getLatitude() > 90) {
+                String desc = loc.getLocationDescription();
                 throw new IllegalArgumentException("Latitude must be -90 <= lat <= 90, but was "
-                        +loc.getLatitude()+" for "+desc);
+                        +loc.asLocation().getLatitude()+" for "+desc);
             }
         }
-        for (Location loc : getStationLocations()) {
+        for (LatLonLocatable staLoc : getStationLocations()) {
+            Location loc = staLoc.asLocation();
             if (loc.getLatitude() < -90 || loc.getLatitude() > 90) {
                 String desc = loc.getDescription();
                 desc = (desc != null) ? desc : loc.getLatitude()+"/"+loc.getLongitude();

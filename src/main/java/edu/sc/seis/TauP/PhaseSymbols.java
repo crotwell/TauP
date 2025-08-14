@@ -231,19 +231,19 @@ public class PhaseSymbols {
         return Objects.equals(NAMED_DISCON_START, name.charAt(offset));
     }
 
-    public static final boolean is(String leg, char symbol) {
+    public static boolean is(String leg, char symbol) {
         return leg.charAt(0) == symbol && leg.length()==1;
     }
 
-    public static final boolean is(String leg, String symbol) {
+    public static boolean is(String leg, String symbol) {
         return Objects.equals(leg, symbol);
     }
 
-    public static final boolean startsWith(String leg, char symbol) {
+    public static boolean startsWith(String leg, char symbol) {
         return leg.charAt(0) == symbol;
     }
 
-    public static final boolean startsWith(String leg, String symbol) {
+    public static boolean startsWith(String leg, String symbol) {
         return leg.startsWith(symbol);
     }
 }

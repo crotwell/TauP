@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p Pn &#45;&#45;deg 10 &#45;&#45;svg </command>
-      <version>3.0.0</version>
+      <version>3.0.2-SNAPSHOT_2025-05-27T114310</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -317,7 +317,7 @@ circle.discontinuity.iocb {
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
   <g class="autocolor" >
 <g>
-    <desc>   10.00    10.0   Pn    143.86    13.754     45.94    45.84    10.00 0   = Pn</desc>
+    <desc>   10.00    10.0   Pn    143.86    13.754     45.94    45.84    10.00   = Pn</desc>
     <g>
       <desc>seg 1/3 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
       <polyline class="path phase_Pn pwave" points="

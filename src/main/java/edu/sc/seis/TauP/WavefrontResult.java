@@ -9,7 +9,7 @@ public class WavefrontResult extends AbstractPhaseResult {
 
     public WavefrontResult(String modelName, List<Double> depth, List<Double> receiverDepth,
                            List<PhaseName> phaseNameList, Scatterer scatterer,
-                           Map<Double, List<WavefrontPathSegment>> isochronMap) {
+                           Map<Double, List<PhaseIsochron>> isochronMap) {
         super(modelName, depth, receiverDepth, phaseNameList, scatterer);
         timesteps = new ArrayList<>(isochronMap.keySet());
         Collections.sort(timesteps);

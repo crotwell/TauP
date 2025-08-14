@@ -29,6 +29,7 @@ Or use --svg to generate a SVG plot
 .. literalinclude:: examples/taup_wavefront_--mod_iasp91_-h_550_-p_s_S_ScS_sS_sScS_--color_wavetype_--svg.cmd
   :language: text
 
+that gives:
 
 .. raw:: html
     :file:  examples/taup_wavefront_--mod_iasp91_-h_550_-p_s_S_ScS_sS_sScS_--color_wavetype_--svg
@@ -36,6 +37,10 @@ Or use --svg to generate a SVG plot
 If the one-sided plot is confusing, the :code:`--negdist` flag will mirror the
 wavefronts from the positive to the negative side of the figure, making a
 more pleasing display.
+
+The web application, via :code:`taup web` has an interesting animation
+feature using CSS to turn on and off various timesteps within the output,
+allowing a "movie" of the wavefront propagation.
 
 The usage is:
 

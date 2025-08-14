@@ -18,7 +18,12 @@ package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.AmplitudeArgs;
+import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
@@ -41,7 +46,7 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
         description = "Calculate pierce points for phases at discontinuities in the model.",
         optionListHeading = OPTIONS_HEADING,
         usageHelpAutoWidth = true)
-public class TauP_Pierce extends TauP_Time {
+public class TauP_Pierce extends TauP_AbstractRayTool {
 
     protected boolean onlyTurnPoints = false;
 
@@ -52,15 +57,18 @@ public class TauP_Pierce extends TauP_Time {
     protected boolean onlyAddPoints = false;
 
     public TauP_Pierce() {
-        super();
+        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
     }
 
     public TauP_Pierce(TauModel tMod) {
-        super(tMod);
+        this();
+        setTauModel(tMod);
     }
 
     public TauP_Pierce(String modelName) throws TauModelException {
-        super(modelName);
+        this();
+        modelArgs.setModelName(modelName);
     }
 
     // get/set methods
@@ -108,18 +116,45 @@ public class TauP_Pierce extends TauP_Time {
         return out;
     }
 
+    @CommandLine.Mixin
+    TextOutputTypeArgs outputTypeArgs;
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOutputFormat();
+    }
+
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+
+    @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
+    protected boolean onlyFirst = false;
+
+    @CommandLine.Mixin
+    AmplitudeArgs sourceArgs = new AmplitudeArgs();
+
+    public AmplitudeArgs getSourceArgs() {
+        return sourceArgs;
+    }
+
+    public boolean isWithAmplitude() {
+        return getSourceArgs().isWithAmplitude();
+    }
+
     @Override
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> rayCalcList) throws TauPException {
-        List<Arrival> arrivalList = super.calcAll(phaseList, rayCalcList);
+        List<Arrival> arrivalList = TauP_Time.internalCalcAll(phaseList, rayCalcList, onlyFirst);
+
         for (Arrival arrival : arrivalList) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
         return arrivalList;
     }
 
-    @Override
     public GsonBuilder createGsonBuilder() {
-        GsonBuilder gsonBld = super.createGsonBuilder();
+        GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
         gsonBld.registerTypeAdapter(Arrival.class,
                 new ArrivalSerializer(true, false, isWithAmplitude()));
         gsonBld.registerTypeAdapter(ScatteredArrival.class,
@@ -128,6 +163,36 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
+    public void start() throws IOException, TauPException {
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
+        List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
+        if (getDistanceArgs().isAllIndexRays()) {
+            List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
+            arrivalList.addAll(indexArrivalList);
+        }
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+        printResult(writer, arrivalList);
+        writer.close();
+    }
+
+    @Override
+    public void destroy() throws TauPException {
+    }
+
+    @Override
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+        if (getOutputFormat().equals(OutputTypes.JSON)) {
+            TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
+            GsonBuilder gsonBld = createGsonBuilder();
+            out.println(gsonBld.create().toJson(result));
+        } else if (getOutputFormat().equals(OutputTypes.HTML)) {
+            printResultHtml(out, arrivalList);
+        } else {
+            printResultText(out, arrivalList);
+        }
+        out.flush();
+    }
+
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         printPierceAsText(out, arrivalList);
     }
@@ -175,6 +240,75 @@ public class TauP_Pierce extends TauP_Time {
         }
     }
 
+    public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        printPierceAsHtml(out, arrivalList);
+    }
+
+    public void printPierceAsHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
+        HTMLUtil.createHtmlStart(out, "TauP Pierce", HTMLUtil.createTableCSS(), true);
+
+        List<String> headers = new ArrayList<>();
+        headers.addAll(List.of("Distance (deg)", "Depth (km)", "Time (s)"));
+
+        boolean latLon = false;
+        for (Arrival arrival : arrivalList) {
+            if (arrival.isLatLonable()) {
+                latLon = true;
+                break;
+            }
+        }
+        if (latLon) {
+            headers.addAll(List.of("Lat", "Lon"));
+        }
+
+        double prevDepth, nextDepth;
+        for (Arrival arrival : arrivalList) {
+
+            TimeDist[] pierce = arrival.getPierce();
+            prevDepth = pierce[0].getDepth();
+            List<List<String>> values = new ArrayList<>();
+            for (int j = 0; j < pierce.length; j++) {
+                List<String> row = new ArrayList<>();
+                double calcDist = pierce[j].getDistDeg();
+                if (j < pierce.length - 1) {
+                    nextDepth = pierce[j + 1].getDepth();
+                } else {
+                    nextDepth = pierce[j].getDepth();
+                }
+                if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
+                        || (onlyRevPoints
+                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getTauModel().getRadiusOfEarth()))
+                )
+                        || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
+                        || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
+                        * (pierce[j].getDepth() - nextDepth) < 0))
+                        || (onlyTurnPoints && j != 0
+                        && ((prevDepth - pierce[j].getDepth()) <= 0
+                        && (pierce[j].getDepth() - nextDepth) >= 0))
+                        || (onlyUnderPoints && j != 0 && j != pierce.length-1
+                        && ((prevDepth - pierce[j].getDepth()) >= 0
+                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
+                    row.add(Outputs.formatDistance(calcDist));
+                    row.add(Outputs.formatDepth(pierce[j].getDepth()));
+                    row.add(Outputs.formatTime(pierce[j].getTime()));
+                    if (arrival.isLatLonable()) {
+                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+                        row.add( Outputs.formatLatLon(latlon[0]));
+                        row.add(Outputs.formatLatLon(latlon[1]));
+                    }
+                }
+                prevDepth = pierce[j].getDepth();
+                values.add(row);
+            }
+
+            out.println("<details open=\"true\">");
+            out.println("  <summary>"+arrival.getCommentLine()+"</summary>");
+            out.println(HTMLUtil.createBasicTable(headers, values));
+            out.println("</details>");
+        }
+        out.println(HTMLUtil.createHtmlEnding());
+    }
     /**
      * checks to see if the given depth has been "added" as a pierce point.
      */

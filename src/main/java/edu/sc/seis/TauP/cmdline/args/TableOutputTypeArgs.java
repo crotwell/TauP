@@ -19,6 +19,9 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     public boolean isJSON() {
         return outputType._isJSON;
     }
+    public boolean isHTML() {
+        return outputType._isHTML;
+    }
     public boolean isCSV() {
         return outputType._isCSV;
     }
@@ -29,12 +32,15 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     public void setOutputFormat(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
+        outputType._isHTML = false;
         outputType._isCSV = false;
         outputType._isLocsat = false;
         if (oType.equalsIgnoreCase(OutputTypes.TEXT) || oType.equalsIgnoreCase("generic")) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.JSON)) {
             outputType._isJSON = true;
+        } else if (oType.equalsIgnoreCase(OutputTypes.HTML)) {
+            outputType._isHTML = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.CSV)) {
             outputType._isCSV = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.LOCSAT)) {
@@ -47,6 +53,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     public String getOutputFormat() {
         if (isJSON()) return OutputTypes.JSON;
         if (isCSV()) return OutputTypes.CSV;
+        if (isHTML()) return OutputTypes.HTML;
         if (isLocsat()) return OutputTypes.LOCSAT;
         return OutputTypes.TEXT;
     }
@@ -55,26 +62,26 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         if (extension != null && !extension.isEmpty()) {
             return extension;
         }
-        String calcExt = "text";
+        String calcExt = OutputTypes.TEXT;
         if (isJSON()) {
-            calcExt = "json";
-        }
-        if (isCSV()) {
-            calcExt = "csv";
-        }
-        if (isLocsat()) {
-            calcExt = "locsat";
+            calcExt = OutputTypes.JSON;
+        } else if (isHTML()) {
+            calcExt = OutputTypes.HTML;
+        } else if (isCSV()) {
+            calcExt = OutputTypes.CSV;
+        } else if (isLocsat()) {
+            calcExt = OutputTypes.LOCSAT;
         }
         return calcExt;
     }
-
-    String outFileBase = "taup_table";
 
     static class TableOutputType {
         @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as Text")
         boolean _isText = true;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
+        @CommandLine.Option(names = {"--html"}, required = true, description = "outputs as HTML")
+        boolean _isHTML = false;
         @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
         boolean _isCSV = false;
         @CommandLine.Option(names = {"--locsat"}, required = true, description = "outputs as Locsat")

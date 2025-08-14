@@ -30,11 +30,12 @@ velocity file, followed by :code:`.taup`. For example
 
 :code:`taup create -nd mymodel.nd`
 
-produces the file :code:`mymodel.taup` which can be used later like::
+produces the file :code:`mymodel.taup` which can be used later like
 
-  taup time --mod mymodel.taup --deg 35 -p P,S
+:code:`taup time --mod mymodel.taup --deg 35 -p P,S`
 
 
 The usage is:
 
-  .. literalinclude:: cmdLineHelp/taup_create.usage
+.. literalinclude:: cmdLineHelp/taup_create.usage
+  :language: text

@@ -44,9 +44,7 @@ public class SvgEarth {
                 if (phase.getMaxDistance() > maxDist) {
                     maxDist = (float) phase.getMaxDistance();
                 }
-                if (maxDist >= Math.PI) {
-                    maxDist = (float) Math.PI;
-                }
+
                 if (phase.getMinDistance() < minDist) {
                     minDist = (float) phase.getMinDistance();
                 }
@@ -74,13 +72,16 @@ public class SvgEarth {
             } else {
                 distRanges.add(0.0);
                 for (SeismicPhase phase : phaseList) {
-                    distRanges.add(phase.getMinDistance()*RtoD);
-                    distRanges.add(phase.getMaxDistance()*RtoD);
+                    distRanges.add(phase.getMinDistanceDeg());
+                    distRanges.add(phase.getMaxDistanceDeg());
+                    if (Math.abs(phase.getMaxDistance()-phase.getMinDistance()) > 3*Math.PI/4 || phase.getMaxDistance() >= Math.PI) {
+                        distRanges.add(180.0);
+                    }
                 }
                 if (includeNegDist) {
                     for (SeismicPhase phase : phaseList) {
-                        distRanges.add(-1*phase.getMinDistance()*RtoD);
-                        distRanges.add(-1*phase.getMaxDistance()*RtoD);
+                        distRanges.add(-1*phase.getMinDistanceDeg());
+                        distRanges.add(-1*phase.getMaxDistanceDeg());
                     }
                 }
             }

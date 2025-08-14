@@ -21,7 +21,7 @@ public class DistanceAngleRaySerializier implements JsonSerializer<DistanceAngle
      *
      * @param src       the object that needs to be converted to Json.
      * @param typeOfSrc the actual type (fully genericized version) of the source object.
-     * @param context
+     * @param context the serialization context
      * @return a JsonElement corresponding to the specified object.
      */
     @Override
@@ -42,7 +42,7 @@ public class DistanceAngleRaySerializier implements JsonSerializer<DistanceAngle
             out.add(JSONLabels.SOURCE, locSerial.serialize(src.getSource(), Location.class, context));
         }
         if (src.hasReceiver()) {
-            out.add(JSONLabels.RECEIVER, locSerial.serialize(src.getSource(), Location.class, context));
+            out.add(JSONLabels.RECEIVER, locSerial.serialize(src.getReceiver(), Location.class, context));
         }
         return out;
     }

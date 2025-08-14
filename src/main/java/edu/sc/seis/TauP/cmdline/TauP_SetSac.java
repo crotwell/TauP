@@ -29,7 +29,7 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
-import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 /**
@@ -70,7 +69,6 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "setsac",
         description = "Set headers to travel times of phases using depth and distance from SAC files.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
@@ -217,14 +215,14 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                           "using lat and lons to calculate distance.");
             if (geodeticArgs.isGeodetic()) {
                 rayCalculateable = DistanceRay.ofGeodeticEventStation(
-                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
-                        new Location(header.getStla(), header.getStlo()),
+                        new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                        new LatLonSimple(header.getStla(), header.getStlo()),
                         DistAz.wgs85_flattening
                 );
             } else {
                 rayCalculateable = DistanceRay.ofEventStation(
-                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
-                        new Location(header.getStla(), header.getStlo())
+                        new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                        new LatLonSimple(header.getStla(), header.getStlo())
                 );
             }
         } else {

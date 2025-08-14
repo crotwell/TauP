@@ -37,10 +37,15 @@ distance. The :code:`--geodetic` argument does the distance calculation using
 an ellipticity, the default is purely spherical. The internal time calculations
 are always spherical. We can also read station locations from a StationXML
 file with :code:`--staxml` and event locations from a QuakeML file with
-:code:`--qml`. Even more fun is to give a station id, like CO_HAW or a
-USGS event id, like us7000pn9s, and TauP will use the IRIS FedCat and
-USGS FDSN Event web services to get the station and event locations.
+:code:`--qml`. Even more fun is to give a station id,
+like :code:`--sid CO_HAW` or a
+USGS event id, like :code:`--eid us7000pn9s`, and TauP will use the
+`IRIS FedCat <https://service.iris.edu/irisws/fedcatalog/1/>`_ and
+`USGS FDSN Event <https://earthquake.usgs.gov/fdsnws/event/1/>`_
+web services to get the station and event locations and depth.
 TauP will do the calculations for all event station pairs.
+Note this should not be called repeatedly as it is slow and puts undo
+strain on these web services.
 
 There are also times when we do not know the final distance, but are interested
 in rays that start or end in a particular way. For example we can shoot

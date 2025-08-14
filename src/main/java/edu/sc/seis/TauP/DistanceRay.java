@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.LatLonLocatable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,25 +8,22 @@ import java.util.List;
 import static edu.sc.seis.TauP.ScatteredSeismicPhase.calcScatterDistDeg;
 
 /**
- * Calculatable ray corresponding to a arc distance from source to receiver.
+ * Calculatable ray corresponding to an arc distance from source to receiver.
  */
 public abstract class DistanceRay extends RayCalculateable implements Cloneable {
 
     DistanceRay() {}
 
     public static FixedHemisphereDistanceRay ofFixedHemisphereDegrees(double deg) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactDegrees(deg));
-        return val;
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactDegrees(deg));
     }
 
     public static FixedHemisphereDistanceRay ofFixedHemisphereKilometers(double km) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactKilometers(km));
-        return val;
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactKilometers(km));
     }
 
     public static FixedHemisphereDistanceRay ofFixedHemisphereRadians(double rad) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactRadians(rad));
-        return val;
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactRadians(rad));
     }
 
     void copyFrom(DistanceRay dr) {
@@ -43,8 +40,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         return val;
     }
     public static DistanceKmRay ofKilometers(double km) {
-        DistanceKmRay val = new DistanceKmRay(km);
-        return val;
+        return new DistanceKmRay(km);
     }
     public static DistanceAngleRay ofRadians(double rad) {
         DistanceAngleRay val = new DistanceAngleRay();
@@ -53,31 +49,28 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     }
 
     public static ExactDistanceRay ofExactDegrees(double deg) {
-        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofDegrees(deg));
-        return val;
+        return new ExactDistanceRay(DistanceRay.ofDegrees(deg));
     }
 
     public static ExactDistanceRay ofExactKilometers(double km) {
-        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofKilometers(km));
-        return val;
+        return new ExactDistanceRay(DistanceRay.ofKilometers(km));
     }
 
     public static ExactDistanceRay ofExactRadians(double rad) {
-        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofRadians(rad));
-        return val;
+        return new ExactDistanceRay(DistanceRay.ofRadians(rad));
     }
 
-    public static DistanceAngleRay ofEventStation(Location evt, Location sta) {
-        DistanceAngleRay val = ofDegrees(SphericalCoords.distance(evt, sta));
+    public static DistanceAngleRay ofEventStation(LatLonLocatable evt, LatLonLocatable sta) {
+        DistanceAngleRay val = ofDegrees(SphericalCoords.distance(evt.asLocation(), sta.asLocation()));
         val.evtLatLon = evt;
         val.staLatLon = sta;
-        val.azimuth = SphericalCoords.azimuth(evt, sta);
-        val.backAzimuth = SphericalCoords.azimuth(sta, evt);
+        val.azimuth = SphericalCoords.azimuth(evt.asLocation(), sta.asLocation());
+        val.backAzimuth = SphericalCoords.azimuth(sta.asLocation(), evt.asLocation());
         return val;
     }
 
-    public static DistanceAngleRay ofGeodeticEventStation(Location evt, Location sta, double invFlattening) {
-        DistAz distAz = new DistAz(evt, sta, 1.0/invFlattening);
+    public static DistanceAngleRay ofGeodeticEventStation(LatLonLocatable evt, LatLonLocatable sta, double invFlattening) {
+        DistAz distAz = new DistAz(evt.asLocation(), sta.asLocation(), 1.0/invFlattening);
         DistanceAngleRay val = ofDegrees(distAz.getDelta());
         val.staLatLon = sta;
         val.evtLatLon = evt;
@@ -109,7 +102,8 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         for (Arrival a : arrivals) {
             a.setSearchValue(this);
         }
-        return Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
+        return arrivals;
     }
 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
@@ -134,7 +128,8 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
             }
             scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
         }
-        return Arrival.sortArrivals(scatArrivals);
+        Arrival.sortArrivals(scatArrivals);
+        return scatArrivals;
     }
 
     public abstract double getDegrees(double radius);

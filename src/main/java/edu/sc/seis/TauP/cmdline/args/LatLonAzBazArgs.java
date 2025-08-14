@@ -1,10 +1,6 @@
 package edu.sc.seis.TauP.cmdline.args;
 
-import edu.sc.seis.seisFile.Location;
 import picocli.CommandLine;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LatLonAzBazArgs extends LatLonArgs {
 

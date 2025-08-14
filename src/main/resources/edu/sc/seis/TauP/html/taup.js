@@ -3,6 +3,11 @@ import {loadSyngine, syngineModelName} from './syngine.js';
 
 import * as sp from './seisplotjs_3.1.5-SNAPSHOT_standalone.mjs';
 
+export let localmode = false;
+
+
+export let base_path = 'localws';
+
 export function start() {
   return setup().then(()=>{
     // go ahead and process the form "as is" so user sees something
@@ -13,6 +18,14 @@ export function start() {
  * Set up form listeners and other initialization items.
  */
 export function setup() {
+  const pathSplit = location.pathname.substring(1).split('/');
+  console.log(`location path split: ${pathSplit.length} for ${location.pathname}`)
+  if (pathSplit.length === 3 && pathSplit[1] === 'taup' && pathSplit[2] === '3') {
+    localmode = false;
+    base_path = pathSplit[0];
+  } else {
+      localmode = true;
+  }
   return createModelNamesRadios().then(() => {
     setupListeners();
     const tool = getToolName();
@@ -156,12 +169,14 @@ function isIOCB(name) {
 export function process() {
   const tool = getToolName();
   enableParams(tool);
-  const taup_url = form_url()
+  const tool_url = form_tool_url()
+  const cmdline_url = `cmdline/${tool_url}`;
+  const taup_url = form_url(tool_url)
   const url_el = document.querySelector("#taup_url");
   url_el.textContent = taup_url;
   url_el.setAttribute("href", taup_url);
 
-  return display_cmdline(taup_url)
+  return display_cmdline(tool_url)
   .then( x => {
     return display_results(taup_url);
   }).then( x => {
@@ -204,8 +219,8 @@ export async function doSimpleFetch(url) {
   return fetch(url, fetchInitObj);
 }
 
-export async function display_cmdline(taup_url) {
-  const cmdline_url = `cmdline/${taup_url}`;
+export async function display_cmdline(tool_url) {
+  const cmdline_url = form_url(`cmdline/${tool_url}`);
   doSimpleFetch(cmdline_url).catch(e => {
     console.log(`fetch error: ${e}`)
     let message = "Network problem connecting to TauP server...";
@@ -413,7 +428,14 @@ export function getModelName() {
   return model;
 }
 
-export function form_url() {
+export function form_url(tool_url) {
+  if (localmode) {
+    return tool_url;
+  }
+  return `/${base_path}/taup/3/${tool_url}`;
+}
+
+export function form_tool_url() {
   let toolname = getToolName();
   let model = getModelName();
   let phase = document.querySelector('input[name="phase"]').value;
@@ -669,8 +691,8 @@ export function form_url() {
     }
   }
   let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
-  if ((isAmplitude && (toolname === "time" || toolname === "find"))
-      || toolname === 'curve' || toolname === 'spikes') {
+  if ((isAmplitude && (toolname === "time" || toolname === "find")
+      || toolname === 'curve' || toolname === 'spikes')) {
     if (toolname === "time" || toolname === "find") {
       url += `&amp=true`;
     }
@@ -982,7 +1004,7 @@ export function enableParams(tool) {
 }
 
 export function loadParamHelp(toolname) {
-  const paramHelpUrl = `paramhelp?tool=${toolname}`;
+  const paramHelpUrl = form_url(`paramhelp?tool=${toolname}`);
   let timeoutSec = 10;
   const controller = new AbortController();
   const signal = controller.signal;
@@ -997,7 +1019,7 @@ export function loadParamHelp(toolname) {
   }).then( response => {
     if (!response.ok) {
       return response.text().then( errMsg => {
-        let message = `Parameter help response not ok: ${response.statusText}`;
+        let message = `Parameter help response not ok: ${response.statusText} ${paramHelpUrl}`;
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
       return {};

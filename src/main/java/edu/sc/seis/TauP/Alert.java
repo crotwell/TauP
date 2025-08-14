@@ -38,7 +38,7 @@ package edu.sc.seis.TauP;
 public class Alert {
 
     /** the machine/OS dependent line terminator, ie \r \r\n or \n. */
-    static String nl = System.getProperty("line.separator");
+    static String nl = System.lineSeparator();
 
     /** Whether or not a GUI is being used. */
     static private boolean GUI = false;
@@ -90,7 +90,9 @@ public class Alert {
      * @param message message to print
      */
     public static void debug(String message) {
-        System.err.println(message);
+        if(TauPConfig.DEBUG) {
+            System.err.println(message);
+        }
     }
 
     public static void setGUI(boolean newGUI) {

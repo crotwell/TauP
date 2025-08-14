@@ -18,20 +18,27 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
     public boolean isJSON() {
         return outputType._isJSON;
     }
+    public boolean isHTML() {
+        return outputType._isHTML;
+    }
 
     @Override
     public String getOutputFormat() {
         if (isJSON()) return OutputTypes.JSON;
+        if (isHTML()) return OutputTypes.HTML;
         return OutputTypes.TEXT;
     }
 
     public void setOutputFormat(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
+        outputType._isHTML = false;
         if (oType.equalsIgnoreCase(OutputTypes.TEXT)) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(OutputTypes.JSON)) {
             outputType._isText = true;
+        } else if (oType.equalsIgnoreCase(OutputTypes.HTML)) {
+            outputType._isHTML = true;
         } else {
             throw new IllegalArgumentException("output type " + oType + " not recognized.");
         }
@@ -39,11 +46,13 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
 
     @Override
     public String getOutFileExtension() {
-        String extention = "text";
+        String extension = OutputTypes.TEXT;
         if (isJSON()) {
-            extention = "json";
+            extension = OutputTypes.JSON;
+        } else if (isHTML()) {
+            extension = OutputTypes.HTML;
         }
-        return extention;
+        return extension;
     }
 
     static class TextOutputType {
@@ -51,6 +60,8 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
         boolean _isText = false;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
+        @CommandLine.Option(names = {"--html"}, required = true, description = "outputs as HTML")
+        boolean _isHTML = false;
     }
 
 }

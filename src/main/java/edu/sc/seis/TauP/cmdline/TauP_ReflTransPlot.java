@@ -98,7 +98,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
@@ -161,6 +161,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.HTML)) {
+            xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
+                    SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             //String xLabel = ReflTransAxisType.labelFor(xAxisType);
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
@@ -726,7 +730,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             description = "Depth in model to get boundary parameters, may be number or name like moho.")
     public void setDepth(String depthOrName) {
         try {
-            Double d = Double.parseDouble(depthOrName);
+            double d = Double.parseDouble(depthOrName);
             setDepth(d);
         } catch (NumberFormatException e ) {
             // try to find by name later?

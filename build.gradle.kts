@@ -13,18 +13,25 @@ plugins {
   signing
   application
   id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.jreleaser") version "1.18.0"
+  id("org.jreleaser") version "1.19.0"
 }
 
 application {
   mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
   applicationName = "taup"
   //applicationName = "taupdev"
+  //
+  // below to address undertow, jboss-threads warning:
+  // WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+  // WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.jboss.threads.JBossExecutors
+  // can be removed if/when undertow upgrades dependency
+  // but this jvm arg not available on java11 or 17, so...
+  // applicationDefaultJvmArgs = listOf("--sun-misc-unsafe-memory-access=allow")
 }
 
 group = "edu.sc.seis"
-version = "3.0.1"
-val zenodo_rel_id = "15426279"
+version = "3.1.0"
+val zenodo_rel_id = "10794858"
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
 jreleaser {
@@ -81,7 +88,7 @@ jreleaser {
         create("sonatype") {
           setActive("ALWAYS")
           url= "https://central.sonatype.com/api/v1/publisher"
-          stagingRepository("target/staging-deploy")
+          stagingRepository("build/staging-deploy")
         }
       }
     }
@@ -156,6 +163,11 @@ distributions {
   }
 }
 
+tasks.withType<Tar>() {
+    compression=Compression.GZIP
+    archiveExtension="tgz"
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(arrayOf("-Xlint:deprecation"))
     // for picocli
@@ -177,9 +189,11 @@ java {
 }
 
 dependencies {
-    implementation("org.json:json:20250107")
+    implementation("org.json:json:20250517")
     implementation("com.google.code.gson:gson:2.13.1")
-    implementation("edu.sc.seis:seisFile:2.3.0")
+    implementation("edu.sc.seis:seisFile:2.3.1")
+    //implementation("edu.sc.seis:seisFile:2.3.1-SNAPSHOT")
+    implementation("edu.sc.seis:seedCodec:1.2.0")
 
     // temporary use modified picocli to allow sort of ArgGroup options
     // see src/main/java/picocli
@@ -192,8 +206,8 @@ dependencies {
     implementation("io.undertow:undertow-core:2.3.18.Final")
 
         // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -206,8 +220,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven {
-        name = "oss.sonatype.org snapshots"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        url = uri(layout.buildDirectory.dir("staging-deploy"))
     }
 }
 
@@ -234,6 +247,7 @@ tasks.named("sourcesJar") {
 tasks.named("makeVersionClass") {
   inputs.files("src/main/")
   inputs.files("build.gradle.kts")
+  mustRunAfter("copyJavascriptResources")
 }
 
 tasks.register<Checksum>("checksumDist") {
@@ -242,7 +256,7 @@ tasks.register<Checksum>("checksumDist") {
   inputs.files(tasks.getByName("distTar").outputs.files)
   inputs.files(tasks.getByName("distZip").outputs.files)
   outputs.dir(layout.buildDirectory.dir("distributions"))
-  algorithm = Checksum.Algorithm.SHA512
+  checksumAlgorithm.set(Checksum.Algorithm.SHA512)
 }
 
 publishing {
@@ -283,12 +297,7 @@ publishing {
         url = uri(layout.buildDirectory.dir("repos/test-deploy"))
       }
       maven {
-          val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-          val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-          url = uri(if ( version.toString().lowercase().endsWith("snapshot")) snapshotRepo else releaseRepo)
-          name = "ossrh"
-          // credentials in gradle.properties as ossrhUsername and ossrhPassword
-          credentials(PasswordCredentials::class)
+        url = uri(layout.buildDirectory.dir("staging-deploy"))
       }
     }
 
@@ -466,10 +475,50 @@ tasks.jar {
     }
     mustRunAfter("sphinx")
 }
+
+
+tasks.withType<Javadoc>() {
+  exclude("src/main/picocli/CommandLine.java")
+  exclude("src/main/picocli/AutoComplete.java")
+  //(options as CoreJavadocOptions).addBooleanOption("Xdoclint:none", true)
+}
+
+tasks.register<Exec>("createJavascriptResources") {
+  workingDir("src/web")
+  commandLine("npm", "run", "esstandalone")
+  outputs.files(//fileTree("src/web/dist"),
+    file("src/web/node_modules/sortable-tablesort/dist/sortable.js"),
+    file("src/web/node_modules/sortable-tablesort/dist/sortable.css"))
+  inputs.file("src/web/package.json")
+}
+tasks.register<Sync>("copyJavascriptResources") {
+  from(tasks.named("createJavascriptResources"))
+  into("src/main/resources/edu/sc/seis/TauP/html/js")
+  exclude("_sources")
+  exclude(".buildinfo")
+}
+tasks.get("processResources").mustRunAfter("copyJavascriptResources")
+
+
 tasks.get("installDist").mustRunAfter("sphinx")
 tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
 tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
 tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
+tasks.get("publish").dependsOn("assemble")
+tasks.get("publish").dependsOn("installDist")
+
+
+tasks.register<JavaExec>("genPythonBindings") {
+  description = "generate TauP python binding files"
+  dependsOn += tasks.getByName("classes")
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  getMainClass().set("edu.sc.seis.TauP.cmdline.PythonBindings")
+  args = listOf("edu.sc.seis.TauP.cmdline.Time")
+  dependsOn += tasks.getByName("compileJava")
+  workingDir = File("build/python")
+  outputs.files(fileTree("build/python"))
+}
+
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {

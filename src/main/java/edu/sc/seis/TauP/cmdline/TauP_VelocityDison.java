@@ -64,7 +64,36 @@ public class TauP_VelocityDison extends TauP_Tool {
             JsonObject out = new JsonObject();
             out.add(JSONLabels.MODEL_LIST, gson.toJsonTree(outList));
             writer.println(gson.toJson(out));
-            writer.flush();
+            writer.close();
+        } else if (outputTypeArgs.isHTML()) {
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            List<String> headers = List.of("Depth", "Radius", "Name", "Vp", "Vs", "Density");
+            HTMLUtil.createHtmlStart(writer, "TauP Discon",
+                    HTMLUtil.createBaseTableCSS()+"\n"+HTMLUtil.createThridRowCSS(), false);
+            for (VelocityModel vMod : vModList) {
+                List<List<String>> values = new ArrayList<>();
+                for (double d : vMod.getDisconDepths()) {
+
+                    NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
+                    String disconName = discon == null ? "" : "  " + discon.getPreferredName();
+                    VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
+                    VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
+                    if (d != 0) {
+                        values.add( List.of("", "", "", ""+above.getBotPVelocity(), ""+above.getBotSVelocity(), ""+above.getBotDensity()));
+                    }
+                    values.add(List.of(Outputs.formatDepth(d), Outputs.formatDepth(vMod.getRadiusOfEarth()-d), disconName, "", "", ""));
+                    if (d != vMod.getRadiusOfEarth()) {
+                        values.add( List.of("", "", "", ""+below.getBotPVelocity(), ""+below.getBotSVelocity(), ""+below.getBotDensity()));
+                    }
+                }
+
+                writer.println("<details open=\"true\">");
+                writer.println("  <summary>"+vMod.getModelName()+"</summary>");
+                writer.println(HTMLUtil.createBasicTable(headers, values));
+                writer.println("</details>");
+            }
+            writer.println(HTMLUtil.createHtmlEnding());
+            writer.close();
         } else {
             outputTypeArgs.setOutputFormat(TEXT);
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
@@ -87,7 +116,7 @@ public class TauP_VelocityDison extends TauP_Tool {
                     writer.println();
                 }
             }
-            writer.flush();
+            writer.close();
         }
     }
 

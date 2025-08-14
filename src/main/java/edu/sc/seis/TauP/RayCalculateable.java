@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.LatLonLocatable;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ public abstract class RayCalculateable {
 
     public abstract List<Arrival> calculate(SeismicPhase phase) throws TauPException;
 
-    public void withEventAzimuth(Location evt, double azimuth) {
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
         this.evtLatLon = evt;
         this.azimuth = azimuth;
         this.backAzimuth = null;
     }
 
-    public void withStationBackAzimuth(Location sta, double backazimuth) {
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
         this.staLatLon = sta;
         this.azimuth = null;
         this.backAzimuth = backazimuth;
@@ -30,29 +30,29 @@ public abstract class RayCalculateable {
     public abstract LatLonable getLatLonable();
 
     public boolean hasSourceDepth() {
-        return evtLatLon != null && evtLatLon.hasDepth();
+        return evtLatLon != null && evtLatLon.asLocation().hasDepth();
     }
     public Double getSourceDepth() {
-        return evtLatLon != null ? evtLatLon.getDepthKm() : null;
+        return evtLatLon != null ? evtLatLon.asLocation().getDepthKm() : null;
     }
     public boolean hasSource() {
         return evtLatLon != null;
     }
-    public Location getSource() {
+    public LatLonLocatable getSource() {
         return evtLatLon;
     }
 
     public boolean hasReceiverDepth() {
-        return staLatLon != null && staLatLon.hasDepth();
+        return staLatLon != null && staLatLon.asLocation().hasDepth();
     }
     public Double getReceiverDepth() {
-        return staLatLon != null ? staLatLon.getDepthKm() : null;
+        return staLatLon != null ? staLatLon.asLocation().getDepthKm() : null;
     }
 
     public boolean hasReceiver() {
         return staLatLon != null;
     }
-    public Location getReceiver() {
+    public LatLonLocatable getReceiver() {
         return staLatLon;
     }
     public boolean hasAzimuth() {
@@ -61,12 +61,21 @@ public abstract class RayCalculateable {
 
     public boolean isGeodetic() { return geodetic;}
 
+    public Double getInvFlattening() {
+        return invFlattening;
+    }
+
     /**
      * Returns azimuth, if available, in the range -180&lt;baz&lt;=180.
      * @return azimuth
      */
     public Double getNormalizedAzimuth() {
         Double az = getAzimuth();
+        return normalizAzimuth(az);
+
+    }
+
+    public static Double normalizAzimuth(Double az) {
         if (az != null ) {
             az = az % 360;
             if (az > 180) {
@@ -91,10 +100,10 @@ public abstract class RayCalculateable {
             }
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
             if (getLatLonable().isGeodetic()) {
-                DistAz distAz = new DistAz(this.staLatLon, this.evtLatLon, invFlattening);
+                DistAz distAz = new DistAz(this.evtLatLon.asLocation(), this.staLatLon.asLocation(), invFlattening);
                 return distAz.getAz();
             } else {
-                return SphericalCoords.azimuth(evtLatLon, staLatLon);
+                return SphericalCoords.azimuth(evtLatLon.asLocation(), staLatLon.asLocation());
             }
         } else {
             throw new RuntimeException("should not happen");
@@ -114,13 +123,7 @@ public abstract class RayCalculateable {
      */
     public Double getNormalizedBackAzimuth() {
         Double baz = getBackAzimuth();
-        if (baz != null ) {
-            baz = baz % 360;
-            if (baz > 180) {
-                baz = baz - 360;
-            }
-        }
-        return baz;
+        return normalizAzimuth(baz);
     }
     /**
      * Gets azimuth if available, null otherwise.
@@ -138,7 +141,7 @@ public abstract class RayCalculateable {
             }
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
             if (getLatLonable().isGeodetic()) {
-                DistAz distAz = new DistAz(this.staLatLon, this.evtLatLon, invFlattening);
+                DistAz distAz = new DistAz(this.evtLatLon, this.staLatLon, invFlattening);
                 return distAz.getBaz();
             } else {
                 return SphericalCoords.azimuth(staLatLon, evtLatLon);
@@ -180,8 +183,8 @@ public abstract class RayCalculateable {
     }
 
 
-    protected Location staLatLon = null;
-    protected Location evtLatLon = null;
+    protected LatLonLocatable staLatLon = null;
+    protected LatLonLocatable evtLatLon = null;
     protected Double azimuth = null;
     protected Double backAzimuth = null;
     protected boolean geodetic = false;

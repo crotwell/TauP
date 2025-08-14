@@ -31,7 +31,6 @@ import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
 import edu.sc.seis.TauP.gson.GsonUtil;
-import edu.sc.seis.TauP.TimeResult;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -417,6 +416,8 @@ public class TauP_Table extends TauP_Tool {
         }
         if(outputTypeArgs.isCSV()) {
             csvTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
+        } else if(outputTypeArgs.isHTML()) {
+            htmlTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else if (outputTypeArgs.isLocsat()) {
             locsatTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else if (outputTypeArgs.isJSON()) {
@@ -456,7 +457,7 @@ public class TauP_Table extends TauP_Tool {
                 arrivals.addAll(shoot.calculate(phase));
             }
         }
-        arrivals = Arrival.sortArrivals(arrivals);
+        Arrival.sortArrivals(arrivals);
         return arrivals;
     }
 
@@ -512,6 +513,25 @@ public class TauP_Table extends TauP_Tool {
                 }
             }
         }
+        out.flush();
+    }
+
+    protected void htmlTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
+                            double[] depths, double receiverDepth, Scatterer scatterer,
+                            List<RayCalculateable> rayCalcList) throws TauPException {
+        HTMLUtil.createHtmlStart(out, "TauP Table", HTMLUtil.createTableCSS(), false);
+        List<List<String>> values = new ArrayList<>();
+        for (double depth : depths) {
+            List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
+            for (RayCalculateable distCalc : rayCalcList) {
+                List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
+                for (Arrival currArrival : arrivals) {
+                    values.add(currArrival.asStringList(true, "%s", "%s", false, false));
+                }
+            }
+        }
+        out.println(HTMLUtil.createBasicTable(Arrival.headerNames(true), values));
+        out.println(HTMLUtil.createHtmlEnding());
         out.flush();
     }
 

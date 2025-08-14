@@ -28,9 +28,21 @@ import java.util.regex.Pattern;
 
 public class TauP_WebServe extends TauP_Tool {
 
-
+    /**
+     * Default for local usage, no prefix to urls
+     *
+     */
     public TauP_WebServe() {
         super(null);
+    }
+
+    /**
+     * Default for local usage, no prefix to urls
+     *
+     */
+    public TauP_WebServe(String wsNamespace) {
+        super(null);
+        this.wsNamespace = wsNamespace;
     }
 
     @Override
@@ -42,6 +54,8 @@ public class TauP_WebServe extends TauP_Tool {
     public void start() {
         System.out.println();
         System.out.println("   http://localhost:"+port);
+        System.out.println("or");
+        System.out.println("   http://localhost:"+port+"/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion);
         System.out.println();
 
         HttpHandler taupToolHandler = new HttpHandler() {
@@ -92,10 +106,14 @@ public class TauP_WebServe extends TauP_Tool {
                     service = splitPath[1];
                     version = splitPath[2];
                     toolname = splitPath[3];
+                    if (Objects.equals(toolname, "query")) {
+                        // map query to time for compatibility with FDSN style ws
+                        toolname = "time";
+                    }
                     if (splitPath.length>=5) {
                         cmdLineToolname = splitPath[4];
                     }
-                    Alert.debug("load via split: "+namespace+" "+service+" "+version+" "+toolname);
+                    Alert.debug("load via split: ns: "+namespace+" ser: "+service+" ver: "+version+" tool: "+toolname);
                 } else if (splitPath.length >= 1) {
                     // simple url where tool is whole path
                     namespace = wsNamespace;
@@ -109,18 +127,28 @@ public class TauP_WebServe extends TauP_Tool {
                         Alert.debug("load via single: "+toolname);
                     }
                 }
-                if (wsNamespace.equals(namespace) && wsServiceName.equals(service)
-                        && wsServiceVersion.equals(version)) {
-                    if (ToolRun.isKnownToolName(toolname)) {
-                        handleTauPTool(exchange, namespace, service, version, toolname);
-                    } else if (toolname.equals(MODEL_NAMES)) {
-                        handleKnownModels(exchange);
-                    } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
-                        TauP_Tool tool = createTool(cmdLineToolname);
-                        handleCmdLine(tool, exchange);
-                    } else if (toolname.equals(PARAM_HELP)) {
-                        handleParamHelp(exchange);
+                if (wsNamespace.equals(namespace) && wsServiceName.equals(service)) {
+                    if (wsServiceVersion.equals(version)) {
+                        if (toolname.equals(MODEL_NAMES)) {
+                            handleKnownModels(exchange);
+                        } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
+                            TauP_Tool tool = createTool(cmdLineToolname);
+                            handleCmdLine(tool, exchange);
+                        } else if (toolname.equals(PARAM_HELP)) {
+                            handleParamHelp(exchange);
+                        } else if (ToolRun.isKnownToolName(toolname)) {
+                            handleTauPTool(exchange, namespace, service, version, toolname);
+                        }
+                    } else {
+                        Alert.info("Unknown version: "+version);
+
+                        new ResponseCodeHandler(404).handleRequest(exchange);
+                        exchange.getResponseSender().send(createVersionsPage("Tool Version "+version+" unknown"));
                     }
+                } else {
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("Namespace "+namespace+" or servicename "+service+" unknown"));
+
                 }
             }
 
@@ -169,7 +197,7 @@ public class TauP_WebServe extends TauP_Tool {
         resHandler.setMimeMappings(nmm);
         resHandler.addWelcomeFiles("index.html");
         PathHandler pathHandler = new PathHandler(resHandler);
-        String prefix = wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion+"/";
+        String prefix = "/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion;
         HttpHandler toolAndResHandler = new HttpHandler() {
             @Override
             public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -183,8 +211,69 @@ public class TauP_WebServe extends TauP_Tool {
                 resHandler.handleRequest(exchange);
             }
         };
+        HttpHandler serviceVersionList = new HttpHandler() {
+            @Override
+            public void handleRequest(HttpServerExchange exchange) throws Exception {
+                String path = exchange.getRequestPath();
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length()-1);
+                }
+                String[] splitPath = path.split("/");
+                if (splitPath.length > 2 ) {
+                    String version = splitPath[2];
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("serviceVersionList Version "+version+" unknown"));
+                    return;
+                }
+                if (path.equals(wsNamespace+"/"+wsServiceName)) {
+                    String versionsPage = "<!DOCTYPE html>\n<html><head><title>Service Versions</title></head><body>"
+                            + "<h3><a href=\"/"+wsNamespace+"\">"+wsNamespace+"</a>/"+wsServiceName+" Service Versions:</h3>\n";
+
+                    versionsPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "\">"
+                            + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "</a>\n"
+                            + "</body></html>";
+                    exchange.getResponseSender().send(versionsPage);
+                    return;
+
+                } else if (TauPConfig.DEBUG) {
+                    Alert.debug("serviceVersionList No handle "+path+"  expect: "+"/"+wsNamespace+"/"+wsServiceName);
+                }
+            }
+        };
+        HttpHandler servicesList = new HttpHandler() {
+            @Override
+            public void handleRequest(HttpServerExchange exchange) throws Exception {
+                String path = exchange.getRequestPath();
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
+                if (path.endsWith("/")) {
+                    path = path.substring(0, path.length()-1);
+                }
+                if (path.equals(wsNamespace)) {
+                    String servicesPage = "<!DOCTYPE html>\n<html><head><title>Services</title></head><body>"
+                            + "<h3>Known "+wsNamespace+" Services:</h3>\n";
+
+                    servicesPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName  + "\">"
+                            + "/" + wsNamespace + "/" + wsServiceName  + "</a>\n"
+                            + "</body></html>";
+                    configContentType(OutputTypes.HTML, exchange);
+                    exchange.getResponseSender().send(servicesPage);
+                    return;
+                } else if (TauPConfig.VERBOSE){
+                    Alert.debug("servicesList No handle "+path+"  expect: "+"/"+wsNamespace);
+                }
+            }
+        };
         // add taup tools at ws path like /uscws/taup/3/time?deg=35&p=P
         pathHandler.addPrefixPath(prefix, toolAndResHandler);
+        // services
+        pathHandler.addPrefixPath("/"+wsNamespace, servicesList);
+        // versions
+        pathHandler.addPrefixPath("/"+wsNamespace+"/"+wsServiceName, serviceVersionList);
         // also add taup tools at root, like /time?deg=35&p=P
         pathHandler.addPrefixPath("/", toolAndResHandler);
         Undertow server = Undertow.builder()
@@ -203,9 +292,25 @@ public class TauP_WebServe extends TauP_Tool {
 
     }
 
+    public String createVersionsPage(String errorMessage) {
+        String versionsPage = "<!DOCTYPE html>\n<html><head><title>Unknown Service Version</title></head><body>";
+        if (errorMessage != null ) {
+            versionsPage+="<h1>Error: "+errorMessage+"</h1>\n";
+        }
+        versionsPage+= "<h3><a href=\"/"+wsNamespace+"\">"+wsNamespace+"</a>/"+wsServiceName+" Service Versions:</h3>\n";
+
+        versionsPage += "<a href=\"" + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "\">"
+                + "/" + wsNamespace + "/" + wsServiceName + "/" + wsServiceVersion + "</a>\n"
+                + "</body></html>";
+        return versionsPage;
+    }
+
     public void configContentType(String format, HttpServerExchange exchange) throws TauPException {
         String contentType;
         switch (format) {
+            case OutputTypes.HTML:
+                contentType = "text/html";
+                break;
             case OutputTypes.TEXT:
             case OutputTypes.GMT:
             case OutputTypes.ND:
@@ -277,8 +382,22 @@ public class TauP_WebServe extends TauP_Tool {
                     out.add(dashedQP);
                     if (op.splitRegex().trim().isEmpty()) {
                         // default split is whitespace, so split on comma
+                        List<String> paramItems = new ArrayList<>();
                         for (String p : qpList) {
-                            out.addAll(Arrays.asList(p.split(",")));
+                            paramItems.addAll(Arrays.asList(p.split(",")));
+                        }
+                        if (op.isMultiValue() && op.arity().min()>1 && op.arity().min() == op.arity().max() && paramItems.size() % op.arity().max()==0) {
+                            // many of arity, like --station lat lon
+                            int idx = 0;
+                            for (String p : paramItems) {
+                                out.add(p);
+                                if (idx <= paramItems.size()-op.arity().max() && idx % op.arity().max() == op.arity().max()-1) {
+                                    out.add(dashedQP);
+                                }
+                                idx++;
+                            }
+                        } else {
+                            out.addAll(paramItems);
                         }
                     } else if (op.splitRegex().trim().equals(",")) {
                         String commaList = "";
@@ -309,7 +428,7 @@ public class TauP_WebServe extends TauP_Tool {
                 Alert.warning(unarg);
             }
             Alert.warning(spec.commandLine().getUsageMessage());
-            throw new TauPException("Unknown parameter: "+qp+" value:"+qpList.getFirst());
+            throw new TauPException("Unknown parameter: '"+qp+"' value: '"+qpList.getFirst()+"'");
         }
         return out;
     }
@@ -490,7 +609,7 @@ public class TauP_WebServe extends TauP_Tool {
     public static final String CMD_LINE = "cmdline";
     public static final String MODEL_NAMES = "modelnames";
 
-    public static final String DEFAULT_SERVICE_NAMESPACE = "uscws";
+    public static final String DEFAULT_SERVICE_NAMESPACE = "localws";
     public static final String DEFAULT_SERVICE = "taup";
     public static final String DEFAULT_SERVICE_VERSION = "3";
 

@@ -5,15 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation &#8212; TauP 3.0.1 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=08bfcbec"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <title>Installation &#8212; TauP 3.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
+    <script src="_static/documentation_options.js?v=dd1205ac"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Distribution" href="distribution.html" />
+    <link rel="next" title="Tools" href="tools.html" />
     <link rel="prev" title="Overview" href="overview.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -25,7 +26,7 @@
   </head><body>
   <div class="document">
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
   <a href="index.html">
@@ -36,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.1</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.1.0</p>
 
 
 
@@ -50,7 +51,16 @@
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
@@ -59,10 +69,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#linux">Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manually">Manually</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rebuilding">Rebuilding</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tab-completion">Tab completion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tab-completion">Tab Completion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-and-where">What and Where</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changes-from-version-2">Changes from Version 2</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
@@ -78,20 +89,10 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="overview.html" title="previous chapter">Overview</a></li>
-      <li>Next: <a href="distribution.html" title="next chapter">Distribution</a></li>
+      <li>Next: <a href="tools.html" title="next chapter">Tools</a></li>
   </ul></li>
 </ul>
 </div>
-<search id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -112,6 +113,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
 <section id="macintosh">
 <h2>Macintosh<a class="headerlink" href="#macintosh" title="Link to this heading">¶</a></h2>
+<p>Homebrew originally was just for Macintosh, but also supports
+Linux and Windows via Windows Subsystem for Linux.</p>
 <p>Using <a class="reference external" href="https://brew.sh/">homebrew</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">tap</span> <span class="n">crotwell</span><span class="o">/</span><span class="n">crotwell</span>
 <span class="n">brew</span> <span class="n">install</span> <span class="n">taup</span>
@@ -134,12 +137,8 @@
 </section>
 <section id="manually">
 <h2>Manually<a class="headerlink" href="#manually" title="Link to this heading">¶</a></h2>
-<p>Download <a class="reference external" href="https://www.seis.sc.edu/downloads/TauP/TauP-3.0.0.tgz">tarball here</a>
-or from the <a class="reference external" href="https://github.com/crotwell/TauP/releases">releases</a>
-page on Github. Then:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxf</span> <span class="n">TauP</span><span class="o">-</span><span class="mf">3.0.0</span><span class="o">.</span><span class="n">tgz</span>
-</pre></div>
-</div>
+<p>Download tarball from <a class="reference external" href="https://doi.org/10.5281/zenodo.10794858">Zenodo</a>. Then:</p>
+<p>unzip TauP-3.1.0.zip</p>
 <p>and add the bin directory to your PATH.</p>
 </section>
 <section id="rebuilding">
@@ -153,18 +152,135 @@ you do, you can build it using the Gradle wrapper script:</p>
 <p>will rebuild TauP into the build/install directory.</p>
 </section>
 <section id="tab-completion">
-<h2>Tab completion<a class="headerlink" href="#tab-completion" title="Link to this heading">¶</a></h2>
-<p>TauP is distributed with a command line completion file for the Bash and ZSH
-Unix shells, named taup_completion. By sourcing this file either in your
-.bashrc or .zshrc file you can use &lt;TAB&gt;&lt;TAB&gt; to autocomplete command line
-arguments. The TauP tool also can output this completion file as needed.</p>
-<p>For Bash add this to your .bashrc file in your home directory, and
-for ZSH add to you .zshrc file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">&lt;</span><span class="p">(</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">taup</span> <span class="n">generate</span><span class="o">-</span><span class="n">completion</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This runs the taup command to generate the completion file on the fly, making
-sure it is the latest version.</p>
+<h2>Tab Completion<a class="headerlink" href="#tab-completion" title="Link to this heading">¶</a></h2>
+<p>New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
+<code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">generate-completion</span></code> will provide hints
+for the shell when hitting the tab key for bash or zsh. You can enable it
+with running this command:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">&lt;(taup</span> <span class="pre">generate-completion)</span></code></p>
+<p>Adding this to your .bash_profile or .zshrc will enable it for future logins.</p>
+<p>Note, for bash 3.2, which the default verion on OSX, there is a bug that
+prevents this from working. The alterantive is to save it as a file like:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">generate-completion</span> <span class="pre">&gt;</span> <span class="pre">taup_completion</span></code></p>
+<p>and then source the file:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">taup_completion</span></code></p>
+<p>Once sourced, you will be able to get hints or completion for most arguments
+within TauP. For example typing:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-</span></code></p>
+<p>and then hitting the tab key will display all of the possible command line
+flags. Continuing to type</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--mod</span></code></p>
+<p>and then hitting the tab key will display the models available for the
+<code class="code docutils literal notranslate"><span class="pre">--mod</span></code> command line argument:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">ak135</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">ak135favg</span>&#160;&#160;&#160; <span class="pre">ak135fcont</span>&#160;&#160; <span class="pre">ak135fsyngine</span>&#160; <span class="pre">iasp91</span>&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">prem</span></code></p>
+</section>
+<section id="what-and-where">
+<h2>What and Where<a class="headerlink" href="#what-and-where" title="Link to this heading">¶</a></h2>
+<p>The current distribution of the TauP package is 3.1.0, created Aug 14, 2025.</p>
+<p>The distribution directory obtained from either the gzipped tar file or
+the zip file contains:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>README.md</p></td>
+<td><p>getting started information</p></td>
+</tr>
+<tr class="row-even"><td><p>LICENSE</p></td>
+<td><p>the GNU LGPL license</p></td>
+</tr>
+<tr class="row-odd"><td><p>VERSION</p></td>
+<td><p>the current version</p></td>
+</tr>
+<tr class="row-even"><td><p>CITATION.cff</p></td>
+<td><p>citation information</p></td>
+</tr>
+<tr class="row-odd"><td><p>StdModels</p></td>
+<td><p>standard models included within the jar in lib</p></td>
+</tr>
+<tr class="row-even"><td><p>bin</p></td>
+<td><p>directory containing the <em>wrapper script</em> to start the tools
+each will print a usage with a –help command line argument.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib</p></td>
+<td><p>all the Java classes included in the package, along with
+saved models for prem, iasp91, and ak135 in the TauP jar file.
+Also included are dependancy jars.</p></td>
+</tr>
+<tr class="row-even"><td><p>docs</p></td>
+<td><p>a directory with the TauP paper published in SRL and this
+manual,installation instructions are in the appendix. Also
+included are javadocs, example properties, history, Maple
+version of equations used, and a simple model file.</p></td>
+</tr>
+<tr class="row-odd"><td><p>src</p></td>
+<td><p>a directory with all of the java source code.</p></td>
+</tr>
+<tr class="row-even"><td><p>gradlew*</p></td>
+<td><p>rebuild TauP using Gradle. Not needed unless recompiling for
+debugging or code modification.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="advantages-of-the-current-release">
+<h3>Advantages of the Current Release<a class="headerlink" href="#advantages-of-the-current-release" title="Link to this heading">¶</a></h3>
+<p>The increased flexibility of this package provides significant advantages. Among
+these are:</p>
+<ul class="simple">
+<li><p>The ability to use many different models. We include a variety of previously created
+models as well as the option of creating your own models. A conscious effort
+was made to make as few assumptions as possible about the nature of the model.
+Therefore,
+even models that have very different structures than common global models can be
+used. Users have calculated travel times for various earth models, models
+of Mars, the Moon, and even a kiwi. Yes, the fruit!</p></li>
+<li><p>Phase parsing. Phases are not hard coded into the program, instead the phase
+names are parsed. This creates an opportunity for the study of less common
+phases that are not present in previous travel time calculators.</p></li>
+<li><p>Programming interface for Java. Because of the use of the Java programming
+language, all of the tools exist simultaneously as both applications and
+libraries.
+Thus, any Java code that has a need for travel times can load and manipulate
+the objects within this package. In addition, Groovy, a popular Java
+scripting language, provides a simple means of directly accessing the public
+methods within the package.</p></li>
+<li><p>Web server interface. Version 3 ships with an embedded web server and web
+page that allows access to the tools via a web browser. This functions both as
+a GUI and as a way to extract results from other programming languages via
+JSON and a HTTP query.</p></li>
+<li><p>Simple amplitudes. Also new is the ability to calculate an amplitude
+approximation from reflection and transmission coefficients and spreading.</p></li>
+</ul>
+</section>
+</section>
+<section id="changes-from-version-2">
+<h2>Changes from Version 2<a class="headerlink" href="#changes-from-version-2" title="Link to this heading">¶</a></h2>
+<p>Version 3 of the The TauP Toolkit is a major revision with breaking changes,
+so users should not expect the exact command from version 2 to work identically
+in version 3. However, in most cases the differences are minor.</p>
+<p>The difference most likely to break is the number of dashes for arguments. In
+version 2, TauP would accept one or two dashes for most argmunents, so</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-ph</span> <span class="pre">P</span> <span class="pre">-deg</span> <span class="pre">35</span></code></p>
+<p>and</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--ph</span> <span class="pre">P</span> <span class="pre">--deg</span> <span class="pre">35</span></code></p>
+<p>were equivalent. In version 3 TauP uses
+<a class="reference external" href="https://picocli.info/">picocli</a>
+to handle all the command line argument parsing. This brings significant
+benefits. In migrating to picocli, we have adopted the
+<a class="reference external" href="https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html">GNU convention</a>
+that command line arguments that are a single character have one dash while
+longer arguments require two dashes. Also, a few arguments that seemed confusing
+have been renamed, for example using <cite>-p</cite> instead of <cite>-ph</cite> to give phases.
+Thus, only this style command works in version 3:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-p</span> <span class="pre">P</span> <span class="pre">--deg</span> <span class="pre">35</span></code></p>
+<p>We have also made changes to the output in some cases. The basic textual output
+from <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span></code> is the same, with the addition of a column for the
+receiver/station depth. The JSON output format has been updated. Before
+the output included a single source and receiver depth, but TauP can handle
+multiple source depths in a single call, these are now lists called
+<cite>sourcedepthlist</cite> and <cite>receiverdepthlist</cite> and each individual arrival
+contains a <cite>sourcedepth</cite> and <cite>receiverdepth</cite>.</p>
+<p>For users that cannot easily update their scripts, version 2 can still be used,
+via manual install or from homebrew (as taup2), but no further development
+will occur for it.</p>
 </section>
 </section>
 
@@ -179,8 +295,8 @@ sure it is the latest version.</p>
       &#169;2025, Philip Crotwell.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/install.rst.txt"

@@ -23,7 +23,7 @@ Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
                  [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--gmt |
-                 --json | --svg | --text]
+                 --html | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:
@@ -157,6 +157,7 @@ Lat,Lon influenced by:
                               if event is also given.
 Output Type:
       --gmt                 outputs as GMT
+      --html                outputs as SVG in HTML
       --json                outputs as JSON
       --svg                 outputs as SVG
       --text                outputs as Text

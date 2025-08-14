@@ -9,7 +9,8 @@ Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
                  [--exclude=depth[,depth...]...]... [[--mod=<modelName>]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                  [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                 [--phasefile=<phaseFiles>]...] [--json | --text]
+                 [--phasefile=<phaseFiles>]...] [--csv | --html | --json |
+                 --text]
 Find seismic phases in an earth model.
 
 Options:
@@ -76,5 +77,7 @@ Phase Names
       --phasefile=<phaseFiles>
                            read list of phase names from file
 Output Type:
+      --csv                outputs as CSV
+      --html               outputs as HTML
       --json               outputs as JSON
       --text               outputs as Text
