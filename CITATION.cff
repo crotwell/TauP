@@ -15,11 +15,11 @@ authors:
     orcid: 'https://orcid.org/0000-0001-6231-4847'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.15426279
-    description: Version 3.0.1
+    value: 10.5281/zenodo.16884103
+    description: Version 3.1.0
 repository-code: 'https://github.com/crotwell/TauP'
 url: 'http://www.seis.sc.edu/TauP/'
-repository: 'http://www.seis.sc.edu/downloads/TauP/'
+repository: 'https://doi.org/10.5281/zenodo.10794857'
 repository-artifact: 'https://central.sonatype.com/artifact/edu.sc.seis/TauP'
 abstract: >-
   The TauP Toolkit is a seismic travel time calculator. In
@@ -35,8 +35,8 @@ keywords:
   - seismograph
 license: LGPL-3.0
 commit: c80b19fd251805f2dcfc3ce8b5f9489f0eed4492
-version: 3.0.1
-date-released: '2025-05-15'
+version: 3.1.0
+date-released: '2025-08-15'
 preferred-citation:
   authors:
     - family-names: Crotwell
