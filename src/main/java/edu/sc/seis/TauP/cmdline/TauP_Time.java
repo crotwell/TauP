@@ -270,6 +270,16 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 relativePhaseName, "Time");
     }
 
+    public static List<String> createModelHeaderLine(String modelName,
+                                                     Scatterer scatterer) {
+        List<String> modelLine = new ArrayList<>(List.of("Model: ", modelName));
+
+        if (scatterer != null && scatterer.depth != 0.0) {
+            modelLine.addAll(List.of("  Scatter Depth: ", scatterer.depth+" km", " Dist: ", scatterer.getDistanceDegree()+" deg"));
+        }
+        return modelLine;
+    }
+
     public static List<List<String>> createHeaderLines(List<Arrival> arrivalList,
                                                        String modelName,
                                                        Scatterer scatterer,
@@ -277,11 +287,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                                        List<String> relativePhaseName,
                                                        String phaseFormat,
                                                        String phasePuristFormat) {
-        List<String> modelLine = new ArrayList<>(List.of("Model: ", modelName));
+        List<String> modelLine = createModelHeaderLine(modelName, scatterer);
 
-        if (scatterer != null && scatterer.depth != 0.0) {
-            modelLine.addAll(List.of("  Scatter Depth: ", scatterer.depth+" km", " Dist: ", scatterer.getDistanceDegree()+" deg"));
-        }
         List<String> lineOne = new ArrayList<>(List.of("Distance   ", "Depth   ",
                 String.format(phaseFormat, "Phase")+ "   ",
                 "Travel    ", "Ray Param  ", "Takeoff  ", "Incident ", "Station   ", "Purist   ",
@@ -319,6 +326,23 @@ public class TauP_Time extends TauP_AbstractRayTool {
             }
         }
         return List.of(modelLine, lineOne, lineTwo);
+    }
+
+    /**
+     * Combines two header line lists into single single list by concate each pair.
+     * @param headLines header lines, size 2
+     * @return combined items
+     */
+    public static List<String> combineHeadLines(List<List<String>> headLines) {
+        List<String> out = new ArrayList<>();
+        // modelLine = headLines.get(0);
+        List<String> head1 = headLines.get(1);
+        List<String> head2 = headLines.get(2);
+        for (int i = 0; i < head1.size(); i++) {
+            String val = head1.get(i).trim() + " " + head2.get(i).trim();
+            out.add(val);
+        }
+        return out;
     }
 
     public static void printArrivalsAsText(PrintWriter out,
@@ -394,10 +418,14 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 withAmplitude, sourceArgs, relativePhaseName,
                 phaseFormat, phaseFormat);
 
+        List<String> mergedHeaders = combineHeadLines(headLines);
+
         HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
         if (withAmplitude) {
             out.println("<p>"+AmplitudeArgs.AMPLITUDE_WARNING+"</p>");
         }
+        String modelLine = String.join("", headLines.get(0));
+        out.println("<h5>"+modelLine+"</h5>");
         List<List<String>> values = new ArrayList<>();
         for (Arrival arrival : arrivalList) {
             List<String> lineItems = arrival.asStringList(false,
@@ -405,7 +433,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             values.add(lineItems);
         }
 
-        out.println(HTMLUtil.createBasicTableMoHeaders(headLines, values));
+        out.println(HTMLUtil.createBasicTable(mergedHeaders, values));
         HTMLUtil.addSortTableJS(out);
         out.println(HTMLUtil.createHtmlEnding());
         out.flush();
@@ -430,20 +458,19 @@ public class TauP_Time extends TauP_AbstractRayTool {
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
                 phaseFormat, phaseFormat);
-        // modelline, head1, head2
-        List<String> head1 = headLines.get(1);
-        List<String> head2 = headLines.get(2);
+        List<String> mergedHeaders = combineHeadLines(headLines);
 
         String comma = ",";
-        for (int i = 0; i < head1.size(); i++) {
-            String val = head1.get(i).trim()+" "+head2.get(i).trim();
+        boolean first = true;
+        for (String val : mergedHeaders) {
             if (val.contains("\"") || val.contains(",")) {
                 val = "\""+val.replaceAll("\"", "\"\"");
             }
-            if (i != 0) {
+            if (! first) {
                 out.print(comma);
             }
             out.print(val);
+            first = false;
         }
         // print model lines as more columns in header???
         for (String v : headLines.get(0)) {
