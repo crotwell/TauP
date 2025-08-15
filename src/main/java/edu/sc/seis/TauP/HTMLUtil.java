@@ -37,7 +37,7 @@ public class HTMLUtil {
 
     public static String createBasicTableMoHeaders(List<List<String>> headers, List<List<String>> values) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<table class=\"sortable\">\n");
+        sb.append("<table class=\"sortable sticky\">\n");
         sb.append("<thead>\n");
         for (List<String> hLine : headers) {
             sb.append("<tr>\n");

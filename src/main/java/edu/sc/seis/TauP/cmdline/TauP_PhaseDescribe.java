@@ -115,6 +115,10 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
                 +"}\n";
         HTMLUtil.createHtmlStart(writer, "TauP Phase", svgCSS, false);
 
+
+        String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
+        writer.println("<h5>"+modelLine+"</h5>");
+
         TauP_Path pathTool = new TauP_Path();
         pathTool.setMapWidth(250);
         pathTool.setMapWidthUnit("p");
