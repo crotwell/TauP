@@ -1,10 +1,9 @@
 class Taup < Formula
   desc "Flexible Seismic Travel-Time and Raypath Utilities"
   homepage "https://www.seis.sc.edu/TauP/"
-  url "https://zenodo.org/records/15426279/files/TauP-3.0.1.zip"
-  sha256 "569a5e1d5d9268e57e6f08ace451946b8264474a951d64bf77283523bac3f1be"
+  url "https://zenodo.org/records/16884103/files/TauP-3.1.0.zip"
+  sha256 "0c4392867c0a8f9c876180a51fb5e1b81859a4c17fd2223efd0d41a573491538"
   license "LGPL-3.0-or-later"
-  revision 3
   depends_on "openjdk"
 
   def install
