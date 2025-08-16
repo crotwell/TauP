@@ -8,9 +8,9 @@ alabaster==1.0.0
     # via sphinx
 babel==2.17.0
     # via sphinx
-certifi==2025.4.26
+certifi==2025.8.3
     # via requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 docutils==0.21.2
     # via
@@ -26,7 +26,7 @@ jinja2==3.1.6
     # via
     #   myst-parser
     #   sphinx
-latexcodec==3.0.0
+latexcodec==3.0.1
     # via pybtex
 markdown-it-py==3.0.0
     # via
@@ -34,7 +34,7 @@ markdown-it-py==3.0.0
     #   myst-parser
 markupsafe==3.0.2
     # via jinja2
-mdit-py-plugins==0.4.2
+mdit-py-plugins==0.5.0
     # via myst-parser
 mdurl==0.1.2
     # via markdown-it-py
@@ -42,13 +42,13 @@ myst-parser==4.0.1
     # via -r requirements.in
 packaging==25.0
     # via sphinx
-pybtex==0.24.0
+pybtex==0.25.1
     # via
     #   pybtex-docutils
     #   sphinxcontrib-bibtex
 pybtex-docutils==1.0.3
     # via sphinxcontrib-bibtex
-pygments==2.19.1
+pygments==2.19.2
     # via sphinx
 pyyaml==6.0.2
     # via
@@ -58,8 +58,6 @@ requests==2.32.4
     # via sphinx
 roman-numerals-py==3.1.0
     # via sphinx
-six==1.17.0
-    # via pybtex
 snowballstemmer==3.0.1
     # via sphinx
 sphinx==8.2.3
@@ -81,7 +79,7 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-urllib3==2.4.0
+urllib3==2.5.0
     # via requests
 
 # The following packages are considered to be unsafe in a requirements file:
