@@ -203,7 +203,7 @@ public class PythonBindings {
 
                     bodyWriter.println();
                     bodyWriter.println("  def and" + capitalize(opname) + "(self, val):");
-                    desc(bodyWriter, op, opname);
+                    desc(bodyWriter, op, opname, true);
 
                     bodyWriter.println("    self._" + varname + ".append(val)");
                     bodyWriter.println("    return self");
@@ -214,24 +214,34 @@ public class PythonBindings {
     }
 
     public static void desc(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
+        desc(bodyWriter, op, opname, false);
+    }
+
+    public static void desc(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname, boolean isAppend) {
         String varname =dashlessArgName( op.longestName());
         String simpleType = typeFromJavaType(op);
 
         bodyWriter.println("    \"\"\"");
-        bodyWriter.print("    Sets the " + varname + " parameter, ");
+        if (isAppend) {
+            bodyWriter.print("    Append a value to the " + varname + " parameter, ");
+        } else {
+            bodyWriter.print("    Sets the " + varname + " parameter, ");
+        }
 
         if (op.typeInfo().isEnum()) {
             List<String> enums = op.typeInfo().getEnumConstantNames();
             bodyWriter.println("a choice of one of:");
-            bodyWriter.print("     "+String.join(", ",enums));
+            bodyWriter.print("     " + String.join(", ", enums));
+        } else if (isAppend) {
+            bodyWriter.print(" of type " + subtypeFromJavaType(op));
         } else {
             bodyWriter.print("of type " + simpleType);
         }
-        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty()) {
+        if (!op.typeInfo().getActualGenericTypeArguments().isEmpty() && !isAppend) {
             bodyWriter.print(" of " + subtypeFromJavaType(op));
         }
         bodyWriter.println();
-        if (simpleType.equals("List")) {
+        if (simpleType.equals("List") && !isAppend) {
             if (op.arity().max() == 1) {
                 bodyWriter.println("    If a single " + subtypeFromJavaType(op)
                         + " is passed in, it is automatically wrapped in a list. So");
