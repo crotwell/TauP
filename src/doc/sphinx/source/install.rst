@@ -3,7 +3,7 @@
 Installation
 ============
 
-Macintosh
+Homebrew
 ---------------------------------------------------
 
 Homebrew originally was just for Macintosh, but also supports
@@ -14,22 +14,6 @@ Using `homebrew <https://brew.sh/>`_::
   brew tap crotwell/crotwell
   brew install taup
   taup --help
-
-
-Linux
------
-
-Using `snap <https://snapcraft.io>`_::
-
-  sudo snap install taup
-  taup --help
-
-
-Note: I have only tested this on Ubuntu on amd64.
-
-You may also get the lastest development version via::
-
-  sudo snap install taup --channel=latest/edge
 
 
 Manually
