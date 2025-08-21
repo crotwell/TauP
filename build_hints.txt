@@ -19,6 +19,9 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
 
 ./gradlew javadoc sphinx iD check
 
+# python bindings
+./gradlew genPythonBindings && cp build/python/* ../taup_python/src/taup/.
+
 JReleaser
 ---------
 To create templates for brew, snap, docker, etc, in case need to modify:
