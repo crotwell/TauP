@@ -329,37 +329,67 @@ public class TauBranch implements Serializable, Cloneable {
     }
     public TimeDist calcTimeDist(double p,
                                  boolean allowTurnInLayer,
-                                 boolean isDowngoing) throws
-            SlownessModelException {
+                                 boolean isDowngoing) throws SlownessModelException {
         int layerNum;
         TimeDist timeDist = new TimeDist(p);
-        SlownessLayer layer;
-        if(p <= getMaxRayParam()) {
-            layerNum = topLayerNum;
-            layer = sMod.getSlownessLayer(layerNum, isPWave);
-            while(layerNum <= botLayerNum && p <= layer.getTopP()
-                    && p <= layer.getBotP()) {
-                timeDist = timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave, isDowngoing));
-                layerNum++;
-                if(layerNum <= botLayerNum) {
-                    layer = sMod.getSlownessLayer(layerNum, isPWave);
+        if (isDowngoing) {
+            if (p <= getMaxRayParam()) {
+                // calculation goes top to bottom, even
+                layerNum = topLayerNum;
+                while (layerNum <= botLayerNum) {
+                    SlownessLayer layer = sMod.getSlownessLayer(layerNum, isPWave);
+                    if (p > layer.getTopP()) {
+                        // can't enter layer from top
+                        break;
+                    } else if (p <= layer.getTopP()
+                            && p <= layer.getBotP()) {
+                        // can cross layer
+                        timeDist = timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave, isDowngoing));
+                    } else if (p < layer.getTopP()
+                            && p > layer.getBotP()) {
+                        // turns in layer
+                        if (allowTurnInLayer) {
+                            timeDist = timeDist.add(sMod.layerTimeDistAllowTurn(p, layerNum, isPWave, isDowngoing));
+                        } else {
+                            throw new SlownessModelException("Ray turns in the middle of this"
+                                    + " layer. layerNum = " + layerNum + (isPWave ? " P" : " S")
+                                    + (isDowngoing ? " down " : " up ")
+                                    + " sphericalRayParam " + p + " layer =" + layer);
+                        }
+                        break;
+                    }
+                    layerNum++;
                 }
             }
-            if((layer.getTopP() - p) * (p - layer.getBotP()) > 0) {
-                if (allowTurnInLayer) {
-                    timeDist = timeDist.add(sMod.layerTimeDistAllowTurn(p, layerNum, isPWave, isDowngoing));
-                } else {
-                    throw new SlownessModelException("Ray turns in the middle of this"
-                            + " layer. layerNum = "
-                            + layerNum
-                            + (isPWave ? " P" : " S")
-                            + " sphericalRayParam " + p + " layer =" + layer);
+        } else {
+            // upgoing
+            if (p <= getMaxRayParam()) {
+                layerNum = botLayerNum;
+                while (layerNum >= topLayerNum) {
+                    SlownessLayer layer = sMod.getSlownessLayer(layerNum, isPWave);
+                    if (p > layer.getBotP()) {
+                        // can't enter layer from bot
+                        break;
+                    } else if (p <= layer.getTopP()
+                            && p <= layer.getBotP()) {
+                        // can cross layer
+                        timeDist = timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave, isDowngoing));
+                    } else if (p < layer.getBotP()
+                            && p > layer.getTopP()) {
+                        // turns in layer
+                        if (allowTurnInLayer) {
+                            timeDist = timeDist.add(sMod.layerTimeDistAllowTurn(p, layerNum, isPWave, isDowngoing));
+                        } else {
+                            throw new SlownessModelException("Ray turns in the middle of this"
+                                    + " layer. layerNum = " + layerNum + (isPWave ? " P" : " S")
+                                    + (isDowngoing ? " down " : " up ")
+                                    + " sphericalRayParam " + p + " layer =" + layer);
+                        }
+                        break;
+                    }
+                    layerNum--;
                 }
             }
-        }
-        if ( ! isDowngoing ) {
-            // timeDist.depth wrong as calc as if downgoing, switch to top of branch
-            timeDist = new TimeDist(timeDist.getP(), timeDist.getTime(), timeDist.getDistRadian(), getTopDepth());
         }
         return timeDist;
     }

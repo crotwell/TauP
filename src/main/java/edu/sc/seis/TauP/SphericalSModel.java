@@ -220,17 +220,26 @@ public class SphericalSModel extends SlownessModel implements Serializable {
         double b; // temporary variable makes the calculations less ugly.
         SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
 
-        if(sphericalRayParam > sphericalLayer.getTopP()) {
+        if((downgoing && sphericalRayParam > sphericalLayer.getTopP())
+             || (!downgoing && sphericalRayParam > sphericalLayer.getBotP())) {
             throw new SlownessModelException("Ray cannot propagate within this"
                     + " layer. layerNum = " + layerNum + " sphericalRayParam="
-                    + sphericalRayParam + "\n" + sphericalLayer);
-        } else if (sphericalRayParam > sphericalLayer.getBotP()) {
+                    + sphericalRayParam + (downgoing ? " down " : " up ") +"\n"
+                    + sphericalLayer);
+        } else if (downgoing && sphericalRayParam > sphericalLayer.getBotP()) {
             // turn in layer, create temp layer with p at bottom
             double turnDepth = sphericalLayer.bullenDepthFor(sphericalRayParam, radiusOfEarth);
             sphericalLayer = new SlownessLayer(sphericalLayer.getTopP(),
                                                sphericalLayer.getTopDepth(),
                                                sphericalRayParam,
                                                turnDepth);
+        } else if (!downgoing && sphericalRayParam > sphericalLayer.getTopP()) {
+            // turn down in layer, create temp layer with p at top
+            double turnDepth = sphericalLayer.bullenDepthFor(sphericalRayParam, radiusOfEarth);
+            sphericalLayer = new SlownessLayer(sphericalRayParam,
+                    turnDepth,
+                    sphericalLayer.getBotP(),
+                    sphericalLayer.getBotDepth());
         }
         // radius to top
         double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); 

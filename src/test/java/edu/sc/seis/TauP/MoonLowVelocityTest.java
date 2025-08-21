@@ -215,4 +215,19 @@ public class MoonLowVelocityTest {
         assertEquals(deg, pierce[pierce.length-1].getDistDeg(), 0.017);
 
     }
+
+    @Test
+    public void sourceInLVZ_ncedc() throws TauModelException, IOException, SlownessModelException {
+        // taup time --mod gil7.tvel --deg 8.2 -p P,S -h 35
+        String model = "gil7.tvel";
+        double depth = 35.0;
+        double deg = 8.2;
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(model);
+        SlownessModel smod = new SphericalSModel(vmod);
+        TauModel tmod = new TauModel(smod);
+        tmod = tmod.depthCorrect(depth);
+        SimpleContigSeismicPhase S_phase = (SimpleContigSeismicPhase)SeismicPhaseFactory.createPhase("S", tmod);
+        List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(S_phase);
+        assertTrue(!aList.isEmpty());
+    }
 }
