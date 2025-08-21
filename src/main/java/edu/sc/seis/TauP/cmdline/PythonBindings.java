@@ -261,11 +261,11 @@ public class PythonBindings {
         bodyWriter.println();
         for (String n : op.names()) {
             if ( opname.equals( dashlessArgName(n))) {
-                bodyWriter.println("    Known as " + n + " in command line.");
+                bodyWriter.println("    Known as ``" + n + "`` in command line.");
             }
         }
         if (!opname.equals(varname)) {
-            bodyWriter.println("    Also known as " + op.longestName() + " in command line.");
+            bodyWriter.println("    Also known as ``" + op.longestName() + "`` in command line.");
         }
         bodyWriter.println();
         bodyWriter.println("    :param val: value to set " + varname + " to");
@@ -408,7 +408,7 @@ public class PythonBindings {
 
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
-            out.println("__version__ = \"0.0.1-dev\"");
+            out.println("__version__ = \"0.1.0\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
