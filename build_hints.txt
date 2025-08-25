@@ -60,3 +60,5 @@ upload to zenodo, check auto upload from github so maybe just edit fields
 edit installers/homebrew/taup.rb and
 cp installers/homebrew/taup.rb ../homebrew-crotwell/Formula/.
 git commit and push from there
+
+update https://www.seis.sc.edu/taup
