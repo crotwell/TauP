@@ -62,3 +62,4 @@ cp installers/homebrew/taup.rb ../homebrew-crotwell/Formula/.
 git commit and push from there
 
 update https://www.seis.sc.edu/taup
+file in Notes/www to update
