@@ -5,8 +5,12 @@ import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 public class SphericalCoordinate {
     public SphericalCoordinate(double phi, double theta) {
+        this(phi, theta, 1);
+    }
+    public SphericalCoordinate(double phi, double theta, double r) {
         this.phi = phi;
         this.theta = theta;
+        this.r = r;
     }
 
     public static SphericalCoordinate fromAzTakeoffDegree(double azDeg, double takeoffDeg) {
@@ -30,6 +34,10 @@ public class SphericalCoordinate {
      */
     double theta;
 
+    /**
+     * Radius, 0<=r
+     */
+    double r;
 
     public double getPhi() {
         return phi;
@@ -37,6 +45,10 @@ public class SphericalCoordinate {
 
     public double getTheta() {
         return theta;
+    }
+
+    public double getR() {
+        return r;
     }
 
     public double getAzimuthRadian() {
