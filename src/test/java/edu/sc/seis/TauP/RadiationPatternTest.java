@@ -63,4 +63,15 @@ public class RadiationPatternTest {
         }
     }
 
+    @Test
+    public void testSphericalCoordinate() {
+        double takeoff = 90;
+        assertEquals(Math.PI/2, SphericalCoordinate.takeoffDegreeToPhiRadian(takeoff), 1e-9);
+        SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(0, takeoff);
+        assertEquals(Math.PI/2, coord.getPhi(), 1e-9);
+        assertEquals(takeoff, coord.getTakeoffAngleDegree(), 1e-9);
+        double sterR = coord.stereoR();
+        assertEquals(1, sterR, 1e-9, "phi="+coord.getPhi());
+    }
+
 }

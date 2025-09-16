@@ -18,6 +18,7 @@ import java.io.*;
 		subcommands = {
 				TauP_Create.class,
 				TauP_Curve.class,
+				TauP_Beachball.class,
 				TauP_DistAz.class,
 				TauP_VelocityDison.class,
 				TauP_Find.class,
@@ -46,6 +47,7 @@ public class ToolRun {
 	public static final String TIME = "time";
 	public static final String PIERCE = "pierce";
 	public static final String PATH = "path";
+	public static final String BEACHBALL = "beachball";
 	public static final String CURVE = "curve";
 	public static final String CREATE = "create";
 	public static final String SETSAC = "setsac";
@@ -89,6 +91,7 @@ public class ToolRun {
 	public static boolean isKnownToolName(String toolToRun) {
 		switch (toolToRun) {
 			case CREATE:
+			case BEACHBALL:
 			case CURVE:
 			case PATH:
 			case PHASE:
@@ -118,6 +121,8 @@ public class ToolRun {
 			tool = new TauP_Create();
 		} else if (toolToRun.contentEquals(CURVE)) {
 			tool = new TauP_Curve();
+		} else if (toolToRun.contentEquals(BEACHBALL)) {
+			tool = new TauP_Beachball();
 		} else if (toolToRun.contentEquals(PATH)) {
 			tool = new TauP_Path();
 		} else if (toolToRun.contentEquals(PHASE)) {
