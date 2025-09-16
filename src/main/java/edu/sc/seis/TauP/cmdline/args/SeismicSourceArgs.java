@@ -84,57 +84,10 @@ public class SeismicSourceArgs {
         return strikeDipRake;
     }
 
-    public double[] faultNormal() {
-        double s = strikeDipRake.get(0)*DtoR;
-        double d = strikeDipRake.get(1)*DtoR;
-        double r = strikeDipRake.get(2)*DtoR;
-        return new double[] {
-                Math.sin(d) * Math.cos(s),
-                -1 * Math.sin(d) * Math.sin(s),
-                Math.cos(d)
-        };
+    public FaultPlane getFaultPlane() {
+        return new FaultPlane(strikeDipRake.get(0), strikeDipRake.get(1), strikeDipRake.get(2));
     }
 
-    public double[] faultSlip() {
-        return faultVector(strikeDipRake.get(2));
-    }
-
-    public double[] faultVector(double rake) {
-        double s = strikeDipRake.get(0)*DtoR;
-        double d = strikeDipRake.get(1)*DtoR;
-        double r = rake*DtoR;
-        return new double[] {
-                Math.cos(r)*Math.sin(s)-Math.sin(r) * Math.cos(d) * Math.cos(s),
-                Math.sin(r) * Math.cos(d) * Math.sin(s)+Math.cos(r)*Math.cos(s),
-                Math.sin(r)*Math.sin(d)
-        };
-    }
-
-    public SeismicSourceArgs auxPlane() {
-        double[] normal = faultSlip();
-        double[] slip = faultNormal();
-        double dip = Math.acos(normal[2]);
-        double sinDip = Math.sin(dip);
-        double strike = Math.atan2(-1*normal[1]/sinDip, normal[0]/sinDip);
-        double rake = Math.asin(slip[2]/sinDip);
-        SeismicSourceArgs auxPlane = new SeismicSourceArgs();
-        auxPlane.setStrikeDipRake(List.of((float)(strike*RtoD), (float)(dip*RtoD), (float)(rake*RtoD)));
-        auxPlane.setMw(getMw());
-        auxPlane.attenuationFreq = attenuationFreq;
-        auxPlane.numFrequencies = numFrequencies;
-        return auxPlane;
-    }
-
-    public double[] nullAxis() {
-        double s = strikeDipRake.get(0)*DtoR;
-        double d = strikeDipRake.get(1)*DtoR;
-        double r = strikeDipRake.get(2)*DtoR;
-        return new double[] {
-                -1*Math.sin(r)*Math.cos(s) + Math.cos(r)*Math.cos(d)*Math.sin(s),
-                Math.sin(r)*Math.sin(s) + Math.cos(r)*Math.cos(d)*Math.cos(s),
-                Math.cos(r)*Math.sin(d)
-        };
-    }
 
     /**
      * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
@@ -218,6 +171,10 @@ public class SeismicSourceArgs {
                 }
             }
         }
+    }
+
+    public String toString() {
+        return getMw()+" Mw, "+strikeDipRake.get(0)+", "+strikeDipRake.get(1)+", "+strikeDipRake.get(2);
     }
 
     public static final float DEFAULT_MW = 4.0f;
