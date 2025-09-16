@@ -112,7 +112,7 @@ public class SeismicSourceArgs {
     }
 
     public String toString() {
-        return getMw()+" Mw, "+strikeDipRake.get(0)+", "+strikeDipRake.get(1)+", "+strikeDipRake.get(2);
+        return getMw()+" Mw, strike: "+strikeDipRake.get(0)+", dip: "+strikeDipRake.get(1)+", rake: "+strikeDipRake.get(2);
     }
 
     public static final float DEFAULT_MW = 4.0f;
