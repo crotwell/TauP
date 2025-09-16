@@ -216,12 +216,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 extraCSS, null, extraDefs);
 
         float scale = pixelWidth/2;
-        writer.println("<g transform=\"scale(1,-1) translate(0, -"+pixelWidth+")\" >  <!-- flip scale -->");
+        float hpw = pixelWidth/2;
+        writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
         writer.println("<g class=\"axis\">");
 
-        writer.println("<line x1=\""+(pixelWidth/2)+"\" y1=\""+(0)+"\" x2=\""+(pixelWidth/2)+"\" y2=\""+(pixelWidth)+"\" />");
-        writer.println("<line x1=\"0\" y1=\""+(pixelWidth/2)+"\" x2=\""+pixelWidth+"\" y2=\""+(pixelWidth/2)+"\" />");
-        writer.println("<circle cx=\""+(pixelWidth/2)+"\" cy=\""+(pixelWidth/2)+"\" r=\""+(pixelWidth/4)+"\" />");
+        writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
+        writer.println("<line x1=\""+(-1*hpw)+"\" y1=\""+(0)+"\" x2=\""+hpw+"\" y2=\""+(0)+"\" />");
+        writer.println("<circle cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
 
         writer.println("</g>");
         writer.println("<g class=\"fault\">");
@@ -234,8 +235,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             double sterR = co.stereoR();
             double sterX = sterR*Math.cos(co.getTheta());
             double sterY = sterR*Math.sin(co.getTheta());
-            double x = scale*(1+sterX/2);
-            double y = scale*(1+sterY/2);
+            double x = scale*(sterX);
+            double y = scale*(sterY);
             writer.print(x+","+y+" ");
         }
         writer.println("\" />");
@@ -248,8 +249,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             double sterR = co.stereoR();
             double sterX = sterR*Math.cos(co.getTheta());
             double sterY = sterR*Math.sin(co.getTheta());
-            double x = scale*(1+sterX/2);
-            double y = scale*(1+sterY/2);
+            double x = scale*(sterX);
+            double y = scale*(sterY);
             writer.print(x+","+y+" ");
         }
         writer.println("\" />");
@@ -283,10 +284,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 compression = (radAmp.getThetaAmplitude()>0)? "compress" : "dilitate";
             }
 
-            double x1 = scale*(1+sterX/2);
-            double y1 = scale*(1+sterY/2);
-            double x2 = scale*(1+(sterX+ampX)/2);
-            double y2 = scale*(1+(sterY+ampY)/2);
+            double x1 = scale*(sterX);
+            double y1 = scale*(sterY);
+            double x2 = scale*((sterX+ampX));
+            double y2 = scale*((sterY+ampY));
             writer.println("<line x1=\""+(x1)+"\" y1=\""+(y1)
                     +"\" x2=\""+(x2)+"\" y2=\""+(y2)+"\" marker-end=\"url(#arrow)\" />");
             writer.println("<circle class=\""+compression+"\" cx=\""+x1+"\" cy=\""+y1+"\" r=\""+2+"\" />");
@@ -305,8 +306,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             double sterR = coordP.stereoR();
             double sterX = sterR * Math.cos(coordP.getTheta());
             double sterY = sterR * Math.sin(coordP.getTheta());
-            double x1 = scale * (1 + sterX / 2);
-            double y1 = scale * (1 + sterY / 2);
+            double x1 = scale * (sterX );
+            double y1 = scale * (sterY );
             writer.println("<circle class=\"arrival " + compressionP + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
             writer.println("<text class=\"arrival " + compressionP + "\" x=\"" + x1 + "\" y=\"" + y1 + "\" >P</text>");
 
@@ -320,8 +321,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             sterR = coordT.stereoR();
             sterX = sterR * Math.cos(coordT.getTheta());
             sterY = sterR * Math.sin(coordT.getTheta());
-            x1 = scale * (1 + sterX / 2);
-            y1 = scale * (1 + sterY / 2);
+            x1 = scale * ( sterX );
+            y1 = scale * ( sterY );
             writer.println("<circle class=\"arrival " + compressionT + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
             writer.println("<text class=\"arrival " + compressionT + "\" x=\"" + x1 + "\" y=\"" + y1 + "\" >T</text>");
 
@@ -336,8 +337,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             sterR = coordN.stereoR();
             sterX = sterR * Math.cos(coordN.getTheta());
             sterY = sterR * Math.sin(coordN.getTheta());
-            x1 = scale * (1 + sterX / 2);
-            y1 = scale * (1 + sterY / 2);
+            x1 = scale * (sterX );
+            y1 = scale * ( sterY );
             writer.println("<circle class=\"arrival " + compressionT + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
             writer.println("<text class=\"arrival " + compressionT + "\" x=\"" + x1 + "\" y=\"" + y1 + "\" >N</text>");
 
@@ -354,8 +355,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 double sterR = coord.stereoR();
                 double sterX = sterR*Math.cos(coord.getTheta());
                 double sterY = sterR*Math.sin(coord.getTheta());
-                double x1 = scale*(1+sterX/2);
-                double y1 = scale*(1+sterY/2);
+                double x1 = scale*(sterX);
+                double y1 = scale*(sterY);
                 writer.println("<circle class=\"arrival "+compression+"\" cx=\""+x1+"\" cy=\""+y1+"\" r=\""+2+"\" />");
 
             }
