@@ -36,7 +36,7 @@ public class SvgUtil {
                                              List<String> colorList,
                                              CharSequence extraCSS, double[] minmax) {
         xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, colorList,
-                extraCSS, null, "");
+                extraCSS, minmax, "");
     }
 
     public static void xyplotScriptBeginning(PrintWriter out,
@@ -65,7 +65,9 @@ public class SvgUtil {
         out.println("  <clipPath id=\"curve_clip\">");
         out.println("    <rect x=\""+-1+"\" y=\""+-1+"\" width=\""+(pixelWidth-2*plotOffset+1)+"\" height=\""+(pixelWidth-2*plotOffset+1)+"\"/>");
         out.println("  </clipPath>");
-        out.println(extraDefs);
+        if (extraDefs.length() > 0) {
+            out.println(extraDefs);
+        }
         out.println("  </defs>");
         //out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
         out.println("<!-- draw axis and label distances.-->");
