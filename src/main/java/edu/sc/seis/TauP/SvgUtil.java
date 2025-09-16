@@ -29,11 +29,21 @@ public class SvgUtil {
         xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, colorList, extraCSS, null);
     }
 
+
     public static void xyplotScriptBeginning(PrintWriter out,
                                              String toolName, List<String> cmdLineArgs,
                                              float pixelWidth, int plotOffset,
                                              List<String> colorList,
                                              CharSequence extraCSS, double[] minmax) {
+        xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, colorList,
+                extraCSS, null, "");
+    }
+
+    public static void xyplotScriptBeginning(PrintWriter out,
+                                             String toolName, List<String> cmdLineArgs,
+                                             float pixelWidth, int plotOffset,
+                                             List<String> colorList,
+                                             CharSequence extraCSS, double[] minmax, CharSequence extraDefs) {
         StringBuffer css = new StringBuffer();
         css.append(extraCSS+"\n");
         StringBuffer stdcss = loadStandardCSS();
@@ -55,6 +65,7 @@ public class SvgUtil {
         out.println("  <clipPath id=\"curve_clip\">");
         out.println("    <rect x=\""+-1+"\" y=\""+-1+"\" width=\""+(pixelWidth-2*plotOffset+1)+"\" height=\""+(pixelWidth-2*plotOffset+1)+"\"/>");
         out.println("  </clipPath>");
+        out.println(extraDefs);
         out.println("  </defs>");
         //out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
         out.println("<!-- draw axis and label distances.-->");
