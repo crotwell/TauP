@@ -43,6 +43,7 @@ public class FaultPlaneTest {
         Vector n = faultPlane.faultNormal();
         assertEquals(1, n.magnitude(), 1e-9);
         Vector d = faultPlane.faultSlip();
+        assertEquals(0, Vector.dotProduct(n, d), 1e-9);
         assertEquals(1, d.magnitude(), 1e-9);
         Vector b = faultPlane.nullAxis();
         assertEquals(1, b.magnitude(), 1e-9);
@@ -52,6 +53,13 @@ public class FaultPlaneTest {
         assertEquals(b.x, nCrossD.x, 1e-9);
         assertEquals(b.y, nCrossD.y, 1e-9);
         assertEquals(b.z, nCrossD.z, 1e-9);
+        Vector p = faultPlane.pAxis();
+        Vector t = faultPlane.tAxis();
+        assertEquals(0, Vector.dotProduct(t, b), 1e-9);
+        assertEquals(0, Vector.dotProduct(p, b), 1e-9);
+        assertEquals(0, Vector.dotProduct(p, t), 1e-9);
 
+        Vector auxN = auxPlane.faultNormal();
+        assertEquals(0, Vector.dotProduct(n, auxN), 1e-9, "n: "+n+" auxN: "+auxN);
     }
 }

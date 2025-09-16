@@ -88,68 +88,6 @@ public class SeismicSourceArgs {
         return new FaultPlane(strikeDipRake.get(0), strikeDipRake.get(1), strikeDipRake.get(2));
     }
 
-
-    /**
-     * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
-     *
-     * @param azimuth azimuth to receiver in degrees
-     * @param takeoffDeg takeoff angle in degrees
-     * @return  Fp, Fsv, Fsh
-     */
-    public double[] calcRadiationPat(double azimuth, double takeoffDeg) {
-        if (hasStrikeDipRake()) {
-            return calcRadiationPatRadian(
-                    strikeDipRake.get(0)*DtoR,
-                    strikeDipRake.get(1)*DtoR,
-                    strikeDipRake.get(2)*DtoR,
-                    azimuth*DtoR,
-                    takeoffDeg*DtoR
-                    );
-        }
-        return new double[] { 1, 1, 1};
-    }
-
-    public static double[] calcRadiationPatDeg(double strike, double dip, double rake, double azimuth, double takeoff) {
-        return calcRadiationPatRadian(strike*DtoR, dip*DtoR, rake*DtoR, azimuth*DtoR, takeoff*DtoR);
-    }
-
-    /**
-     * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
-     * ALl in radians.
-     * @param strike fault strike in radian
-     * @param dip fault dip in radian
-     * @param rake fault rake in radian
-     * @param azimuth azimuth to receiver in radian
-     * @param takeoff takeoff angle in radian
-     * @return  Fp, Fsv, Fsh
-     */
-    public static double[] calcRadiationPatRadian(double strike, double dip, double rake, double azimuth, double takeoff) {
-        double ih = takeoff;
-        double phi_f = strike;
-        double phi_r = azimuth;
-        double phi_r_f = phi_r - phi_f;
-        double theta = dip;
-        double lam = rake;
-        double Fp = (Math.cos(lam)*Math.sin(theta)*Math.sin(2*phi_r_f)
-            - Math.sin(lam)*Math.sin(2*theta)*Math.sin(phi_r_f)*Math.sin(phi_r_f)
-              )*Math.sin(ih)*Math.sin(ih)
-            + (Math.sin(lam)*Math.cos(2*theta)*Math.sin(phi_r_f)
-                - Math.cos(lam)*Math.cos(theta)*Math.cos(phi_r_f)
-              )*Math.sin(2*ih)
-            + Math.sin(lam)*Math.sin(2*theta)*Math.cos(ih)*Math.cos(ih);
-
-        double Fsv = (Math.sin(lam)*Math.cos(2*theta)*Math.sin(phi_r_f)
-            - Math.cos(lam)*Math.cos(theta)*Math.cos(phi_r_f)) * Math.cos(2*ih)
-            + 1.0/2*Math.cos(lam)*Math.sin(theta)*Math.sin(2*phi_r_f)*Math.sin(2*ih)
-            - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*(1 + Math.sin(phi_r_f)*Math.sin(phi_r_f));
-
-        double Fsh = (Math.cos(lam)*Math.cos(theta)*Math.sin(phi_r_f)
-        + Math.sin(lam)*Math.cos(2*theta)*Math.cos(phi_r_f))*Math.cos(ih)
-        +(Math.cos(lam)*Math.sin(theta)*Math.cos(2*phi_r_f)
-        - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*Math.sin(2*phi_r_f))*Math.sin(ih);
-        return new double[] {Fp, Fsv, Fsh};
-    }
-
     public void validateArguments() {
         if (strikeDipRake != null && strikeDipRake.size() != 3) {
             throw new IllegalArgumentException("StrikeDipRake must have 3 values, but was: "+strikeDipRake.size());
@@ -164,7 +102,7 @@ public class SeismicSourceArgs {
             throw new TauModelException("model "+modelArgs.getModelName()
                     +" does not include Q, but amplitude requires Q. Please choose a different model.");
         }
-        if (getStrikeDipRake() != null) {
+        if (hasStrikeDipRake() ) {
             for (RayCalculateable rc : rayList) {
                 if (!rc.hasAzimuth()) {
                     throw new IllegalArgumentException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);

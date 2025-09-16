@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import edu.sc.seis.TauP.FaultPlane;
 import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 
@@ -17,11 +18,12 @@ public class SourceArgsSerializer implements JsonSerializer<SeismicSourceArgs> {
         json.addProperty(JSONLabels.MW, src.getMw());
         json.addProperty(JSONLabels.ATTEN_FREQ, src.getAttenuationFrequency());
         if (src.hasStrikeDipRake()) {
+            FaultPlane faultPlane = src.getFaultPlane();
             JsonObject jsonSDR = new JsonObject();
             json.add(JSONLabels.FAULT, jsonSDR);
-            jsonSDR.addProperty(JSONLabels.STRIKE, src.getStrikeDipRake().get(0));
-            jsonSDR.addProperty(JSONLabels.DIP, src.getStrikeDipRake().get(1));
-            jsonSDR.addProperty(JSONLabels.RAKE, src.getStrikeDipRake().get(2));
+            jsonSDR.addProperty(JSONLabels.STRIKE, faultPlane.getStrike());
+            jsonSDR.addProperty(JSONLabels.DIP, faultPlane.getDip());
+            jsonSDR.addProperty(JSONLabels.RAKE, faultPlane.getRake());
 
         }
         return json;

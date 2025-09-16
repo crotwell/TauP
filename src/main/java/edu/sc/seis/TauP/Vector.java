@@ -36,12 +36,8 @@ public class Vector {
         return new Vector(-1*x, -1*y, -1*z);
     }
 
-    public static Vector dotProduct(Vector a, Vector b) {
-        return new Vector(
-                a.x*b.x,
-                a.y*b.y,
-                a.z*b.z
-        );
+    public static double dotProduct(Vector a, Vector b) {
+        return  a.x*b.x + a.y*b.y + a.z*b.z;
     }
 
     public static Vector crossProduct(Vector a, Vector b) {
@@ -51,6 +47,11 @@ public class Vector {
                 a.x*b.y - a.y*b.x
         );
     }
+
+    public String toString() {
+        return "["+x+", "+y+", "+z+"]";
+    }
+
 
     double x;
     double y;

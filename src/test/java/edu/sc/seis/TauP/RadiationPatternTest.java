@@ -10,25 +10,26 @@ public class RadiationPatternTest {
 
     @Test
     public void testRadPat() {
-        double strike = 0 * DtoR;
-        double dip = 90 * DtoR;
-        double rake = 0 * DtoR;
-        double azimuth = 45 * DtoR;
-        double takeoff = 90 * DtoR;  // horizontal
-        double[] radTerms = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth, takeoff);
+        double strike = 0;
+        double dip = 90;
+        double rake = 0;
+        double azimuth = 45;
+        double takeoff = 90;  // horizontal
+        FaultPlane faultPlane = new FaultPlane(strike, dip, rake);
+        double[] radTerms = faultPlane.calcRadiationPatDegree(azimuth, takeoff);
         assertEquals(1, radTerms[0]);
         assertEquals(0, radTerms[1], 1e-9, "Sv");
         assertEquals(0, radTerms[2], 1e-9, "Sh");
 
-        takeoff = 90 * DtoR;
-        azimuth = 0 * DtoR;
-        radTerms = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth, takeoff);
+        takeoff = 90;
+        azimuth = 0;
+        radTerms = faultPlane.calcRadiationPatDegree(azimuth, takeoff);
         assertEquals(0, radTerms[0], 1e-9);
         assertEquals(1, Math.sqrt(radTerms[1]*radTerms[1]+radTerms[2]*radTerms[2]), 1e-9, "S+Sh");
 
         // down
         takeoff = 0;
-        radTerms = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth, takeoff);
+        radTerms = faultPlane.calcRadiationPatDegree(azimuth, takeoff);
         assertEquals(0, radTerms[0]);
         assertEquals(0, radTerms[1], 1e-9, "Sv");
         assertEquals(0, radTerms[2], 1e-9, "Sh");
@@ -38,17 +39,18 @@ public class RadiationPatternTest {
 
     @Test
     public void testPSymmetry() {
-        double strike = 0 * DtoR;
-        double dip = 90 * DtoR;
-        double rake = 0 * DtoR;
-        double azimuth = 45 * DtoR;
-        double takeoff = 45 * DtoR;
+        double strike = 0;
+        double dip = 90;
+        double rake = 0;
+        FaultPlane faultPlane = new FaultPlane(strike, dip, rake);
+        double azimuth = 45;
+        double takeoff = 45;
         for (int i = 0; i < 90; i++) {
-            azimuth=i*DtoR;
-            double[] radA = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth, takeoff);
-            double[] radB = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth+Math.PI/2, takeoff);
-            double[] radC = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth+Math.PI, takeoff);
-            double[] radD = SeismicSourceArgs.calcRadiationPatRadian(strike, dip, rake, azimuth+3*Math.PI/2, takeoff);
+            azimuth=i;
+            double[] radA = faultPlane.calcRadiationPatDegree(azimuth, takeoff);
+            double[] radB = faultPlane.calcRadiationPatDegree(azimuth+90, takeoff);
+            double[] radC = faultPlane.calcRadiationPatDegree(azimuth+180, takeoff);
+            double[] radD = faultPlane.calcRadiationPatDegree(azimuth+270, takeoff);
             assertEquals(radA[0], -1*radB[0], 1e-9);
             assertEquals(radA[0], radC[0], 1e-9);
             assertEquals(radA[0], -1*radD[0], 1e-9);

@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static edu.sc.seis.TauP.SphericalCoords.DtoR;
-import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "beachball",
@@ -58,7 +56,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                         distanceValuesPerSource.add(ray);
                     }
                 }
-                List<RadiationAmplitude> radPattern = calcRadiationPattern(source, numPoints);
+                List<RadiationAmplitude> radPattern = calcRadiationPattern(source.getFaultPlane(), numPoints);
                 List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
 
                 String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
@@ -121,13 +119,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         return arrivals;
     }
 
-    public List<RadiationAmplitude> calcRadiationPattern(SeismicSourceArgs sourceArgs, int num_pts) {
+    public List<RadiationAmplitude> calcRadiationPattern(FaultPlane faultPlane, int num_pts) {
         List<RadiationAmplitude> result = new ArrayList<>(num_pts);
         List<SphericalCoordinate> fibPoints = FibonacciSphere.calc(num_pts);
         for (SphericalCoordinate coord : fibPoints) {
             double[] radiationPattern = new double[] {1,1,1};
             if (sourceArgs!=null) {
-                radiationPattern = sourceArgs.calcRadiationPat(coord.getAzimuthDegree(), coord.getTakeoffAngleDegree());
+                radiationPattern = faultPlane.calcRadiationPatDegree(coord.getAzimuthDegree(), coord.getTakeoffAngleDegree());
             }
             RadiationAmplitude radAmp = new RadiationAmplitude(coord, radiationPattern);
             result.add(radAmp);
@@ -139,7 +137,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     }
     public void printResult(PrintWriter out, List<Arrival> arrivalList, SeismicSourceArgs sourceArgs) throws IOException, TauPException {
 
-        List<RadiationAmplitude> radPattern = calcRadiationPattern(sourceArgs, numPoints);
+        List<RadiationAmplitude> radPattern = calcRadiationPattern(sourceArgs.getFaultPlane(), numPoints);
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             throw new TauPException("JSON output not yet implemented");
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
@@ -227,11 +225,6 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         writer.println("</g>");
         writer.println("<g class=\"fault\">");
-        double strikeRad = (90-sourceArgs.getStrikeDipRake().get(0))*DtoR;
-        //writer.println("<line x1=\""+((1-Math.cos(strikeRad))*(pixelWidth/2))
-        //        +"\" y1=\""+((1-Math.sin(strikeRad))*(pixelWidth/2))
-        //        +"\" x2=\""+((1+Math.cos(strikeRad))*(pixelWidth/2))
-        //        +"\" y2=\""+((1+Math.sin(strikeRad))*(pixelWidth/2))+"\" />");
         writer.print("<polyline class=\"fault\", points=\"");
         FaultPlane faultPlane = sourceArgs.getFaultPlane();
         for (int i = 0; i < 360; i++) {
@@ -260,10 +253,6 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             writer.print(x+","+y+" ");
         }
         writer.println("\" />");
-        writer.println("<line  x1=\""+((1-0)*(pixelWidth/2))
-                +"\" y1=\""+((1-0)*(pixelWidth/2))
-                +"\" x2=\""+((1+Math.cos(strikeRad))*(pixelWidth/2))
-                +"\" y2=\""+((1+Math.sin(strikeRad))*(pixelWidth/2))+"\" />");
         writer.println("</g>");
         writer.println("<g class=\"radpattern\">");
         float ampScale = 0.1f;
