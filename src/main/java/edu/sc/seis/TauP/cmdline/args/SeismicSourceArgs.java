@@ -92,6 +92,15 @@ public class SeismicSourceArgs {
         if (strikeDipRake != null && strikeDipRake.size() != 3) {
             throw new IllegalArgumentException("StrikeDipRake must have 3 values, but was: "+strikeDipRake.size());
         }
+        if (strikeDipRake.get(0) < -180 || 360 < strikeDipRake.get(0) ) {
+            throw new IllegalArgumentException("Strike should be -180 to 360, but was "+strikeDipRake.get(0));
+        }
+        if (strikeDipRake.get(1) < -90 || 90 < strikeDipRake.get(1) ) {
+            throw new IllegalArgumentException("Dip should be -90 to 90, but was "+strikeDipRake.get(1));
+        }
+        if (strikeDipRake.get(2) < -180 || 180 < strikeDipRake.get(2) ) {
+            throw new IllegalArgumentException("Rake should be -180 to 180, but was "+strikeDipRake.get(2));
+        }
     }
 
     public void validateArgumentsForAmplitude(ModelArgs modelArgs,  List<RayCalculateable> rayList) throws TauPException {
