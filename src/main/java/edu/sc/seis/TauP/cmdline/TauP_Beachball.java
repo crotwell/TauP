@@ -125,12 +125,11 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         List<RadiationAmplitude> result = new ArrayList<>(num_pts);
         List<SphericalCoordinate> fibPoints = FibonacciSphere.calc(num_pts);
         for (SphericalCoordinate coord : fibPoints) {
-            double[] radiationPattern = new double[] {1,1,1};
+            RadiationAmplitude radiationPattern = new RadiationAmplitude();
             if (sourceArgs!=null) {
                 radiationPattern = faultPlane.calcRadiationPatDegree(coord.getAzimuthDegree(), coord.getTakeoffAngleDegree());
             }
-            RadiationAmplitude radAmp = new RadiationAmplitude(coord, radiationPattern);
-            result.add(radAmp);
+            result.add(radiationPattern);
         }
         return result;
     }

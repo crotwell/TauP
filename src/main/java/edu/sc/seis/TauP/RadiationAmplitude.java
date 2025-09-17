@@ -2,6 +2,12 @@ package edu.sc.seis.TauP;
 
 public class RadiationAmplitude {
 
+    public RadiationAmplitude() {
+        this.coord = new SphericalCoordinate(0,0);
+        this.radialAmplitude = 1;
+        this.phiAmplitude = 1;
+        this.thetaAmplitude = 1;
+    }
     public RadiationAmplitude(SphericalCoordinate coord, double[] radPSvSh) {
         this.coord = coord;
         this.radialAmplitude = radPSvSh[0];

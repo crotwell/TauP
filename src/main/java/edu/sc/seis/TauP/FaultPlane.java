@@ -100,8 +100,12 @@ public class FaultPlane {
      * @param takeoff takeoff angle in degrees
      * @return  Fp, Fsv, Fsh
      */
-    public double[] calcRadiationPatDegree(double azimuth, double takeoff) {
-        return calcRadiationPatRadian(azimuth*DtoR, takeoff*DtoR);
+    public RadiationAmplitude calcRadiationPatDegree(double azimuth, double takeoff) {
+        double[] radiationPattern = calcRadiationPatRadian(azimuth*DtoR, takeoff*DtoR);
+
+        SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(azimuth, takeoff);
+        RadiationAmplitude radAmp = new RadiationAmplitude(coord, radiationPattern);
+        return radAmp;
     }
 
     /**

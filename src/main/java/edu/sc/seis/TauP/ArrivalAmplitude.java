@@ -25,10 +25,10 @@ public class ArrivalAmplitude {
         attenuation = (float) arr.calcAttenuation();
         freeFactor = (float) arr.calcFreeFactor();
         radiationPattern = new float[3];
-        double[] drp = arr.calcRadiationPattern();
-        radiationPattern[0] = (float)drp[0];
-        radiationPattern[1] = (float)drp[1];
-        radiationPattern[2] = (float)drp[2];
+        RadiationAmplitude drp = arr.calcRadiationPattern();
+        radiationPattern[0] = (float)drp.getRadialAmplitude();
+        radiationPattern[1] = (float)drp.getPhiAmplitude();
+        radiationPattern[2] = (float)drp.getThetaAmplitude();
 
         radiationTerm = (float) arr.calcRadiationTerm();
         mgtokg = (float) 1e-3;

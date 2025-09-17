@@ -463,12 +463,12 @@ public class Arrival {
         double ampFactor = getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
         if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
             FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            double[] radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             double radTerm = 1;
             if (getPhase().getInitialPhaseSegment().isPWave) {
-                radTerm = radiationPattern[0];
+                radTerm = radiationPattern.getRadialAmplitude();
             } else {
-                radTerm = radiationPattern[1];
+                radTerm = radiationPattern.getPhiAmplitude();
             }
             ampFactor *= radTerm;
         } else if (sourceArgs.hasStrikeDipRake() && (searchCalc.hasAzimuth()) ) {
@@ -528,8 +528,8 @@ public class Arrival {
         double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
         if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
             FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            double[] radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
-            ampFactor *= radiationPattern[2];
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            ampFactor *= radiationPattern.getThetaAmplitude();
         } else if (sourceArgs.hasStrikeDipRake() && !searchCalc.hasAzimuth() ) {
             // change to TauPException
             throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth: "+searchCalc);
@@ -576,11 +576,11 @@ public class Arrival {
         double radTerm = 1;
         if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
             FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            double[] radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
-                radTerm = radiationPattern[0];
+                radTerm = radiationPattern.getRadialAmplitude();
             } else {
-                radTerm = radiationPattern[1];
+                radTerm = radiationPattern.getPhiAmplitude();
             }
         }
         return radTerm;
@@ -591,11 +591,11 @@ public class Arrival {
         double radTerm = 1;
         if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
             FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            double[] radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = 0;
             } else {
-                radTerm = radiationPattern[2];
+                radTerm = radiationPattern.getThetaAmplitude();
             }
         }
         return radTerm;
@@ -789,12 +789,14 @@ public class Arrival {
     /**
      * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
      *
-     * @return  Fp, Fsv, Fsh
+     * @return Fp, Fsv, Fsh
      */
-    public double[] calcRadiationPattern() {
+    public RadiationAmplitude calcRadiationPattern() {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
 
-        double[] radiationPattern = new double[] {1,1,1};
+        RadiationAmplitude radiationPattern = new RadiationAmplitude(
+                new SphericalCoordinate(0,0),
+                new double[] {1,1,1});
         if (sourceArgs!=null && searchCalc.hasAzimuth()) {FaultPlane faultPlane = sourceArgs.getFaultPlane();
             radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
         }
