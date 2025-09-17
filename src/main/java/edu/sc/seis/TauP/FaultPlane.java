@@ -129,7 +129,7 @@ public class FaultPlane {
         double Fsv = (Math.sin(lam)*Math.cos(2*theta)*Math.sin(phi_r_f)
                 - Math.cos(lam)*Math.cos(theta)*Math.cos(phi_r_f)) * Math.cos(2*ih)
                 + 1.0/2*Math.cos(lam)*Math.sin(theta)*Math.sin(2*phi_r_f)*Math.sin(2*ih)
-                - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*(1 + Math.sin(phi_r_f)*Math.sin(phi_r_f));
+                - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*Math.sin(2*ih)*(1 + Math.sin(phi_r_f)*Math.sin(phi_r_f));
 
         double Fsh = (Math.cos(lam)*Math.cos(theta)*Math.sin(phi_r_f)
                 + Math.sin(lam)*Math.cos(2*theta)*Math.cos(phi_r_f))*Math.cos(ih)
