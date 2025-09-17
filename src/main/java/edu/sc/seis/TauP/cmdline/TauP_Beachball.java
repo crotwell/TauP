@@ -47,7 +47,11 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         }
         if (getOutputFormat().equals(OutputTypes.HTML)) {
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-            HTMLUtil.createHtmlStart(writer, "TauP Beachball", "", false);
+            StringBuilder extraCSS = new StringBuilder();
+            extraCSS.append("div.beachball svg {\n");
+            extraCSS.append("  height: 500px;\n");
+            extraCSS.append("}\n");
+            HTMLUtil.createHtmlStart(writer, "TauP Beachball", extraCSS, false);
 
             for (SeismicSourceArgs source : uniqSourceArgs) {
                 List<RayCalculateable> distanceValuesPerSource = new ArrayList<>();
@@ -69,7 +73,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     p = p.negate();
                     coordP = p.toSpherical();
                 }
-                writer.println("<h5>P: to: "+coordP.getTakeoffAngleDegree()+" az: "+coordP.getAzimuthDegree());
+                writer.println("<h5>P: to: "+coordP.getTakeoffAngleDegree()+" az: "+coordP.getAzimuthDegree()+"</h5>");
 
                 Vector t = faultPlane.tAxis();
                 SphericalCoordinate coordT = t.toSpherical();
@@ -77,7 +81,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     t = t.negate();
                     coordT = t.toSpherical();
                 }
-                writer.println("<h5>T: to: "+coordT.getTakeoffAngleDegree()+" az: "+coordT.getAzimuthDegree());
+                writer.println("<h5>T: to: "+coordT.getTakeoffAngleDegree()+" az: "+coordT.getAzimuthDegree()+"</h5>");
 
                 Vector n = faultPlane.nullAxis();
                 SphericalCoordinate coordN = n.toSpherical();
@@ -85,10 +89,12 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     n = n.negate();
                     coordN = n.toSpherical();
                 }
-                writer.println("<h5>N: to: "+coordN.getTakeoffAngleDegree()+" az: "+coordN.getAzimuthDegree());
+                writer.println("<h5>N: to: "+coordN.getTakeoffAngleDegree()+" az: "+coordN.getAzimuthDegree()+"</h5>");
                 for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.ampsv, BeachballType.ampsh)) {
-                    writer.println("<h5>Amplitude: "+bb);
+                    writer.println("<div class=\"beachball\">");
+                    writer.println("  <h5>Amplitude: "+bb+"</h5>");
                     printResultSVG(writer, source, arrivalList, bb);
+                    writer.println("</div>");
                 }
             }
             writer.println(HTMLUtil.createHtmlEnding());
