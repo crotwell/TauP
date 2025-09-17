@@ -1,15 +1,13 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.Vector;
 import edu.sc.seis.TauP.cmdline.args.*;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -69,28 +67,20 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 FaultPlane faultPlane = source.getFaultPlane();
                 Vector p = faultPlane.pAxis();
                 SphericalCoordinate coordP = p.toSpherical();
-                if (coordP.getTakeoffAngleDegree()>90) {
-                    p = p.negate();
-                    coordP = p.toSpherical();
-                }
-                writer.println("<h5>P: to: "+coordP.getTakeoffAngleDegree()+" az: "+coordP.getAzimuthDegree()+"</h5>");
+                writer.println("<h5>P: takeoff: "+Outputs.formatLatLon(coordP.getTakeoffAngleDegree())
+                        +" az: "+Outputs.formatLatLon(coordP.getAzimuthDegree())+"</h5>");
 
                 Vector t = faultPlane.tAxis();
                 SphericalCoordinate coordT = t.toSpherical();
-                if (coordT.getTakeoffAngleDegree()>90) {
-                    t = t.negate();
-                    coordT = t.toSpherical();
-                }
-                writer.println("<h5>T: to: "+coordT.getTakeoffAngleDegree()+" az: "+coordT.getAzimuthDegree()+"</h5>");
+                writer.println("<h5>T: takeoff: "+Outputs.formatLatLon(coordT.getTakeoffAngleDegree())
+                        +" az: "+Outputs.formatLatLon(coordT.getAzimuthDegree())+"</h5>");
 
                 Vector n = faultPlane.nullAxis();
                 SphericalCoordinate coordN = n.toSpherical();
-                if (coordN.getTakeoffAngleDegree()>90) {
-                    n = n.negate();
-                    coordN = n.toSpherical();
-                }
-                writer.println("<h5>N: to: "+coordN.getTakeoffAngleDegree()+" az: "+coordN.getAzimuthDegree()+"</h5>");
-                for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.ampsv, BeachballType.ampsh)) {
+                writer.println("<h5>N: takeoff: "+Outputs.formatLatLon(coordN.getTakeoffAngleDegree())
+                        +" az: "+Outputs.formatLatLon(coordN.getAzimuthDegree())+"</h5>");
+
+                for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.amps, BeachballType.ampsv, BeachballType.ampsh)) {
                     writer.println("<div class=\"beachball\">");
                     writer.println("  <h5>Amplitude: "+bb+"</h5>");
                     printResultSVG(writer, source, arrivalList, bb);
@@ -110,7 +100,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
     @Override
     public void validateArguments() throws TauPException {
-
+        this.sourceArgs.validateArguments();
     }
 
     @Override
@@ -215,6 +205,15 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraCSS.append("  fill: green;\n");
         extraCSS.append("  stroke: green;\n");
         extraCSS.append("}\n");
+        extraCSS.append("circle.phase.min {\n");
+        extraCSS.append("  fill: white;\n");
+        extraCSS.append("  stroke: green;\n");
+        extraCSS.append("}\n");
+        extraCSS.append("circle.phase.max {\n");
+        extraCSS.append("  fill: papayawhip;\n");
+        extraCSS.append("  fill-opacity: 0.5;\n");
+        extraCSS.append("  stroke: green;\n");
+        extraCSS.append("}\n");
         StringBuilder extraDefs = new StringBuilder();
         extraDefs.append("<marker\n");
         extraDefs.append("      id=\"arrow\"\n" );
@@ -234,7 +233,11 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         float hpw = pixelWidth/2;
         FaultPlane faultPlane = sourceArgs.getFaultPlane();
 
+
         writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
+
+
+        drawPhasesSVG(writer, faultPlane, scale, getSeismicPhases(), bbType);
         writer.println("<g class=\"axis\">");
 
         writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
@@ -250,6 +253,31 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         writer.println("</g> <!-- end flip scale -->");
         writer.println("</svg>");
+    }
+
+    public void drawPhasesSVG(PrintWriter writer, FaultPlane faultPlane, float scale, List<SeismicPhase> phaseList, BeachballType bbType) throws SlownessModelException, TauModelException {
+        writer.println("<g class=\"phase\">");
+        for (SeismicPhase phase : phaseList) {
+            // only draw if phase source segment matches bb type
+            if (bbType.equals(BeachballType.ampp) == phase.sourceSegmentIsPWave()) {
+                List<Double> takeoffList = new ArrayList<>();
+                takeoffList.add(phase.calcTakeoffAngleDegree(phase.getMaxRayParam()));
+                takeoffList.add(phase.calcTakeoffAngleDegree(phase.getMinRayParam()));
+                takeoffList.sort(Comparator.reverseOrder());
+                String minmaxclass = "max";
+                for (double takeoff : takeoffList) {
+                    SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(0, takeoff);
+
+                    double sterR = coord.stereoR();
+                    double x1 = scale * (0);
+                    double y1 = scale * (0);
+                    writer.println("<circle class=\"phase " + phase.getName() + " " + minmaxclass +
+                            "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + sterR * scale + "\" />");
+                    minmaxclass = "min";
+                }
+            }
+        }
+        writer.println("</g>");
     }
 
     public void drawArrivalsSVG(PrintWriter writer, FaultPlane faultPlane, float scale, List<Arrival> arrivalList) throws SlownessModelException, TauModelException {
@@ -318,24 +346,29 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             double sterR = radAmp.getCoord().stereoR();
             double sterX = sterR*Math.cos(radAmp.getCoord().getTheta());
             double sterY = sterR*Math.sin(radAmp.getCoord().getTheta());
-            double ampX;
-            double ampY;
-            String compression;
+            double ampX=0;
+            double ampY=0;
+            String compression="";
             if (bbType.equals(BeachballType.ampp)) {
                 // P
                 ampX = (Math.cos(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
                 ampY = (Math.sin(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
                 compression = (radAmp.getRadialAmplitude()>0)? "compress" : "dilitate";
-            } else if (bbType.equals(BeachballType.ampsv)) {
+            }
+            if (bbType.equals(BeachballType.ampsv) || bbType.equals(BeachballType.amps)) {
                 // Sv
-                ampX = (Math.cos(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
-                ampY = (Math.sin(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
+                ampX += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
+                ampY += (Math.sin(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
                 compression = (radAmp.getPhiAmplitude()>0)? "compress" : "dilitate";
-            } else {
+            }
+            if (bbType.equals(BeachballType.ampsh) || bbType.equals(BeachballType.amps)) {
                 // Sh
-                ampX = (-Math.sin(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
-                ampY = (Math.cos(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
+                ampX += (-Math.sin(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
+                ampY += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
                 compression = (radAmp.getThetaAmplitude()>0)? "compress" : "dilitate";
+            }
+            if (bbType.equals(BeachballType.amps)) {
+                compression = (radAmp.getThetaAmplitude()*radAmp.getPhiAmplitude()>0)? "compress" : "dilitate";
             }
 
             double x1 = scale*(sterX);
