@@ -6,7 +6,7 @@ import java.util.List;
 
 public class HTMLUtil {
 
-    public static void createHtmlStart(PrintWriter writer, String title, String css, boolean withSortTable) throws TauPException {
+    public static void createHtmlStart(PrintWriter writer, String title, CharSequence css, boolean withSortTable) throws TauPException {
         String htmlStart = "<!DOCTYPE html>\n" +
             "<html lang=\"en-US\">\n" +
             "  <head>\n" +
