@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import edu.sc.seis.seisFile.LatLonLocatable;
 
 import java.util.ArrayList;

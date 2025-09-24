@@ -4,7 +4,6 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import picocli.CommandLine;
 
 import java.util.*;
@@ -16,7 +15,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phaseArgs.setTool(this);
     }
 
-    public TimeResult createTimeResult(boolean isWithAmplitude, SeismicSourceArgs sourceArgs, List<Arrival> arrivalList) throws PhaseParseException {
+    public TimeResult createTimeResult(boolean isWithAmplitude, SeismicSource sourceArgs, List<Arrival> arrivalList) throws PhaseParseException {
         return new TimeResult(modelArgs.getModelName(),
                 modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
                 getPhaseArgs().parsePhaseNameList(),

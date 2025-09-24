@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -53,11 +52,11 @@ public class OceanModelTest {
             SeismicPhase sp = SeismicPhaseFactory.createPhase(pn, tMod, tMod.sourceDepth);
             phaseList.add(sp);
         }
-        SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+        SeismicSource sourceArgs = new SeismicSource();
         double dist = 5;
         for (SeismicPhase sp : phaseList) {
             DistanceRay dr = DistanceRay.ofDegrees(dist);
-            dr.setSourceArgs(sourceArgs);
+            dr.setSeismicSource(sourceArgs);
             List<Arrival> arrivals = dr.calculate(sp);
             for (Arrival aa : arrivals) {
                 assertNotNull(aa);

@@ -355,7 +355,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         FindTimeResult result = new FindTimeResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
                 inputPhases, getScatterer(),
-                false, sourceArgs,
+                false, sourceArgs.getSeismicSource(),
                 arrivals,
                 maxActions, excludeList, phases);
         return result;
@@ -613,7 +613,7 @@ class FindTimeResult extends TimeResult {
 
     public FindTimeResult(String modelName, List<Double> depth, List<Double> receiverDepth,
                           List<PhaseName> phaseNameList, Scatterer scatterer,
-                          boolean withAmp, SeismicSourceArgs sourceArgs, List<Arrival> arrivals,
+                          boolean withAmp, SeismicSource sourceArgs, List<Arrival> arrivals,
                           int maxActions, List<Float> exclude,
                           List<String> foundphases) {
         super(modelName, depth, receiverDepth, phaseNameList, scatterer, withAmp, sourceArgs, arrivals);

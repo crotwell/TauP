@@ -153,11 +153,11 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         // save values used to make calc, if not already from eh
         if (quake != null) {
             eh.addToBag(quake);
-            SeismicSourceArgs quakeSourceArgs = new SeismicSourceArgs();
+
             if (quake.getPreferredMagnitude() != null && sourceArgs.getMw()== ArrivalAmplitude.DEFAULT_MW) {
                 // may not be Mw, but better than nothing???
-                quakeSourceArgs.setMw(quake.getPreferredMagnitude().getMag().getValue());
-                rayCalculateable.setSeismicSource(quakeSourceArgs.getSeismicSource());
+                SeismicSource quakeSourceArgs = new SeismicSource(quake.getPreferredMagnitude().getMag().getValue());
+                rayCalculateable.setSeismicSource(quakeSourceArgs);
             }
         }
         if (chan != null) {
@@ -186,7 +186,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         if (!arrivals.isEmpty()) {
 
             if (ehKey != null && !ehKey.isEmpty()) {
-                TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivals);
+                TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs.getSeismicSource(), arrivals);
                 Gson gson = GsonUtil.createGsonBuilder().create();
                 JsonObject jsonObj = JsonParser.parseString(dr3.getExtraHeadersAsString(0)).getAsJsonObject();
                 if (jsonObj.has(ehKey)) {

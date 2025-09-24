@@ -48,6 +48,7 @@ public interface JSONLabels {
     String MODEL = "model";
     String MW = "Mw";
     String ATTEN_FREQ = "attenuationfreq";
+    String ATTEN_NUM_FREQ = "attenuationnumfreq";
     String FAULT = "fault";
     String STRIKE = "strike";
     String DIP = "dip";

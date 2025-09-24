@@ -25,8 +25,6 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;

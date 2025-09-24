@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -22,7 +20,7 @@ public class AbstractPhaseResult {
                                List<PhaseName> phases,
                                Scatterer scatterer,
                                boolean withAmp,
-                               SeismicSourceArgs sourceArgs) {
+                               SeismicSource sourceArgs) {
         this.model = model;
         this.sourcedepthlist = sourcedepthlist;
         this.receiverdepthlist = receiverdepthlist;
@@ -55,7 +53,7 @@ public class AbstractPhaseResult {
         return scatter;
     }
 
-    public SeismicSourceArgs getSourceArg() {
+    public SeismicSource getSourceArg() {
         return sourceArg;
     }
 
@@ -64,5 +62,5 @@ public class AbstractPhaseResult {
     List<Double> receiverdepthlist;
     List<String> phases;
     Scatterer scatter;
-    SeismicSourceArgs sourceArg;
+    SeismicSource sourceArg;
 }

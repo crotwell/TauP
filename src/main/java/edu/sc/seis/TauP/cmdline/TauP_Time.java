@@ -240,7 +240,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
-            TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
+            TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs.getSeismicSource(), arrivalList);
             GsonBuilder gsonBld = createGsonBuilder();
             out.println(gsonBld.create().toJson(result));
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {

@@ -181,7 +181,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		boolean withPierce = false;
 		boolean withPath = true;
 		boolean withAmp = false;
-		SeismicSourceArgs sourceArgs = null;
+		SeismicSource sourceArgs = null;
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			TimeResult result = createTimeResult(withAmp, sourceArgs, arrivalList);
 			GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
