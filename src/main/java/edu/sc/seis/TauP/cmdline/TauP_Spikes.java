@@ -29,7 +29,6 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.Arrival;
 import edu.sc.seis.TauP.cmdline.args.*;
-import edu.iris.dmc.seedcodec.*;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
@@ -161,8 +160,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         List<DistanceRay> degreesList = new ArrayList<>();
         Set<Double> distFromArrival = new HashSet<>();
         for (RayCalculateable ray : rayList) {
-            if (!ray.hasSourceArgs()) {
-                ray.setSourceArgs(sourceArgs);
+            if (!ray.hasSeismicSource()) {
+                ray.setSeismicSource(sourceArgs.getSeismicSource());
             }
             if (ray instanceof DistanceRay) {
                 degreesList.add((DistanceRay)ray);
@@ -184,7 +183,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             if (!dr.hasAzimuth() && latLonArgs.hasAzimuth()) {
                 dr.setAzimuth(latLonArgs.getAzimuth());
             }
-            dr.setSourceArgs(sourceArgs);
+            dr.setSeismicSource(sourceArgs.getSeismicSource());
             degreesList.add(dr);
         }
         for (DistanceRay dr : degreesList) {

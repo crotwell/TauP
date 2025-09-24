@@ -1,9 +1,11 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-
 public class ArrivalAmplitude {
 
+    public static final float DEFAULT_ATTENUATION_FREQUENCY = 1.0f;
+    public static final float DEFAULT_MW = 4.0f;
+    public static final String DEFAULT_MW_STR = ""+DEFAULT_MW;
+    public static final int DEFAULT_NUM_FREQUENCIES = 64;
     float factorpsv;
     float factorsh;
     float geospread;
@@ -14,14 +16,13 @@ public class ArrivalAmplitude {
     float mgtokg;
     float refltranpsv;
     float refltransh;
-    SeismicSourceArgs source;
+    SeismicSource source;
 
     public ArrivalAmplitude(Arrival arr) throws TauModelException, SlownessModelException {
         geospread = (float)arr.getAmplitudeGeometricSpreadingFactor();
-        source = arr.getRayCalculateable().sourceArgs;
+        source = arr.getRayCalculateable().seismicSource;
         factorpsv = (float) arr.getAmplitudeFactorPSV();
         factorsh = (float) arr.getAmplitudeFactorSH();
-        geospread = (float) geospread;
         attenuation = (float) arr.calcAttenuation();
         freeFactor = (float) arr.calcFreeFactor();
         radiationPattern = new float[3];

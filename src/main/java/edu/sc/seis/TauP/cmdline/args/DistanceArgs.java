@@ -2,6 +2,8 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 
@@ -87,6 +89,7 @@ public class DistanceArgs {
                         DistanceRay evtDr = DistanceRay.duplicate(dr);
                         evtDr.withEventAzimuth(evtLoc, getAzimuth());
                         evtDr.setDescription(evtLoc.getLocationDescription()+" to az "+Outputs.formatDistance(getAzimuth()).trim());
+                        evtDr.insertSeismicSource(evtLoc);
                         evtOut.add(evtDr);
                     }
                 }
@@ -399,9 +402,12 @@ public class DistanceArgs {
             }
         }
         if (sourceArgs != null) {
-            for (RayCalculateable rc : out) {
-                if (!rc.hasSourceArgs()) {
-                    rc.setSourceArgs(sourceArgs);
+            if (sourceArgs.hasStrikeDipRake()) {
+                for (RayCalculateable rc : out) {
+                    if (!rc.hasFaultPlane()) {
+                        float Mw = rc.hasMw() ? rc.getMw() : sourceArgs.getMw();
+                        rc.setSeismicSource(new SeismicSource(Mw, sourceArgs.getFaultPlane()));
+                    }
                 }
             }
         }

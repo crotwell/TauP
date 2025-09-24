@@ -2,7 +2,7 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.DistanceRay;
 import edu.sc.seis.TauP.RayCalculateable;
-import edu.sc.seis.TauP.TauPException;
+import edu.sc.seis.TauP.SeismicSource;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
@@ -17,9 +17,10 @@ public class DistanceLengthArgs {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getLengthDistances());
         if (sourceArgs != null) {
+            SeismicSource ss = new SeismicSource(sourceArgs.getMw(), sourceArgs.getFaultPlane());
             for (RayCalculateable rc : out) {
-                if (!rc.hasSourceArgs()) {
-                    rc.setSourceArgs(sourceArgs);
+                if (!rc.hasSeismicSource()) {
+                    rc.setSeismicSource(ss);
                 }
             }
         }

@@ -66,6 +66,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         val.staLatLon = sta;
         val.azimuth = SphericalCoords.azimuth(evt.asLocation(), sta.asLocation());
         val.backAzimuth = SphericalCoords.azimuth(sta.asLocation(), evt.asLocation());
+        val.insertSeismicSource(evt);
         return val;
     }
 
@@ -78,6 +79,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         val.backAzimuth = distAz.getBaz();
         val.invFlattening = invFlattening;
         val.geodetic = true;
+        val.insertSeismicSource(evt);
         return val;
     }
 

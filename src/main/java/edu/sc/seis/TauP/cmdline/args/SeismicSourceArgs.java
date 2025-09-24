@@ -5,15 +5,12 @@ import picocli.CommandLine;
 
 import java.util.List;
 
-import static edu.sc.seis.TauP.SphericalCoords.DtoR;
-import static edu.sc.seis.TauP.SphericalCoords.RtoD;
-
 public class SeismicSourceArgs {
 
 
 
     @CommandLine.Option(names = "--mw",
-            defaultValue = DEFAULT_MW_STR,
+            defaultValue = ArrivalAmplitude.DEFAULT_MW_STR,
             description = "scale amplitude by source moment magnitude, default is ${DEFAULT-VALUE}")
     public void setMw(float mw) {
         this.mw = mw;
@@ -32,22 +29,22 @@ public class SeismicSourceArgs {
     }
 
     @CommandLine.Option(names="--attenuationfreq",
-            defaultValue=""+Arrival.DEFAULT_ATTENUATION_FREQUENCY,
+            defaultValue=""+ ArrivalAmplitude.DEFAULT_ATTENUATION_FREQUENCY,
             description = "attenuation frequency for amplitude calculations, default is ${DEFAULT-VALUE}")
     Float attenuationFreq = null;
 
     public float getAttenuationFrequency() {
         if (attenuationFreq == null) {
-            return Arrival.DEFAULT_ATTENUATION_FREQUENCY;
+            return ArrivalAmplitude.DEFAULT_ATTENUATION_FREQUENCY;
         } else {
             return attenuationFreq;
         }
     }
 
     @CommandLine.Option(names="--numattenuationfreq",
-            defaultValue=""+DEFAULT_NUM_FREQUENCIES,
+            defaultValue=""+ ArrivalAmplitude.DEFAULT_NUM_FREQUENCIES,
             description = " number attenuation frequencies for amplitude calculations, default is ${DEFAULT-VALUE}")
-    int numFrequencies = DEFAULT_NUM_FREQUENCIES;
+    int numFrequencies = ArrivalAmplitude.DEFAULT_NUM_FREQUENCIES;
 
     public int getNumFrequencies() {
         return numFrequencies;
@@ -85,7 +82,10 @@ public class SeismicSourceArgs {
     }
 
     public FaultPlane getFaultPlane() {
-        return new FaultPlane(strikeDipRake.get(0), strikeDipRake.get(1), strikeDipRake.get(2));
+        if (strikeDipRake != null) {
+            return new FaultPlane(strikeDipRake.get(0), strikeDipRake.get(1), strikeDipRake.get(2));
+        }
+        return null;
     }
 
     public void validateArguments() {
@@ -126,8 +126,7 @@ public class SeismicSourceArgs {
         return getMw()+" Mw, strike: "+strikeDipRake.get(0)+", dip: "+strikeDipRake.get(1)+", rake: "+strikeDipRake.get(2);
     }
 
-    public static final float DEFAULT_MW = 4.0f;
-    public static final String DEFAULT_MW_STR = ""+DEFAULT_MW;
-
-    public static final int DEFAULT_NUM_FREQUENCIES = 64;
+    public SeismicSource getSeismicSource() {
+        return new SeismicSource(getMw(), hasStrikeDipRake()?getFaultPlane():null);
+    }
 }

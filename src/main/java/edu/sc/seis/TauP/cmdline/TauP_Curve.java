@@ -437,7 +437,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     public Arrival arrivalAtIndex(int i, SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
         RayParamIndexRay rc = new RayParamIndexRay(i);
-        rc.setSourceArgs(sourceArgs);
+        rc.setSeismicSource(sourceArgs.getSeismicSource());
         rc.setAzimuth(azimuth);
         rc.setDescription("Index "+i);
         return rc.calculate(phase).get(0);

@@ -159,18 +159,18 @@ public class ExactDistanceRay extends DistanceRay {
     }
 
     @Override
-    public boolean hasSourceArgs() {
-        return distanceRay.hasSourceArgs();
+    public boolean hasSeismicSource() {
+        return distanceRay.hasSeismicSource();
     }
 
     @Override
-    public void setSourceArgs(SeismicSourceArgs sourceArgs) {
-        distanceRay.setSourceArgs(sourceArgs);
+    public void setSeismicSource(SeismicSource source) {
+        distanceRay.setSeismicSource(source);
     }
 
     @Override
-    public SeismicSourceArgs getSourceArgs() {
-        return distanceRay.getSourceArgs();
+    public SeismicSource getSeismicSource() {
+        return distanceRay.getSeismicSource();
     }
 
     @Override

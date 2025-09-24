@@ -154,10 +154,10 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         if (quake != null) {
             eh.addToBag(quake);
             SeismicSourceArgs quakeSourceArgs = new SeismicSourceArgs();
-            if (quake.getPreferredMagnitude() != null && sourceArgs.getMw()==SeismicSourceArgs.DEFAULT_MW) {
+            if (quake.getPreferredMagnitude() != null && sourceArgs.getMw()== ArrivalAmplitude.DEFAULT_MW) {
                 // may not be Mw, but better than nothing???
                 quakeSourceArgs.setMw(quake.getPreferredMagnitude().getMag().getValue());
-                rayCalculateable.setSourceArgs(quakeSourceArgs);
+                rayCalculateable.setSeismicSource(quakeSourceArgs.getSeismicSource());
             }
         }
         if (chan != null) {

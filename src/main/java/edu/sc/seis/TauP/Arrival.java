@@ -455,14 +455,15 @@ public class Arrival {
      * See FMGS eq 17.74
      */
     public double getAmplitudeFactorPSV() throws TauModelException, SlownessModelException {
-        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        SeismicSource sourceArgs = getRayCalculateable().getSeismicSource();
+
         if (sourceArgs == null) {
             throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable());
         }
 
-        double ampFactor = getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
-        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
-            FaultPlane faultPlane = sourceArgs.getFaultPlane();
+        double ampFactor = getAmplitudeFactorPSV(getRayCalculateable().getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
+        if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth() ) {
+            FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
             RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             double radTerm = 1;
             if (getPhase().getInitialPhaseSegment().isPWave) {
@@ -471,7 +472,7 @@ public class Arrival {
                 radTerm = radiationPattern.getPhiAmplitude();
             }
             ampFactor *= radTerm;
-        } else if (sourceArgs.hasStrikeDipRake() && (searchCalc.hasAzimuth()) ) {
+        } else if (getRayCalculateable().hasFaultPlane() && (!searchCalc.hasAzimuth()) ) {
             // change to TauPException
             throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
         }
@@ -524,15 +525,15 @@ public class Arrival {
          * @throws SlownessModelException
          */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
-        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
-        double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
-        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
-            FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+        SeismicSource sourceArgs = getRayCalculateable().getSeismicSource();
+        double ampFactor = getAmplitudeFactorSH(getRayCalculateable().getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
+        if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth() ) {
+            FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( getRayCalculateable().getAzimuth(), getTakeoffAngleDegree());
             ampFactor *= radiationPattern.getThetaAmplitude();
-        } else if (sourceArgs.hasStrikeDipRake() && !searchCalc.hasAzimuth() ) {
+        } else if (getRayCalculateable().hasFaultPlane() && !getRayCalculateable().hasAzimuth() ) {
             // change to TauPException
-            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth: "+searchCalc);
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth: "+getRayCalculateable());
         }
         return ampFactor;
     }
@@ -572,11 +573,10 @@ public class Arrival {
     }
 
     public double getRadiationPatternPSV() {
-        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         double radTerm = 1;
-        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
-            FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+        if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth() ) {
+            FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( getRayCalculateable().getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern.getRadialAmplitude();
             } else {
@@ -587,11 +587,10 @@ public class Arrival {
     }
 
     public double getRadiationPatternSH() {
-        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         double radTerm = 1;
-        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
-            FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+        if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth() ) {
+            FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( getRayCalculateable().getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = 0;
             } else {
@@ -744,8 +743,8 @@ public class Arrival {
      * Calculate attenuation over path at the default frequency. See eq B13.2.2 in FMGS, p374.
      */
     public double calcAttenuation() {
-        return calcAttenuation(getRayCalculateable().getSourceArgs().getAttenuationFrequency(),
-                getRayCalculateable().getSourceArgs().getNumFrequencies());
+        return calcAttenuation(getRayCalculateable().getAttenuationFrequency(),
+                getRayCalculateable().getNumFrequencies());
     }
 
     /**
@@ -792,13 +791,12 @@ public class Arrival {
      * @return Fp, Fsv, Fsh
      */
     public RadiationAmplitude calcRadiationPattern() {
-        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
-
         RadiationAmplitude radiationPattern = new RadiationAmplitude(
                 new SphericalCoordinate(0,0),
                 new double[] {1,1,1});
-        if (sourceArgs!=null && searchCalc.hasAzimuth()) {FaultPlane faultPlane = sourceArgs.getFaultPlane();
-            radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+        if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth()) {
+            FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
+            radiationPattern = faultPlane.calcRadiationPatDegree( getRayCalculateable().getAzimuth(), getTakeoffAngleDegree());
         }
         return radiationPattern;
     }
@@ -992,8 +990,6 @@ public class Arrival {
         return piercepoint;
     }
 
-
-    public static final float DEFAULT_ATTENUATION_FREQUENCY = 1.0f;
 
     protected static final double KMtoM = 1000.0; // 1000 m per km
 

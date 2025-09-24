@@ -2,6 +2,8 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
 
 import java.util.List;
 
@@ -12,12 +14,32 @@ import java.util.List;
 public abstract class RayCalculateable {
 
 
+    public void insertSeismicSource(LatLonLocatable evtLoc) {
+        if (evtLoc instanceof Event) {
+            Event event = (Event)evtLoc;
+
+            if (event.getFocalMechanismList().size()>0) {
+                FocalMechanism fm = event.getFocalMechanismList().get(0);
+                if (fm.getNodalPlane().length>0) {
+                    FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
+                    SeismicSource es = new SeismicSource(event.getPreferredMagnitude().getMag().getValue(), fp);
+                    setSeismicSource(es);
+                }
+            } else {
+                // only Mw
+                SeismicSource es = new SeismicSource(event.getPreferredMagnitude().getMag().getValue());
+                setSeismicSource(es);
+            }
+        }
+    }
+
     public abstract List<Arrival> calculate(SeismicPhase phase) throws TauPException;
 
     public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
         this.evtLatLon = evt;
         this.azimuth = azimuth;
         this.backAzimuth = null;
+        this.insertSeismicSource(evt);
     }
 
     public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
@@ -155,14 +177,109 @@ public abstract class RayCalculateable {
         this.backAzimuth = backAzimuth;
     }
 
-    public boolean hasSourceArgs() {
-        return sourceArgs != null;
+
+    public boolean hasMw() {
+        if (hasSeismicSource()) {
+            return getSeismicSource().hasMw();
+        }
+        if (hasSource()) {
+            LatLonLocatable ll = getSource();
+            if (ll instanceof Event) {
+                Event event = (Event) ll;
+                return event.getPreferredMagnitude() != null;
+            }
+        }
+        return false;
     }
-    public void setSourceArgs(SeismicSourceArgs sourceArgs) {
-        this.sourceArgs = sourceArgs;
+    public float getMw() {
+        if (hasSource()) {
+            LatLonLocatable ll = getSource();
+            if (ll instanceof Event) {
+                Event event = (Event) ll;
+                if (event.getPreferredMagnitude() != null) {
+                    return event.getPreferredMagnitude().getMag().getValue();
+                }
+            }
+        }
+        if (hasSeismicSource()) {
+            return getSeismicSource().getMw();
+        }
+        return ArrivalAmplitude.DEFAULT_MW;
     }
-    public SeismicSourceArgs getSourceArgs() {
-        return sourceArgs;
+
+    public double getMoment() {
+        return MomentMagnitude.mw_to_N_m(getMw());
+    }
+    public boolean hasFaultPlane() {
+        if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
+            return true;
+        }
+        if (hasSource()) {
+            LatLonLocatable ll = getSource();
+            if (ll instanceof Event) {
+                Event event = (Event) ll;
+
+                if (event.getFocalMechanismList().size() > 0) {
+                    FocalMechanism fm = event.getFocalMechanismList().get(0);
+                    if (fm.getNodalPlane().length > 0) {
+                        return true;
+                    }
+                }
+            }
+        } else if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
+            return true;
+        }
+        return false;
+    }
+    public FaultPlane getFaultPlane() {
+        if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
+            return getSeismicSource().getNodalPlane1();
+        }
+         if (hasSource()) {
+            LatLonLocatable ll = getSource();
+            if (ll instanceof Event) {
+                Event event = (Event)ll;
+
+                if (event.getFocalMechanismList().size()>0) {
+                    FocalMechanism fm = event.getFocalMechanismList().get(0);
+                    if (fm.getNodalPlane().length>0) {
+                        FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
+                        SeismicSourceArgs es = new SeismicSourceArgs();
+                        es.setStrikeDipRake(List.of((float)fp.getStrike(), (float)fp.getDip(), (float)fp.getRake()));
+                        es.setMw(event.getPreferredMagnitude().getMag().getValue());
+                        return fp;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public double getAttenuationFrequency() {
+        if (hasSeismicSource()) {
+            return getSeismicSource().getAttenuationFrequency();
+        }
+        return ArrivalAmplitude.DEFAULT_ATTENUATION_FREQUENCY;
+    }
+
+    public int getNumFrequencies() {
+        if (hasSeismicSource()) {
+            return getSeismicSource().getNumFrequencies();
+        }
+        return ArrivalAmplitude.DEFAULT_NUM_FREQUENCIES;
+    }
+
+
+    public boolean hasSeismicSource() {
+        return seismicSource != null;
+    }
+
+    public void setSeismicSource(SeismicSource source) {
+        this.seismicSource = source;
+    }
+
+    public SeismicSource getSeismicSource() {
+        return seismicSource;
     }
 
     public boolean hasDescription() {
@@ -194,6 +311,6 @@ public abstract class RayCalculateable {
     /**
      * Optional source args for amp calculations.
      */
-    protected SeismicSourceArgs sourceArgs = null;
+    protected SeismicSource seismicSource = null;
 
 }
