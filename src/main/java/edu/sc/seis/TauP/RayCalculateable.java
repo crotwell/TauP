@@ -201,7 +201,7 @@ public abstract class RayCalculateable {
                 }
             }
         }
-        if (hasSeismicSource()) {
+        if (hasSeismicSource() && getSeismicSource().hasMw()) {
             return getSeismicSource().getMw();
         }
         return ArrivalAmplitude.DEFAULT_MW;
@@ -214,43 +214,11 @@ public abstract class RayCalculateable {
         if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
             return true;
         }
-        if (hasSource()) {
-            LatLonLocatable ll = getSource();
-            if (ll instanceof Event) {
-                Event event = (Event) ll;
-
-                if (event.getFocalMechanismList().size() > 0) {
-                    FocalMechanism fm = event.getFocalMechanismList().get(0);
-                    if (fm.getNodalPlane().length > 0) {
-                        return true;
-                    }
-                }
-            }
-        } else if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
-            return true;
-        }
         return false;
     }
     public FaultPlane getFaultPlane() {
         if (hasSeismicSource() && getSeismicSource().hasNodalPlane()) {
             return getSeismicSource().getNodalPlane1();
-        }
-         if (hasSource()) {
-            LatLonLocatable ll = getSource();
-            if (ll instanceof Event) {
-                Event event = (Event)ll;
-
-                if (event.getFocalMechanismList().size()>0) {
-                    FocalMechanism fm = event.getFocalMechanismList().get(0);
-                    if (fm.getNodalPlane().length>0) {
-                        FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
-                        SeismicSourceArgs es = new SeismicSourceArgs();
-                        es.setStrikeDipRake(List.of((float)fp.getStrike(), (float)fp.getDip(), (float)fp.getRake()));
-                        es.setMw(event.getPreferredMagnitude().getMag().getValue());
-                        return fp;
-                    }
-                }
-            }
         }
         return null;
     }
