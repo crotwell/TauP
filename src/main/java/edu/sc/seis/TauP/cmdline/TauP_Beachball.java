@@ -42,6 +42,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         // in case no arrivals, still use given source arg
         if (sourceArgs.hasStrikeDipRake()) {
             uniqFaultPlaneList.add(sourceArgs.getFaultPlane());
+        } else {
+            // no fault plane given on cmd line, so make sure all rays have
+            for (RayCalculateable ray : distanceValues) {
+                if (!ray.hasFaultPlane()) {
+                    Alert.warning("Missing fault plane for ray: "+ray);
+                }
+            }
         }
         for (RayCalculateable ray : distanceValues) {
             if (ray.hasSeismicSource() && ray.getSeismicSource().hasNodalPlane()) {
@@ -65,11 +72,20 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         }
         if (getOutputFormat().equals(OutputTypes.HTML)) {
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+
             StringBuilder extraCSS = new StringBuilder();
             extraCSS.append("div.beachball svg {\n");
             extraCSS.append("  height: 500px;\n");
             extraCSS.append("}\n");
             HTMLUtil.createHtmlStart(writer, "TauP Beachball", extraCSS, false);
+
+            writer.println("<li>");
+            for (RayCalculateable ray : distanceValues) {
+                if (!ray.hasFaultPlane()) {
+                    writer.println("<li>Missing fault plane for ray: "+ray+"</li>");
+                }
+            }
+            writer.println("</li>");
 
             for (FaultPlane faultPlane : uniqFaultPlaneList) {
                 List<RayCalculateable> distanceValuesPerSource = new ArrayList<>();
