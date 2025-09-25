@@ -51,7 +51,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 if (ll instanceof Event) {
                     Event event = (Event)ll;
 
-                    if (event.getFocalMechanismList().size()>0) {
+                    if (!event.getFocalMechanismList().isEmpty()) {
                         FocalMechanism fm = event.getFocalMechanismList().get(0);
                         if (fm.getNodalPlane().length>0) {
                             FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
@@ -78,7 +78,6 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                         distanceValuesPerSource.add(ray);
                     }
                 }
-                List<RadiationAmplitude> radPattern = calcRadiationPattern(faultPlane, numPoints);
                 List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
 
                 String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
@@ -168,10 +167,58 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     }
 
     public void printResultSVG(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList, BeachballType bbType) throws TauPException {
-
+        if (faultPlane == null) {
+            for (Arrival arrival : arrivalList) {
+                if (arrival.getRayCalculateable().hasFaultPlane()) {
+                    faultPlane = arrival.getRayCalculateable().getFaultPlane();
+                    break;
+                }
+            }
+        }
         float pixelWidth = outputTypeArgs.getPixelWidth();
-        TauModel tMod = modelArgs.getTauModel();
         int plotOffset = 0;
+        StringBuilder extraCSS = getBeachballExtraCSS();
+        StringBuilder extraDefs = new StringBuilder();
+        extraDefs.append("<marker\n");
+        extraDefs.append("      id=\"arrow\"\n" );
+        extraDefs.append("      viewBox=\"0 0 10 10\"\n");
+        extraDefs.append("      refX=\"5\"\n");
+        extraDefs.append("      refY=\"5\"\n");
+        extraDefs.append("      markerWidth=\"3\"\n" );
+        extraDefs.append("      markerHeight=\"3\"\n");
+        extraDefs.append("      orient=\"auto-start-reverse\">\n");
+        extraDefs.append("      <path d=\"M 0 0 L 10 5 L 0 10 z\" />\n");
+        extraDefs.append("    </marker>");
+        SvgUtil.xyplotScriptBeginning( writer, toolNameFromClass(this.getClass()),
+                getCmdLineArgs(),  pixelWidth, plotOffset, coloring.getColorList(),
+                extraCSS, null, extraDefs);
+
+        float scale = pixelWidth/2;
+        float hpw = pixelWidth/2;
+
+
+        writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
+
+
+        drawPhasesSVG(writer, scale, getSeismicPhases(), bbType);
+        writer.println("<g class=\"axis\">");
+
+        writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
+        writer.println("<line x1=\""+(-1*hpw)+"\" y1=\""+(0)+"\" x2=\""+hpw+"\" y2=\""+(0)+"\" />");
+        writer.println("<circle cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
+
+        writer.println("</g>");
+
+        drawFaultsSVG(writer, faultPlane, scale);
+        drawRadiationPatternSVG(writer, faultPlane, scale, bbType);
+        drawPTNAxes(writer, faultPlane, scale);
+        drawArrivalsSVG(writer, scale, arrivalList);
+
+        writer.println("</g> <!-- end flip scale -->");
+        writer.println("</svg>");
+    }
+
+    private static StringBuilder getBeachballExtraCSS() {
         StringBuilder extraCSS = new StringBuilder();
         extraCSS.append("g.radpattern line {\n");
         extraCSS.append("  stroke: black;\n");
@@ -232,47 +279,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraCSS.append("  fill-opacity: 0.5;\n");
         extraCSS.append("  stroke: green;\n");
         extraCSS.append("}\n");
-        StringBuilder extraDefs = new StringBuilder();
-        extraDefs.append("<marker\n");
-        extraDefs.append("      id=\"arrow\"\n" );
-        extraDefs.append("      viewBox=\"0 0 10 10\"\n");
-        extraDefs.append("      refX=\"5\"\n");
-        extraDefs.append("      refY=\"5\"\n");
-        extraDefs.append("      markerWidth=\"3\"\n" );
-        extraDefs.append("      markerHeight=\"3\"\n");
-        extraDefs.append("      orient=\"auto-start-reverse\">\n");
-        extraDefs.append("      <path d=\"M 0 0 L 10 5 L 0 10 z\" />\n");
-        extraDefs.append("    </marker>");
-        SvgUtil.xyplotScriptBeginning( writer, toolNameFromClass(this.getClass()),
-                getCmdLineArgs(),  pixelWidth, plotOffset, coloring.getColorList(),
-                extraCSS, null, extraDefs);
-
-        float scale = pixelWidth/2;
-        float hpw = pixelWidth/2;
-
-
-        writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
-
-
-        drawPhasesSVG(writer, faultPlane, scale, getSeismicPhases(), bbType);
-        writer.println("<g class=\"axis\">");
-
-        writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
-        writer.println("<line x1=\""+(-1*hpw)+"\" y1=\""+(0)+"\" x2=\""+hpw+"\" y2=\""+(0)+"\" />");
-        writer.println("<circle cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
-
-        writer.println("</g>");
-
-        drawFaultsSVG(writer, faultPlane, scale);
-        drawRadiationPatternSVG(writer, faultPlane, scale, bbType);
-        drawPTNAxes(writer, faultPlane, scale);
-        drawArrivalsSVG(writer, faultPlane, scale, arrivalList);
-
-        writer.println("</g> <!-- end flip scale -->");
-        writer.println("</svg>");
+        return extraCSS;
     }
 
-    public void drawPhasesSVG(PrintWriter writer, FaultPlane faultPlane, float scale, List<SeismicPhase> phaseList, BeachballType bbType) throws SlownessModelException, TauModelException {
+    public void drawPhasesSVG(PrintWriter writer, float scale, List<SeismicPhase> phaseList, BeachballType bbType) {
         writer.println("<g class=\"phase\">");
         for (SeismicPhase phase : phaseList) {
             // only draw if phase source segment matches bb type
@@ -297,7 +307,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         writer.println("</g>");
     }
 
-    public void drawArrivalsSVG(PrintWriter writer, FaultPlane faultPlane, float scale, List<Arrival> arrivalList) throws SlownessModelException, TauModelException {
+    public void drawArrivalsSVG(PrintWriter writer, float scale, List<Arrival> arrivalList) throws SlownessModelException, TauModelException {
         writer.println("<g class=\"arrival\">");
         for (Arrival arr : arrivalList) {
             if (arr.getRayCalculateable().hasAzimuth()) {
@@ -446,8 +456,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         sterY = sterR * Math.sin(coordN.getTheta());
         x1 = scale * (sterX );
         y1 = scale * ( sterY );
-        writer.println("<circle class=\"arrival " + compressionT + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
-        writer.println("<text class=\"arrival " + compressionT + "\" x=\"" + x1 + "\" y=\"" + y1 + "\" >N</text>");
+        writer.println("<circle class=\"arrival " + compressionN + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
+        writer.println("<text class=\"arrival " + compressionN + "\" x=\"" + x1 + "\" y=\"" + y1 + "\" >N</text>");
 
         writer.println("</g>");
     }
