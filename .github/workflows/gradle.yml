@@ -26,7 +26,7 @@ jobs:
         java-version: '11'
         distribution: 'zulu'
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
     - name: Build with Gradle
       run: ./gradlew installDist
     - name: Test with Gradle
