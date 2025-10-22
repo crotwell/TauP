@@ -202,34 +202,55 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         boolean isFlat = false;
         String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, isFlat, isDowngoing);
-        TauBranch nextBranch = tMod.getTauBranch(startBranchNum, isPWave);
+        TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
+        TauBranch endBranch = tMod.getTauBranch(endBranchNum, isPWave);
+
 
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
+        TauBranch priorEndBranch = tMod.getTauBranch(priorEndBranchNum, endSeg.isPWave);
+
+        // check to make sure RP compatible with boundary when entering from below or above
+        // or when reflecting with phase change
+        switch (endSeg.endAction) {
+            case REFLECT_UNDERSIDE:
+            case REFLECT_UNDERSIDE_CRITICAL:
+            case TRANSDOWN:
+                maxRayParam = Math.min(maxRayParam, startBranch.getTopRayParam());
+                break;
+            case REFLECT_TOPSIDE:
+            case REFLECT_TOPSIDE_CRITICAL:
+            case TRANSUP:
+                maxRayParam = Math.min(maxRayParam, startBranch.getBotRayParam());
+            default:
+        }
         switch (endAction) {
             case REFLECT_TOPSIDE_CRITICAL:
-                minRayParam = Math.max(minRayParam, nextBranch.getMinRayParam());
+                minRayParam = Math.max(minRayParam, endBranch.getMinRayParam());
             case TRANSDOWN:
             case REFLECT_TOPSIDE:
             case END_DOWN:
-                maxRayParam = Math.min(maxRayParam, nextBranch.getMinTurnRayParam());
+                maxRayParam = Math.min(maxRayParam, endBranch.getMinTurnRayParam());
+                maxRayParam = Math.min(maxRayParam, endBranch.getBotRayParam());
                 break;
 
             case TURN:
-                minRayParam = Math.max(minRayParam, nextBranch.getMinRayParam());
-                maxRayParam = Math.min(maxRayParam, nextBranch.getMaxRayParam());
+                minRayParam = Math.max(minRayParam, endBranch.getBotRayParam());
+                maxRayParam = Math.min(maxRayParam, startBranch.getTopRayParam());
                 break;
             case TRANSUP:
+                maxRayParam = Math.min(maxRayParam, endBranch.getTopRayParam());
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
             case END:
-                maxRayParam = Math.min(maxRayParam, nextBranch.getMaxRayParam());
+                maxRayParam = Math.min(maxRayParam, endBranch.getMaxRayParam());
                 break;
 
         }
+
         SeismicPhaseSegment nextSeg;
         if (maxRayParam < minRayParam) {
-             nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, isDowngoing, nextLegName);
+            nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, isDowngoing, nextLegName);
         } else {
             nextSeg = new SeismicPhaseSegment(tMod,
                     startBranchNum, endBranchNum, isPWave, endAction, isDowngoing, nextLegName,
@@ -795,6 +816,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 endSegment().minRayParam = minRP;
             }
         }
+    }
+
+    public final List<SeismicPhaseSegment> getSegmentList() {
+        return segmentList;
     }
 
     public final SeismicPhaseSegment get(int i) {
@@ -1566,7 +1591,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     public String segmentListAsString() {
         StringBuffer sb = new StringBuffer();
         for (SeismicPhaseSegment seg : segmentList) {
-            sb.append(", "+seg.startBranch+" "+seg.endBranch+" then "+seg.endAction);
+            sb.append(", "+seg.startBranch+" as "+(seg.isPWave?"P":"S")+" "+seg.endBranch+" then "+seg.endAction);
         }
         return sb.substring(2);
     }
