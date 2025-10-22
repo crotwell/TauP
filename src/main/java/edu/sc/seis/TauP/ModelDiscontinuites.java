@@ -1,27 +1,21 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.gson.AboveBelowVelocityDiscon;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModelDiscontinuites {
 
-    public ModelDiscontinuites(VelocityModel vMod) {
+    public ModelDiscontinuites(VelocityModel vMod) throws NoSuchLayerException {
         this.modelname = vMod.getModelName();
         for (double d : vMod.getDisconDepths()) {
-            if (d == vMod.getRadiusOfEarth()) {
-                // center not really a discon
-                continue;
-            }
-            if (vMod.isNamedDisconDepth(d)) {
-                discontinuities.add(vMod.getNamedDisconForDepth(d));
-            } else {
-                discontinuities.add(new NamedVelocityDiscon(d));
-            }
+            discontinuities.add(new AboveBelowVelocityDiscon(d, vMod));
         }
     }
 
     String modelname;
-    List<NamedVelocityDiscon> discontinuities = new ArrayList<>();
+    List<AboveBelowVelocityDiscon> discontinuities = new ArrayList<>();
 
 
 }

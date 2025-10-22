@@ -21,6 +21,35 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
             json.addProperty(JSONLabels.PREFNAME, src.getPreferredName());
         }
         json.addProperty(JSONLabels.DEPTH, (float)src.getDepth());
+        if (src instanceof AboveBelowVelocityDiscon) {
+            AboveBelowVelocityDiscon abDiscon = (AboveBelowVelocityDiscon)src;
+            if (abDiscon.above != null) {
+                JsonObject above = new JsonObject();
+                above.addProperty(JSONLabels.VP, abDiscon.above.getBotPVelocity());
+                above.addProperty(JSONLabels.VS, abDiscon.above.getBotPVelocity());
+                above.addProperty(JSONLabels.DENSITY, abDiscon.above.getBotPVelocity());
+                if (!abDiscon.above.QIsDefault()) {
+                    above.addProperty(JSONLabels.QP, abDiscon.above.getBotQp());
+                    above.addProperty(JSONLabels.QS, abDiscon.above.getBotQs());
+                }
+                above.addProperty(JSONLabels.SLOWP, (float)abDiscon.getAboveSlownessP());
+                above.addProperty(JSONLabels.SLOWS, (float)abDiscon.getAboveSlownessS());
+                json.add(JSONLabels.ABOVE, above);
+            }
+            if (abDiscon.below != null) {
+                JsonObject below = new JsonObject();
+                below.addProperty(JSONLabels.VP, abDiscon.below.getBotPVelocity());
+                below.addProperty(JSONLabels.VS, abDiscon.below.getBotPVelocity());
+                below.addProperty(JSONLabels.DENSITY, abDiscon.below.getBotPVelocity());
+                if (!abDiscon.below.QIsDefault()) {
+                    below.addProperty(JSONLabels.QP, (float)abDiscon.below.getBotQp());
+                    below.addProperty(JSONLabels.QS, (float)abDiscon.below.getBotQs());
+                }
+                below.addProperty(JSONLabels.SLOWP, abDiscon.getBelowSlownessP());
+                below.addProperty(JSONLabels.SLOWS, abDiscon.getBelowSlownessS());
+                json.add(JSONLabels.BELOW, below);
+            }
+        }
         return json;
     }
 }

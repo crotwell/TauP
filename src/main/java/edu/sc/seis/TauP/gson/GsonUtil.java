@@ -25,6 +25,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(Scatterer.class, new ScattererSerializer());
         gson.registerTypeAdapter(ShadowZone.class, new ShadowZoneSerializer());
         gson.registerTypeAdapter(NamedVelocityDiscon.class, new NamedVelocityDisconSerializer());
+        gson.registerTypeAdapter(AboveBelowVelocityDiscon.class, new NamedVelocityDisconSerializer());
         gson.registerTypeAdapter(VelocityLayer.class, new VelocityLayerSerializer());
         gson.registerTypeAdapter(VelocityModel.class, new VelocityModelSerializer());
         gson.registerTypeAdapter(Isochron.class, new IsochronSerializer());

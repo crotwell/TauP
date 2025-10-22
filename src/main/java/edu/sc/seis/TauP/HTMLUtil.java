@@ -112,7 +112,7 @@ public class HTMLUtil {
         sb.append("    background: var(--odd-row-background);\n");
         sb.append("    border: unset;\n");
         sb.append("    padding-top: 5px;\n");
-        sb.append("    border-top: 1px solid lightgray;\n");
+        sb.append("    border-top: 3px dotted lightgray;\n");
         sb.append("}\n");
 
         sb.append("tbody tr:nth-child(3n+1) td {\n");
@@ -126,7 +126,7 @@ public class HTMLUtil {
         sb.append("    background: var(--odd-row-background);\n");
         sb.append("    padding-bottom: 5px;\n");
         sb.append("    border: unset;\n");
-        sb.append("    border-bottom: 1px solid lightgray;\n");
+        sb.append("    border-bottom: 1px dotted lightgray;\n");
         sb.append("}\n");
         return sb.toString();
     }

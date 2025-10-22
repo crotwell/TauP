@@ -82,8 +82,8 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         return json;
     }
 
-    String name;
-    String preferredName = null;
+    protected String name;
+    protected String preferredName = null;
     double depth;
 
     // common names

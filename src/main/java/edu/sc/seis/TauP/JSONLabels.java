@@ -102,4 +102,14 @@ public interface JSONLabels {
     String DIST = "dist";
     String EXACT = "exact";
     String HEMISPHERE = "hemisphere";
+
+    String VP = "Vp";
+    String VS = "Vs";
+    String QP = "Qp";
+    String QS = "Qs";
+    String DENSITY = "density";
+    String SLOWP = "slowness_p";
+    String SLOWS = "slowness_s";
+    String ABOVE = "above";
+    String BELOW = "below";
 }

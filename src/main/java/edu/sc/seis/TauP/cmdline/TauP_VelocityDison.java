@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.sc.seis.TauP.gson.AboveBelowVelocityDiscon;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
@@ -13,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TEXT;
 
@@ -68,22 +70,45 @@ public class TauP_VelocityDison extends TauP_Tool {
         } else if (outputTypeArgs.isHTML()) {
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
             List<String> headers = List.of("Depth", "Radius", "Name", "Vp", "Vs", "Density");
+            if (alsoSlowness) {
+                headers = new ArrayList<>(headers);
+                headers.add("P Slowness (s/deg)");
+                headers.add("S Slowness (s/deg)");
+            }
             HTMLUtil.createHtmlStart(writer, "TauP Discon",
                     HTMLUtil.createBaseTableCSS()+"\n"+HTMLUtil.createThridRowCSS(), false);
             for (VelocityModel vMod : vModList) {
                 List<List<String>> values = new ArrayList<>();
                 for (double d : vMod.getDisconDepths()) {
+                    AboveBelowVelocityDiscon discon = new AboveBelowVelocityDiscon(d, vMod);
 
-                    NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
-                    String disconName = discon == null ? "" : "  " + discon.getPreferredName();
-                    VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
-                    VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
+                    String disconName = discon.hasPreferredName() ? "  " + discon.getPreferredName() : "";
                     if (d != 0) {
-                        values.add( List.of("", "", "", ""+above.getBotPVelocity(), ""+above.getBotSVelocity(), ""+above.getBotDensity()));
+                        List<String> aboveValues = new ArrayList<>();
+                        aboveValues.addAll(List.of("", "", "", ""+ discon.getAbove().getBotPVelocity(),
+                                ""+ discon.getAbove().getBotSVelocity(), ""+ discon.getAbove().getBotDensity()));
+                        if (alsoSlowness) {
+                            aboveValues.add(Outputs.formatRayParam(discon.getAboveSlownessP()));
+                            aboveValues.add(Outputs.formatRayParam(discon.getAboveSlownessS()));
+                        }
+                        values.add( aboveValues);
                     }
-                    values.add(List.of(Outputs.formatDepth(d), Outputs.formatDepth(vMod.getRadiusOfEarth()-d), disconName, "", "", ""));
+                    List<String> depthValues = new ArrayList<>();
+                    depthValues.addAll( List.of(Outputs.formatDepth(d),
+                            Outputs.formatDepth(vMod.getRadiusOfEarth()-d), disconName, "", "", ""));
+                    if (alsoSlowness) {
+                        depthValues.addAll(List.of("", ""));
+                    }
+                    values.add(depthValues);
                     if (d != vMod.getRadiusOfEarth()) {
-                        values.add( List.of("", "", "", ""+below.getBotPVelocity(), ""+below.getBotSVelocity(), ""+below.getBotDensity()));
+                        List<String> belowValues = new ArrayList<>();
+                        belowValues.addAll( List.of("", "", "", ""+ discon.getBelow().getBotPVelocity(),
+                                ""+ discon.getBelow().getBotSVelocity(), ""+ discon.getBelow().getBotDensity()));
+                        if (alsoSlowness) {
+                            belowValues.add(Outputs.formatRayParam(discon.getBelowSlownessP()));
+                            belowValues.add(Outputs.formatRayParam(discon.getBelowSlownessS()));
+                        }
+                        values.add(belowValues);
                     }
                 }
 
@@ -100,18 +125,39 @@ public class TauP_VelocityDison extends TauP_Tool {
             for (VelocityModel vMod : vModList) {
                 writer.println("# " + vMod.getModelName());
                 writer.println("#        Depth    (Radius)");
-                writer.println("#        Vp      Vs      Density");
+                writer.print("#        Vp      Vs      Density");
+                if (alsoSlowness) {
+                    writer.print("  P Slow (s/deg)  S Slow (s/deg)");
+                }
+                writer.println();
                 for (double d : vMod.getDisconDepths()) {
-                    NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
-                    String disconName = discon == null ? "" : "  " + discon.getPreferredName();
-                    VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
-                    VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
+                    AboveBelowVelocityDiscon discon = new AboveBelowVelocityDiscon(d, vMod);
+                    String disconName = discon.hasPreferredName() ? "  " + discon.getPreferredName() : "";
                     if (d != 0) {
-                        writer.println("      " + Outputs.formatRayParam(above.getBotPVelocity()) + " " + Outputs.formatRayParam(above.getBotSVelocity()) + " " + Outputs.formatRayParam(above.getBotDensity()));
+                        writer.print("      " + Outputs.formatRayParam(discon.getAbove().getBotPVelocity())
+                                + " " + Outputs.formatRayParam(discon.getAbove().getBotSVelocity())
+                                + " " + Outputs.formatRayParam(discon.getAbove().getBotDensity()));
+                        if (alsoSlowness) {
+                            SlownessLayer p_SlowLayer = new SlownessLayer(discon.getAbove(), vMod.getSpherical(), vMod.getRadiusOfEarth(), true);
+                            SlownessLayer s_SlowLayer = new SlownessLayer(discon.getAbove(), vMod.getSpherical(), vMod.getRadiusOfEarth(), false);
+                            writer.print("      " + Outputs.formatRayParam(p_SlowLayer.getBotP()/RtoD));
+                            writer.print("      " + Outputs.formatRayParam(s_SlowLayer.getBotP()/RtoD));
+                        }
+                        writer.println();
                     }
-                    writer.println("---"+Outputs.formatDepth(d)+" "+Outputs.formatDepth(vMod.getRadiusOfEarth()-d)+" " + disconName);
+                    writer.println("---"+Outputs.formatDepth(d)
+                            +" "+Outputs.formatDepth(vMod.getRadiusOfEarth()-d)
+                            +" " + disconName);
                     if (d != vMod.getRadiusOfEarth()) {
-                        writer.println("      " + Outputs.formatRayParam(below.getTopPVelocity()) + " " + Outputs.formatRayParam(below.getTopSVelocity()) + " " + Outputs.formatRayParam(below.getTopDensity()));
+                        writer.print("      " + Outputs.formatRayParam(discon.getBelow().getTopPVelocity())
+                                + " " + Outputs.formatRayParam(discon.getBelow().getTopSVelocity())
+                                + " " + Outputs.formatRayParam(discon.getBelow().getTopDensity()));if (alsoSlowness) {
+                            SlownessLayer p_SlowLayer = new SlownessLayer(discon.getBelow(), vMod.getSpherical(), vMod.getRadiusOfEarth(), true);
+                            SlownessLayer s_SlowLayer = new SlownessLayer(discon.getBelow(), vMod.getSpherical(), vMod.getRadiusOfEarth(), false);
+                            writer.print("      " + Outputs.formatRayParam(p_SlowLayer.getTopP()/RtoD));
+                            writer.print("      " + Outputs.formatRayParam(s_SlowLayer.getTopP()/RtoD));
+                        }
+                        writer.println();
                     }
                     writer.println();
                 }
@@ -141,4 +187,8 @@ public class TauP_VelocityDison extends TauP_Tool {
 
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs;
+
+    @CommandLine.Option(names = {"--slowness"},
+            description = "output the slowness for each discontinuity also")
+    protected boolean alsoSlowness = false;
 }
