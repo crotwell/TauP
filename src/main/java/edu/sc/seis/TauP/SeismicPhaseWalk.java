@@ -425,7 +425,8 @@ public class SeismicPhaseWalk {
                 break;
             case REFLECT_UNDERSIDE:
             case TRANSDOWN:
-                outTreeAdd(outTree, proto.nextSegment(isPWave, TURN));
+                ProtoSeismicPhase turnPhase = proto.nextSegment(isPWave, TURN);
+                outTreeAdd(outTree, turnPhase);
                 if (prevEndSeg.endBranch < tMod.getNumBranches()-2) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, TRANSDOWN));
                     if ( ! excludeBranch.contains(1+ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, true)) ) {

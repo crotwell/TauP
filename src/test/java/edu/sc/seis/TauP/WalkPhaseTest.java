@@ -361,6 +361,7 @@ public class WalkPhaseTest {
 
     }
 
+
     @Test
     public void phaseChangeRayParam() throws TauModelException {
         TauModel tMod = TauModelLoader.load("iasp91");

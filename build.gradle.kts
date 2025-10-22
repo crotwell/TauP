@@ -12,8 +12,8 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.jreleaser") version "1.19.0"
+  id("com.github.ben-manes.versions") version "0.53.0"
+  id("org.jreleaser") version "1.20.0"
 }
 
 application {
@@ -190,7 +190,7 @@ java {
 
 dependencies {
     implementation("org.json:json:20250517")
-    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.google.code.gson:gson:2.13.2")
     implementation("edu.sc.seis:seisFile:2.3.1")
     //implementation("edu.sc.seis:seisFile:2.3.1-SNAPSHOT")
     implementation("edu.sc.seis:seedCodec:1.2.0")
@@ -203,7 +203,7 @@ dependencies {
     implementation("org.slf4j:slf4j-reload4j:2.0.6")
 
 
-    implementation("io.undertow:undertow-core:2.3.18.Final")
+    implementation("io.undertow:undertow-core:2.3.20.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
