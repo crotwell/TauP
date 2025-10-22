@@ -413,6 +413,26 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName, String toolname) throws TauPException {
+
+
+        HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
+        if (withAmplitude) {
+            out.println("<p>"+AmplitudeArgs.AMPLITUDE_WARNING+"</p>");
+        }
+        String modelLine = String.join("", createModelHeaderLine(modelName, scatterer));
+        out.println("<h5>"+modelLine+"</h5>");
+        printArrivalsAsHtmlTable(out, arrivalList, modelName, scatterer, withAmplitude, sourceArgs, relativePhaseName, toolname);
+        HTMLUtil.addSortTableJS(out);
+        out.println(HTMLUtil.createHtmlEnding());
+        out.flush();
+    }
+
+    public static void printArrivalsAsHtmlTable(PrintWriter out,
+                                           List<Arrival> arrivalList,
+                                           String modelName,
+                                           Scatterer scatterer,
+                                           boolean withAmplitude, SeismicSourceArgs sourceArgs,
+                                           List<String> relativePhaseName, String toolname) throws TauPException {
         String phaseFormat = "%s";
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
@@ -420,12 +440,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
         List<String> mergedHeaders = combineHeadLines(headLines);
 
-        HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
-        if (withAmplitude) {
-            out.println("<p>"+AmplitudeArgs.AMPLITUDE_WARNING+"</p>");
-        }
-        String modelLine = String.join("", headLines.get(0));
-        out.println("<h5>"+modelLine+"</h5>");
         List<List<String>> values = new ArrayList<>();
         for (Arrival arrival : arrivalList) {
             List<String> lineItems = arrival.asStringList(false,
@@ -434,9 +448,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
         }
 
         out.println(HTMLUtil.createBasicTable(mergedHeaders, values));
-        HTMLUtil.addSortTableJS(out);
-        out.println(HTMLUtil.createHtmlEnding());
-        out.flush();
     }
 
 
