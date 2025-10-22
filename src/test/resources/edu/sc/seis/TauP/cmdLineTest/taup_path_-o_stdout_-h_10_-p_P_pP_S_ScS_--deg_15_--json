@@ -24,6 +24,13 @@
       "incident": 43.420486,
       "puristdist": 15.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1700.8848,
       "path": [
         {
@@ -376,6 +383,13 @@
       "incident": 45.29328,
       "puristdist": 15.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1687.1029,
       "path": [
         {
@@ -618,6 +632,13 @@
       "incident": 44.809475,
       "puristdist": 15.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1689.6921,
       "path": [
         {
@@ -910,6 +931,13 @@
       "incident": 45.307064,
       "puristdist": 15.0,
       "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1695.5564,
       "path": [
         {
@@ -1213,6 +1241,13 @@
       "incident": 43.559498,
       "puristdist": 15.0,
       "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1708.6523,
       "path": [
         {
@@ -1626,6 +1661,13 @@
       "incident": 44.774063,
       "puristdist": 15.0,
       "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1698.6182,
       "path": [
         {
@@ -1989,6 +2031,13 @@
       "incident": 35.418922,
       "puristdist": 15.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1832.8384,
       "path": [
         {
@@ -2631,6 +2680,13 @@
       "incident": 35.875412,
       "puristdist": 15.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1825.3733,
       "path": [
         {
@@ -3263,6 +3319,13 @@
       "incident": 35.422916,
       "puristdist": 15.0,
       "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1843.997,
       "path": [
         {
@@ -3966,6 +4029,13 @@
       "incident": 35.822926,
       "puristdist": 15.0,
       "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1837.3668,
       "path": [
         {
@@ -4659,6 +4729,13 @@
       "incident": 47.270397,
       "puristdist": 15.0,
       "puristname": "S",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1686.8524,
       "path": [
         {
@@ -4886,6 +4963,13 @@
       "incident": 38.31232,
       "puristdist": 15.0,
       "puristname": "S",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1826.3488,
       "path": [
         {
@@ -5373,6 +5457,13 @@
       "incident": 38.649155,
       "puristdist": 15.0,
       "puristname": "S",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 1821.3586,
       "path": [
         {
@@ -5850,6 +5941,13 @@
       "incident": 4.4832096,
       "puristdist": 15.0,
       "puristname": "Scs",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 15.0,
+          "unit": "deg"
+        }
+      },
       "pathlength": 5909.861,
       "path": [
         {

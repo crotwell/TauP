@@ -27,6 +27,13 @@
       "incident": 25.670954,
       "puristdist": 40.0,
       "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 40.0,
+          "unit": "deg"
+        }
+      },
       "pierce": [
         [
           0.0,
@@ -125,6 +132,13 @@
         "depth": 200.0,
         "distdeg": -5.0
       },
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 40.0,
+          "unit": "deg"
+        }
+      },
       "pierce": [
         [
           0.0,
@@ -220,6 +234,13 @@
       "incident": 27.762682,
       "puristdist": 40.0,
       "puristname": "S",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 40.0,
+          "unit": "deg"
+        }
+      },
       "pierce": [
         [
           0.0,

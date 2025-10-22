@@ -42,7 +42,14 @@
             "takeoff": 86.78937,
             "incident": 86.78937,
             "puristdist": 6.4212656,
-            "puristname": "S"
+            "puristname": "S",
+            "raytype": {
+              "type": "DistanceAngleRay",
+              "ray": {
+                "radian": 0.11207222997739995,
+                "unit": "rad"
+              }
+            }
           },
           "postshadow": {
             "sourcedepth": 0.0,
@@ -54,7 +61,14 @@
             "takeoff": 86.78937,
             "incident": 86.78937,
             "puristdist": 6.5993147,
-            "puristname": "Sed15S"
+            "puristname": "Sed15S",
+            "raytype": {
+              "type": "DistanceAngleRay",
+              "ray": {
+                "radian": 0.11517977272062169,
+                "unit": "rad"
+              }
+            }
           }
         }
       ],

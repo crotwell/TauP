@@ -43,6 +43,10 @@ public class TakeoffAngleRay extends ShootableRay {
         return new RayParamRay(rayParam);
     }
 
+    public Double getTakeoffAngle() {
+        return takeoffAngle;
+    }
+
     Double takeoffAngle;
 
 }

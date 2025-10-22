@@ -19,6 +19,7 @@ public class RayParamRay extends ShootableRay {
     }
     public static RayParamRay ofRayParamSDegree(double d) {
         RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor);
+        rp.rayParamSDeg = d;
         rp.setDescription(d+" s/deg");
         return rp;
     }
@@ -44,9 +45,27 @@ public class RayParamRay extends ShootableRay {
         return rayParam;
     }
 
+    public boolean hasSDegree() {
+        return rayParamSDeg != null;
+    }
+    /**
+     * ray param in s/radian
+     *
+     * @return ray param in seconds per radian
+     */
+    public Double getRayParamSDegree() {
+        if (rayParamSDeg != null) {
+            return rayParamSDeg;
+        }
+        return rayParam/SphericalCoords.RtoD;
+    }
 
     /**
      * Ray parameter in s/radian.
      */
     Double rayParam;
+    /**
+     * Optional value in s/deg if constructed via ofRayParamSDegree().
+     */
+    Double rayParamSDeg = null;
 }

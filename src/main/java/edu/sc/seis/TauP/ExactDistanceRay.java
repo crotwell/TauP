@@ -226,4 +226,8 @@ public class ExactDistanceRay extends DistanceRay {
     public String toString() {
         return"exactly "+distanceRay.toString();
     }
+
+    public DistanceRay getWrappedDistanceRay() {
+        return distanceRay;
+    }
 }

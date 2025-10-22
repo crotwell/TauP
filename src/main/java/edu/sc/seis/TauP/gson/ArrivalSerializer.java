@@ -45,10 +45,22 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         a.addProperty(JSONLabels.RAYPARAM, (float)(Math.PI / 180.0 * arr.getRayParam()));
         a.addProperty(JSONLabels.TAKEOFF, (float) arr.getTakeoffAngleDegree());
         a.addProperty(JSONLabels.INCIDENT, (float) arr.getIncidentAngleDegree());
+        if (arr.getRayCalculateable().hasAzimuth()) {
+            a.addProperty(JSONLabels.AZ, arr.getRayCalculateable().getAzimuth());
+        }
+        if (arr.getRayCalculateable().hasBackAzimuth()) {
+            a.addProperty(JSONLabels.BAZ, arr.getRayCalculateable().getBackAzimuth());
+        }
         a.addProperty(JSONLabels.PURISTDIST, (float)arr.getDistDeg());
         a.addProperty(JSONLabels.PURISTNAME, arr.getPuristName());
         if (arr.getRayCalculateable().hasDescription()) {
             a.addProperty(JSONLabels.DESC, arr.getRayCalculateable().getDescription());
+        }
+        if (arr.getRayCalculateable().hasSource()) {
+            a.add(JSONLabels.SOURCE_LOC, context.serialize(arr.getRayCalculateable().getSource()));
+        }
+        if (arr.getRayCalculateable().hasReceiver()) {
+            a.add(JSONLabels.RECEIVER_LOC, context.serialize(arr.getRayCalculateable().getReceiver()));
         }
         if (withAmplitude) {
             try {
@@ -70,6 +82,8 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             relA.addProperty(JSONLabels.DIFFERENCE, (float)(arr.getTime()-relArrival.getTime()));
             relA.add(JSONLabels.ARRIVAL, context.serialize(relArrival));
         }
+        RayCalculateableSerializer raycalcSerializer = new RayCalculateableSerializer();
+        a.add(JSONLabels.RAYCALC, raycalcSerializer.serialize(arr.getRayCalculateable(), RayCalculateable.class, context));
         if (withPierce) {
             JsonArray points = new JsonArray();
             a.add(JSONLabels.PIERCE, points);

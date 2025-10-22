@@ -89,6 +89,10 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
         return dr;
     }
 
+    public ExactDistanceRay getWrappedDistanceRay() {
+        return distanceRay;
+    }
+
     public String toString() {
         return"exact hemi "+super.toString();
     }

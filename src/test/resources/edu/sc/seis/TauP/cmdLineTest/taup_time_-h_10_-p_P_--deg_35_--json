@@ -20,7 +20,14 @@
       "takeoff": 26.741543,
       "incident": 26.69624,
       "puristdist": 35.0,
-      "puristname": "P"
+      "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     }
   ]
 }

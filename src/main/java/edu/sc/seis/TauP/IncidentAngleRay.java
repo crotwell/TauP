@@ -43,6 +43,10 @@ public class IncidentAngleRay extends ShootableRay {
         return new RayParamRay(rayParam);
     }
 
+    public Double getIncidentAngle() {
+        return incidentAngle;
+    }
+
     Double incidentAngle;
 
 }

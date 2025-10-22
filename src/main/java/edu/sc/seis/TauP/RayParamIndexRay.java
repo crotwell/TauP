@@ -28,5 +28,9 @@ public class RayParamIndexRay extends ShootableRay {
         return "rp index "+index;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     int index;
 }

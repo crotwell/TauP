@@ -75,7 +75,14 @@
       "takeoff": 26.782135,
       "incident": 26.736752,
       "puristdist": 35.0,
-      "puristname": "P"
+      "puristname": "P",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -87,7 +94,14 @@
       "takeoff": 153.19893,
       "incident": 26.755655,
       "puristdist": 35.0,
-      "puristname": "pP"
+      "puristname": "pP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -99,7 +113,14 @@
       "takeoff": 164.39865,
       "incident": 26.751438,
       "puristdist": 35.0,
-      "puristname": "sP"
+      "puristname": "sP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -111,7 +132,14 @@
       "takeoff": 40.548923,
       "incident": 40.472023,
       "puristdist": 35.0,
-      "puristname": "PP"
+      "puristname": "PP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -123,7 +151,14 @@
       "takeoff": 35.26966,
       "incident": 35.20608,
       "puristdist": 35.0,
-      "puristname": "PP"
+      "puristname": "PP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -135,7 +170,14 @@
       "takeoff": 36.658276,
       "incident": 36.591373,
       "puristdist": 35.0,
-      "puristname": "PP"
+      "puristname": "PP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -147,7 +189,14 @@
       "takeoff": 45.18152,
       "incident": 45.091087,
       "puristdist": 35.0,
-      "puristname": "PP"
+      "puristname": "PP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -159,7 +208,14 @@
       "takeoff": 45.0654,
       "incident": 44.975334,
       "puristdist": 35.0,
-      "puristname": "PP"
+      "puristname": "PP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -171,7 +227,14 @@
       "takeoff": 8.744313,
       "incident": 8.73048,
       "puristdist": 35.0,
-      "puristname": "Pcp"
+      "puristname": "Pcp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -183,7 +246,14 @@
       "takeoff": 28.668465,
       "incident": 28.619303,
       "puristdist": 35.0,
-      "puristname": "S"
+      "puristname": "S",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -195,7 +265,14 @@
       "takeoff": 126.401,
       "incident": 28.646286,
       "puristdist": 35.0,
-      "puristname": "pS"
+      "puristname": "pS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -207,7 +284,14 @@
       "takeoff": 151.31593,
       "incident": 28.634874,
       "puristdist": 35.0,
-      "puristname": "sS"
+      "puristname": "sS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -219,7 +303,14 @@
       "takeoff": 28.835577,
       "incident": 53.82393,
       "puristdist": 35.0,
-      "puristname": "SP"
+      "puristname": "SP",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -231,7 +322,14 @@
       "takeoff": 53.918713,
       "incident": 28.774641,
       "puristdist": 35.0,
-      "puristname": "PS"
+      "puristname": "PS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -243,7 +341,14 @@
       "takeoff": 6.4463987,
       "incident": 10.83078,
       "puristdist": 35.0,
-      "puristname": "Scp"
+      "puristname": "Scp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -255,7 +360,14 @@
       "takeoff": 10.8494215,
       "incident": 6.4370666,
       "puristdist": 35.0,
-      "puristname": "Pcs"
+      "puristname": "Pcs",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -267,7 +379,14 @@
       "takeoff": 49.03354,
       "incident": 48.93007,
       "puristdist": 35.0,
-      "puristname": "SS"
+      "puristname": "SS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -279,7 +398,14 @@
       "takeoff": 39.367878,
       "incident": 39.294132,
       "puristdist": 35.0,
-      "puristname": "SS"
+      "puristname": "SS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -291,7 +417,14 @@
       "takeoff": 41.057213,
       "incident": 40.978924,
       "puristdist": 35.0,
-      "puristname": "SS"
+      "puristname": "SS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -303,7 +436,14 @@
       "takeoff": 31.410543,
       "incident": 31.355642,
       "puristdist": 35.0,
-      "puristname": "SS"
+      "puristname": "SS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -315,7 +455,14 @@
       "takeoff": 31.638874,
       "incident": 31.58348,
       "puristdist": 35.0,
-      "puristname": "SS"
+      "puristname": "SS",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -327,7 +474,14 @@
       "takeoff": 2.2802625,
       "incident": 2.2766814,
       "puristdist": 35.0,
-      "puristname": "PKikp"
+      "puristname": "PKikp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -339,7 +493,14 @@
       "takeoff": 177.72018,
       "incident": 2.2762418,
       "puristdist": 35.0,
-      "puristname": "pPKikp"
+      "puristname": "pPKikp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -351,7 +512,14 @@
       "takeoff": 178.64015,
       "incident": 2.2763305,
       "puristdist": 35.0,
-      "puristname": "sPKikp"
+      "puristname": "sPKikp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -363,7 +531,14 @@
       "takeoff": 9.657617,
       "incident": 9.642313,
       "puristdist": 35.0,
-      "puristname": "Scs"
+      "puristname": "Scs",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -375,7 +550,14 @@
       "takeoff": 1.430901,
       "incident": 2.3953042,
       "puristdist": 35.0,
-      "puristname": "SKikp"
+      "puristname": "SKikp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -387,7 +569,14 @@
       "takeoff": 2.3060124,
       "incident": 2.3023908,
       "puristdist": 325.0,
-      "puristname": "PKIkKIkp"
+      "puristname": "PKIkKIkp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -399,7 +588,14 @@
       "takeoff": 1.3067465,
       "incident": 2.1874034,
       "puristdist": 325.0,
-      "puristname": "SKIkKIkp"
+      "puristname": "SKIkKIkp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -411,7 +607,14 @@
       "takeoff": 2.190757,
       "incident": 1.3046434,
       "puristdist": 325.0,
-      "puristname": "PKIkKIks"
+      "puristname": "PKIkKIks",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -423,7 +626,14 @@
       "takeoff": 1.2456756,
       "incident": 1.24372,
       "puristdist": 325.0,
-      "puristname": "SKIkKIks"
+      "puristname": "SKIkKIks",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -435,7 +645,14 @@
       "takeoff": 2.9737089,
       "incident": 2.969037,
       "puristdist": 325.0,
-      "puristname": "PKIkpPKIkp"
+      "puristname": "PKIkpPKIkp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -447,7 +664,14 @@
       "takeoff": 13.238733,
       "incident": 13.217577,
       "puristdist": 325.0,
-      "puristname": "PKpPKp"
+      "puristname": "PKpPKp",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     },
     {
       "sourcedepth": 10.0,
@@ -459,7 +683,14 @@
       "takeoff": 1.3995245,
       "incident": 1.3973273,
       "puristdist": 325.0,
-      "puristname": "SKIksSKIks"
+      "puristname": "SKIksSKIks",
+      "raytype": {
+        "type": "DistanceAngleRay",
+        "ray": {
+          "deg": 35.0,
+          "unit": "deg"
+        }
+      }
     }
   ]
 }
