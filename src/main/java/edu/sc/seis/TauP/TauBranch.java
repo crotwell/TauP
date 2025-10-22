@@ -861,7 +861,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     public String toString() {
-        String desc = "Tau Branch\n";
+        String desc = "Tau Branch "+(isPWave?"P":"S")+" "+"\n";
         desc += " topDepth = " + getTopDepth() + "\n";
         desc += " botDepth = " + getBotDepth() + "\n";
         desc += " maxRayParam=" + getMaxRayParam() + " minTurnRayParam="

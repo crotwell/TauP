@@ -293,6 +293,16 @@ public class TauModel implements Serializable {
         return mohoBranch;
     }
 
+    /** @return tau branch with the moho at its top. */
+    public TauBranch getAboveMohoTauBranch(boolean isPWave) {
+        return getTauBranch(mohoBranch-1, isPWave);
+    }
+
+    /** @return tau branch with the moho at its top. */
+    public TauBranch getBelowMohoTauBranch(boolean isPWave) {
+        return getTauBranch(mohoBranch, isPWave);
+    }
+
     /** @return depth of the cmb. */
     public double getCmbDepth() {
         return cmbDepth;
@@ -303,6 +313,16 @@ public class TauModel implements Serializable {
         return cmbBranch;
     }
 
+    /** @return tau branch with the iocb at its top. */
+    public TauBranch getAboveCmbTauBranch(boolean isPWave) {
+        return getTauBranch(cmbBranch-1, isPWave);
+    }
+
+    /** @return tau branch with the iocb at its top. */
+    public TauBranch getBelowCmbTauBranch(boolean isPWave) {
+        return getTauBranch(cmbBranch, isPWave);
+    }
+
     /** @return depth of the iocb. */
     public double getIocbDepth() {
         return iocbDepth;
@@ -311,6 +331,16 @@ public class TauModel implements Serializable {
     /** @return branch number with the iocb at its top. */
     public int getIocbBranch() {
         return iocbBranch;
+    }
+
+    /** @return tau branch with the iocb at its bottom. */
+    public TauBranch getAboveIocbTauBranch(boolean isPWave) {
+        return getTauBranch(iocbBranch-1, isPWave);
+    }
+
+    /** @return tau branch with the iocb at its top. */
+    public TauBranch getBelowIocbTauBranch(boolean isPWave) {
+        return getTauBranch(iocbBranch, isPWave);
     }
 
     /**

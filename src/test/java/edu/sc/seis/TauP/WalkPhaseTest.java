@@ -356,4 +356,48 @@ public class WalkPhaseTest {
         assertTrue(PhaseInteraction.isDowngoingActionBefore(REFLECT_TOPSIDE));
 
     }
+
+
+    @Test
+    public void phaseChangeRayParam() throws TauModelException {
+        TauModel tMod = TauModelLoader.load("iasp91");
+        double receiverDepth = 0.0;
+        double sourceDepth = 579.0;
+        tMod = tMod.depthCorrect(sourceDepth);
+        int maxLegs = 4;
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        Double d = 20.0;
+        Double d35 = 35.0;
+        Double d210 = 210.0;
+        Double d410 = 410.0;
+        double d660 = 660.0;
+        walker.excludeBoundaries(List.of(d, d35, d210, d410, d660));
+        List<ProtoSeismicPhase> segmentTree = new ArrayList<>();
+        segmentTree.addAll( walker.createSourceSegments(tMod, SeismicPhase.SWAVE, receiverDepth));
+        ProtoSeismicPhase SKp = null;
+        for (ProtoSeismicPhase psp : segmentTree) {
+            SeismicPhaseSegment seg = psp.getSegmentList().get(0);
+            if (!seg.isPWave && seg.isDownGoing && seg.endAction == TRANSDOWN) {
+                SKp = psp;
+            }
+        }
+        SKp = SKp.nextSegment(false, TRANSDOWN);
+        assertEquals(2889.0, SKp.endSegment().getBotDepth());
+        // into outer core
+        SKp = SKp.nextSegment(true, TURN);
+        assertEquals(tMod.getAboveIocbTauBranch(true).getBotRayParam(), SKp.endSegment().minRayParam);
+        assertEquals(tMod.getBelowCmbTauBranch(true).getTopRayParam(), SKp.endSegment().maxRayParam);
+        // back into mantle
+        SKp = SKp.nextSegment(true, TRANSUP);
+        assertEquals(2889.0, SKp.endSegment().getTopDepth());
+        assertEquals(tMod.getAboveIocbTauBranch(true).getBotRayParam(), SKp.endSegment().minRayParam);
+        assertEquals(tMod.getBelowCmbTauBranch(true).getTopRayParam(), SKp.endSegment().maxRayParam);
+        while (SKp.endSegment().endBranch > 1) {
+            SKp = SKp.nextSegment(true, TRANSUP);
+        }
+        assertEquals(tMod.getAboveCmbTauBranch(true).getBotRayParam(), SKp.endSegment().maxRayParam);
+        SKp = SKp.nextSegment(true, END);
+        assertEquals(tMod.getAboveIocbTauBranch(true).getBotRayParam(), SKp.endSegment().minRayParam);
+        assertEquals(tMod.getAboveCmbTauBranch(true).getBotRayParam(), SKp.endSegment().maxRayParam);
+    }
 }
