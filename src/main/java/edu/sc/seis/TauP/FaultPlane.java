@@ -166,6 +166,11 @@ public class FaultPlane {
         return Objects.hash(strike, dip, rake);
     }
 
+    @Override
+    public String toString() {
+        return "strike: "+strike+" dip: "+dip+" rake: "+rake;
+    }
+
     double strike;
     double dip;
     double rake;

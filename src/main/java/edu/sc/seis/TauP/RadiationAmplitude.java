@@ -15,6 +15,13 @@ public class RadiationAmplitude {
         this.thetaAmplitude = radPSvSh[2];
     }
 
+    /**
+     * Create amplitude for point on sphere
+     * @param coord spherical direction
+     * @param radialAmp P amplitude
+     * @param thetaAmp Sv amplitude
+     * @param phiAmp Sh amplitude
+     */
     public RadiationAmplitude(SphericalCoordinate coord, double radialAmp, double thetaAmp, double phiAmp) {
         this.coord = coord;
         this.radialAmplitude = radialAmp;
@@ -26,14 +33,26 @@ public class RadiationAmplitude {
         return coord;
     }
 
+    /**
+     * P amplitude.
+     * @return amplitude
+     */
     public double getRadialAmplitude() {
         return radialAmplitude;
     }
 
+    /**
+     * Sv amplitude.
+     * @return amplitude
+     */
     public double getThetaAmplitude() {
         return thetaAmplitude;
     }
 
+    /**
+     * Sh amplitude.
+     * @return amplitude
+     */
     public double getPhiAmplitude() {
         return phiAmplitude;
     }
