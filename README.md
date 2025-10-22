@@ -37,7 +37,7 @@ Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.528
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
-### Install
+# Install
 
 ## [Macintosh](https://docs.brew.sh/Installation) (or [Linux or Windows Subsystem for Linux](https://docs.brew.sh/Homebrew-on-Linux)
 
@@ -56,7 +56,7 @@ or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 
 
-### Rebuilding
+# Rebuilding
 
 You should not need to rebuild TauP unless you are trying to help debug, but if you do, you can build it using the Gradle wrapper script.
 
