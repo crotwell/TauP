@@ -1,8 +1,12 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.Vector;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
@@ -77,12 +81,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             extraCSS.append("div.beachball svg {\n");
             extraCSS.append("  height: 500px;\n");
             extraCSS.append("}\n");
+            extraCSS.append(HTMLUtil.createTableCSS());
             HTMLUtil.createHtmlStart(writer, "TauP Beachball", extraCSS, false);
 
             writer.println("<li>");
             for (RayCalculateable ray : distanceValues) {
                 if (!ray.hasFaultPlane()) {
-                    writer.println("<li>Missing fault plane for ray: "+ray+"</li>");
+                    writer.println("<li>Missing fault plane for ray: " + ray + "</li>");
                 }
             }
             writer.println("</li>");
@@ -94,35 +99,56 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                         distanceValuesPerSource.add(ray);
                     }
                 }
-                List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
+                List<Arrival> arrivalList = new ArrayList<>();
+                if ( ! phaseArgs.isEmpty()) {
+                    arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
+                }
 
                 String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
-                writer.println("<h5>"+modelLine+" "+faultPlane+"</h5>");
+                writer.println("<h5>" + modelLine + " " + faultPlane + "</h5>");
 
                 Vector p = faultPlane.pAxis();
                 SphericalCoordinate coordP = p.toSpherical();
-                writer.println("<h5>P: takeoff: "+Outputs.formatLatLon(coordP.getTakeoffAngleDegree())
-                        +" az: "+Outputs.formatLatLon(coordP.getAzimuthDegree())+"</h5>");
+                writer.println("<h5>P: takeoff: " + Outputs.formatLatLon(coordP.getTakeoffAngleDegree())
+                        + " az: " + Outputs.formatLatLon(coordP.getAzimuthDegree()) + "</h5>");
 
                 Vector t = faultPlane.tAxis();
                 SphericalCoordinate coordT = t.toSpherical();
-                writer.println("<h5>T: takeoff: "+Outputs.formatLatLon(coordT.getTakeoffAngleDegree())
-                        +" az: "+Outputs.formatLatLon(coordT.getAzimuthDegree())+"</h5>");
+                writer.println("<h5>T: takeoff: " + Outputs.formatLatLon(coordT.getTakeoffAngleDegree())
+                        + " az: " + Outputs.formatLatLon(coordT.getAzimuthDegree()) + "</h5>");
 
                 Vector n = faultPlane.nullAxis();
                 SphericalCoordinate coordN = n.toSpherical();
-                writer.println("<h5>N: takeoff: "+Outputs.formatLatLon(coordN.getTakeoffAngleDegree())
-                        +" az: "+Outputs.formatLatLon(coordN.getAzimuthDegree())+"</h5>");
+                writer.println("<h5>N: takeoff: " + Outputs.formatLatLon(coordN.getTakeoffAngleDegree())
+                        + " az: " + Outputs.formatLatLon(coordN.getAzimuthDegree()) + "</h5>");
+
+                if (! arrivalList.isEmpty()) {
+                    TauP_Time.printArrivalsAsHtmlTable(writer, arrivalList, getTauModelName(), getScatterer(),
+                            false, sourceArgs, new ArrayList<String>(), "beachball");
+                }
 
                 for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.amps, BeachballType.ampsv, BeachballType.ampsh)) {
                     writer.println("<div class=\"beachball\">");
-                    writer.println("  <h5>Amplitude: "+bb+"</h5>");
+                    writer.println("  <h5>Amplitude: " + bb + "</h5>");
                     printResultSVG(writer, faultPlane, arrivalList, bb);
                     writer.println("</div>");
                 }
             }
+            HTMLUtil.addSortTableJS(writer);
             writer.println(HTMLUtil.createHtmlEnding());
             writer.close();
+        } else if (getOutputFormat().equals(OutputTypes.JSON)) {
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            for (FaultPlane faultPlane : uniqFaultPlaneList) {
+                List<RayCalculateable> distanceValuesPerSource = new ArrayList<>();
+                for (RayCalculateable ray : distanceValues) {
+                    if (ray.getFaultPlane().equals(faultPlane)) {
+                        distanceValuesPerSource.add(ray);
+                    }
+                }
+                List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
+                printResultJson(writer, faultPlane, arrivalList);
+            }
         } else {
             throw new TauPException("Ooops, only --html works now");
         }
@@ -215,8 +241,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
 
-
-        drawPhasesSVG(writer, scale, getSeismicPhases(), bbType);
+        if (! phaseArgs.isEmpty()) {
+            drawPhasesSVG(writer, scale, getSeismicPhases(), bbType);
+        }
         writer.println("<g class=\"axis\">");
 
         writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
@@ -488,6 +515,22 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             printResultSVG(writer, faultPlane, arrivalList, bb);
         }
         writer.println(HTMLUtil.createHtmlEnding());
+    }
+
+    public void printResultJson(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList) throws TauPException {
+        boolean withPierce = false;
+        boolean withPath = false;
+        boolean withAmp = true;
+        List<RadiationAmplitude> radPattern = calcRadiationPattern(faultPlane, numPoints);
+        SeismicSource seismicSource = new SeismicSource(ArrivalAmplitude.DEFAULT_MW, faultPlane);
+        BeachballResult bbResult = new BeachballResult(modelArgs.getModelName(),
+                modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
+                getPhaseArgs().parsePhaseNameList(),
+                getScatterer(), withAmp, seismicSource, arrivalList, radPattern);
+        GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+        gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, true));
+        gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp));
+        writer.println(gsonBuilder.create().toJson(bbResult));
     }
 
     @CommandLine.Mixin
