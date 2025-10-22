@@ -12,8 +12,8 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.jreleaser") version "1.19.0"
+  id("com.github.ben-manes.versions") version "0.53.0"
+  id("org.jreleaser") version "1.20.0"
 }
 
 application {
