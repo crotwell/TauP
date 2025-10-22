@@ -218,6 +218,7 @@ public class AK135Test  {
 
     public List<Double> doErrorPlot(String phase, List<Float> sourceDepthList, File dir) throws TauPException, IOException {
         setupForPhase(phase);
+        String phaseTitle = String.join(",", taup.phaseNameList);
         double maxTimeError = 0;
         double maxErrorAtDeg = 0;
         List<XYPlottingData> xyData = new ArrayList<>();
@@ -232,7 +233,7 @@ public class AK135Test  {
             List<TimeDist> pubPlotTDList = tdList;
             if (phase.equals("S")) {
                 List<TimeDist> zeroToFifty = tdList.subList(0, 51);
-                pubPlotTDList = zeroToFifty;
+                //pubPlotTDList = zeroToFifty;
             }
             double[] rayParam = createPlotData(pubPlotTDList, AxisType.rayparamrad);
             double[] pubtime = createPlotData(pubPlotTDList, AxisType.time);
@@ -248,7 +249,7 @@ public class AK135Test  {
 
             // plot raw published values
             XYPlotOutput xyPlotOutput = new XYPlotOutput(List.of(publishedxyPlot) , taup.modelArgs);
-            xyPlotOutput.setTitle("Published AK135 for "+phase+" at "+sourceDepth+" km, red="+redVel+" s/deg");
+            xyPlotOutput.setTitle("Published AK135 for "+phaseTitle+" at "+sourceDepth+" km, red="+redVel+" s/deg");
             String filename = "pub_ak135_"+phase+"_"+sourceDepthList.get(0)+".html";
             PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, filename)));
             xyPlotOutput.printAsHtml(writer, "pub ak135", new ArrayList<>(), "", true);
@@ -261,7 +262,7 @@ public class AK135Test  {
                     List<Arrival> arrivals = taup.calcAll(phaseList, List.of(DistanceRay.ofRadians(td.getDistRadian())));
                     // otherwise assume first?
                     if (arrivals.size() == 0) {
-                        System.err.println("Missing arrival for " + phase + " at " + td.getDistDeg() + " at depth " + sourceDepth);
+                        System.err.println("Missing arrival for " + phaseTitle + " at " + td.getDistDeg() + " at depth " + sourceDepth);
                         continue;
                     }
                     Arrival a = arrivals.get(0);
@@ -285,7 +286,7 @@ public class AK135Test  {
             XYSegment taupseg = new XYSegment(taupdeg, tauptime);
             XYPlottingData taupxyPlot = new XYPlottingData(List.of(taupseg),
                     AxisType.rayparamrad.name(), AxisType.degree.name(),
-                    "TauP-AK for " + phase+" "+sourceDepth, new ArrayList<>());
+                    "TauP-AK for " + phaseTitle+" "+sourceDepth, new ArrayList<>());
             xyData.add(taupxyPlot);
         }
 
@@ -296,7 +297,7 @@ public class AK135Test  {
             sourceTitle+=","+sourceDepth;
         }
         sourceTitle = sourceTitle.substring(1);
-        xyPlotOutput.setTitle("TauP - Published AK135 for "+phase+" at "+sourceTitle+" km");
+        xyPlotOutput.setTitle("TauP - Published AK135 for "+phaseTitle+" at "+sourceTitle+" km");
         String filename;
         if (sourceDepthList.size()==1) {
             filename = "ak135_"+phase+"_"+sourceDepthList.get(0)+".html";
