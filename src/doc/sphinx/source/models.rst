@@ -263,6 +263,17 @@ Notes on Standard Models
   constant at 57823 except in the inner core, where it is 1327.7. We therefore
   are using this column as Q_alpha and not Q_kappa.
 
+  In the published travel times for AK135,
+  available at
+  http://download.iaspei.org/download/AK135tables.pdf,
+  for the phase SKS, it appears that
+  the times for depths 500 and 700 for 144 degrees appear
+  to be a copy/paste of the line for 143
+  degrees. Also, the tables for P corresponds to p,P,Pdiff in TauP,
+  for S corresponds to s,S,Sdiff and SKP corresponds to SKP,SKIKP.
+  And TauP does not separate the ab and bc branches of the PKP and SKS phases
+  and the df branch is PKIKP or SKIKS.
+
 * ak135fcont
 
   There is a small discrepancy in how to create a "continental structure"
