@@ -498,8 +498,8 @@ tasks.jar {
 
 
 tasks.withType<Javadoc>() {
-  exclude("src/main/picocli/CommandLine.java")
-  exclude("src/main/picocli/AutoComplete.java")
+  exclude("picocli/CommandLine.java")
+  exclude("picocli/AutoComplete.java")
   //(options as CoreJavadocOptions).addBooleanOption("Xdoclint:none", true)
 }
 
