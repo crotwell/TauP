@@ -2,6 +2,8 @@ import java.util.Date
 import org.gradle.crypto.checksum.Checksum
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution
+import org.apache.tools.ant.filters.ReplaceTokens
+
 
 plugins {
   id("edu.sc.seis.version-class") version "1.4.1"
@@ -31,7 +33,11 @@ application {
 
 group = "edu.sc.seis"
 version = "3.1.1-SNAPSHOT"
-val zenodo_rel_id = "10794858"
+val ver_split = project.getVersion().toString().split(".")
+val short_version = ver_split[0]+"."+ver_split[1]
+val copyright = "2025"
+val zenodo_rel_id = "16884103" // latest version
+val zenodo_all_id = "10794857" // all versions
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
 jreleaser {
@@ -115,6 +121,32 @@ tasks.register("zenodoDoi") {
   inputs.files("build.gradle.kts")
   outputs.files(doifile)
   File(doifile).writeText(""+zenodo_rel_id)
+}
+
+tasks.register<Copy>("zenodoDoiReadme") {
+  inputs.files("build.gradle.kts")
+  from("src/doc/pages/index.md")
+  into("docs")
+  filter<ReplaceTokens>("tokens" to mapOf(
+    "version" to project.version,
+    "short_version" to short_version,
+    "copyright" to copyright,
+    "zenodo_all_id" to zenodo_all_id,
+    "zenodo_rel_id" to zenodo_rel_id))
+}
+tasks.register<Copy>("copyReadme") {
+  dependsOn("zenodoDoiReadme")
+  from("docs/index.md")
+  into(".")
+  rename("index.md", "README.md")
+}
+
+tasks.register<Exec>("readmeToHtml") {
+  workingDir("docs")
+  commandLine("/usr/bin/env", "-S", "myst-docutils-demo", "index.md", "index.html")
+  inputs.files(tasks.named("zenodoDoiReadme"))
+  outputs.files(file("docs/index.html"))
+  dependsOn("zenodoDoiReadme")
 }
 
 distributions {
@@ -462,6 +494,7 @@ tasks.register<Sync>("copySphinxToDocs") {
   from(tasks.named("sphinxMakeHtml"))
   into("docs/manual")
   dependsOn("sphinxMakeHtml")
+  dependsOn("readmeToHtml")
   exclude("_sources")
   exclude(".buildinfo")
 }

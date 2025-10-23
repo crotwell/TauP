@@ -33,9 +33,10 @@ as well as the
 [Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.16884103)
 for the version you are using.
 
-Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.5281/zenodo.16884103
+Crotwell, H. P. (2025). The TauP Toolkit (3.1.0). Zenodo. https://doi.org/10.5281/zenodo.16884103
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
+
 
 # Install
 

@@ -17,6 +17,7 @@ release_year = verjson['date'][0:4]
 rst_epilog = f'''
 .. |fullversion| replace:: {verjson['version']}
 .. |release_year| replace:: {release_year}
+.. |zenodo_all_id_num| replace:: 10794857
 .. |zenodo_id_num| replace:: {zenodo_doi_text}
 .. |zenodo_url| replace:: Zenodo
 .. _zenodo_url: {zenodo_url}
