@@ -145,6 +145,7 @@ public class CmdLineOutputTest {
                                           "taup find --help",
                                           "taup distaz --help",
                                           "taup spikes --help",
+                                          "taup beachball --help",
     };
 
     String versionCmd = "taup --version";

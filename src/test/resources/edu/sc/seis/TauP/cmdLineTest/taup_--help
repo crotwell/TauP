@@ -6,6 +6,7 @@ Commands:
   create               Create .taup file from a velocity model.
   curve                Plot travel time vs. distance and other curves for
                          seismic phases.
+  beachball            Plot beachball for focal mechanism.
   distaz               Calc distance, az and baz for event lat,lon and station
                          lat,lon pairs.
   discon               List velocity discontinuities for a model.

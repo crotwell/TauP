@@ -16,6 +16,7 @@ taup version --help
 taup find --help
 taup distaz --help
 taup spikes --help
+taup beachball --help
 taup time -h 10 -p P --deg 35 --mod prem
 taup time -h 10 -p P --deg 35
 taup time -h 10 -p P --deg 35 --mod ak135

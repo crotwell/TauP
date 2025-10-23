@@ -1,0 +1,162 @@
+Usage: taup beachball [--debug] [--geodetic] [--help] [--verbose]
+                      [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
+                      [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
+                      [--baz=<backAzimuth>] [--color=<coloring>]
+                      [--geodeticflattening=f] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
+                      [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                      [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                      [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
+                      [--sid=sta[,sta...]]... [--evt=lat lon]... [--evt=lat
+                      lon]... [--sta=lat lon]... [--sta=lat lon]...
+                      [--strikediprake=strike dip rake]... [[--mod=<modelName>]
+                      [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                      [--scat=depth deg]...] [[-p=phase[,phase...]]...
+                      [--phasefile=<phaseFiles>]...] [[--allindex] [--deg=d[,
+                      d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km
+                      [,km...]]... [--incident=deg[,deg...]]... [--km=km[,
+                      km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                      [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,
+                      s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
+                      [--takeoff=deg[,deg...]]... [--degreerange=[step][min max]
+                      [min max step]]... [--exactdegreerange=[step][min max]
+                      [min max step]]... [--exactkilometerrange=[step][min max]
+                      [min max step]]... [--incidentrange=[step][min max][min
+                      max step]]... [--kilometerrange=[step][min max][min max
+                      step]]... [--takeoffrange=[step][min max][min max
+                      step]]...]... [--gmt | --html | --json | --svg | --text]
+Plot beachball for focal mechanism.
+
+Options:
+
+      --attenuationfreq=<attenuationFreq>
+                            attenuation frequency for amplitude calculations,
+                              default is 1.0
+  -b, --bbtype=type         Beachball data type, default is ampp, one of P, S,
+                              Sv, Sh
+      --color=<coloring>    style of coloring for paths and wavefronts, one of:
+                              auto, wavetype, phase, none
+      --debug               enable debugging output
+      --eid=evt[,evt...]    event id, like us7000pn9s, for lookup via USGS fdsn
+                              event web service. Creates a distance if station
+                              is also given.
+      --geodetic            use geodetic latitude for distance calculations,
+                              which implies an ellipticity. Default is
+                              spherical. Note this only affects calculation of
+                              distance from lat/lon pairs, all travel time
+                              calculations are done in a purely spherical model.
+      --geodeticflattening=f
+                            Inverse Elliptical flattening for distance
+                              calculations when --geodetic, defaults to WGS84 ~
+                              298.257. The distance calculation uses 1/x.
+      --help                display this help message
+      --mapwidth=<mapwidth> plot width in units from --mapwidthunit.
+      --mapwidthunit=<mapWidthUnit>
+                            plot width unit, i for inch, c for cm or p for px.
+      --mw=<mw>             scale amplitude by source moment magnitude, default
+                              is 4.0
+      --numattenuationfreq=<numFrequencies>
+                             number attenuation frequencies for amplitude
+                              calculations, default is 64
+  -o, --output=<outFile>    output to file, default is stdout.
+      --prop=<toolPropsFilename>
+                            load defaults from properties file
+      --qml, --quakeml=<quakemlFilename>
+                            QuakeML file to load for earthquake origins to use
+      --sid=sta[,sta...]    station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                              via fedcat web service. Creates a distance if
+                              event is also given.
+      --staxml=<stationxmlFilename>
+                            StationXML file to extract station latitudes and
+                              longitudes from
+      --strikediprake=strike dip rake
+                            fault strike, dip and rake for amplitude
+                              calculations. If not given radiation pattern is
+                              unity in all directions.
+      --verbose             enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                            source depth in km
+      --mod, --model=<modelName>
+                            use velocity model "modelName" for calculations.
+                            Default is iasp91. Other builtin models include
+                              prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=depth deg
+                            scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
+      --stadepth, --receiverdepth=depth[,depth...]
+                            the receiver depth in km for stations not at the
+                              surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file
+Distance is given by:
+      --allindex            all arrivals at sampling of model
+      --deg, --degree=d[,d...]
+                            distance in degrees
+      --degreerange=[step][min max][min max step]
+                            regular distance range in degrees, one of step; min
+                              max or min max step. Default min is 0, max is 180
+                              and step is 10.
+      --exactdegree=d[,d...]
+                            exact distance traveled in degrees, not 360-d
+      --exactdegreerange=[step][min max][min max step]
+                            regular distance range in exact degrees, not
+                              360-deg, one of step; min max or min max step.
+                              Default min is 0, max is 180 and step is 10.
+      --exactkilometer=km[,km...]
+                            exact distance traveled in kilometers, not 360-k
+      --exactkilometerrange=[step][min max][min max step]
+                            regular distance range in kilometers, not 360-k,
+                              one of step; min max or min max step. Default min
+                              is 0, max is 1000 and step is 100.
+      --incident=deg[,deg...]
+                            incident angle in degrees at the receiver, zero is
+                              down, 90 horizontal, 180 is up.
+      --incidentrange=[step][min max][min max step]
+                            regular range in incident angle in degrees, one of
+                              step; min max or min max step. Default min is 0
+                              and step is 10.
+      --kilometerrange=[step][min max][min max step]
+                            regular distance range in kilometers, one of step;
+                              min max or min max step. Default min is 0, max is
+                              1000 and step is 100.
+      --km, --kilometer=km[,km...]
+                            distance in kilometers along surface.
+      --rayparamdeg=s/deg[,s/deg...]
+                            ray parameter from the source in s/deg, up or down
+                              is determined by the phase
+      --rayparamidx=i[,i...]
+                            ray parameter from the source as index into model
+                              sampling, up or down is determined by the phase
+      --rayparamkm=s/km[,s/km...]
+                            ray parameter from the source in s/km, up or down
+                              is determined by the phase
+      --rayparamrad=s/rad[,s/rad...]
+                            ray parameter from the source in s/rad, up or down
+                              is determined by the phase
+      --takeoff=deg[,deg...]
+                            takeoff angle in degrees from the source, zero is
+                              down, 90 horizontal, 180 is up.
+      --takeoffrange=[step][min max][min max step]
+                            regular range in takeoff angle in degrees, one of
+                              step; min,max or min,max,step. Default min is 0
+                              and step is 10.
+Lat,Lon influenced by:
+      --az=<azimuth>        azimuth in degrees, source to receiver
+      --baz=<backAzimuth>   backazimuth in degrees, receiver to source
+      --evt, --event=lat lon
+                            event latitude and longitude.  Creates a distance
+                              if station is also given.
+      --sta, --station=lat lon
+                            station latitude and longitude. Creates a distance
+                              if event is also given.
+Output Type:
+      --gmt                 outputs as GMT
+      --html                outputs as SVG in HTML
+      --json                outputs as JSON
+      --svg                 outputs as SVG
+      --text                outputs as Text
