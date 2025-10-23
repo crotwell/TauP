@@ -362,11 +362,17 @@ tasks.register<JavaExec>("genCmdLineTestFiles") {
     dependsOn += tasks.getByName("genAk135Plots")
     outputs.files(fileTree("build/cmdLineTest"))
 }
-tasks.register<Sync>("copyCmdLineTestFiles") {
+tasks.register<Sync>("fullCopyCmdLineTestFiles") {
   from(tasks.getByName("genCmdLineTestFiles").outputs)
   into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
 }
+tasks.register<Exec>("copyCmdLineTestFiles") {
+  commandLine("./src/util/onlyversiondiff.py")
+  dependsOn("genCmdLineTestFiles")
+  dependsOn("genCmdLineHelpFiles")
+}
+
 tasks.get("test").mustRunAfter("copyCmdLineTestFiles")
 tasks.get("jar").mustRunAfter("copyCmdLineTestFiles")
 tasks.get("distTar").mustRunAfter("copyCmdLineTestFiles")
@@ -411,6 +417,7 @@ tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/python/grab_taup_times_http.py")
   into("src/doc/sphinx/source/programming")
 }
+
 
 tasks.register<Sync>("copyStdModelsToSphinx") {
   from("src/main/resources/edu/sc/seis/TauP/StdModels") {
