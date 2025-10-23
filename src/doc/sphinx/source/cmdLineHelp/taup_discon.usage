@@ -1,4 +1,4 @@
-Usage: taup discon [--debug] [--help] [--verbose] [-o=<outFile>]
+Usage: taup discon [--debug] [--help] [--slowness] [--verbose] [-o=<outFile>]
                    [--prop=<toolPropsFilename>] [--mod=model [--mod=model]... |
                    --nd=model [--nd=model]... | --tvel=model [--tvel=model]...]
                    [--html | --json | --text]
@@ -11,6 +11,7 @@ Options:
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file
+      --slowness             output the slowness for each discontinuity also
       --verbose              enable verbose output
 Velocity Model
       --mod, --model=model   use velocity model "modelname" for calculations,

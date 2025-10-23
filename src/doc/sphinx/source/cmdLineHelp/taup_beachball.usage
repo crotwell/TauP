@@ -1,6 +1,6 @@
 Usage: taup beachball [--debug] [--geodetic] [--help] [--verbose]
                       [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                      [--az=<azimuth>] [--baz=<backAzimuth>]
+                      [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--geodeticflattening=f] [--mapwidth=<mapwidth>]
                       [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
@@ -32,6 +32,8 @@ Options:
       --attenuationfreq=<attenuationFreq>
                             attenuation frequency for amplitude calculations,
                               default is 1.0
+  -b, --bbtype=type         Beachball data type, default is ampp, one of P, S,
+                              Sv, Sh
       --color=<coloring>    style of coloring for paths and wavefronts, one of:
                               auto, wavetype, phase, none
       --debug               enable debugging output
