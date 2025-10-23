@@ -742,7 +742,7 @@ public class CmdLineOutputTest {
         fileOut.close();
     }
 
-    File docOutputDir = new File("src/doc/sphinx/source/examples");
+    File docOutputDir = new File("build/docExamples");
     File testOutputDir = new File("build/cmdLineTest");
     File testJsonOutputDir = new File("build/cmdLineTestJson");
     File testHtmlOutputDir = new File("build/cmdLineTestHtml");
@@ -795,6 +795,5 @@ public class CmdLineOutputTest {
         CmdLineOutputTest me = new CmdLineOutputTest();
         me.regenSavedOutput();
         me.regenReflTranCompareFigures();
-        me.regenExampleOutput();
     }
 }

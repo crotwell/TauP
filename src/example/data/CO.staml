@@ -1,0 +1,2367 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+ <FDSNStationXML xmlns="http://www.fdsn.org/xml/station/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:iris="http://www.fdsn.org/xml/station/1/iris" xsi:schemaLocation="http://www.fdsn.org/xml/station/1 http://www.fdsn.org/xml/station/fdsn-station-1.1.xsd" schemaVersion="1.1">
+  <Source>IRIS-DMC</Source>
+  <Sender>IRIS-DMC</Sender>
+  <Module>IRIS WEB SERVICE: fdsnws-station | version: 1.1.52</Module>
+  <ModuleURI>http://service.iris.edu/fdsnws/station/1/query?net=CO&amp;cha=H??&amp;starttime=2024-08-30T00:00:00Z&amp;endtime=2024-08-31T00:00:00Z&amp;level=channel&amp;format=xml&amp;includecomments=false&amp;nodata=404</ModuleURI>
+  <Created>2024-09-12T14:13:56.4763</Created>
+  <Network code="CO" startDate="1987-01-01T00:00:00.0000" restrictedStatus="open">
+   <Description>South Carolina Seismic Network (SCSN)</Description>
+   <Identifier type="DOI">10.7914/SN/CO
+   </Identifier>
+   <TotalNumberStations>18</TotalNumberStations>
+   <SelectedNumberStations>12</SelectedNumberStations>
+   <Station code="BARN" startDate="2021-12-31T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED">
+    <Latitude>34.13742</Latitude>
+    <Longitude>-80.69453</Longitude>
+    <Elevation>73.05</Elevation>
+    <Site>
+     <Name>Farm at One Under Lane, Elgin SC</Name>
+     <County>Kershaw</County>
+     <Region>South Carolina</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2021-12-31T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>9</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HNE" locationCode="00" startDate="2021-12-31T00:00:00.0000" restrictedStatus="open">
+     <Latitude>34.13742</Latitude>
+     <Longitude>-80.69453</Longitude>
+     <Elevation>73</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103806</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103806</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2021-12-31T00:00:00.0000" restrictedStatus="open">
+     <Latitude>34.13742</Latitude>
+     <Longitude>-80.69453</Longitude>
+     <Elevation>73</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103806</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103806</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2021-12-31T00:00:00.0000" restrictedStatus="open">
+     <Latitude>34.13742</Latitude>
+     <Longitude>-80.69453</Longitude>
+     <Elevation>73</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103806</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103806</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="BIRD" startDate="2010-08-25T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.645</Latitude>
+    <Longitude>-80.4615</Longitude>
+    <Elevation>132.0</Elevation>
+    <Site>
+     <Name>Birdtown, Kershaw, SC, USA</Name>
+     <County>Kershaw</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2010-08-25T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>65</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2024-02-09T16:00:00.0000" restrictedStatus="open">
+     <Latitude>34.645</Latitude>
+     <Longitude>-80.4615</Longitude>
+     <Elevation>132</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001624</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3602</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2024-02-09T16:00:00.0000" restrictedStatus="open">
+     <Latitude>34.645</Latitude>
+     <Longitude>-80.4615</Longitude>
+     <Elevation>132</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001624</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3602</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2024-02-09T16:00:00.0000" restrictedStatus="open">
+     <Latitude>34.645</Latitude>
+     <Longitude>-80.4615</Longitude>
+     <Elevation>132</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001624</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3602</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="C1SC" startDate="2012-10-08T19:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>32.798</Latitude>
+    <Longitude>-79.959</Longitude>
+    <Elevation>5.0</Elevation>
+    <Site>
+     <Name>The Citadel,Charleston,SC</Name>
+     <Town>Charleston</Town>
+     <County>Charleston</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2012-10-08T19:00:00.0000</CreationDate>
+    <TotalNumberChannels>71</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HNE" locationCode="00" startDate="2022-02-24T18:40:00.0000" restrictedStatus="open">
+     <Latitude>32.798</Latitude>
+     <Longitude>-79.959</Longitude>
+     <Elevation>5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna2 100807</SerialNumber>
+      <CalibrationDate>2022-02-24T00:00:00.0000</CalibrationDate>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>100807</SerialNumber>
+      <CalibrationDate>2017-06-01T00:00:00.0000</CalibrationDate>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427818.956875477</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2022-02-24T18:40:00.0000" restrictedStatus="open">
+     <Latitude>32.798</Latitude>
+     <Longitude>-79.959</Longitude>
+     <Elevation>5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna2 100807</SerialNumber>
+      <CalibrationDate>2022-02-24T00:00:00.0000</CalibrationDate>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>100807</SerialNumber>
+      <CalibrationDate>2017-06-01T00:00:00.0000</CalibrationDate>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427818.956875477</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2022-02-24T18:40:00.0000" restrictedStatus="open">
+     <Latitude>32.798</Latitude>
+     <Longitude>-79.959</Longitude>
+     <Elevation>5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna2 100807</SerialNumber>
+      <CalibrationDate>2022-02-24T00:00:00.0000</CalibrationDate>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>100807</SerialNumber>
+      <CalibrationDate>2017-06-01T00:00:00.0000</CalibrationDate>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427818.956875477</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="CASEE" startDate="2009-12-07T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.993</Latitude>
+    <Longitude>-82.9317</Longitude>
+    <Elevation>385.0</Elevation>
+    <Site>
+     <Name>Lake Jocassee, SC, USA</Name>
+     <County>Oconee</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2009-12-07T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>83</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>757</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>757</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>757</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>2918</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.81358264113</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>2918</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.81358264113</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2019-09-23T16:30:00.0000" restrictedStatus="open">
+     <Latitude>34.993</Latitude>
+     <Longitude>-82.9317</Longitude>
+     <Elevation>385</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>2918</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4864</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.81358264113</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="CSB" startDate="2009-04-13T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>32.98698</Latitude>
+    <Longitude>-80.071545</Longitude>
+    <Elevation>6.0</Elevation>
+    <Site>
+     <Name>Charleston Southern University, Charleston, SC, USA</Name>
+     <County>Charleston</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2009-04-13T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>232</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>34.6</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Vendor>Nanometrics</Vendor>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001046</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>124.6</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Vendor>Nanometrics</Vendor>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001046</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Vendor>Nanometrics</Vendor>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001046</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>8481</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>8481</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2019-12-16T16:00:00.0000" restrictedStatus="open">
+     <Latitude>32.98698</Latitude>
+     <Longitude>-80.071545</Longitude>
+     <Elevation>6</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>8481</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4866</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="HAW" startDate="2010-03-11T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>33.3612</Latitude>
+    <Longitude>-81.6097</Longitude>
+    <Elevation>112.0</Elevation>
+    <Site>
+     <Name>Hawthorne Fire Tower, SC, USA</Name>
+     <County>Aiken</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2010-03-11T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>129</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>-143</Elevation>
+     <Depth>255</Depth>
+     <Azimuth>328</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001001</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>-143</Elevation>
+     <Depth>255</Depth>
+     <Azimuth>238</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001001</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>-143</Elevation>
+     <Depth>255</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001001</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>112</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4316</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>112</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4316</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2023-09-20T17:00:00.0000" restrictedStatus="open">
+     <Latitude>33.3612</Latitude>
+     <Longitude>-81.6097</Longitude>
+     <Elevation>112</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4316</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>4181</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="HODGE" startDate="2010-03-25T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.2315</Latitude>
+    <Longitude>-82.2586</Longitude>
+    <Elevation>151.0</Elevation>
+    <Site>
+     <Name>Hodges, SC, USA</Name>
+     <County>Greenwood</County>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2010-03-25T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>74</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001610</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3605</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001610</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3605</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001610</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3605</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103805</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103805</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103805</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103805</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2022-08-30T17:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2315</Latitude>
+     <Longitude>-82.2586</Longitude>
+     <Elevation>151</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>etna2 103805</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103805</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="JSC" startDate="2009-04-13T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.2818</Latitude>
+    <Longitude>-81.25966</Longitude>
+    <Elevation>103.0</Elevation>
+    <Site>
+     <Name>Jenkinsville, South Carolina</Name>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2009-04-13T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>122</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="PARR" startDate="2023-11-28T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED">
+    <Latitude>34.2872</Latitude>
+    <Longitude>-81.3297</Longitude>
+    <Elevation>105.47</Elevation>
+    <Site>
+     <Name>Parr Shoals Reservoir, South Carolina</Name>
+     <Town>Peak</Town>
+     <County>Fairfield</County>
+     <Region>South Carolina</Region>
+     <Country>USA</Country>
+    </Site>
+    <TotalNumberChannels>9</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HNE" locationCode="00" startDate="2023-11-28T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2872</Latitude>
+     <Longitude>-81.3297</Longitude>
+     <Elevation>105.5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna-2-103804-I1</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103804</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2023-11-28T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2872</Latitude>
+     <Longitude>-81.3297</Longitude>
+     <Elevation>105.5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna-2-103804-I1</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103804</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2023-11-28T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.2872</Latitude>
+     <Longitude>-81.3297</Longitude>
+     <Elevation>105.5</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-DECK</Model>
+      <SerialNumber>Etna-2-103804-I1</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>KINEMETRICS</Type>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>ETNA-2</Model>
+      <SerialNumber>103804</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>855302.3694710516</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="PAULI" startDate="2011-04-26T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.82097</Latitude>
+    <Longitude>-81.8144</Longitude>
+    <Elevation>179.0</Elevation>
+    <Site>
+     <Name>Pauline, SC, USA</Name>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2011-04-26T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>43</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2023-10-06T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.82097</Latitude>
+     <Longitude>-81.8144</Longitude>
+     <Elevation>179</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001251</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3600</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2023-10-06T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.82097</Latitude>
+     <Longitude>-81.8144</Longitude>
+     <Elevation>179</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001251</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3600</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2023-10-06T18:00:00.0000" restrictedStatus="open">
+     <Latitude>34.82097</Latitude>
+     <Longitude>-81.8144</Longitude>
+     <Elevation>179</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001251</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3600</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.043164837540085E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="SUMMV" startDate="2015-04-21T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>33.0658</Latitude>
+    <Longitude>-80.2738</Longitude>
+    <Elevation>17.1</Elevation>
+    <Site>
+     <Name>Summerville Airport, SC, USA</Name>
+     <Description>Summerville Airport, Summerville, SC USA</Description>
+     <Town>Summerville</Town>
+     <County>Charleston</County>
+     <Region>South Carolina</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2015-04-21T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>216</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>-82.9</Elevation>
+     <Depth>100</Depth>
+     <Azimuth>281.5</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001004</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>-82.9</Elevation>
+     <Depth>100</Depth>
+     <Azimuth>11.5</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001004</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>-82.9</Elevation>
+     <Depth>100</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001004</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>17.1</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>5365</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>17.1</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>5365</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2019-12-16T18:40:00.0000" restrictedStatus="open">
+     <Latitude>33.0658</Latitude>
+     <Longitude>-80.2738</Longitude>
+     <Elevation>17.1</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>5365</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S+</Model>
+      <SerialNumber>6865</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="TEEBA" startDate="2018-04-25T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>32.8975</Latitude>
+    <Longitude>-80.1911</Longitude>
+    <Elevation>11.22</Elevation>
+    <Site>
+     <Name>Mateeba, Summerville SC</Name>
+     <Town>Summerville</Town>
+     <County>Dorchester</County>
+     <Region>South Carolina</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2018-04-25T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>147</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>-62.8</Elevation>
+     <Depth>74</Depth>
+     <Azimuth>335</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001009</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>-62.8</Elevation>
+     <Depth>74</Depth>
+     <Azimuth>65</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001009</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>-62.8</Elevation>
+     <Depth>74</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120 BOREHOLE</Model>
+      <SerialNumber>001009</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.049417490676555E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>11.2</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4083</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>11.2</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4083</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2019-06-21T15:00:00.0000" restrictedStatus="open">
+     <Latitude>32.8975</Latitude>
+     <Longitude>-80.1911</Longitude>
+     <Elevation>11.2</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>4083</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330</Model>
+      <SerialNumber>3868</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>427911.8565884668</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+  </Network>
+ </FDSNStationXML>

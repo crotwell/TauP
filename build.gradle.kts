@@ -386,6 +386,25 @@ tasks.register<Sync>("copyCmdLineHelpFiles") {
   dependsOn("genCmdLineHelpFiles")
 }
 
+tasks.register<Copy>("copyDocExampleData") {
+  from("src/example/data")
+  into("build/docExamples")
+}
+tasks.register<JavaExec>("genDocExampleFiles") {
+  inputs.files("build.gradle.kts") // for version.json
+  description = "generate TauP doc example output files"
+  classpath = sourceSets.getByName("test").runtimeClasspath
+  getMainClass().set("edu.sc.seis.TauP.cmdline.GenDocExamples")
+  dependsOn += tasks.getByName("testClasses")
+  dependsOn += tasks.getByName("copyDocExampleData")
+  outputs.files(fileTree("build/docExamples"))
+}
+tasks.register<Sync>("copyDocExampleFiles") {
+  from(tasks.getByName("genDocExampleFiles").outputs)
+  into("src/doc/sphinx/source/examples")
+  dependsOn("genDocExampleFiles")
+}
+
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
   from("src/example/python/grab_taup_times.py")
@@ -430,6 +449,7 @@ tasks.register<Exec>("sphinxMakeHtml") {
   dependsOn("copyProgramExampleFiles")
   dependsOn("copyCmdLineHelpFiles")
   dependsOn("copyStdModelsToSphinx")
+  dependsOn("copyDocExampleFiles")
 }
 tasks.register<Sync>("copySphinxToDocs") {
   from(tasks.named("sphinxMakeHtml"))
