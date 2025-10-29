@@ -418,9 +418,9 @@ public class PythonBindings {
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
             out.println("from .dataclass import (");
-            out.println("    Amplitude, Arrival, Fault, PathSegment,");
-            out.println("    RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
-            out.println("    Isochron, Wavefront, WavefrontResult");
+            out.println("    Amplitude, Arrival, Curve, CurveSegment, Daz, Fault, Isochron,");
+            out.println("    PathSegment, RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
+            out.println("    Wavefront, WavefrontResult");
             out.println(")");
 
             out.println();
@@ -433,14 +433,17 @@ public class PythonBindings {
             }
             out.println("    \"Amplitude\",");
             out.println("    \"Arrival\",");
+            out.println("    \"Curve\",");
+            out.println("    \"CurveSegment\",");
+            out.println("    \"Daz\",");
             out.println("    \"Fault\",");
+            out.println("    \"Isochron\",");
             out.println("    \"PathSegment\",");
             out.println("    \"RelativeArrival\",");
             out.println("    \"Scatter\",");
             out.println("    \"Source\",");
             out.println("    \"TimeDist\",");
             out.println("    \"TimeResult\",");
-            out.println("    \"Isochron\",");
             out.println("    \"Wavefront\",");
             out.println("    \"WavefrontResult\"");
             out.println("]");
