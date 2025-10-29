@@ -52,7 +52,7 @@ public class SeismicSourceArgs {
 
     List<Float> strikeDipRake = null;
 
-    @CommandLine.Option(names="--strikediprake",
+    @CommandLine.Option(names= {"--strikediprake"},
             paramLabel =  "strike dip rake",
             hideParamSyntax = true,
             arity = "3",
