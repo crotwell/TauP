@@ -154,11 +154,12 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
     }
 
     public GsonBuilder createGsonBuilder() {
+        boolean withDerivative = false;
         GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
         gsonBld.registerTypeAdapter(Arrival.class,
-                new ArrivalSerializer(true, false, isWithAmplitude()));
+                new ArrivalSerializer(true, false, isWithAmplitude(), withDerivative));
         gsonBld.registerTypeAdapter(ScatteredArrival.class,
-                new ScatteredArrivalSerializer(true, false, isWithAmplitude()));
+                new ScatteredArrivalSerializer(true, false, isWithAmplitude(), withDerivative));
         return gsonBld;
     }
 

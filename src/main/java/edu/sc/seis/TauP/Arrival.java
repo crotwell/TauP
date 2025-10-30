@@ -618,10 +618,14 @@ public class Arrival {
         return getPhase().velocityAtSource();
     }
 
+    public double sourceRadius() {
+        double rofE = getTauModel().getRadiusOfEarth();
+        return rofE - getSourceDepth();
+    }
+
     public double radialSlownessAtSource() {
         double srcVel = velocityAtSource();
-        double rofE = getTauModel().getRadiusOfEarth();
-        double srcRadius = rofE - getSourceDepth();
+        double srcRadius = sourceRadius();
         double radSlow = Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
         if (! Double.isFinite(radSlow)
                 && Math.abs( 1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius)) < 1e-6) {
@@ -637,10 +641,14 @@ public class Arrival {
         return getPhase().velocityAtReceiver();
     }
 
+    public double receiverRadius() {
+        double rofE = getTauModel().getRadiusOfEarth();
+        return rofE - getReceiverDepth();
+    }
+
     public double radialSlownessAtReceiver() {
         double recVel = velocityAtReceiver();
-        double rofE = getTauModel().getRadiusOfEarth();
-        double recRadius = rofE - getReceiverDepth();
+        double recRadius = receiverRadius();
         return Math.sqrt(1/(recVel*recVel) - getRayParam()*getRayParam()/(recRadius*recRadius));
     }
 
@@ -1015,19 +1023,36 @@ public class Arrival {
         }
         return latestArrival;
     }
-
     public static List<String> headerNames(boolean tableStyle) {
+        return headerNames(tableStyle, false, false, false);
+    }
+
+    public static List<String> headerNames(boolean tableStyle,
+                                           boolean withAmp, boolean withRelPhase, boolean withDerivative) {
         List<String> common = List.of("Distance (deg)","Depth (km)","Phase","Time (s)","RayParam (deg/s)",
                 "Takeoff Angle","Incident Angle","Recv Depth","Purist Distance","Purist Name");
+        List<String> line = new ArrayList<>(common);
         if (tableStyle) {
-            List<String> line = new ArrayList<>(List.of("Model"));
+            line = new ArrayList<>(List.of("Model"));
             line.addAll(common);
-            return line;
         }
-        return common;
+        if (withAmp) {
+            line.addAll(List.of("Amp PSv", "Amp Sh"));
+        }
+        if (withRelPhase) {
+            line.addAll(List.of("Rel Time", "Rel Name"));
+        }
+        if (withDerivative) {
+            line.addAll(List.of("Source Vel", "Source Radial Slow", "Radius", "Receiver Vel", "Rec. Radial Slow", "Radius", "dp/ddeg"));
+        }
+        return line;
     }
+
     public static String CSVHeader() {
-        return String.join(",", headerNames(true));
+        return CSVHeader(false, false, false);
+    }
+    public static String CSVHeader(boolean withAmp, boolean withRelPhase, boolean withDerivative) {
+        return String.join(",", headerNames(true, withAmp, withRelPhase, withDerivative));
     }
 
     /**
@@ -1035,7 +1060,7 @@ public class Arrival {
      * @return arrival for printing
      */
     public List<String> asStringList(boolean tableStyle, String phaseFormat, String phasePuristFormat,
-                                     boolean withAmp, boolean withRelPhase) {
+                                     boolean withAmp, boolean withRelPhase, boolean withDerivative) {
         List<String> line = new ArrayList<>();
         if (tableStyle) {
             String modelName = getTauModel().getModelName().replaceAll("\"", " ");
@@ -1078,6 +1103,15 @@ public class Arrival {
                 line.add("");
             }
         }
+        if (withDerivative) {
+            line.add(Outputs.formatVelocity( velocityAtSource()));
+            line.add(Outputs.formatRayParam(radialSlownessAtSource()));
+            line.add(Outputs.formatDepth(sourceRadius()));
+            line.add(Outputs.formatVelocity( velocityAtReceiver()));
+            line.add(Outputs.formatRayParam(radialSlownessAtReceiver()));
+            line.add(Outputs.formatDepth(receiverRadius()));
+            line.add(Outputs.formatDpDdeg(getDRayParamDDeltaDeg()));
+        }
         if (getRayCalculateable().hasDescription()) {
             line.add(" "+getRayCalculateable().getDescription());
         }
@@ -1086,9 +1120,14 @@ public class Arrival {
 
 
     public String asCSVRow() {
+        return asCSVRow(false, false, false);
+    }
+
+    public String asCSVRow(boolean withAmp, boolean withRelPhase, boolean withDerivative) {
         String sep = ",";
         StringBuilder sb = new StringBuilder();
-        for (String s : asStringList(true, "%s", "%s", false, false)) {
+        for (String s : asStringList(true, "%s", "%s",
+                withAmp, withRelPhase, withDerivative)) {
             sb.append(s.trim()).append(sep);
         }
         sb.deleteCharAt(sb.length()-1);

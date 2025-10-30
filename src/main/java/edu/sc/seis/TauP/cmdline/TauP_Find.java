@@ -193,14 +193,14 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                         modelArgs.getModelName(),
                         getScatterer(),
                         isWithAmplitude(), sourceArgs,
-                        relativePhaseName, "Find");
+                        relativePhaseName, "Find", false);
             } else {
                 TauP_Time.printArrivalsAsText(out, arrivalList,
                         modelArgs.getModelName(),
                         getScatterer(),
                         onlyPrintTime, onlyPrintRayP,
                         isWithAmplitude(), sourceArgs,
-                        relativePhaseName);
+                        relativePhaseName, false);
             }
         }
         out.flush();

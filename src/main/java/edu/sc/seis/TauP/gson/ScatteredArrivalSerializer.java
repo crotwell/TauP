@@ -14,14 +14,16 @@ public class ScatteredArrivalSerializer implements JsonSerializer<ScatteredArriv
     boolean withPierce;
     boolean withPath;
     boolean withAmplitude;
+    boolean withDerivative;
     ArrivalSerializer arrSerial;
     public ScatteredArrivalSerializer(boolean withPierce,
                              boolean withPath,
-                             boolean withAmplitude) {
+                             boolean withAmplitude, boolean withDerivative) {
         this.withPierce = withPierce;
         this.withPath = withPath;
         this.withAmplitude = withAmplitude;
-        this.arrSerial = new ArrivalSerializer(withPierce, withPath, withAmplitude);
+        this.withDerivative = withDerivative;
+        this.arrSerial = new ArrivalSerializer(withPierce, withPath, withAmplitude, withDerivative);
     }
 
     @Override

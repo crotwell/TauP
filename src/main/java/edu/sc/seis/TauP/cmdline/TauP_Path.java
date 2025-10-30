@@ -181,12 +181,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		boolean withPierce = false;
 		boolean withPath = true;
 		boolean withAmp = false;
+		boolean withDerivative = false;
 		SeismicSource sourceArgs = null;
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			TimeResult result = createTimeResult(withAmp, sourceArgs, arrivalList);
 			GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
-			gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp));
-			gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp));
+			gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
+			gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
 			out.println(gsonBuilder.create().toJson(result));
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			printResultSVG(out, arrivalList);

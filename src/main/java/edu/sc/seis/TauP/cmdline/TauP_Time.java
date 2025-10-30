@@ -16,11 +16,13 @@
  */
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -49,6 +51,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
+
+    @CommandLine.Option(names = {"--derivative"}, description = "include derivative calculations")
+    protected boolean withDerivative = false;
+
 
     @CommandLine.Mixin
     AmplitudeArgs sourceArgs = new AmplitudeArgs();
@@ -233,16 +239,21 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public GsonBuilder createGsonBuilder() {
         GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
         gsonBld.registerTypeAdapter(Arrival.class,
-                new ArrivalSerializer(false, false, isWithAmplitude()));
+                new ArrivalSerializer(false, false, isWithAmplitude(), withDerivative));
         return gsonBld;
     }
 
     @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
+            boolean withPierce = false;
+            boolean withPath = false;
+            GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+            gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, isWithAmplitude(), withDerivative));
+            gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, isWithAmplitude(), withDerivative));
+            Gson gson = gsonBuilder.create();
             TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs.getSeismicSource(), arrivalList);
-            GsonBuilder gsonBld = createGsonBuilder();
-            out.println(gsonBld.create().toJson(result));
+            out.println(gson.toJson(result));
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {
             printResultHtml(out, arrivalList);
         } else if (getOutputFormat().equals(OutputTypes.CSV)) {
@@ -259,7 +270,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 getScatterer(),
                 onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs,
-                relativePhaseName);
+                relativePhaseName, withDerivative);
     }
 
     public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
@@ -267,7 +278,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getModelName(),
                 getScatterer(),
                 isWithAmplitude(), sourceArgs,
-                relativePhaseName, "Time");
+                relativePhaseName, "Time",
+                withDerivative);
     }
 
     public static List<String> createModelHeaderLine(String modelName,
@@ -286,17 +298,18 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                                        boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                                        List<String> relativePhaseName,
                                                        String phaseFormat,
-                                                       String phasePuristFormat) {
+                                                       String phasePuristFormat,
+                                                       boolean withDerivative) {
         List<String> modelLine = createModelHeaderLine(modelName, scatterer);
 
         List<String> lineOne = new ArrayList<>(List.of("Distance   ", "Depth   ",
                 String.format(phaseFormat, "Phase")+ "   ",
                 "Travel    ", "Ray Param  ", "Takeoff  ", "Incident ", "Station   ", "Purist   ",
-                "", String.format(phasePuristFormat, "Purist")));
+                " ", String.format(phasePuristFormat, "Purist ")));
         List<String> lineTwo = new ArrayList<>(List.of("  (deg)    ", " (km)   ",
                 String.format(phaseFormat, "Name ")+ "   ",
                 "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance ",
-                "", String.format(phasePuristFormat, "Name  ")));
+                " ", String.format(phasePuristFormat, "Name   ")));
         if (withAmplitude) {
             lineOne.addAll(List.of("    Amp  ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  "));
             lineTwo.addAll(List.of("  Factor PSv", "   Sh"));
@@ -312,6 +325,22 @@ public class TauP_Time extends TauP_AbstractRayTool {
             lineTwo.add(space.repeat((11-allRelPhase.length())/2)+"  "+String.format(phaseFormat, allRelPhase));
             lineOne.add(" to");
             lineTwo.add("");
+        }
+        if (withDerivative) {
+            lineOne.add("Source ");
+            lineTwo.add("Vel    ");
+            lineOne.add("Radial ");
+            lineTwo.add("Slow   ");
+            lineOne.add("Source ");
+            lineTwo.add("Radius ");
+            lineOne.add("Station ");
+            lineTwo.add("Vel     ");
+            lineOne.add("Radial ");
+            lineTwo.add("Slow   ");
+            lineOne.add("Station ");
+            lineTwo.add("Radius  ");
+            lineOne.add("dp/   ");
+            lineTwo.add("ddeg  ");
         }
         for (Arrival arrival : arrivalList) {
             if (arrival.getRayCalculateable().hasDescription()) {
@@ -351,9 +380,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            Scatterer scatterer,
                                            boolean onlyPrintTime, boolean onlyPrintRayP,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
-                                           List<String> relativePhaseName) {
+                                           List<String> relativePhaseName,
+                                           boolean withDerivative) {
         int maxNameLength = 5;
-        int maxPuristNameLength = 6;
+        int maxPuristNameLength = 7;
         for (Arrival arrival : arrivalList) {
             if (arrival.getName().length() > maxNameLength) {
                 maxNameLength = arrival.getName()
@@ -371,7 +401,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         if(!(onlyPrintRayP || onlyPrintTime)) {
             List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                     withAmplitude, sourceArgs, relativePhaseName,
-                    phaseFormat, phasePuristFormat);
+                    phaseFormat, phasePuristFormat, withDerivative);
             if (withAmplitude) {
                 out.println(AmplitudeArgs.AMPLITUDE_WARNING);
             }
@@ -386,7 +416,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             out.write(dashes.append("\n").toString());
             for (Arrival arrival : arrivalList) {
                 List<String> lineItems = arrival.asStringList(false,
-                        phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty());
+                        phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty(), withDerivative);
                 // fix indentation
                 out.println(String.join("", lineItems));
             }
@@ -412,7 +442,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            String modelName,
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
-                                           List<String> relativePhaseName, String toolname) throws TauPException {
+                                           List<String> relativePhaseName, String toolname,
+                                           boolean withDerivative) throws TauPException {
 
 
         HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
@@ -421,7 +452,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
         }
         String modelLine = String.join("", createModelHeaderLine(modelName, scatterer));
         out.println("<h5>"+modelLine+"</h5>");
-        printArrivalsAsHtmlTable(out, arrivalList, modelName, scatterer, withAmplitude, sourceArgs, relativePhaseName, toolname);
+        printArrivalsAsHtmlTable(out, arrivalList, modelName, scatterer, withAmplitude, sourceArgs,
+                relativePhaseName, toolname, withDerivative);
         HTMLUtil.addSortTableJS(out);
         out.println(HTMLUtil.createHtmlEnding());
         out.flush();
@@ -432,18 +464,19 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            String modelName,
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
-                                           List<String> relativePhaseName, String toolname) throws TauPException {
+                                           List<String> relativePhaseName, String toolname,
+                                                boolean withDerivative) throws TauPException {
         String phaseFormat = "%s";
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
-                phaseFormat, phaseFormat);
+                phaseFormat, phaseFormat, withDerivative);
 
         List<String> mergedHeaders = combineHeadLines(headLines);
 
         List<List<String>> values = new ArrayList<>();
         for (Arrival arrival : arrivalList) {
             List<String> lineItems = arrival.asStringList(false,
-                    phaseFormat, phaseFormat, withAmplitude, !relativePhaseName.isEmpty());
+                    phaseFormat, phaseFormat, withAmplitude, !relativePhaseName.isEmpty(), withDerivative);
             values.add(lineItems);
         }
 
@@ -456,7 +489,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getModelName(),
                 getScatterer(),
                 isWithAmplitude(), sourceArgs,
-                relativePhaseName, "Time");
+                relativePhaseName, "Time",
+                withDerivative);
     }
 
     public static void printArrivalsAsCsv(PrintWriter out,
@@ -464,11 +498,12 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            String modelName,
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
-                                           List<String> relativePhaseName, String toolname) throws TauPException {
+                                           List<String> relativePhaseName, String toolname,
+                                          boolean withDerivative) throws TauPException {
         String phaseFormat = "%s";
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
-                phaseFormat, phaseFormat);
+                phaseFormat, phaseFormat, withDerivative);
         List<String> mergedHeaders = combineHeadLines(headLines);
 
         String comma = ",";
@@ -493,7 +528,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         for (Arrival arrival : arrivalList) {
             comma = ",";
             List<String> lineItems = arrival.asStringList(false,
-                    phaseFormat, phaseFormat, withAmplitude, !relativePhaseName.isEmpty());
+                    phaseFormat, phaseFormat, withAmplitude, !relativePhaseName.isEmpty(), withDerivative);
             for (int i = 0; i < lineItems.size(); i++) {
                 String val = lineItems.get(i).trim();
                 if (val.contains("\"") || val.contains(",")) {

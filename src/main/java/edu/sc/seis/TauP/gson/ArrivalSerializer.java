@@ -10,13 +10,16 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
     boolean withPierce;
     boolean withPath;
     boolean withAmplitude;
+    boolean withDerivative;
 
     public ArrivalSerializer(boolean withPierce,
                              boolean withPath,
-                             boolean withAmplitude) {
+                             boolean withAmplitude,
+                             boolean withDerivative) {
         this.withPierce = withPierce;
         this.withPath = withPath;
         this.withAmplitude = withAmplitude;
+        this.withDerivative = withDerivative;
     }
 
     /**
@@ -84,6 +87,21 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         }
         RayCalculateableSerializer raycalcSerializer = new RayCalculateableSerializer();
         a.add(JSONLabels.RAYCALC, raycalcSerializer.serialize(arr.getRayCalculateable(), RayCalculateable.class, context));
+        if (withDerivative) {
+            JsonObject deriv = new JsonObject();
+            a.add(JSONLabels.DERIVATIVE, deriv);
+            JsonObject source = new JsonObject();
+            deriv.add(JSONLabels.SOURCE, source);
+            source.addProperty(JSONLabels.VELOCITY, (float)arr.velocityAtSource());
+            source.addProperty(JSONLabels.RADIALSLOWNESS, (float)arr.radialSlownessAtSource());
+            source.addProperty(JSONLabels.RADIUS, (float)arr.sourceRadius());
+            JsonObject receiver = new JsonObject();
+            deriv.add(JSONLabels.RECEIVER, receiver);
+            receiver.addProperty(JSONLabels.VELOCITY, (float)arr.velocityAtReceiver());
+            receiver.addProperty(JSONLabels.RADIALSLOWNESS, (float)arr.radialSlownessAtReceiver());
+            receiver.addProperty(JSONLabels.RADIUS, (float)arr.receiverRadius());
+            deriv.addProperty(JSONLabels.DPDDEG, arr.getDRayParamDDeltaDeg());
+        }
         if (withPierce) {
             JsonArray points = new JsonArray();
             a.add(JSONLabels.PIERCE, points);

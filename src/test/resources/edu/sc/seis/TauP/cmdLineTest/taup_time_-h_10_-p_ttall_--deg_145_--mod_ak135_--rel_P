@@ -1,8 +1,8 @@
 
 Model: ak135
-Distance   Depth   Phase        Travel    Ray Param  Takeoff  Incident Station   Purist   Purist     Relative to
-  (deg)     (km)   Name         Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance Name             P         
----------------------------------------------------------------------------------------------------------------------
+Distance   Depth   Phase        Travel    Ray Param  Takeoff  Incident Station   Purist    Purist     Relative to
+  (deg)     (km)   Name         Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name             P         
+----------------------------------------------------------------------------------------------------------------------
   145.00    10.0   Pdiff        1025.40     4.446     13.43    13.41      0.0   145.00   = Pdiff      no arrival
   145.00    10.0   pPdiff       1028.75     4.446    166.57    13.41      0.0   145.00   = pPdiff     no arrival
   145.00    10.0   sPdiff       1029.94     4.446    172.04    13.41      0.0   145.00   = sPdiff     no arrival

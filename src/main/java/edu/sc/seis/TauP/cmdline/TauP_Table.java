@@ -25,12 +25,16 @@
  */
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -464,6 +468,13 @@ public class TauP_Table extends TauP_Tool {
     protected void jsonTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
                              double[] depths, double receiverDepth, Scatterer scatterer,
                              List<RayCalculateable> rayCalcList) throws TauPException {
+        boolean withPierce = false;
+        boolean withPath = false;
+        boolean withAmp = false;
+        GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+        gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
+        gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
+        Gson gson = gsonBuilder.create();
         out.println("[");
         for (double depth : depths) {
             List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
@@ -476,7 +487,7 @@ public class TauP_Table extends TauP_Tool {
                         scatterer,
                         false, null,
                         arrivals);
-                out.println(GsonUtil.toJson(result));
+                out.println(gson.toJson(result));
             }
         }
         out.println("]");
@@ -503,13 +514,13 @@ public class TauP_Table extends TauP_Tool {
     protected void csvTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
                             double[] depths, double receiverDepth, Scatterer scatterer,
                             List<RayCalculateable> rayCalcList) throws TauPException {
-        out.println(Arrival.CSVHeader());
+        out.println(Arrival.CSVHeader(false, false, withDerivative));
         for (double depth : depths) {
             List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
             for (RayCalculateable distCalc : rayCalcList) {
                 List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 for (Arrival currArrival : arrivals) {
-                    out.println(currArrival.asCSVRow());
+                    out.println(currArrival.asCSVRow(false, false, withDerivative));
                 }
             }
         }
@@ -526,7 +537,8 @@ public class TauP_Table extends TauP_Tool {
             for (RayCalculateable distCalc : rayCalcList) {
                 List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 for (Arrival currArrival : arrivals) {
-                    values.add(currArrival.asStringList(true, "%s", "%s", false, false));
+                    values.add(currArrival.asStringList(true, "%s", "%s",
+                            false, false, withDerivative));
                 }
             }
         }
@@ -645,5 +657,8 @@ public class TauP_Table extends TauP_Tool {
 
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgs phaseArgs = new PhaseArgs();
+
+    @CommandLine.Option(names = {"--derivative"}, description = "include derivative calculations")
+    protected boolean withDerivative = false;
 
 }

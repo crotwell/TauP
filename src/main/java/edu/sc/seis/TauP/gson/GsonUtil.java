@@ -32,8 +32,8 @@ public class GsonUtil {
         gson.registerTypeAdapter(XYSegment.class, new XYSegmentSerializer());
         gson.registerTypeAdapter(XYPlottingData.class, new XYPlottingDataSerializer());
         gson.registerTypeAdapter(XYPlotOutput.class, new XYPlotOutputSerializer());
-        gson.registerTypeAdapter(Arrival.class, new ArrivalSerializer(false, false, false));
-        gson.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(false, false, false));
+        gson.registerTypeAdapter(Arrival.class, new ArrivalSerializer(false, false, false, false));
+        gson.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(false, false, false, false));
         gson.registerTypeAdapter(TimeResult.class, new TimeResultSerializer());
         gson.registerTypeAdapter(BeachballResult.class, new BeachballResultSerializer());
         gson.registerTypeAdapter(PhaseDescribeResult.class, new PhaseDescribeSerializer());

@@ -124,7 +124,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
                 if (! arrivalList.isEmpty()) {
                     TauP_Time.printArrivalsAsHtmlTable(writer, arrivalList, getTauModelName(), getScatterer(),
-                            false, sourceArgs, new ArrayList<String>(), "beachball");
+                            false, sourceArgs, new ArrayList<String>(), "beachball",
+                            false);
                 }
 
                 for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.amps, BeachballType.ampsv, BeachballType.ampsh)) {
@@ -521,6 +522,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         boolean withPierce = false;
         boolean withPath = false;
         boolean withAmp = true;
+        boolean withDerivative = false;
         List<RadiationAmplitude> radPattern = calcRadiationPattern(faultPlane, numPoints);
         SeismicSource seismicSource = new SeismicSource(ArrivalAmplitude.DEFAULT_MW, faultPlane);
         BeachballResult bbResult = new BeachballResult(modelArgs.getModelName(),
@@ -528,8 +530,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 getPhaseArgs().parsePhaseNameList(),
                 getScatterer(), withAmp, seismicSource, arrivalList, radPattern);
         GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
-        gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, true));
-        gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp));
+        gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
+        gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
         writer.println(gsonBuilder.create().toJson(bbResult));
     }
 

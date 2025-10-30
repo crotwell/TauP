@@ -1,13 +1,15 @@
-Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
-                  [-o=<outFile>] [--prop=<toolPropsFilename>] [--csv | --html |
-                  --json | --locsat | --text] [[--mod=<modelName>]
-                  [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
-                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+Usage: taup table [--debug] [--derivative] [--help] [--verbose]
+                  [--header=<headerFile>] [-o=<outFile>]
+                  [--prop=<toolPropsFilename>] [--csv | --html | --json |
+                  --locsat | --text] [[--mod=<modelName>] [--stadepth=depth[,
+                  depth...]]... [--scat=depth deg]...] [[-p=phase[,
+                  phase...]]... [--phasefile=<phaseFiles>]...]
 Create a table of travel times for a range of depths and distances.
 
 Options:
 
       --debug              enable debugging output
+      --derivative         include derivative calculations
       --header=<headerFile>
                            reads depth and distance spacing data from a LOCSAT
                              style file.

@@ -182,6 +182,10 @@ public class Outputs {
         return String.format(locale, depthFormat, depth);
     }
 
+    public static String formatVelocity(double velocity) {
+        return String.format(locale, velocityFormat, velocity);
+    }
+
     public static String formatDistance(double distance) {
 
         return String.format(locale,  distanceFormat, distance);
@@ -211,6 +215,10 @@ public class Outputs {
         return String.format(locale,  rayParamFormat, rayParam);
     }
 
+    public static String formatDpDdeg(double dpddeg) {
+        return String.format(locale,  dpddegFormat, dpddeg);
+    }
+
     public static String formatLatLon(double latlon) {
 
         return String.format(locale, latLonFormat, latlon);
@@ -236,9 +244,13 @@ public class Outputs {
 
     public static String distanceFormatNoPad = "%.2f";
 
+    public static String velocityFormat = "%5.2f";
+
     public static String timeFormatNoPad = "%.2f";
 
     public static String rayParamFormat = "%8.3f";
+
+    public static String dpddegFormat = "%9.5f";
 
     public static String latLonFormat = "%8.2f";
 
