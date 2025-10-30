@@ -24,6 +24,14 @@ public class SphericalCoordinate {
         return new SphericalCoordinate(phi, theta);
     }
 
+    public Vector toCartesian() {
+        return new Vector(
+                r*Math.sin(phi)*Math.cos(theta),
+                r*Math.sin(phi)*Math.sin(theta),
+                r*Math.cos(phi)
+                );
+    }
+
     /**
      * Angle from north pole, 0 to pi.
      */
