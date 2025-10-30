@@ -32,7 +32,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.1.1-SNAPSHOT"
+version = "3.2.0-SNAPSHOT"
 val ver_split = project.getVersion().toString().split(".")
 val short_version = ver_split[0]+"."+ver_split[1]
 val copyright = "2025"
