@@ -113,7 +113,7 @@ public interface JSONLabels {
     String ABOVE = "above";
     String BELOW = "below";
     String DERIVATIVE = "derivative";
-    String DPDDEG = "dp/ddeg";
+    String DPDDEG = "dpddeg";
     String VELOCITY = "velocity";
     String RADIALSLOWNESS = "radialslowness";
     String RADIUS = "radius";
