@@ -579,9 +579,15 @@ public class TauP_Table extends TauP_Tool {
     protected void locsatTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
                                double[] depths, double receiverDepth, Scatterer scatterer,
                                List<RayCalculateable> rayCalcList) throws TauPException {
-        String float15_4 = "%15.4f";
-        String float7_2 = "%7.2f";
         String decimal7 = "%-7d";
+
+        String depthFormat = "%7." + toolProps.getProperty("taup.table.locsat.depth.precision", "2")
+                + "f";
+        String distanceFormat = "%7." + toolProps.getProperty("taup.table.locsat.distance.precision", "2")
+                + "f";
+        String timeFormat = "%15." + toolProps.getProperty("taup.table.locsat.time.precision", "4")
+                + "f";
+
         double maxDiff = Double.parseDouble(toolProps.getProperty("taup.table.locsat.maxdiff",
                 "105.0"));
         out.print("n # " + PhaseArgs.getPhaseNamesAsString(phaseNames)
@@ -590,7 +596,7 @@ public class TauP_Table extends TauP_Tool {
         out.print(String.format(decimal7, depths.length)
                 + "# number of depth samples\n");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            out.print(String.format(float7_2, depths[depthNum]));
+            out.print(String.format(depthFormat, depths[depthNum]));
             if(depthNum % 10 == 9) {
                 out.println();
             }
@@ -606,7 +612,7 @@ public class TauP_Table extends TauP_Tool {
                 throw new TauPException("RayCalc is not a distance: "+rayCalc);
             }
             DistanceRay dr = (DistanceRay)rayCalc;
-            out.print(String.format(float7_2, dr.getDegrees(tMod.getRadiusOfEarth())));
+            out.print(String.format(distanceFormat, dr.getDegrees(tMod.getRadiusOfEarth())));
             if(distNum % 10 == 9) {
                 out.println();
             }
@@ -622,12 +628,12 @@ public class TauP_Table extends TauP_Tool {
                 DistanceRay dr = (DistanceRay)distCalc;
                 double distance = dr.getDegrees(tMod.getRadiusOfEarth());
                 List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
-                String outString = String.format(float15_4, -1.0) + "    none\n";
+                String outString = String.format(timeFormat, -1.0) + "    none\n";
                 for (Arrival currArrival : arrivals) {
                     if (distance > maxDiff
                             && (currArrival.getName().endsWith("diff"))) {
                     } else {
-                        outString = String.format(float15_4, currArrival.getTime()) + "    " + currArrival.getName() + "\n";
+                        outString = String.format(timeFormat, currArrival.getTime()) + "    " + currArrival.getName() + "\n";
                         break;
                     }
                 }

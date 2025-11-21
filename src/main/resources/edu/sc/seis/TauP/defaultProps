@@ -36,6 +36,15 @@ taup.rayparam.precision=3
 # option to TauP_Table
 taup.table.locsat.maxdiff=105.0
 
+# precison for depth for locsat output, defaults to 2 decimal digits.
+taup.table.locsat.depth.precision=2
+
+# precison for distance for locsat output, defaults to 2 decimal digits.
+taup.table.locsat.distance.precision=2
+
+# precison for time for locsat output, defaults to 4 decimal digits.
+taup.table.locsat.time.precision=4
+
 # max jump in distance (deg) in path without simple linear path interpolation
 taup.path.maxPathInc=1.0
 

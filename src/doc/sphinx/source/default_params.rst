@@ -89,6 +89,12 @@ The currently used properties are:
   not be added to the table, even though they may show up in the output of
   TauP Time. Instead, the next later arriving phase, if any, will be used
   instead. The default is 105 degrees.
+* :code:`taup.table.locsat.depth.precision`
+  precison for depth for locsat output, defaults to 2 decimal digits.
+* :code:`taup.table.locsat.distance.precision`
+  precison for distance for locsat output, defaults to 2 decimal digits.
+* :code:`taup.table.locsat.time.precision`
+  precison for time for locsat output, defaults to 4 decimal digits.
 * :code:`taup.create.minDeltaP`
   Minimum difference in slowness between
   successive slowness samples. This is used to decide when to stop adding new
