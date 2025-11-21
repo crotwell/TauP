@@ -108,7 +108,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                             lineColor = "-W," + ColoringArgs.gmtColor(coloring.colorForIndex(phaseIdx));
                             out.write("gmt plot " + lineColor + " -A  <<END\n");
                         }
-                        segment.writeGMTText(out, distDepthRangeArgs, Outputs.distanceFormat, Outputs.depthFormat, withTime);
+                        segment.writeGMTText(out, distDepthRangeArgs, Outputs.distanceFormat, Outputs.depthFormat, withTime, false);
                         if (coloring.getColoring() == ColorType.wavetype || coloring.getColoring() == ColorType.phase) {
                             out.println("END");
                         }

@@ -70,6 +70,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
 	boolean onlyNamedDiscon = false;
 
+	@CommandLine.Option(names = "--withlatlon", description = "include lat,lon for path points in output.")
+	protected boolean withLatLon = false;
+
 	public TauP_Path() {
 		super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_path"));
 		outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
@@ -211,7 +214,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 						String colorArg = "-W"+(interpSeg.isPWave() ?ColoringArgs.PWAVE_COLOR:ColoringArgs.SWAVE_COLOR)+" ";
 						out.write("gmt plot "+colorArg+" -A  <<END\n");
 					}
-					interpSeg.writeGMTText(out, distDepthRange, Outputs.distanceFormat, Outputs.depthFormat, withTime);
+					interpSeg.writeGMTText(out, distDepthRange, Outputs.distanceFormat, Outputs.depthFormat, withTime, withLatLon);
 					if (getGraphicOutputTypeArgs().isGMT() && coloring.getColoring() == ColorType.wavetype) {
 						out.println("END");
 					}

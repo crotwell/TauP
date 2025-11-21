@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import com.google.gson.JsonObject;
+import edu.sc.seis.TauP.cmdline.args.DistDepthRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +109,19 @@ public class ArrivalPathSegment extends AbstractPathSegment {
     public String description() {
         return "seg "+segmentIndex+"/"+totalNumSegments+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
 
+    }
+
+    @Override
+    public String gmtTextLine(TimeDist td, DistDepthRange distDepthRange, String xFormat, String yFormat,
+                              boolean withTime, boolean withLatLon,
+                              DistanceAxisType distanceAxisType, DepthAxisType depthAxisType) {
+        String line = super.gmtTextLine(td, distDepthRange, xFormat, yFormat, withTime, withLatLon, distanceAxisType, depthAxisType);
+        if (withLatLon && arrival.isLatLonable()) {
+            double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
+            line += "  " + Outputs.formatLatLon(latlon[0]) + "  "
+                    + Outputs.formatLatLon(latlon[1]);
+        }
+        return line;
     }
 
     public SeismicPhaseSegment getPhaseSegment() {

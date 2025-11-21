@@ -230,7 +230,46 @@ public abstract class AbstractPathSegment {
         pw.println("    </g>");
     }
 
-    public void writeGMTText(PrintWriter pw, DistDepthRange distDepthRange, String xFormat, String yFormat, boolean withTime) {
+    public String gmtTextLine(TimeDist td, DistDepthRange distDepthRange, String xFormat, String yFormat,
+                              boolean withTime,
+                              DistanceAxisType distanceAxisType, DepthAxisType depthAxisType) {
+        return gmtTextLine(td, distDepthRange, xFormat, yFormat, withTime, false, distanceAxisType, depthAxisType);
+    }
+
+    public String gmtTextLine(TimeDist td, DistDepthRange distDepthRange, String xFormat, String yFormat,
+                              boolean withTime, boolean withLatLon,
+                              DistanceAxisType distanceAxisType, DepthAxisType depthAxisType) {
+        double xVal;
+        double yVal;
+        double R = getPhase().getTauModel().getRadiusOfEarth();
+        switch (distanceAxisType) {
+            case radian:
+                xVal = td.getDistRadian();
+                break;
+            case kilometer:
+                xVal = R * td.getDistRadian();
+                break;
+            case degree:
+            default:
+                // default to degree?
+                xVal = td.getDistDeg();
+        }
+        switch (depthAxisType) {
+            case depth:
+                yVal = td.getDepth();
+                break;
+            case radius:
+            default:
+                yVal = R - td.getDepth();
+        }
+        String line = String.format(xFormat, xVal) + "  " + String.format(yFormat, yVal);
+        if (withTime) {
+            line += " " + Outputs.formatTime(td.getTime());
+        }
+        return line;
+    }
+
+    public void writeGMTText(PrintWriter pw, DistDepthRange distDepthRange, String xFormat, String yFormat, boolean withTime, boolean withLatLon) {
         //pw.println("> " + arrival.getCommentLine());
         DistanceAxisType distanceAxisType = distDepthRange.distAxisType != null ? distDepthRange.distAxisType : DistanceAxisType.degree;
         DepthAxisType depthAxisType = distDepthRange.depthAxisType != null ? distDepthRange.depthAxisType : DepthAxisType.radius;
@@ -238,32 +277,7 @@ public abstract class AbstractPathSegment {
         double R = getPhase().getTauModel().getRadiusOfEarth();
         String prevLine = "";
         for (TimeDist td : path) {
-            double xVal;
-            double yVal;
-            switch (distanceAxisType) {
-                case radian:
-                    xVal = td.getDistRadian();
-                    break;
-                case kilometer:
-                    xVal = R * td.getDistRadian();
-                    break;
-                case degree:
-                default:
-                    // default to degree?
-                    xVal = td.getDistDeg();
-            }
-            switch (depthAxisType) {
-                case depth:
-                    yVal = td.getDepth();
-                    break;
-                case radius:
-                default:
-                    yVal = R - td.getDepth();
-            }
-            String line = String.format(xFormat, xVal) + "  " + String.format(yFormat, yVal);
-            if (withTime) {
-                line += " " + Outputs.formatTime(td.getTime());
-            }
+            String line = gmtTextLine(td, distDepthRange, xFormat, yFormat, withTime, withLatLon, distanceAxisType, depthAxisType);
             if (! line.equals(prevLine)) {
                 // avoid duplicate lines in output, usually due to changes smaller than the output format
                 pw.println(line);
