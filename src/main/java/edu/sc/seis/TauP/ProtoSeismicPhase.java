@@ -799,11 +799,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public void calcEndSegRayParam() throws TauModelException {
-        double maxRP = -1;
-        double minRP = Double.MAX_VALUE;
+        double maxRP = segmentList.get(0).maxRayParam;
+        double minRP = segmentList.get(0).minRayParam;
         for (SeismicPhaseSegment s : segmentList) {
-            maxRP = Math.max(maxRP, s.maxRayParam);
-            minRP = Math.min(minRP, s.minRayParam);
+            maxRP = Math.min(maxRP, s.maxRayParam);
+            minRP = Math.max(minRP, s.minRayParam);
         }
         SeismicPhaseSegment end = endSegment();
         if (end.maxRayParam != maxRP || end.minRayParam != minRP) {
