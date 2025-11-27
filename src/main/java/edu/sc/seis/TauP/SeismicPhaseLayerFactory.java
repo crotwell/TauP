@@ -769,11 +769,16 @@ public class SeismicPhaseLayerFactory {
             return proto;
         }
         SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
+        if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
+            return baseFactory.failWithMessage(proto,"Unable to diffract, not diffraction depth " + currLeg + ", "+disconBranch+" at "+
+                    tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
+        }
 
         endAction = DIFFRACT;
-        if (prevEndBranch < disconBranch - 1 || prevEndAction == START ||
+        if (prevEndBranch < disconBranch - 1  ||
                 (prevEndBranch == disconBranch-1 && prevSegment != null && prevSegment.endsAtTop())
         ) {
+            // above discon, add branch down
             proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
@@ -790,10 +795,6 @@ public class SeismicPhaseLayerFactory {
                     +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+prevSegment.endsAtTop());
         }
 
-        if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
-            return baseFactory.failWithMessage(proto,"Unable to diffract, not diffraction depth " + currLeg + ", "+disconBranch+" at "+
-                tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
-        }
         // is possible to diffract downward? maybe if low velocity zone??
         if (currLeg.endsWith(DIFFDOWN)
                 || (currBranch == botBranchNum
