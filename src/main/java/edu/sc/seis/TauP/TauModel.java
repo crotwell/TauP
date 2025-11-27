@@ -198,6 +198,9 @@ public class TauModel implements Serializable {
      * @throws NoSuchLayerException
      */
     public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+        if (getTauBranch(branchNum, isPWave).isHighSlowness()) {
+            return false;
+        }
         double topDepth = getTauBranch(branchNum, false).getTopDepth();
         int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
