@@ -584,34 +584,6 @@ public class SeismicPhaseFactory {
     }
 
     /**
-     * Calculates how many times the phase passes through a branch, up or down,
-     * so that we can just multiply instead of doing the ray calc for each time.
-     * @return
-     */
-    protected static int[][] calcBranchMultiplier(TauModel tMod, List<SeismicPhaseSegment> segmentList) {
-        /* initialize the counter for each branch to 0. 0 is P and 1 is S. */
-        int[][] timesBranches = new int[2][tMod.getNumBranches()];
-        for(int i = 0; i < timesBranches[0].length; i++) {
-            timesBranches[0][i] = 0;
-            timesBranches[1][i] = 0;
-        }
-        /* Count how many times each branch appears in the path. */
-        for (SeismicPhaseSegment seg : segmentList) {
-            if (seg.isFlat) {
-                // head/diff waves will be inserted after regular paths are calculated
-                continue;
-            }
-            int begin = Math.min(seg.startBranch, seg.endBranch);
-            int finish = Math.max(seg.startBranch, seg.endBranch);
-            int isPIdx = seg.isPWave ? 0 : 1;
-            for (int i = begin; i <= finish; i++) {
-                timesBranches[isPIdx][i]++;
-            }
-        }
-        return timesBranches;
-    }
-
-    /**
      * Sums the appropriate branches for this phase.
      *
      * @throws TauModelException
