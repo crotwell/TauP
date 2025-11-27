@@ -750,8 +750,11 @@ public class SeismicPhaseLayerFactory {
             throws TauModelException {
         PhaseInteraction endAction;
         PhaseInteraction prevEndAction = proto.getEndAction();
-        int prevEndBranch = proto.isEmpty() ? -1 : proto.endSegment().endBranch;
+        int prevEndBranch = proto.isEmpty() ? (tMod.getSourceBranch()-1) : proto.endSegment().endBranch;
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
+        if (proto.isEmpty()) {
+            currBranch = tMod.getSourceBranch()-1;
+        }
         int depthIdx = 0;
         if (startsWith(currLeg, p_leg) || startsWith(currLeg, s_leg)) {
             depthIdx = 1;
