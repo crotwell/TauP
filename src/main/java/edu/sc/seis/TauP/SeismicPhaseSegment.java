@@ -674,6 +674,23 @@ public class SeismicPhaseSegment {
 		return reflTranValue;
 	}
 
+	public SeismicPhaseSegment clone() {
+		SeismicPhaseSegment seg = new SeismicPhaseSegment(
+				tMod,
+				startBranch,
+				endBranch,
+				isPWave,
+				endAction,
+				isDownGoing,
+				legName,
+				minRayParam,
+				maxRayParam);
+		seg.prevEndAction = prevEndAction;
+		seg.isFlat = isFlat;
+		seg.flatFractionOfPath = flatFractionOfPath;
+		return seg;
+	}
+
 
 	public static String segmentListDescribe(List<List<SeismicPhaseSegment>> segmentListList) {
 		StringBuilder out = new StringBuilder();
