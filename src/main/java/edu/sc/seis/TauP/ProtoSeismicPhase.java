@@ -894,9 +894,17 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         segmentList.add(seg);
     }
 
-
+    /**
+     * Calculate the starting branch number for the current leg. This is the same as the
+     * previous end branch number for reflections, and offset by one for transmissions.
+     * @param currLeg current leg name
+     * @return branch number
+     */
     public int calcStartBranch(String currLeg) {
         int currBranch;
+        if (isFail) {
+            throw new RuntimeException("Phase has failed, cannot calc next branch");
+        }
         if (currLeg.endsWith(KMPS_CODE)) {
             // surface wave, zero
             currBranch = 0;
@@ -941,11 +949,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             throw new TauModelException(getName()+": end branch outside range: "+endBranch);
         }
         if(endAction == TRANSUP && endBranch == 0) {
-            failNext("cannot TRANSUP with end branch zero, already at surface: "+endBranch);
+            return failNext("cannot TRANSUP with end branch zero, already at surface: "+endBranch);
         }
         if( ! isPWave && tMod.isFluidBranch(startBranch)) {
             // S wave in fluid
-            failNext("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
+            return failNext("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
         }
         int endOffset;
         boolean isDownGoing;
@@ -1100,13 +1108,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             // and cross into lower
             if (endBranch == tMod.getNumBranches()-1) {
-                failNext(" Cannot TRANSDOWN center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+                return failNext(" Cannot TRANSDOWN center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
             }
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getTopRayParam());
 
         } else if(endAction == HEAD) {
             if (endBranch == tMod.getNumBranches()-1) {
-                failNext(" Cannot head wave at center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+                return failNext(" Cannot head wave at center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
             }
             endOffset = 0;
             isDownGoing = true;
@@ -1121,9 +1129,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 /*
                  * No diffraction if diffraction is at center of earth.
                  */
-                failNext("No diffraction if diffraction is at center of earth.");
-                minRayParam = -1;
-                maxRayParam = -1;
+                return failNext("No diffraction if diffraction is at center of earth.");
             }
             endOffset = 0;
             isDownGoing = true;
@@ -1137,9 +1143,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             minRayParam = Math.max(minRayParam, maxRayParam);
             if (tMod.getTauBranch(endBranch, isPWave).isHighSlowness()) {
                 // should diff be allowed if in neg slowness gradient at boundary???
-                failNext("No diffraction as above branch is a high slowness gradient");
-                minRayParam = -1;
-                maxRayParam = -1;
+                return failNext("No diffraction as above branch is a high slowness gradient");
             }
         } else if (endAction == TRANSUPDIFFRACT) {
             endOffset = -1;
@@ -1153,9 +1157,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 /*
                  * No diffraction if above branch is a high slowness gradient.
                  */
-                failNext("No transup diffraction as above branch is a high slowness gradient");
-                minRayParam = -1;
-                maxRayParam = -1;
+                return failNext("No transup diffraction as above branch is a high slowness gradient");
             }
         } else {
             throw new TauModelException(getName()+": Illegal endAction: endAction="
@@ -1170,7 +1172,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
                     if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
                             || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
-                        failNext("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
+                        return failNext("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
                                 +" is in fluid: "+tb+" "+fluidDR+" "+startBranch+" "+endBranch+" "+isDownGoing);
                     }
                 }
@@ -1179,9 +1181,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if(isDownGoing) {
             if (startBranch > endBranch) {
                 // can't be downgoing as we are already below
-                minRayParam = -1;
-                maxRayParam = -1;
-                failNext("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
+                return failNext("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
             } else {
                 if(TauPConfig.DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
@@ -1195,9 +1195,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         } else {
             if (startBranch < endBranch) {
                 // can't be upgoing as we are already above
-                minRayParam = -1;
-                maxRayParam = -1;
-                failNext("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
+                return failNext("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
             } else {
                 if(TauPConfig.DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {
@@ -1232,6 +1230,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                                 PhaseInteraction endAction,
                                                 String currLeg) throws TauModelException {
         // special case, add "flat" segment along bounday
+        if (isFail) {
+            // phase has already failed, don't add more segments, return last (failed) segment.
+            return endSegment();
+        }
         switch (endAction) {
             case END:
             case END_DOWN:
@@ -1254,7 +1256,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             case FAIL:
                 throw new TauModelException("Phase already finished: "+prevEndAction);
             default:
-                throw new TauModelException("End action before flat branch not allowed: "+endAction);
+                throw new TauModelException("End action before flat branch not allowed: "+prevEndAction+" in "+getName());
         }
         int branch = calcStartBranch(currLeg);
         double minRayParam;
@@ -1285,8 +1287,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
                 if (minRayParam > headRP || maxRayParam < headRP) {
                     // can't do head wave, no rp match
-                    minRayParam = -1;
-                    maxRayParam = -1;
                     return failNext("Head wave ray parameter, "+headRP
                             +", outside of min,max rayparameter for phase "+minRayParam+" "+maxRayParam);
                 } else {
