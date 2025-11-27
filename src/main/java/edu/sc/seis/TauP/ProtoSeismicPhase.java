@@ -856,29 +856,31 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public int countFlatLegs() {
-        int countHeadLegs = 0;
+        int countLegs = 0;
         for (SeismicPhaseSegment seg : segmentList) {
-            if (seg.isFlat) { countHeadLegs++;}
+            if (seg.isFlat) { countLegs++;}
         }
-        return countHeadLegs;
+        return countLegs;
     }
 
     public int countHeadLegs() {
         int countHeadLegs = 0;
         for (SeismicPhaseSegment seg : segmentList) {
-            if (seg.isFlat && seg.prevEndAction == HEAD) { countHeadLegs++;}
+            if (seg.isFlat && seg.prevEndAction == HEAD) {
+                countHeadLegs++;
+            }
         }
         return countHeadLegs;
     }
 
     public int countDiffLegs() {
-        int countHeadLegs = 0;
+        int countDiffLegs = 0;
         for (SeismicPhaseSegment seg : segmentList) {
-            if (seg.isFlat && (seg.prevEndAction == DIFFRACT || seg.prevEndAction == TRANSUPDIFFRACT)) {
-                countHeadLegs++;
+            if (seg.isFlat && seg.prevEndAction == DIFFRACT || seg.prevEndAction == TRANSUPDIFFRACT ) {
+                countDiffLegs++;
             }
         }
-        return countHeadLegs;
+        return countDiffLegs;
     }
 
     public final void add(SeismicPhaseSegment seg) {
