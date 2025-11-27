@@ -795,7 +795,7 @@ public class SeismicPhaseLayerFactory {
         } else {
             // we are below at the right branch to diffract???
             return baseFactory.failWithMessage(proto,"Unable to diffract, below the right branch to diffract " + currBranch +" of "+proto.phaseName
-                    +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+prevSegment.endsAtTop());
+                    +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+(prevSegment!=null?prevSegment.endsAtTop():""));
         }
 
         // is possible to diffract downward? maybe if low velocity zone??
