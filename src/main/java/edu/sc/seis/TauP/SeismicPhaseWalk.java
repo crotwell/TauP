@@ -517,7 +517,7 @@ public class SeismicPhaseWalk {
                     return "k";
                 }
             } else {
-                throw new IllegalArgumentException("Cannot have S wave in outer core");
+                return "[outercore_S]";
             }
         }
         if (tauBranch.isPWave) {
