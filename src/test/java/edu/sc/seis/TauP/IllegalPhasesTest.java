@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IllegalPhasesTest {
 
-	static List<String> otherLegalPhases = Arrays.asList("SKviKS",
+	static List<String> otherLegalPhases = Arrays.asList(
+			"SKviKS",
 			"SKviKKviKS",
 			"SK^cKS",
 			"SK^cK^cKS",
@@ -59,7 +60,8 @@ class IllegalPhasesTest {
 			"P410diff",
 			"P410diffS",
 			"Pvmp",
-			"Pv_moho_p"
+			"Pv_moho_p",
+			"SdiffP", "PSdiff"
 	);
 
 	static List<String> scatterLegalPhases = Arrays.asList(
@@ -143,9 +145,34 @@ class IllegalPhasesTest {
 			}
 		}
 	}
-	
+
 	@Test
-	void checkLegalPhasesTest() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
+	void checkLegalPhasesTest() throws TauModelException, SlownessModelException, IOException {
+		boolean DEBUG = true;
+
+		String modelName = "outerCoreDiscon.nd";
+		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+		TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
+
+		float receiverDepth = 100;
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
+		legalPhases.addAll(otherLegalPhases);
+		for (String phaseName : legalPhases) {
+			try {
+				if (! (phaseName.startsWith("p") || phaseName.startsWith("s"))) {
+					SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
+					assertNotNull(phase);
+					// can fail due to receiver depth???
+					//assertFalse(phase.isFail(), phaseName);
+				}
+			} catch(TauModelException ex) {
+				System.err.println("Working on phase: "+phaseName);
+				throw ex;
+			}
+		}
+	}
+	@Test
+	void checkLegalPhasesAtDepthTest() throws TauModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 
 		String modelName = "outerCoreDiscon.nd";
@@ -158,10 +185,16 @@ class IllegalPhasesTest {
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
-				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
-				assertNotNull(phase);
+				if (! (phaseName.startsWith("p") || phaseName.startsWith("s"))) {
+					SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
+					assertNotNull(phase);
+					// can fail due to receiver depth???
+					//assertFalse(phase.isFail(), phaseName);
+				}
 				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
 				assertNotNull(phase_depth);
+				// can fail due to receiver depth???
+				//assertFalse(phase_depth.isFail(), phaseName+" at depth "+phase_depth.describe());
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
