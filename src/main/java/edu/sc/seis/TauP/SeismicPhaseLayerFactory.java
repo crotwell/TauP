@@ -785,7 +785,7 @@ public class SeismicPhaseLayerFactory {
             proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
-                    nextIsPWave,
+                    isPWave,
                     endAction,
                     currLeg);
         } else if (currBranch == disconBranch - 1
