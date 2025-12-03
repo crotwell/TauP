@@ -1299,8 +1299,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
                 if (minRayParam > diffRP || maxRayParam < diffRP) {
                     // can't do diff wave, no rp match
-                    minRayParam = -1;
-                    maxRayParam = -1;
                     return failNext("Diffraction ray parameter, "+diffRP
                             +", outside of min,max rayparameter for phase "+minRayParam+" "+maxRayParam);
                 } else {
