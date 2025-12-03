@@ -400,7 +400,7 @@ tasks.register<Sync>("fullCopyCmdLineTestFiles") {
   dependsOn("genCmdLineTestFiles")
 }
 tasks.register<Exec>("copyCmdLineTestFiles") {
-  commandLine("./src/util/onlyversiondiff.py")
+  commandLine("./src/util/versiondiff_tests.py")
   dependsOn("genCmdLineTestFiles")
   dependsOn("genCmdLineHelpFiles")
 }
@@ -437,9 +437,13 @@ tasks.register<JavaExec>("genDocExampleFiles") {
   dependsOn += tasks.getByName("copyDocExampleData")
   outputs.files(fileTree("build/docExamples"))
 }
-tasks.register<Sync>("copyDocExampleFiles") {
+tasks.register<Sync>("fullCopyDocExampleFiles") {
   from(tasks.getByName("genDocExampleFiles").outputs)
   into("src/doc/sphinx/source/examples")
+  dependsOn("genDocExampleFiles")
+}
+tasks.register<Exec>("copyDocExampleFiles") {
+  commandLine("./src/util/versiondiff_examples.py")
   dependsOn("genDocExampleFiles")
 }
 

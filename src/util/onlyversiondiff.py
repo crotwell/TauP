@@ -35,12 +35,17 @@ def checkFile(filename, newdir, olddir):
         shutil.copy(newFile, olddir)
     else:
         if newFile.is_file() and oldFile.is_file():
-            with open(newFile, "r") as inNew:
-                newLines = inNew.readlines()
-            with open(oldFile, "r") as inOld:
-                oldLines = inOld.readlines()
-            difflines = difflib.ndiff(newLines, oldLines)
-            (actualDiff, line) = isOnlyVersion(difflines, filename)
+            if filename.endswith(".ms3") or filename.endswith(".sac"):
+                print(f"sac or ms3 file, {filename}, copying anyway")
+                actualDiff=True
+                line="binary file"
+            else:
+                with open(newFile, "r") as inNew:
+                    newLines = inNew.readlines()
+                with open(oldFile, "r") as inOld:
+                    oldLines = inOld.readlines()
+                difflines = difflib.ndiff(newLines, oldLines)
+                (actualDiff, line) = isOnlyVersion(difflines, filename)
             if actualDiff:
                 print(f"Found diff in {filename}: {line}")
                 shutil.copy(newFile, olddir)
@@ -54,21 +59,9 @@ def checkDir(newdir, olddir):
     for f in newdir.iterdir():
         allFiles.add(f.name)
     for filename in allFiles:
-        #print(file.name)
-        checkFile(filename, newdir, olddir)
-
-def main():
-    d = "cmdLineTest"
-    newdir = Path(f"build/{d}")
-    olddir = Path(f"src/test/resources/edu/sc/seis/TauP/{d}")
-    checkDir(newdir, olddir)
-
-    d = "cmdLineHelp"
-    newdir = Path(f"build/{d}")
-    olddir = Path(f"src/doc/sphinx/source/{d}")
-    checkDir(newdir, olddir)
-
-    print("Done!")
-
-if __name__ == "__main__":
-    main()
+        try:
+            #print(file.name)
+            checkFile(filename, newdir, olddir)
+        except Exception as e:
+            print(f"Error with {filename}")
+            raise e
