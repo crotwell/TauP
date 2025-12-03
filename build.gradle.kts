@@ -15,7 +15,7 @@ plugins {
   signing
   application
   id("com.github.ben-manes.versions") version "0.53.0"
-  id("org.jreleaser") version "1.20.0"
+  id("org.jreleaser") version "1.21.0"
 }
 
 application {
@@ -32,7 +32,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.2.0-SNAPSHOT2"
+version = "3.2.0-SNAPSHOT3"
 val ver_split = project.getVersion().toString().split(".")
 val short_version = ver_split[0]+"."+ver_split[1]
 val copyright = "2025"
