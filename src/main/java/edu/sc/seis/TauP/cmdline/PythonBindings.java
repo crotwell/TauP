@@ -408,7 +408,7 @@ public class PythonBindings {
 
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
-            out.println("__version__ = \"0.1.0\"");
+            out.println("__version__ = \"0.2.0\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
