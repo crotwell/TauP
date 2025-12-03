@@ -11,6 +11,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HeadDiffWaveTest {
 
   @Test
+  public void testSdiffP() throws Exception {
+
+    double depth = 0;
+    TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
+    SimpleSeismicPhase SdiffP_Phase = SeismicPhaseFactory.createPhase("SdiffP", tMod);
+    SimpleSeismicPhase SP_Phase = SeismicPhaseFactory.createPhase("SP", tMod);
+    assertEquals(SP_Phase.getMaxDistance(), SdiffP_Phase.getMinDistance());
+    double overlapDeg = SdiffP_Phase.getMinDistanceDeg();
+    DistanceRay overlapRay = DistanceRay.ofDegrees(overlapDeg);
+    List<Arrival> arrivalsSdiffP = overlapRay.calculate(SdiffP_Phase);
+    List<Arrival> arrivalsSP = overlapRay.calculate(SP_Phase);
+    assertEquals(1, arrivalsSdiffP.size());
+    assertEquals(1, arrivalsSP.size());
+    assertEquals(arrivalsSdiffP.get(0).getTime(), arrivalsSP.get(0).getTime(), 0.001);
+  }
+
+  @Test
   public void testHeadOrDiffractSeqSize() throws Exception {
     double depth = 0;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
