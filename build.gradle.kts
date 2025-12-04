@@ -238,8 +238,8 @@ dependencies {
     implementation("io.undertow:undertow-core:2.3.20.Final")
 
         // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.14.1")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
