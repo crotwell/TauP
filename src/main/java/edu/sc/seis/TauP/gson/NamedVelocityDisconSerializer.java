@@ -33,7 +33,11 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
                     above.addProperty(JSONLabels.QS, abDiscon.above.getBotQs());
                 }
                 above.addProperty(JSONLabels.SLOWP, (float)abDiscon.getAboveSlownessP());
-                above.addProperty(JSONLabels.SLOWS, (float)abDiscon.getAboveSlownessS());
+                if (Double.isFinite(abDiscon.getAboveSlownessS())) {
+                    above.addProperty(JSONLabels.SLOWS, (float) abDiscon.getAboveSlownessS());
+                } else {
+                    above.addProperty(JSONLabels.SLOWS, "Infinity");
+                }
                 json.add(JSONLabels.ABOVE, above);
             }
             if (abDiscon.below != null) {
@@ -46,7 +50,11 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
                     below.addProperty(JSONLabels.QS, (float)abDiscon.below.getBotQs());
                 }
                 below.addProperty(JSONLabels.SLOWP, abDiscon.getBelowSlownessP());
-                below.addProperty(JSONLabels.SLOWS, abDiscon.getBelowSlownessS());
+                if (Double.isFinite(abDiscon.getBelowSlownessS())) {
+                    below.addProperty(JSONLabels.SLOWS, (float) abDiscon.getBelowSlownessS());
+                } else {
+                    below.addProperty(JSONLabels.SLOWS, "Infinity");
+                }
                 json.add(JSONLabels.BELOW, below);
             }
         }
