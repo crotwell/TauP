@@ -900,10 +900,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
      * @param currLeg current leg name
      * @return branch number
      */
-    public int calcStartBranch(String currLeg) {
+    public int calcStartBranch(String currLeg) throws TauModelException {
         int currBranch;
         if (isFail) {
-            throw new RuntimeException("Phase has failed, cannot calc next branch");
+            throw new TauModelException("Phase has failed, cannot calc next branch");
         }
         if (currLeg.endsWith(KMPS_CODE)) {
             // surface wave, zero
