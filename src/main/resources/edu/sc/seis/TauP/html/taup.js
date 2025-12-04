@@ -12,6 +12,9 @@ export function start() {
   return setup().then(()=>{
     // go ahead and process the form "as is" so user sees something
     process();
+  }).catch(err => {
+    console.log(`setup error: ${err}`);
+    throw err;
   });
 }
 /**
@@ -90,7 +93,7 @@ export function createModelDisconRadio() {
     if (res.ok) {
       return res.json();
     } else {
-      return { models: [ { discon: [] }]};
+      return { models: [ { modelname: "empty", discontinuities: [] }]};
     }
   }).then(json => {
     const m = json.models[0];
@@ -142,6 +145,9 @@ export function createModelDisconRadio() {
       disconOptList[1].setAttribute("selected", ""); // avoid free surface
     }
     disconSelect.replaceChildren(...disconOptList);
+  }).catch(err => {
+    displayErrorMessage("Error loading model discontinuities...", disconUrl, err);
+    return { models: [ { modelname: "empty", discontinuities: [] }]};
   });
 }
 
@@ -167,6 +173,7 @@ function isIOCB(name) {
  * Extract options from form, create URL, display results.
  */
 export function process() {
+  clearErrorMessages();
   const tool = getToolName();
   enableParams(tool);
   const tool_url = form_tool_url()
@@ -367,12 +374,16 @@ export async function display_results(taup_url) {
   });
 }
 
-export function displayErrorMessage(title, the_url, exception) {
-  console.log(title);
-  const container_el = document.querySelector("#results");
+export function clearErrorMessages() {
+  const container_el = document.querySelector("#messages");
   while(container_el.firstChild) {
     container_el.removeChild(container_el.firstChild);
   }
+}
+
+export function displayErrorMessage(title, the_url, exception) {
+  console.log(title);
+  const container_el = document.querySelector("#messages");
   const msgDiv = document.createElement("div");
   container_el.appendChild(msgDiv);
   const head = document.createElement("h3");
@@ -381,10 +392,14 @@ export function displayErrorMessage(title, the_url, exception) {
   head.textContent = title;
   const descEl = document.createElement("p");
   msgDiv.appendChild(descEl);
-  const link = document.createElement("a");
-  descEl.appendChild(link);
-  link.setAttribute("href", the_url);
-  link.textContent = the_url;
+  if (the_url != null) {
+    const link = document.createElement("a");
+    descEl.appendChild(link);
+    link.setAttribute("href", the_url);
+    link.textContent = the_url;
+  } else {
+    descEl.textContent = "unknown url";
+  }
   const exceptDiv = document.createElement("div");
   msgDiv.appendChild(exceptDiv);
   if (exception.message) {
@@ -506,7 +521,8 @@ export function form_tool_url() {
     if (evdepth !== "0") {
       url += `&evdepth=${evdepth}`;
     }
-  } else if (toolname === "velplot" || toolname === "discon" || isrefltranmodel === "refltrandepth") {
+  } else if (toolname === "velplot" || toolname === "discon" ||
+      (toolname === "refltrans" && isrefltranmodel === "refltrandepth")) {
     url = `${toolname}?model=${model}`;
   } else {
     url = `${toolname}?`;

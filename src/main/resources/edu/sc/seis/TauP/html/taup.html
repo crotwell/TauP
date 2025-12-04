@@ -791,6 +791,9 @@
 
 </details>
 
+<div id="messages">
+</div>
+
 <div class="results">
   <span>Results: <button name="CopyResults" title="Copy results">&#10697;</button></span>
   <div id="results">
@@ -802,7 +805,9 @@
 <script type="module" >
   import * as taup from "./taup.js";
   // set up listeners on all the form inputs
-  taup.start();
+  taup.start().catch(err => {
+    taup.displayErrorMessage("Error starting taup javascript", null, err);
+  });
 </script>
 
 <script type="module" src="getversion.js">
