@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Path &#8212; TauP 3.1.0 documentation</title>
+    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=dd1205ac"></script>
+    <script src="_static/documentation_options.js?v=5c1cf889"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.1.0</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT3</p>
 
 
 
@@ -2290,20 +2290,21 @@ circle.discontinuity.iocb {
 </svg>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
-                 [--onlynameddiscon] [--verbose] [--withtime] [--az=&lt;azimuth&gt;]
-                 [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                 [--color=&lt;coloring&gt;] [--geodeticflattening=f]
-                 [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
-                 [--maxpathinc=&lt;maxPathInc&gt;] [-o=&lt;outFile&gt;]
-                 [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
-                 [--staxml=&lt;stationxmlFilename&gt;] [--xaxis=type] [--yaxis=type]
-                 [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
-                 [--degminmax=min max]... [--depthminmax=min max]... [--evt=lat
-                 lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
-                 lon]... [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
-                 [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
-                 [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                 [[--allindex] [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--onlynameddiscon] [--verbose] [--withlatlon] [--withtime]
+                 [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+                 [--baz=&lt;backAzimuth&gt;] [--color=&lt;coloring&gt;]
+                 [--geodeticflattening=f] [--mapwidth=&lt;mapwidth&gt;]
+                 [--mapwidthunit=&lt;mapWidthUnit&gt;] [--maxpathinc=&lt;maxPathInc&gt;]
+                 [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
+                 [--qml=&lt;quakemlFilename&gt;] [--staxml=&lt;stationxmlFilename&gt;]
+                 [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
+                 [--sid=sta[,sta...]]... [--degminmax=min max]...
+                 [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
+                 lon]... [--sta=lat lon]... [--sta=lat lon]...
+                 [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]... [--stadepth=depth
+                 [,depth...]]... [--scat=depth deg]...] [[-p=phase[,
+                 phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex]
+                 [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
                  [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
@@ -2359,6 +2360,7 @@ Options:
                             StationXML file to extract station latitudes and
                               longitudes from
       --verbose             enable verbose output
+      --withlatlon          include lat,lon for path points in output.
       --withtime            include time for each path point, no effect for SVG.
       --xaxis=type          x axis type, the depth/radius axis, one of degree,
                               radian, kilometer
