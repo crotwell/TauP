@@ -1,6 +1,6 @@
 {
   "name": "taup_web",
-  "version": "3.0.2",
+  "version": "3.2.0",
   "description": "HTML helpers for TauP",
   "main": "index.js",
   "scripts": {

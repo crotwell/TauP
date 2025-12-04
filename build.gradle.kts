@@ -554,6 +554,7 @@ tasks.register<Exec>("createJavascriptResources") {
     file("src/web/node_modules/sortable-tablesort/dist/sortable.js"),
     file("src/web/node_modules/sortable-tablesort/dist/sortable.css"))
   inputs.file("src/web/package.json")
+  inputs.file("src/web/package-lock.json")
 }
 tasks.register<Sync>("copyJavascriptResources") {
   from(tasks.named("createJavascriptResources"))
