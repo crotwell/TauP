@@ -1,6 +1,10 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.Geodesic;
+import net.sf.geographiclib.GeodesicData;
+import net.sf.geographiclib.GeodesicLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         azimuth = dr.azimuth;
         backAzimuth = dr.backAzimuth;
         geodetic = dr.geodetic;
+        geodesic = dr.geodesic;
         invFlattening = dr.invFlattening;
     }
     public static DistanceAngleRay ofDegrees(double deg) {
@@ -70,14 +75,19 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         return val;
     }
 
-    public static DistanceAngleRay ofGeodeticEventStation(LatLonLocatable evt, LatLonLocatable sta, double invFlattening) {
-        DistAz distAz = new DistAz(evt.asLocation(), sta.asLocation(), 1.0/invFlattening);
-        DistanceAngleRay val = ofDegrees(distAz.getDelta());
+    public static DistanceAngleRay ofGeodeticEventStation(LatLonLocatable evt, LatLonLocatable sta, Geodesic geod) {
+        Location eLoc = evt.asLocation();
+        Location sLoc = sta.asLocation();
+        GeodesicLine azGLine = geod.InverseLine(eLoc.getLatitude(), eLoc.getLongitude(),
+                                                sLoc.getLatitude(), sLoc.getLongitude());
+        GeodesicLine bazGLine = geod.InverseLine(sLoc.getLatitude(), sLoc.getLongitude(),
+                                                 eLoc.getLatitude(), eLoc.getLongitude());
+        DistanceAngleRay val = ofDegrees(azGLine.Arc());
         val.staLatLon = sta;
         val.evtLatLon = evt;
-        val.azimuth = distAz.getAz();
-        val.backAzimuth = distAz.getBaz();
-        val.invFlattening = invFlattening;
+        val.azimuth = azGLine.Azimuth();
+        val.backAzimuth = bazGLine.Azimuth();
+        val.geodesic = geod;
         val.geodetic = true;
         val.insertSeismicSource(evt);
         return val;
@@ -173,11 +183,11 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     @Override
     public LatLonable getLatLonable() {
         if (staLatLon != null && evtLatLon != null) {
-            return new EventStation(evtLatLon, staLatLon);
+            return new EventStation(evtLatLon, staLatLon, geodesic);
         } else if (staLatLon != null && backAzimuth != null) {
-            return new StationBackAzimuth(staLatLon, backAzimuth);
+            return new StationBackAzimuth(staLatLon, backAzimuth, geodesic);
         } else if (evtLatLon != null && azimuth != null) {
-            return new EventAzimuth(evtLatLon, azimuth);
+            return new EventAzimuth(evtLatLon, azimuth, geodesic);
         }
         return null;
     }

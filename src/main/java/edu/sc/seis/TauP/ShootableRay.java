@@ -24,9 +24,9 @@ public abstract class ShootableRay extends RayCalculateable {
     public LatLonable getLatLonable() {
         if (isLatLonable()) {
             if (evtLatLon != null) {
-                return new EventAzimuth(evtLatLon, azimuth);
+                return new EventAzimuth(evtLatLon, azimuth, geodesic);
             } else {
-                return new StationBackAzimuth(staLatLon, backAzimuth);
+                return new StationBackAzimuth(staLatLon, backAzimuth, geodesic);
             }
         }
         return null;

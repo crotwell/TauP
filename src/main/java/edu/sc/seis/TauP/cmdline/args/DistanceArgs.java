@@ -119,7 +119,7 @@ public class DistanceArgs {
                 for (LatLonLocatable staLoc : stationList) {
                     DistanceRay dr;
                     if (geodeticArgs.isGeodetic()) {
-                        dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getInverseEllipFlattening());
+                        dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getGeodesic());
                     } else {
                         dr = DistanceRay.ofEventStation(evtLoc, staLoc);
                     }

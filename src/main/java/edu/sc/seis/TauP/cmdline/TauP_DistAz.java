@@ -89,7 +89,7 @@ public class TauP_DistAz extends TauP_Tool {
             for (LatLonLocatable staLoc : staList) {
                 DistanceAngleRay dr;
                 if (geodeticArgs.isGeodetic()) {
-                    dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getInverseEllipFlattening());
+                    dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getGeodesic());
                 } else {
                     dr = DistanceRay.ofEventStation(evtLoc, staLoc);
                 }

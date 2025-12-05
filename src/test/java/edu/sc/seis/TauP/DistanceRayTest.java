@@ -1,6 +1,9 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.Geodesic;
+import net.sf.geographiclib.GeodesicData;
+import net.sf.geographiclib.GeodesicLine;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -34,6 +37,24 @@ public class DistanceRayTest {
     }
 
     @Test
+    public void testGeodesic() {
+        double staLat = 10;
+        double staLon = 0;
+        double evtLat = 0;
+        double evtLon = 0;
+        GeodesicLine bazGLine = Geodesic.WGS84.InverseLine(staLat, staLon,
+                evtLat, evtLon);
+        double baz = bazGLine.Azimuth();
+        assertEquals(180.0, baz, "baz 10,0 to 0,0");
+
+        GeodesicLine azGLine = Geodesic.WGS84.InverseLine(
+                evtLat, evtLon, staLat, staLon);
+        double az = azGLine.Azimuth();
+        assertEquals(0.0, az, "az 10,0 to 0,0");
+
+    }
+
+    @Test
     public void testCalcAzBaz() {
         Location staLoc = new Location(10, 0);
         Location evtLoc = new Location(0, 0);
@@ -41,7 +62,7 @@ public class DistanceRayTest {
         assertEquals(0, dr.getNormalizedAzimuth(), 0.01);
         assertEquals(180, dr.getNormalizedBackAzimuth(), 0.01);
 
-        DistanceRay gdr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, DistAz.wgs85_invflattening);
+        DistanceRay gdr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, Geodesic.WGS84);
         assertEquals(dr.getNormalizedAzimuth(), gdr.getNormalizedAzimuth(), 0.1);
         assertEquals(dr.getNormalizedBackAzimuth(), gdr.getNormalizedBackAzimuth(), 0.1);
 
@@ -50,7 +71,7 @@ public class DistanceRayTest {
         DistanceRay drE = DistanceRay.ofEventStation(evtLoc, staLocE);
         assertEquals(45, drE.getNormalizedAzimuth(), 1);
         assertEquals(-135, drE.getNormalizedBackAzimuth(), 1);
-        DistanceRay gdrE = DistanceRay.ofGeodeticEventStation(evtLoc, staLocE, DistAz.wgs85_invflattening);
+        DistanceRay gdrE = DistanceRay.ofGeodeticEventStation(evtLoc, staLocE, Geodesic.WGS84);
         assertEquals(drE.getNormalizedAzimuth(), gdrE.getNormalizedAzimuth(), 0.5, "az");
         assertEquals(drE.getNormalizedBackAzimuth(), gdrE.getNormalizedBackAzimuth(), 0.5, "baz");
 
@@ -58,7 +79,7 @@ public class DistanceRayTest {
         DistanceRay drW = DistanceRay.ofEventStation(evtLocW, staLoc);
         assertEquals(45, drW.getNormalizedAzimuth(), 1);
         assertEquals(-135, drW.getNormalizedBackAzimuth(), 1);
-        DistanceRay gdrW = DistanceRay.ofGeodeticEventStation(evtLocW, staLoc, DistAz.wgs85_invflattening);
+        DistanceRay gdrW = DistanceRay.ofGeodeticEventStation(evtLocW, staLoc, Geodesic.WGS84);
         assertEquals(drW.getNormalizedAzimuth(), gdrW.getNormalizedAzimuth(), 0.5);
         assertEquals(drW.getNormalizedBackAzimuth(), gdrW.getNormalizedBackAzimuth(), 0.5);
     }

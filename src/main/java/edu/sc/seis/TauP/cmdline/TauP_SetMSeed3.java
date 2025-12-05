@@ -139,7 +139,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
             // geodetic vs spherical???
             if (geodeticArgs.isGeodetic()) {
                 rayCalculateable = DistanceRay.ofGeodeticEventStation(evLoc, staLoc,
-                        geodeticArgs.getInverseEllipFlattening()
+                        geodeticArgs.getGeodesic()
                 );
             } else {
                 rayCalculateable = DistanceRay.ofEventStation(evLoc, staLoc);

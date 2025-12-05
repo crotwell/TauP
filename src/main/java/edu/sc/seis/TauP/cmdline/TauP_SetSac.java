@@ -217,7 +217,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                 rayCalculateable = DistanceRay.ofGeodeticEventStation(
                         new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
                         new LatLonSimple(header.getStla(), header.getStlo()),
-                        DistAz.wgs85_flattening
+                        geodeticArgs.getGeodesic()
                 );
             } else {
                 rayCalculateable = DistanceRay.ofEventStation(
