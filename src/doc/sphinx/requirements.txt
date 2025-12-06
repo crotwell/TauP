@@ -67,7 +67,7 @@ sphinx==8.2.3
     #   sphinxcontrib-bibtex
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
-sphinxcontrib-bibtex==2.6.3
+sphinxcontrib-bibtex==2.6.5
     # via -r requirements.in
 sphinxcontrib-devhelp==2.0.0
     # via sphinx
@@ -81,6 +81,3 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 urllib3==2.5.0
     # via requests
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
