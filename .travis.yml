@@ -1,0 +1,16 @@
+language: java
+dist: jammy
+git:
+  quiet: true
+
+jdk:
+  - openjdk11
+
+before_script:
+  - chmod +x gradlew
+
+install:
+  - ./gradlew build -x signDistTar -x signDistZip -x signMavenJavaPublication
+
+script:
+  - ./gradlew check
