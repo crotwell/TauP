@@ -49,21 +49,21 @@ public class TauP_DistAz extends TauP_Tool {
     public void start() throws IOException, TauPException {
 
         List<LatLonLocatable> eventLocs = new ArrayList<>();
-        eventLocs.addAll(latLonArgs.getEventLocations());
+        eventLocs.addAll(geodeticArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
 
         List<LatLonLocatable> staList = new ArrayList<>();
-        staList.addAll(latLonArgs.getStationLocations());
+        staList.addAll(geodeticArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
 
         List<DistanceAngleRay> distList = new ArrayList<>();
 
-        if (latLonArgs.hasAzimuth()) {
+        if (geodeticArgs.hasAzimuth()) {
             for (LatLonLocatable evtLoc : eventLocs) {
                 Location eLoc = evtLoc.asLocation();
                 for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(eLoc, d, latLonArgs.getAzimuth());
-                    double lon = SphericalCoords.lonFor(eLoc, d, latLonArgs.getAzimuth());
+                    double lat = SphericalCoords.latFor(eLoc, d, geodeticArgs.getAzimuth());
+                    double lon = SphericalCoords.lonFor(eLoc, d, geodeticArgs.getAzimuth());
                     LatLonSimple loc = new LatLonSimple(lat, lon);
                     DistanceAngleRay dr = DistanceRay.ofEventStation(evtLoc, loc);
                     //dr.setAzimuth(latLonArgs.getAzimuth());
@@ -72,11 +72,11 @@ public class TauP_DistAz extends TauP_Tool {
                 }
             }
         }
-        if (latLonArgs.hasBackAzimuth()) {
+        if (geodeticArgs.hasBackAzimuth()) {
             for (LatLonLocatable staLoc : staList) {
                 for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(staLoc.asLocation(), d, latLonArgs.getBackAzimuth());
-                    double lon = SphericalCoords.lonFor(staLoc.asLocation(), d, latLonArgs.getBackAzimuth());
+                    double lat = SphericalCoords.latFor(staLoc.asLocation(), d, geodeticArgs.getBackAzimuth());
+                    double lon = SphericalCoords.lonFor(staLoc.asLocation(), d, geodeticArgs.getBackAzimuth());
                     LatLonSimple loc = new LatLonSimple(lat, lon);
                     DistanceAngleRay dr = DistanceRay.ofEventStation(loc, staLoc);
                     //dr.setBackAzimuth(latLonArgs.getBackAzimuth());
@@ -160,22 +160,18 @@ public class TauP_DistAz extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (!distArgs.allEmpty() && ! (latLonArgs.hasAzimuth() || latLonArgs.hasBackAzimuth())) {
+        if (!distArgs.allEmpty() && ! (geodeticArgs.hasAzimuth() || geodeticArgs.hasBackAzimuth())) {
             throw new IllegalArgumentException("Distance only used with azimuth or backazimuth");
         }
-        if (distArgs.allEmpty() && (latLonArgs.hasAzimuth() || latLonArgs.hasBackAzimuth())) {
+        if (distArgs.allEmpty() && (geodeticArgs.hasAzimuth() || geodeticArgs.hasBackAzimuth())) {
             throw new IllegalArgumentException("Azimuth and backazimuth require distance in deg or km");
         }
-        if (geodeticArgs.isGeodetic() && (latLonArgs.hasBackAzimuth() || latLonArgs.hasAzimuth())) {
-            throw new IllegalArgumentException("Unable to project for az,baz with geodetic, only for spherical");
-        }
-        if ( (latLonArgs.getEventLocations().isEmpty() && ! qmlStaxmlArgs.hasQml()) && !latLonArgs.hasBackAzimuth()) {
+        if ( (geodeticArgs.getEventLocations().isEmpty() && ! qmlStaxmlArgs.hasQml()) && !geodeticArgs.hasBackAzimuth()) {
             throw new IllegalArgumentException("Either back azimuth, event lat,lon or QuakeML file must be given");
         }
-        if ( (latLonArgs.getStationLocations().isEmpty() && ! qmlStaxmlArgs.hasStationXML()) && !latLonArgs.hasAzimuth()) {
+        if ( (geodeticArgs.getStationLocations().isEmpty() && ! qmlStaxmlArgs.hasStationXML()) && !geodeticArgs.hasAzimuth()) {
             throw new IllegalArgumentException("Either azimuth, station lat,lon or StationXML file must be given");
         }
-        latLonArgs.validateArguments();
         geodeticArgs.validateArguments();
     }
 
@@ -204,9 +200,6 @@ public class TauP_DistAz extends TauP_Tool {
 
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs;
-
-    @CommandLine.Mixin
-    LatLonAzBazArgs latLonArgs = new LatLonAzBazArgs();
 
     @CommandLine.Mixin
     QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();

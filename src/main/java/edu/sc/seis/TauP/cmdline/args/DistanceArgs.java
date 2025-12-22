@@ -2,8 +2,6 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.LatLonLocatable;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
-import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 
@@ -415,23 +413,23 @@ public class DistanceArgs {
     }
 
     public Double getAzimuth() {
-        return latLonArgs.azimuth;
+        return geodeticArgs.azimuth;
     }
-    public void setAzimuth(double val) { latLonArgs.azimuth = val;}
-    public boolean hasAzimuth() {return latLonArgs.hasAzimuth();}
+    public void setAzimuth(double val) { geodeticArgs.azimuth = val;}
+    public boolean hasAzimuth() {return geodeticArgs.hasAzimuth();}
 
     public Double getBackAzimuth() {
-        return latLonArgs.backAzimuth;
+        return geodeticArgs.backAzimuth;
     }
-    public boolean hasBackAzimuth() {return latLonArgs.hasBackAzimuth();}
-    public void setBackAzimuth(double val) { latLonArgs.backAzimuth = val;}
+    public boolean hasBackAzimuth() {return geodeticArgs.hasBackAzimuth();}
+    public void setBackAzimuth(double val) { geodeticArgs.backAzimuth = val;}
 
     public boolean hasEventLatLon() {
-        return  latLonArgs.hasEventLatLon() || qmlStaxmlArgs.hasQml();
+        return  geodeticArgs.hasEventLatLon() || qmlStaxmlArgs.hasQml();
     }
 
     public boolean hasStationLatLon() {
-        return latLonArgs.hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
+        return geodeticArgs.hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
     }
 
     public void validateArguments() {
@@ -452,7 +450,6 @@ public class DistanceArgs {
         if ((hasAzimuth() && hasBackAzimuth())) {
             throw new IllegalArgumentException("Cannot specify both azimuth and back azimuth");
         }
-        latLonArgs.validateArguments();
         geodeticArgs.validateArguments();
     }
 
@@ -464,9 +461,6 @@ public class DistanceArgs {
     DistanceRayArgs distArgs = new DistanceRayArgs();
 
     @ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
-    LatLonAzBazArgs latLonArgs = new LatLonAzBazArgs();
-
-    @CommandLine.Mixin
     GeodeticArgs geodeticArgs = new GeodeticArgs();
 
     @CommandLine.Mixin
@@ -474,14 +468,14 @@ public class DistanceArgs {
 
     public List<LatLonLocatable> getStationLatLon() throws TauPException {
         List<LatLonLocatable> staList = new ArrayList<>();
-        staList.addAll(latLonArgs.getStationLocations());
+        staList.addAll(geodeticArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
         return staList;
     }
 
     public List<LatLonLocatable> getEventLatLon() throws TauPException {
         List<LatLonLocatable> eventLocs = new ArrayList<>();
-        eventLocs.addAll(latLonArgs.getEventLocations());
+        eventLocs.addAll(geodeticArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
         return eventLocs;
     }
@@ -503,8 +497,8 @@ public class DistanceArgs {
     }
 
     public void clear() {
-        latLonArgs.stationLatLonList.clear();
-        latLonArgs.eventLatLonList.clear();
+        geodeticArgs.stationLatLonList.clear();
+        geodeticArgs.eventLatLonList.clear();
         distArgs.takeoffAngle.clear();
         distArgs.incidentAngle.clear();
         distArgs.degreesList.clear();

@@ -180,8 +180,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         }
         for (Double radian : distFromArrival) {
             DistanceRay dr = DistanceRay.ofRadians(radian);
-            if (!dr.hasAzimuth() && latLonArgs.hasAzimuth()) {
-                dr.setAzimuth(latLonArgs.getAzimuth());
+            if (!dr.hasAzimuth() && geodeticArgs.hasAzimuth()) {
+                dr.setAzimuth(geodeticArgs.getAzimuth());
             }
             dr.setSeismicSource(sourceArgs.getSeismicSource());
             degreesList.add(dr);
@@ -673,10 +673,10 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
 
     public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = distanceArgs.getRayCalculatables(sourceArgs);
-        if (latLonArgs.hasAzimuth()) {
+        if (geodeticArgs.hasAzimuth()) {
             for (RayCalculateable rc : out) {
                 if (!rc.hasAzimuth()) {
-                    rc.setAzimuth(latLonArgs.getAzimuth());
+                    rc.setAzimuth(geodeticArgs.getAzimuth());
                 }
             }
         }
@@ -695,23 +695,23 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
     }
 
     public boolean hasEventLatLon() {
-        return  latLonArgs.hasEventLatLon() || qmlStaxmlArgs.hasQml();
+        return  geodeticArgs.hasEventLatLon() || qmlStaxmlArgs.hasQml();
     }
 
     public boolean hasStationLatLon() {
-        return latLonArgs.hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
+        return geodeticArgs.hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
     }
 
     public List<LatLonLocatable> getStationLatLon() throws TauPException {
         List<LatLonLocatable> staList = new ArrayList<>();
-        staList.addAll(latLonArgs.getStationLocations());
+        staList.addAll(geodeticArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
         return staList;
     }
 
     public List<LatLonLocatable> getEventLatLon() throws TauPException {
         List<LatLonLocatable> eventLocs = new ArrayList<>();
-        eventLocs.addAll(latLonArgs.getEventLocations());
+        eventLocs.addAll(geodeticArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
         return eventLocs;
     }
@@ -748,9 +748,6 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
 
 
     @CommandLine.ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
-    LatLonAzBazArgs latLonArgs = new LatLonAzBazArgs();
-
-    @CommandLine.Mixin
     GeodeticArgs geodeticArgs = new GeodeticArgs();
 
     @CommandLine.Mixin
