@@ -875,6 +875,11 @@ export function form_tool_url() {
     if (angles) {
       url += `&angles=true`;
     }
+
+    let rtcoefphase = document.querySelector('input[name="rtcoefphase"]').checked;
+    if (rtcoefphase) {
+      url += `&phase=true`;
+    }
     let energyflux = document.querySelector('input[name="energyflux"]').checked;
     if (energyflux) {
       url += `&energyflux=true`;

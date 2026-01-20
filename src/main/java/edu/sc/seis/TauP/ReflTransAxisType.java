@@ -16,6 +16,9 @@ public enum ReflTransAxisType {
     RppEnergy, TppEnergy, RpsEnergy, TpsEnergy,
     RspEnergy, TspEnergy, RssEnergy, TssEnergy,
     RshshEnergy, TshshEnergy,
+    RppPhase, TppPhase, RpsPhase, TpsPhase,
+    RspPhase, TspPhase, RssPhase, TssPhase,
+    RshshPhase, TshshPhase,
     RpAngle, RsAngle, TpAngle, TsAngle,
     FreeRecFuncPr, FreeRecFuncSvr, FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh;
 
@@ -33,6 +36,11 @@ public enum ReflTransAxisType {
             RppEnergy, TppEnergy, RpsEnergy, TpsEnergy,
             RspEnergy, TspEnergy, RssEnergy, TssEnergy,
             RshshEnergy, TshshEnergy);
+
+    public static final List<ReflTransAxisType> allPhase = List.of(
+            RppPhase, TppPhase, RpsPhase, TpsPhase,
+            RspPhase, TspPhase, RssPhase, TssPhase,
+            RshshPhase, TshshPhase);
 
     public static String labelFor(ReflTransAxisType axisType) {
         switch (axisType) {
@@ -58,6 +66,17 @@ public enum ReflTransAxisType {
             case RshshEnergy:
             case TshshEnergy:
                 return axisType.name().replace("Energy", " Energy");
+            case RppPhase:
+            case RpsPhase:
+            case TppPhase:
+            case TpsPhase:
+            case RspPhase:
+            case RssPhase:
+            case TspPhase:
+            case TssPhase:
+            case RshshPhase:
+            case TshshPhase:
+                return axisType.name().replace("Phase", " Phase");
             case FreeRecFuncPr:
             case FreeRecFuncPz:
             case FreeRecFuncSvr:

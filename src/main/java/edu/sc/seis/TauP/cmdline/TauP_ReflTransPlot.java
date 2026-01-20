@@ -76,7 +76,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 yAxisType.addAll(ReflTransAxisType.allAngle);
             } else if (isEnergyFlux()) {
                 yAxisType.addAll(ReflTransAxisType.allEnergy);
-            } else {
+            } else if (isPhase()) {
+                yAxisType.addAll(ReflTransAxisType.allPhase);
+            } else if (yAxisType.isEmpty()) {
                 yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
             if (layerParams == null) {
@@ -103,10 +105,11 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
         xyOut.getColoringArgs().setColoring(ColorType.phase);
+        String title = "";
         if (layerParams != null) {
-            xyOut.setTitle(layerParams.asName());
+            title = layerParams.asName();
         } else {
-            String title = modelArgs.getModelName() +" at ";
+            title = modelArgs.getModelName() +" at ";
             if (fsrf || depth == 0 || NamedVelocityDiscon.SURFACE.equalsIgnoreCase(depthName)) {
                 title += " surface";
             } else {
@@ -116,12 +119,18 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     title += depth + " km";
                 }
             }
-            xyOut.setTitle(title);
         }
+        if (isIncidentDown()) {
+            title += ", inc. down";
+        } else {
+            title += ", inc. up";
+        }
+        xyOut.setTitle(title);
         String yAxisActual = "";
         boolean hasDisplacement = false;
         boolean hasAngle = false;
         boolean hasEnergy = false;
+        boolean hasPhase = false;
         boolean hasFreeSurface = false;
         for (XYPlottingData xyp : xyPlots) {
             try {
@@ -132,6 +141,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     hasAngle = true;
                 } else if (ReflTransAxisType.allEnergy.contains(axisType)) {
                     hasEnergy = true;
+                } else if (ReflTransAxisType.allPhase.contains(axisType)) {
+                    hasPhase = true;
                 } else if (ReflTransAxisType.allFreeRF.contains(axisType)) {
                     hasFreeSurface = true;
                 } else {
@@ -151,10 +162,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (hasEnergy) {
             yAxisActual += " Energy,";
         }
+        if (hasPhase) {
+            yAxisActual += " Phase,";
+        }
         if (hasFreeSurface) {
             yAxisActual += " Free Surface RF,";
         }
-        yAxisActual = yAxisActual.substring(0, yAxisActual.length()-1) + " Coeff.";
+        if (yAxisActual.length()>0 ) {
+            yAxisActual = yAxisActual.substring(0, yAxisActual.length() - 1) + " Coeff.";
+        }
         xyOut.setXLabel(DegRayParam.labelFor(xAxisType));
         xyOut.setYLabel(yAxisActual);
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
@@ -336,6 +352,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RppPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RppPhase,
+                        reflTranCoef::getRppPhase
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tpp)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
@@ -353,6 +376,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 out.add(xyp);
             }
 
+            if (yAxisType.contains(ReflTransAxisType.TppPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TppPhase,
+                        reflTranCoef::getTppPhase
+                );
+                out.add(xyp);
+            }
+
             if (yAxisType.contains(ReflTransAxisType.Rps)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.Rps,
@@ -360,10 +391,19 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+
             if (yAxisType.contains(ReflTransAxisType.RpsEnergy)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.RpsEnergy,
                         reflTranCoef::getEnergyFluxRps
+                );
+                out.add(xyp);
+            }
+
+            if (yAxisType.contains(ReflTransAxisType.RpsPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpsPhase,
+                        reflTranCoef::getRpsPhase
                 );
                 out.add(xyp);
             }
@@ -380,6 +420,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TpsEnergy,
                         reflTranCoef::getEnergyFluxTps
+                );
+                out.add(xyp);
+            }
+
+            if (yAxisType.contains(ReflTransAxisType.TpsPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpsPhase,
+                        reflTranCoef::getTpsPhase
                 );
                 out.add(xyp);
             }
@@ -467,6 +515,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RspPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RspPhase,
+                        reflTranCoef::getRspPhase
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tsp)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -479,6 +534,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TspEnergy,
                         reflTranCoef::getEnergyFluxTsp
+                );
+                out.add(xyp);
+            }
+
+            if (yAxisType.contains(ReflTransAxisType.TspPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TspPhase,
+                        reflTranCoef::getTspPhase
                 );
                 out.add(xyp);
             }
@@ -497,6 +560,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RssPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RssPhase,
+                        reflTranCoef::getRssPhase
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tss)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -509,6 +579,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TssEnergy,
                         reflTranCoef::getEnergyFluxTss
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TssPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TssPhase,
+                        reflTranCoef::getTssPhase
                 );
                 out.add(xyp);
             }
@@ -588,6 +665,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RshshPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RshshPhase,
+                        reflTranCoef::getRshshPhase
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tshsh)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -600,6 +684,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TshshEnergy,
                         reflTranCoef::getEnergyFluxTshsh
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TshshPhase)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TshshPhase,
+                        reflTranCoef::getTshshPhase
                 );
                 out.add(xyp);
             }
@@ -806,6 +897,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
     public boolean isEnergyFlux() { return energyflux;}
 
+    @CommandLine.Option(names = "--phase",
+            description = "all displacement phase coefficients, like TppPhase")
+    public void setPhase(boolean phase) {
+        this.phase = phase;
+    }
+    public boolean isPhase() { return phase;}
+
     @CommandLine.Option(names = "--fsrf",
             description = "all free surface receiver functions, like FreeRecFuncPz")
     public void setFreeSurfRF(boolean fsrf) {
@@ -955,6 +1053,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     protected boolean absolute = false;
     protected boolean angles = false;
     protected boolean energyflux = false;
+    protected boolean phase = false;
     protected boolean fsrf = false;
 
     public boolean isLinearRayParam() {

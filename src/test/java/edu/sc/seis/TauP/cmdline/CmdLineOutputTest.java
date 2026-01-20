@@ -506,6 +506,10 @@ public class CmdLineOutputTest {
                 "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 -x rayparam  -y Rsp Rss --svg");
         figureTitles.put("AR_fig_5_10.svg", "Aki and Richards, fig 5.10");
         figureCompare.put("AR_fig_5_10.svg", "AR_fig_5_10.pdf");
+        fmgsFigureTestCmds.put("AR_fig_5_10_phase.svg",
+                "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 -x rayparam  -y RspPhase RssPhase --svg");
+        figureTitles.put("AR_fig_5_10_phase.svg", "Aki and Richards, fig 5.10 phase");
+        figureCompare.put("AR_fig_5_10_phase.svg", "AR_fig_5_10.pdf");
         fmgsFigureTestCmds.put("Shearer_fig_6_5.svg",
                 "taup refltrans -o stdout  --shwave --mod prem --depth 24.4 --down --svg");
         figureTitles.put("Shearer_fig_6_5.svg", "Shearer, fig 6.5");
