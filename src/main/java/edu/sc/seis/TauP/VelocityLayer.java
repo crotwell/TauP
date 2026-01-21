@@ -407,8 +407,9 @@ public class VelocityLayer implements Cloneable, Serializable {
         return calcQpFromQs(getBotQs(), getBotPVelocity(), getBotSVelocity());
     }
     /**
-     * Calculate Qp from Qs assuming Q_kappa is negligible.
+     * Calculate Qp from Qs assuming Q_kappa is negligible (ie very large).
      * See Montagner and Kennett, 1996, eqn 2.6
+     * and Foundations of Modern Global Seismomolgy, Chap 15, eq 15.12-14
      * @param Qs S wave Q factor, aka Q_mu
      * @param vp P wave velocity
      * @param vs S wave velocity
@@ -417,4 +418,19 @@ public class VelocityLayer implements Cloneable, Serializable {
     public static double calcQpFromQs(double Qs, double vp, double vs) {
         return 3.0/4*((vp*vp)/(vs*vs))*Qs;
     }
+
+    /**
+     * Calculate Qp from Q_mu and Q_kappa .
+     * and Foundations of Modern Global Seismology, Chap 15, eq 15.12-14
+     * @param q_kappa  compression Q factor
+     * @param q_mu shear Q factor, aka Q_s
+     * @param vp P wave velocity
+     * @param vs S wave velocity
+     * @return Qp P wave Q factor
+     */
+    public static double calcQp(double q_kappa, double q_mu, double vp, double vs) {
+        double L = 4.0/3*((vs*vs)/(vp*vp));
+        return 1.0 / (L/q_mu + (1-L)/q_kappa);
+    }
+
 }
