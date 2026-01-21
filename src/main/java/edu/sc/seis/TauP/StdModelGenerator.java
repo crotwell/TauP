@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Generate standard models. This is used by the gradle build, but unlikely to be useful to end users.
@@ -48,6 +49,8 @@ public class StdModelGenerator {
           super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "ak135fsyngine"));
       }
   }
+
+  public static List<String> standardModels = new StdModelCandidates();
 
   public static void createStandardModels(File inDir, File outDir)
   throws IOException, TauPException {

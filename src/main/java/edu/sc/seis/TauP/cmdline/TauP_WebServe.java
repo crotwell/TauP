@@ -489,7 +489,7 @@ public class TauP_WebServe extends TauP_Tool {
 
     public List<String> getKnownModels() {
         List<String> out = new ArrayList<>();
-            out.addAll(TauModelLoader.defaultModelList);
+            out.addAll(StdModelGenerator.standardModels);
         out.addAll(TauModelLoader.otherVelocityModels.keySet());
         return out;
     }

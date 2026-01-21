@@ -40,7 +40,7 @@ public class TauP_Web implements Callable<Integer> {
             tool.port = port;
             tool.host = host;
             for (String modName : extraModelNames) {
-                if (! TauModelLoader.defaultModelList.contains(modName)) {
+                if (! StdModelGenerator.standardModels.contains(modName)) {
                     VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
                     if (vMod == null) {
                         // were not able to find it

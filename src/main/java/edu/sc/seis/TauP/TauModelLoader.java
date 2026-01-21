@@ -55,8 +55,6 @@ public class TauModelLoader {
 
     protected static String packageName = "/edu/sc/seis/TauP/StdModels";
 
-    public static List<String> defaultModelList = List.of("iasp91", "ak135", "ak135favg", "ak135fcont", "ak135fsyngine", "prem");
-
     public static Map<String, VelocityModel> otherVelocityModels = new HashMap<>();
 
     public static TauModel load(String modelName) throws TauModelException {
