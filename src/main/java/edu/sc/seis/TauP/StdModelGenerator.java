@@ -46,7 +46,7 @@ public class StdModelGenerator {
 
   public static class StdModelCandidates extends ArrayList<String> {
       StdModelCandidates() {
-          super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "ak135fsyngine"));
+          super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "ak135fsyngine", "ek137", "rem1d"));
       }
   }
 
@@ -57,8 +57,10 @@ public class StdModelGenerator {
     ArrayList<String> tvelModelNames = new ArrayList<>();
     tvelModelNames.add("iasp91");
     tvelModelNames.add("ak135");
+    tvelModelNames.add("ek137");
     ArrayList<String> ndModelNames = new ArrayList<>();
     ndModelNames.add("prem");
+    ndModelNames.add("rem1d");
     ndModelNames.add("ak135fcont");
     ndModelNames.add("ak135favg");
     ndModelNames.add("ak135fsyngine");

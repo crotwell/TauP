@@ -125,6 +125,8 @@ places in order until it finds a model that matches the name.
   `ak135favg <_static/StdModels/ak135favg.nd>`_          :cite:t:`kennett:ak135f`
   `ak135fcont <_static/StdModels/ak135fcont.nd>`_        :cite:t:`kennett:ak135f`
   `ak135fsyngine <_static/StdModels/ak135fsyngine.nd>`_  :cite:t:`kennett:ak135f`
+  `rem1d <_static/StdModels/rem1d.nd>`_                    :cite:t:`rem1d_1`, :cite:t:`rem1d_2`
+  `ek137 <_static/StdModels/ek137.nd>`_                    :cite:t:`ek137`
   ====================================================== =============================
 
   We will consider adding other models to the distribution if
