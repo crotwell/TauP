@@ -988,6 +988,34 @@ public class SeismicPhaseLayerFactory {
                         endAction,
                         currLeg);
                 // should handle other nextLeg besides END ???
+            } else if (startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
+                String depthString;
+                depthString = nextLeg.substring(1);
+                endAction = REFLECT_UNDERSIDE;
+                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
+                if (reflectDisconBranch >= disconBranch ) {
+                    String reason = "Attempt to underside reflect " + currLeg
+                            + " from deeper layer: " + nextLeg;
+                    return baseFactory.failWithMessage(proto, reason);
+                }
+                if (!validateDisconWithinLayers(proto, reflectDisconBranch, nextLeg)) {
+                    return proto;
+                }
+                proto.addToBranch(
+                        reflectDisconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.charAt(0) == getAbovePLegSymbol() || nextLeg.charAt(0) == getAboveSLegSymbol()
+                    || nextLeg.charAt(0) == getAboveUpPLegSymbol() || nextLeg.charAt(0) == getAboveUpSLegSymbol()) {
+                endAction = TRANSUP;
+                proto.addToBranch(
+                        topBranchNum,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
             } else if (topBranchNum==0 && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0)==s_leg)) {
                 // crust mantle surface reflect
                 endAction = REFLECT_UNDERSIDE;
@@ -999,11 +1027,11 @@ public class SeismicPhaseLayerFactory {
                         currLeg);
 
             } else {
-                return baseFactory.failWithMessage(proto, " Phase not recognized for non-standard diffraction: "
+                return baseFactory.failWithMessage(proto, " Phase not recognized for non-standard head wave: "
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            return baseFactory.failWithMessage(proto,  " Phase not recognized for non-standard diffraction: "
+            return baseFactory.failWithMessage(proto,  " Phase not recognized for non-standard head wave: "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
