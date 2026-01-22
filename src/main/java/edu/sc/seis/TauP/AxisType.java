@@ -16,6 +16,8 @@ public enum AxisType {
     takeoffangle,
     incidentangle,
     turndepth,
+    dpddelta,
+    dpddeg,
     amp,
     amppsv,
     ampsh,
@@ -52,6 +54,8 @@ public enum AxisType {
             case tstar:
             case time:
             case turndepth:
+            case dpddelta:
+            case dpddeg:
             case geospread:
             case energygeospread:
             case pathlength:
@@ -94,6 +98,8 @@ public enum AxisType {
             case tau:
             case time:
             case turndepth:
+            case dpddelta:
+            case dpddeg:
             case geospread:
             case energygeospread:
             case radiation:

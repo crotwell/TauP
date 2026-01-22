@@ -163,6 +163,12 @@ public class Outputs {
             case turndepth:
                 outFormat = distanceFormatNoPad;
                 break;
+            case dpddelta:
+                outFormat = distanceFormatNoPad;
+                break;
+            case dpddeg:
+                outFormat = rayParamFormat;
+                break;
             case index:
                 outFormat = "%8.0f";
                 break;

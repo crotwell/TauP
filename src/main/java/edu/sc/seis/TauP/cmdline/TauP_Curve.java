@@ -270,6 +270,17 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getDeepestPierce().getDepth();
             }
+        } else if (axisType==AxisType.dpddelta || axisType==AxisType.dpddeg) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = arrivalAtIndex(i, phase);
+                if (axisType==AxisType.dpddelta) {
+                    out[i] = arrival.getDRayParamDDelta();
+                } else {
+                    out[i] = arrival.getDRayParamDDeltaDeg();
+                }
+            }
         } else if (axisType==AxisType.radiation || axisType==AxisType.radiationpsv) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
