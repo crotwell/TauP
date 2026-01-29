@@ -433,10 +433,10 @@ public class LegPuller {
                 tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
                 double foundDepth = tBranch.getTopDepth();
                 double depthDelta = Math.abs(disconDepth - foundDepth);
-                if (depthDelta < disconMax
+                if (depthDelta <= disconMax
                         && !tMod.isNoDisconDepth(foundDepth)) {
                     disconBranch = i;
-                    disconMax = Math.abs(disconDepth - foundDepth);
+                    disconMax = depthDelta;
                 }
             }
         }

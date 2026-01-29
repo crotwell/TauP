@@ -1155,7 +1155,7 @@ public class SeismicPhaseLayerFactory {
     int botBranchNum;
     double topDepth;
     double botDepth;
-    double depthTolerance = 10;
+    double depthTolerance = LegPuller.DISCON_DEPTH_TOLERANCE;
     SeismicPhaseFactory baseFactory;
     SeismicPhaseLayerFactory aboveLayerFactory;
     SeismicPhaseLayerFactory belowLayerFactory;
