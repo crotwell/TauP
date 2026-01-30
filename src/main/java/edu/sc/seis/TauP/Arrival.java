@@ -323,7 +323,7 @@ public class Arrival {
      * the actual distance traveled.
      */
     public double getModuloDistDeg() {
-        return SeismicPhase.distanceTrim180(getDistDeg());
+        return SphericalCoords.distanceTrim180(getDistDeg());
     }
 
     public void setSearchValue(RayCalculateable searchVal) {
@@ -345,7 +345,7 @@ public class Arrival {
      * the actual distance traveled.
      */
     public double getModuloSearchDistDeg() {
-        return SeismicPhase.distanceTrim180(getSearchDistDeg());
+        return SphericalCoords.distanceTrim180(getSearchDistDeg());
     }
 
     public static final double MANY_LAPS_PLUS_180 = 360*100+180;

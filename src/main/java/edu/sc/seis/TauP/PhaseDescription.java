@@ -21,12 +21,12 @@ public class PhaseDescription {
             this.maxexists = new PhaseRange();
 
             this.minexists.dist = (float) phase.getMinDistanceDeg();
-            this.minexists.modulodist = (float) SeismicPhase.distanceTrim180(phase.getMinDistanceDeg());
+            this.minexists.modulodist = (float) SphericalCoords.distanceTrim180(phase.getMinDistanceDeg());
             this.minexists.rayparameter = (float) (phase.getMinRayParam() / RtoD);
             this.minexists.time = (float) phase.getMinTime();
 
             this.maxexists.dist = (float) phase.getMaxDistanceDeg();
-            this.maxexists.modulodist = (float) SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg());
+            this.maxexists.modulodist = (float) SphericalCoords.distanceTrim180(phase.getMaxDistanceDeg());
             this.maxexists.rayparameter = (float) (phase.getMaxRayParam() / RtoD);
             this.maxexists.time = (float) phase.getMaxTime();
             this.shadow = phase.getShadowZones();

@@ -24,6 +24,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double getMaxRayParam();
 
+
     double getMinRayParam();
 
     double getMinTime();
@@ -88,21 +89,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     double getTau(int i);
 
     double[] getTau();
-
-    static double distanceTrim180(double deg) {
-        double tempDeg = deg;
-        if(tempDeg < 0.0) {
-            tempDeg *= -1.0;
-        } // make sure deg is positive
-        while(tempDeg > 360.0) {
-            tempDeg -= 360.0;
-        } // make sure it is less than 360
-        if(tempDeg > 180.0) {
-            tempDeg = 360.0 - tempDeg;
-        } // make sure less than or equal to 180
-        // now we have 0.0 <= deg <= 180
-        return tempDeg;
-    }
 
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
@@ -203,11 +189,11 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
             String mod180Min = "";
             if (phase.getMinDistanceDeg() > 180 || phase.getMinDistanceDeg() < -180) {
-                mod180Min = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+") ";
+                mod180Min = " ("+Outputs.formatDistanceNoPad(SphericalCoords.distanceTrim180(phase.getMinDistanceDeg()))+") ";
             }
             String mod180Max = "";
             if (phase.getMaxDistanceDeg() > 180 || phase.getMaxDistanceDeg() < -180) {
-                mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
+                mod180Max = " ("+Outputs.formatDistanceNoPad(SphericalCoords.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
             }
             desc += "  exists from "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+" to "
                     +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees in the "

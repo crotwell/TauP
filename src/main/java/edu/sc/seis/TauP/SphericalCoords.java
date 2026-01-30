@@ -93,6 +93,33 @@ public class SphericalCoords {
     }
 
     /**
+     * returns distance in radians and in the range 0-PI. Note this may not be
+     * the actual distance traveled.
+     */
+    public static double getModuloDistRadian(double distRadian) {
+        double moduloDist = distRadian % TWOPI;
+        if (moduloDist < 0) {
+            moduloDist *= -1;
+        }
+        if(moduloDist > Math.PI) {
+            moduloDist = TWOPI - moduloDist;
+        }
+        return moduloDist;
+    }
+
+    public static double distanceTrim180(double deg) {
+        double tempDeg = deg % 360;
+        if(tempDeg < 0.0) {
+            tempDeg *= -1.0;
+        } // make sure deg is positive
+        if(tempDeg > 180.0) {
+            tempDeg = 360.0 - tempDeg;
+        } // make sure less than or equal to 180
+        // now we have 0.0 <= deg <= 180
+        return tempDeg;
+    }
+
+    /**
      * Find the rotation pole required to rotate the first lat lon pair to the
      * second. Just does a cross product.
      * 
