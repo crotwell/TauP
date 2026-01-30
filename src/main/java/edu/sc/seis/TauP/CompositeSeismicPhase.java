@@ -459,7 +459,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException, SlownessModelException, TauModelException {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival, TimeDist prevEnd, int prevIdx) throws SlownessModelException, TauModelException {
         return arrival.getSimpleContigSeismicPhase().calcSegmentPaths(arrival, prevEnd, prevIdx);
     }
 

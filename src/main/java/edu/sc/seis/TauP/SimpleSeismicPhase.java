@@ -12,8 +12,10 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
      *  */
     public abstract List<Arrival> calcTimeExactDistance(double searchDist);
 
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException, SlownessModelException, TauModelException {
-        return calcSegmentPaths(currArrival, new TimeDist(currArrival.getRayParam(), 0, 0, currArrival.getSourceDepth()), 0);
+
+    @Override
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) throws SlownessModelException, TauModelException, NoArrivalException {
+        return calcSegmentPaths(arrival, new TimeDist(arrival.getRayParam(), 0, 0, arrival.getSourceDepth()), 0);
     }
 
     /**
@@ -25,7 +27,7 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
      * @param prevEnd
      * @return
      */
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException, SlownessModelException, TauModelException {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) throws SlownessModelException, TauModelException {
         int idx = prevIdx+1;
         List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
         int numSegments = currArrival.listPhaseSegments().size();

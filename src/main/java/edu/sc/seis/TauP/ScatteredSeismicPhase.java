@@ -500,8 +500,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return 0;
     }
 
-
-
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
@@ -518,10 +516,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return SeismicPhaseReflTransHolder.zero();
     }
 
-
-
-
-
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
@@ -531,7 +525,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) throws NoArrivalException, SlownessModelException, TauModelException {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) throws SlownessModelException, TauModelException {
         List<ArrivalPathSegment> out = new ArrayList<>();
         List<ArrivalPathSegment> inboundPath = inboundArrival.getPathSegments();
         for (ArrivalPathSegment seg : inboundPath) {

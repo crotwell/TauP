@@ -68,8 +68,9 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
         return null;
     }
 
+
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) {
         return List.of();
     }
 
