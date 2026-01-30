@@ -75,6 +75,15 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         return val;
     }
 
+    /** Creates distance ray for the angle between the event and station using the given geodesic.
+     * The distance is calculated via Geographiclib and the resulting meters are  converted to
+     * degrees on a sphere of radius (2a+b)/3, the average radius of the ellipsoid from the geodesic.
+     *
+     * @param evt event location
+     * @param sta station location
+     * @param geod geodesic representing the ellipsoid, often WSG84
+     * @return Distance ray  for the angle on the average sphere
+     */
     public static DistanceAngleRay ofGeodeticEventStation(LatLonLocatable evt, LatLonLocatable sta, Geodesic geod) {
         Location eLoc = evt.asLocation();
         Location sLoc = sta.asLocation();
@@ -82,7 +91,10 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                                                 sLoc.getLatitude(), sLoc.getLongitude());
         GeodesicLine bazGLine = geod.InverseLine(sLoc.getLatitude(), sLoc.getLongitude(),
                                                  eLoc.getLatitude(), eLoc.getLongitude());
-        DistanceAngleRay val = ofDegrees(azGLine.Arc());
+        double avgRaduis = geod.EquatorialRadius()* (3- geod.Flattening()) / 3;
+        DistanceKmRay valKm = ofKilometers(azGLine.Distance()/1000);
+        DistanceAngleRay val = ofDegrees(valKm.getDegrees(avgRaduis));
+        // maybe should just use km ray? But causes issue with TauP_DistAz
         val.staLatLon = sta;
         val.evtLatLon = evt;
         val.azimuth = azGLine.Azimuth();
