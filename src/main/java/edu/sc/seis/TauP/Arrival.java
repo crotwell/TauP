@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 
 /**
  * convenience class for storing the parameters associated with a phase arrival.
@@ -294,13 +293,17 @@ public class Arrival {
         return Duration.ofNanos(Math.round(getTime()*1000000000));
     }
 
-    /** returns travel distance in radians */
+    /**
+     * The actual travel distance in radians.
+     * May not match the search distance if long way around or laps.
+     * */
     public double getDist() {
         return dist;
     }
 
     /**
-     * returns travel distance in degrees.
+     * returns actual travel distance in degrees.
+     * May not match the search distance if long way around or laps.
      */
     public double getDistDeg() {
         return SphericalCoords.RtoD * getDist();
@@ -311,11 +314,7 @@ public class Arrival {
      * the actual distance traveled.
      */
     public double getModuloDist() {
-        double moduloDist = getDist() % TWOPI;
-        if(moduloDist > Math.PI) {
-            moduloDist = TWOPI - moduloDist;
-        }
-        return moduloDist;
+        return SphericalCoords.getModuloDistRadian(getDist());
     }
 
     /**
