@@ -575,6 +575,8 @@ tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
 tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
 tasks.get("publish").dependsOn("assemble")
 tasks.get("publish").dependsOn("installDist")
+tasks.get("jreleaserDeploy").dependsOn(tasks.get("publishMavenJavaPublicationToMavenRepository"))
+tasks.get("jreleaserFullRelease").dependsOn(tasks.get("publishMavenJavaPublicationToMavenRepository"))
 
 
 tasks.register<JavaExec>("genPythonBindings") {

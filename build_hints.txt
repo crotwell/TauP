@@ -10,9 +10,9 @@ conda activate sphinx
 ./gradlew dependencyUpdates
 
 # wrapper
-./gradlew wrapper --gradle-version 8.13 --distribution-type bin
+./gradlew wrapper --gradle-version 8.14 --distribution-type bin
 
-# regen cmd line tests, check for any differences
+# regen cmd line tests, check for any differences, use java11
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
 
 ./gradlew cCLTF
@@ -29,6 +29,10 @@ jreleaser template generate -b src/jreleaser -p brew -d taup
 
 dryrun is set to true in build.gradle.kts to avoid accidentaly upload
 
+#   just to mavenCentral:
+./gradlew jreleaserDeploy
+#   or the full thing, but maybe check github token?
+./gradlew jreleaserFullRelease
 
 
 # On release:
