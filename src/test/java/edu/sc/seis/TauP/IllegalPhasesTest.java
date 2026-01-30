@@ -104,6 +104,13 @@ class IllegalPhasesTest {
 	// can generate arrivals
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
+
+	public static List<String> createLegalPhases() {
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
+		legalPhases.addAll(otherLegalPhases);
+		return legalPhases;
+	}
+
 	ArrayList<String> createIllegalPhases() {
 		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		ArrayList<String> illegalEndPhases = new ArrayList<>();

@@ -51,6 +51,7 @@ public class SphericalCoords {
 
     protected static final double dtor = Math.PI / 180.0;
     public static final double DtoR = dtor;
+    public static final double ONE_DEG_AS_RADIAN = dtor;
 
     protected static final double rtod = 180.0 / Math.PI;
     public static final double RtoD = rtod;

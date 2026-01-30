@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static edu.sc.seis.TauP.SphericalCoords.ONE_DEG_AS_RADIAN;
 
 /**
  * convenience class for storing the parameters associated with a phase arrival.
@@ -150,6 +151,104 @@ public class Arrival {
     private final int rayParamIndex;
 
     private final double dRPdDist;
+
+    /**
+     * Finds a distance near the arrival distance at which the phase still exists.
+     * @param deltaRadian max delta distance in radians
+     * @return a distance in radians
+     */
+    public double findNearDistance(double deltaRadian) {
+        double nearDist = getDist()+deltaRadian/2;
+        SimpleContigSeismicPhase contigPhase = getSimpleContigSeismicPhase();
+        if (nearDist >= contigPhase.getMaxDistance()) {
+            nearDist = getDist()- deltaRadian/2;
+        }
+        if (nearDist <= contigPhase.getMinDistance() && getDist() > contigPhase.getMinDistance()) {
+            nearDist = (getDist()+contigPhase.getMinDistance())/2;
+        }
+        return nearDist;
+    }
+
+
+    public Arrival nearbyArrival() {
+        return nearbyArrival(ONE_DEG_AS_RADIAN);
+    }
+    public Arrival nearbyArrival(double deltaDistRadian) {
+        double dd = deltaDistRadian;
+        if (dd > ONE_DEG_AS_RADIAN) { dd = ONE_DEG_AS_RADIAN; } // 1 deg ~ 0.0175 rad
+        double beforeDist = getModuloDist()-dd/2;
+        if (beforeDist < 0 && getDist() >= 0) {
+            beforeDist = getModuloDist()+dd;
+        }
+        double afterDist = getModuloDist()+dd/2;
+        List<Arrival> nearArrivalList;
+        SimpleContigSeismicPhase contigPhase = getSimpleContigSeismicPhase();
+
+        DistanceRay beforeRay = DistanceRay.ofRadians(beforeDist);
+        DistanceRay afterRay = DistanceRay.ofRadians(afterDist);
+        nearArrivalList = beforeRay.calculate(getPhase());
+        nearArrivalList.addAll(afterRay.calculate(getPhase()));
+
+        Arrival nearArrival = nearArrivalList.get(0);
+        for (Arrival na : nearArrivalList) {
+            // find initial arrival with same ray parameter sign
+            if (isLongWayAround()&&na.isLongWayAround()) {
+                nearArrival=na;
+                break;
+            }
+            if ((na.getRayParam() > 0 && getRayParam()>=0) || (na.getRayParam() < 0 && getRayParam()<0)) {
+                nearArrival = na;
+                break;
+            }
+        }
+        if (contigPhase.getMinRayParam() != contigPhase.getMaxRayParam()) {
+            // find near arrival with closest ray parameter to ours and same sign
+            for (Arrival na : nearArrivalList) {
+                if ((na.getRayParam() * getRayParam()>0) && Math.abs(na.getRayParam() - getRayParam()) < Math.abs(nearArrival.getRayParam() - getRayParam())) {
+                    nearArrival = na;
+                }
+            }
+        } else {
+            // degenerate like Sdiff, find closest time
+            for (Arrival na : nearArrivalList) {
+                if (Math.abs(na.getTime() - getTime()) < Math.abs(nearArrival.getTime() - getTime())) {
+                    nearArrival = na;
+                }
+            }
+        }
+
+        return nearArrival;
+    }
+
+    public int internalCausticCount() {
+        int internalCaustic = 0;
+        Arrival near = nearbyArrival(0.01);
+        List<ArrivalPathSegment> arrSegList = getPathSegments();
+        List<ArrivalPathSegment> nearSegList = near.getPathSegments();
+        TimeDist prevArr = arrSegList.get(0).prevEnd;
+        TimeDist prevNear = nearSegList.get(0).prevEnd;
+        // first leg can't cross
+        for (int i = 1; i < arrSegList.size(); i++) {
+            ArrivalPathSegment aSeg = arrSegList.get(i);
+            ArrivalPathSegment nSeg = nearSegList.get(i);
+            if (aSeg.getPhaseSegment().endAction == PhaseInteraction.TURN) {
+                // combine prev and current segments
+                // what about if cross happens shallower in "transmitup" segment
+                continue;
+            } else {
+                TimeDist currArr = aSeg.getPathEnd();
+                TimeDist currNear = nSeg.getPathEnd();
+                if (aSeg.getPhaseSegment().prevEndAction == PhaseInteraction.TURN && (
+                        (prevArr.getDistDeg()<prevNear.getDistDeg() && currArr.getDistDeg()<currNear.getDistDeg() )
+                        || (prevArr.getDistDeg()> prevNear.getDistDeg() && currArr.getDistDeg() > currNear.getDistDeg()))) {
+                    internalCaustic++;
+                }
+                prevArr = currArr;
+                prevNear = currNear;
+            }
+        }
+        return internalCaustic;
+    }
 
     /** original angular search criteria, usually distance (great circle) in degrees.
      * May differ from dist by multiple of 180
