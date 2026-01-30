@@ -513,16 +513,28 @@ public class SeismicPhaseSegment {
 	}
 
 	/**
+	 * Calculates the product of the energy flux reflection and transmission coefficients for this leg.
+	 * @param arrival arrival/ ray parameter to use for the calculation
+	 * @param nextLegIsPWave if next leg is a P wave, neede for final coefficient at end of leg
+	 * @param allSH if should calculate the SH coefficients instead of P-SV
+	 */
+	public double calcEnergyFluxFactorReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws TauModelException, SlownessModelException {
+		return calcReflTran(arrival, nextLegIsPWave, allSH).energyFlux;
+	}
+
+
+	/**
 	 * Calculates the product of the reflection and transmission coefficients for this leg.
 	 * @param arrival arrival/ ray parameter to use for the calculation
 	 * @param nextLegIsPWave if next leg is a P wave, neede for final coefficient at end of leg
 	 * @param allSH if should calculate the SH coefficients instead of P-SV
 	 */
-	public double calcEnergyFluxFactorReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException {
-		double reflTranValue = 1;
+	public SeismicPhaseReflTransHolder calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws TauModelException, SlownessModelException {
+		Complex reflTranValue = new Complex(1, 0);
+		double energyFlux = 1;
 		if (isPWave && allSH) {
 			// P wave leg in SH system, so zero
-			return 0;
+			return new SeismicPhaseReflTransHolder(new Complex(0,0), 0);
 		}
 		VelocityModel vMod = getTauModel().getVelocityModel();
 		if ( ! isFlat) {
@@ -565,29 +577,43 @@ public class SeismicPhaseSegment {
 				double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 				if (isPWave) {
 					if ( endAction == TURN
+							&& arrival.getRayParam() < tauBranch.getMaxRayParam()
+							&& arrival.getRayParam() > tauBranch.getMinTurnRayParam()) {
+						// turn is actually turned above the boundary
+					} else if ( endAction == TURN
 							&& arrival.getRayParam() >= tauBranch.getMinRayParam()
 							&& arrival.getRayParam() <= tauBranch.getMinTurnRayParam()) {
 						// turn is actually critically reflect at the boundary
-						reflTranValue *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
+						reflTranValue = reflTranValue.times(reflTranCoef.getComplexRpp(flatRayParam));
+						energyFlux *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
 					} else {
-						reflTranValue *= reflTranCoef.getEnergyFluxFactorTpp(flatRayParam);
+						reflTranValue = reflTranValue.times(reflTranCoef.getComplexTpp(flatRayParam));
+						energyFlux *= reflTranCoef.getEnergyFluxFactorTpp(flatRayParam);
 					}
 				} else {
 					// SV or SH or combo???
 					if ( endAction == TURN
+							&& arrival.getRayParam() < tauBranch.getMaxRayParam()
+							&& arrival.getRayParam() > tauBranch.getMinTurnRayParam()) {
+						// turn is actually turned above the boundary,
+					} else if ( endAction == TURN
 							&& arrival.getRayParam() >= tauBranch.getMinRayParam()
 							&& arrival.getRayParam() <= tauBranch.getMinTurnRayParam()) {
 						// turn is actually critically reflect at the boundary
 						if (allSH) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexRshsh(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexRss(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
 						}
 					} else {
 						if (allSH) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorTshsh(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexTshsh(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorTshsh(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorTss(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexTss(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorTss(flatRayParam);
 						}
 					}
 				}
@@ -609,18 +635,23 @@ public class SeismicPhaseSegment {
 						// turn is actually critical reflection from bottom of layer
 						if (isPWave) {
 							if (nextLegIsPWave) {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexRpp(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
 							} else {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorRps(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexRps(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorRps(flatRayParam);
 							}
 						} else {
 							if (nextLegIsPWave) {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorRsp(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexRsp(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorRsp(flatRayParam);
 							} else {
 								if (allSH) {
-									reflTranValue *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
+									reflTranValue = reflTranValue.times(reflTranCoef.getComplexRshsh(flatRayParam));
+									energyFlux *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
 								} else {
-									reflTranValue *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
+									reflTranValue = reflTranValue.times(reflTranCoef.getComplexRss(flatRayParam));
+									energyFlux *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
 								}
 							}
 						}
@@ -628,18 +659,23 @@ public class SeismicPhaseSegment {
 				} else if (this.endAction == TRANSDOWN || this.endAction == TRANSUP) {
 					if (isPWave) {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorTpp(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexTpp(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorTpp(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorTps(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexTps(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorTps(flatRayParam);
 						}
 					} else {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorTsp(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexTsp(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorTsp(flatRayParam);
 						} else {
 							if (allSH) {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorTshsh(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexTshsh(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorTshsh(flatRayParam);
 							} else {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorTss(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexTss(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorTss(flatRayParam);
 							}
 						}
 					}
@@ -647,18 +683,23 @@ public class SeismicPhaseSegment {
 
 					if (isPWave) {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexRpp(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorRpp(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorRps(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexRps(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorRps(flatRayParam);
 						}
 					} else {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getEnergyFluxFactorRsp(flatRayParam);
+							reflTranValue = reflTranValue.times(reflTranCoef.getComplexRsp(flatRayParam));
+							energyFlux *= reflTranCoef.getEnergyFluxFactorRsp(flatRayParam);
 						} else {
 							if (allSH) {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexRshsh(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorRshsh(flatRayParam);
 							} else {
-								reflTranValue *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
+								reflTranValue = reflTranValue.times(reflTranCoef.getComplexRss(flatRayParam));
+								energyFlux *= reflTranCoef.getEnergyFluxFactorRss(flatRayParam);
 							}
 						}
 					}
@@ -671,8 +712,8 @@ public class SeismicPhaseSegment {
 			 * diffracted waves.
 			 */
 		}
-		return reflTranValue;
-	}
+		return new SeismicPhaseReflTransHolder(reflTranValue, energyFlux);
+    }
 
 	public SeismicPhaseSegment clone() {
 		SeismicPhaseSegment seg = new SeismicPhaseSegment(

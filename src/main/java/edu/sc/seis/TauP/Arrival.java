@@ -518,12 +518,8 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getEnergyFluxFactorReflTransPSV() throws VelocityModelException, SlownessModelException {
-        try {
-            return getPhase().calcEnergyFluxFactorReflTranPSV(this);
-        } catch (NoArrivalException e) {
-            throw new RuntimeException("Should never happen "+getName(), e);
-        }
+    public double getEnergyFluxFactorReflTransPSV() throws TauModelException, SlownessModelException {
+        return getReflTransPSV().energyFlux;
     }
 
     /**
@@ -535,12 +531,35 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getEnergyFluxFactorReflTransSH() throws VelocityModelException, SlownessModelException {
-        try {
-            return getPhase().calcEnergyFluxFactorReflTranSH(this);
-        } catch (NoArrivalException e) {
-            throw new RuntimeException("Should never happen "+getName(), e);
-        }
+    public double getEnergyFluxFactorReflTransSH() throws TauModelException, SlownessModelException {
+        return getReflTransSH().energyFlux;
+    }
+
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival in the P-SV plane. Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     *
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public SeismicPhaseReflTransHolder getReflTransPSV() throws TauModelException, SlownessModelException {
+        return getPhase().calcReflTranPSV(this);
+    }
+
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival for transverse, SH, waves. If any segment on the path is a P wave, the result will be zero.
+     * Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     *
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public SeismicPhaseReflTransHolder getReflTransSH() throws TauModelException, SlownessModelException {
+        return getPhase().calcReflTranSH(this);
     }
 
     /**

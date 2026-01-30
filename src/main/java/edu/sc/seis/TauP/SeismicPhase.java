@@ -146,9 +146,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     SeismicPhase interpolatePhase(double maxDeltaDeg);
 
-    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
+    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws TauModelException, SlownessModelException, NoArrivalException;
 
-    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
+    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws TauModelException, SlownessModelException, NoArrivalException;
+
+    SeismicPhaseReflTransHolder calcReflTranPSV(Arrival arrival) throws TauModelException, SlownessModelException;
+
+    SeismicPhaseReflTransHolder calcReflTranSH(Arrival arrival) throws TauModelException, SlownessModelException;
 
     List<TimeDist> interpPierceTimeDist(Arrival arrival) throws NoArrivalException, TauModelException;
 

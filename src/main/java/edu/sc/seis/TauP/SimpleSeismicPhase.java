@@ -41,4 +41,13 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
 
     public abstract SimpleSeismicPhase interpolateSimplePhase(double maxDeltaDeg);
 
+    @Override
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws TauModelException, SlownessModelException {
+        return calcReflTranPSV(arrival).energyFlux;
+    }
+
+    @Override
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws TauModelException, SlownessModelException {
+        return calcReflTranSH(arrival).energyFlux;
+    }
 }

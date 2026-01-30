@@ -480,13 +480,13 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException {
-        return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranPSV(arrival);
+    public SeismicPhaseReflTransHolder calcReflTranPSV(Arrival arrival) throws TauModelException, SlownessModelException {
+        return arrival.getSimpleContigSeismicPhase().calcReflTranPSV(arrival);
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException {
-        return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranSH(arrival);
+    public SeismicPhaseReflTransHolder calcReflTranSH(Arrival arrival) throws TauModelException, SlownessModelException {
+        return arrival.getSimpleContigSeismicPhase().calcReflTranSH(arrival);
     }
 
     @Override

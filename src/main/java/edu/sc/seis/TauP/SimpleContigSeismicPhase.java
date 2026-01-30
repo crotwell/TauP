@@ -1111,32 +1111,34 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException {
-        double reflTranValue = 1;
+    public SeismicPhaseReflTransHolder calcReflTranPSV(Arrival arrival) throws TauModelException, SlownessModelException {
+        SeismicPhaseReflTransHolder reflTranValue = SeismicPhaseReflTransHolder.unity();
         boolean calcSH = false;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
 
-            reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, seg.isPWave, calcSH);
+            reflTranValue = reflTranValue.times(prevSeg.calcReflTran(arrival, seg.isPWave, calcSH));
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue = reflTranValue.times( prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH)); // last seg can't change phase at end
+        reflTranValue.internalCaustics = arrival.internalCausticCount();
         return reflTranValue;
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException {
-        double reflTranValue = 1;
+    public SeismicPhaseReflTransHolder calcReflTranSH(Arrival arrival) throws TauModelException, SlownessModelException {
+        SeismicPhaseReflTransHolder reflTranValue = SeismicPhaseReflTransHolder.unity();
 
         boolean isAllS = isAllSWave();
-        if ( ! isAllS) { return 0; }
+        if ( ! isAllS) { return SeismicPhaseReflTransHolder.zero(); }
         boolean calcSH = true;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
-            reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, seg.isPWave, calcSH);
+            reflTranValue = reflTranValue.times( prevSeg.calcReflTran(arrival, seg.isPWave, calcSH));
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue = reflTranValue.times(prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH)); // last seg can't change phase at end
+        reflTranValue.internalCaustics = arrival.internalCausticCount();
         return reflTranValue;
     }
 

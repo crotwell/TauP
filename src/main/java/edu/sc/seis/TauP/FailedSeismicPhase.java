@@ -89,13 +89,13 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) {
-        return 0;
+    public SeismicPhaseReflTransHolder calcReflTranPSV(Arrival arrival) {
+        return SeismicPhaseReflTransHolder.zero();
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) {
-        return 0;
+    public SeismicPhaseReflTransHolder calcReflTranSH(Arrival arrival) {
+        return SeismicPhaseReflTransHolder.zero();
     }
 
     @Override

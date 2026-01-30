@@ -500,6 +500,28 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return 0;
     }
 
+
+
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
+    @Override
+    public SeismicPhaseReflTransHolder calcReflTranPSV(Arrival arrival) throws VelocityModelException {
+        return SeismicPhaseReflTransHolder.zero();
+    }
+
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
+    @Override
+    public SeismicPhaseReflTransHolder calcReflTranSH(Arrival arrival) throws VelocityModelException {
+        return SeismicPhaseReflTransHolder.zero();
+    }
+
+
+
+
+
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
