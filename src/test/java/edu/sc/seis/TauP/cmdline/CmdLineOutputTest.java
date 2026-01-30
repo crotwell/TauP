@@ -509,6 +509,12 @@ public class CmdLineOutputTest {
                 "taup refltrans -o stdout --abs --pwave  --swave --layer 5.8 3.35 2.5 0 0 0 -x rayparam -y Rpp Rps Rsp Rss --yminmax 0 3.3 --legend --svg");
         figureTitles.put("FMGS_fig_13_15.svg", "FMGS, fig 13.15, free surface");
         figureCompare.put("FMGS_fig_13_15.svg", "FMGS_fig_13_15.png");
+
+        fmgsFigureTestCmds.put("FMGS_13_16.svg",
+                "taup refltrans --abs --anglestep 1 --svg --fsrf --layer 5.8 3.35 2.9 0 0 0 --legend --pwave --swave -x rayparam -o stdout");
+        figureTitles.put("FMGS_13_16.svg", "FMGS, fig 13.16, free surface RF");
+        figureCompare.put("FMGS_13_16.svg", "FMGS_fig_13_16.png");
+
         fmgsFigureTestCmds.put("AR_fig_5_06.svg",
                 "taup refltrans -o stdout --pwave --swave --layer 5 3 2.5 0 0 0 -x rayparam -y Rpp Rps Rsp Rss --legend --svg");
         figureTitles.put("AR_fig_5_06.svg", "Aki and Richards, fig 5.6");
@@ -521,15 +527,15 @@ public class CmdLineOutputTest {
                 "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 -x rayparam  -y RspPhase RssPhase --legend --svg");
         figureTitles.put("AR_fig_5_10_phase.svg", "Aki and Richards, fig 5.10 phase");
         figureCompare.put("AR_fig_5_10_phase.svg", "AR_fig_5_10.pdf");
+
         fmgsFigureTestCmds.put("Shearer_fig_6_5.svg",
                 "taup refltrans -o stdout  --shwave --mod prem --depth 24.4 --down --legend --svg");
         figureTitles.put("Shearer_fig_6_5.svg", "Shearer, fig 6.5");
         figureCompare.put("Shearer_fig_6_5.svg", "Shearer_fig_6_5.pdf");
-
-        fmgsFigureTestCmds.put("FMGS_13_16.svg",
-                "taup refltrans --abs --anglestep 1 --svg --fsrf --layer 5.8 3.35 2.9 0 0 0 --legend --pwave --swave -x rayparam -o stdout");
-        figureTitles.put("FMGS_13_16.svg", "FMGS, fig 13.16, free surface RF");
-        figureCompare.put("FMGS_13_16.svg", "FMGS_fig_13_16.png");
+        fmgsFigureTestCmds.put("Shearer_fig_6_5b.svg",
+                "taup refltrans -o stdout  --phase --shwave --mod prem --depth 24.4 --down --legend --svg");
+        figureTitles.put("Shearer_fig_6_5b.svg", "Shearer, phase, fig 6.5");
+        figureCompare.put("Shearer_fig_6_5b.svg", "Shearer_fig_6_5.pdf");
 
 
         File topdir = new File("build/cmdLineTest");
