@@ -214,9 +214,16 @@ public class DistAz {
     public static double kmPerDeg() {
         return kmPerDeg(wgs85_meanEarthRadius);
     }
+
+    /**
+     * Kilometers per degree on a sphere of the given radius, eg Math.PI*radius/180.0
+     * @param radius
+     * @return
+     */
     public static double kmPerDeg(double radius) {
         return Math.PI*radius/180.0;
     }
+
     public static double degreesToKilometers(double degrees) {
         return degrees * kmPerDeg();
     }
