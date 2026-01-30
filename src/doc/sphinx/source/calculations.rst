@@ -30,7 +30,8 @@ an earthquake at due north (30,0) of the same station, 29.83 degrees. Because Ta
 spherical, the default is to not take the elliptical nature of the earth
 into account when calculating these distances. But this can be changed with
 the :code:`--geodetic` parameter, which implies that the given latitudes
-are geodetic instead of geocentric.
+are geodetic instead of geocentric. Geodetic calculations use the
+geographiclib package of :cite:t:`Karney2013` `Karney`.
 And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`
 parameter.
