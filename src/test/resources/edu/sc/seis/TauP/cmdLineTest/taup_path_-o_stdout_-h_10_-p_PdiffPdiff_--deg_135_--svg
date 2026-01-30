@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p PdiffPdiff &#45;&#45;deg 135 &#45;&#45;svg </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -271,7 +271,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>  135.00    10.0   PdiffPdiff   1762.79     4.439     13.41    13.39   225.00   = PdiffPdiff</desc>
     <g>
-      <desc>seg 1/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 1/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from -0.00 deg, 10.0 km to -49.18 deg, 2889.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
     0.00  -6361.00
    -0.00  -6361.00
@@ -481,7 +481,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
+      <desc>seg 2/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle from -49.18 deg, 2889.0 km to -63.29 deg, 2889.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
 -2635.00  -2276.20
 -2672.02  -2232.63
@@ -502,7 +502,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 3/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from -63.29 deg, 2889.0 km to -112.49 deg, 0.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
 -3110.43  -1565.10
 -3136.87  -1517.62
@@ -715,7 +715,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 4/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 4/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from -112.49 deg, 0.0 km to -161.69 deg, 2889.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
 -5886.49   2436.97
 -5885.22   2436.77
@@ -928,7 +928,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 5/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
+      <desc>seg 5/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle from -161.69 deg, 2889.0 km to -175.80 deg, 2889.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
 -1093.95   3305.69
 -1039.53   3323.21
@@ -949,7 +949,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 6/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 6/6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from -175.80 deg, 2889.0 km to -225.00 deg, 0.0 km</desc>
       <polyline class="path phase_PdiffPdiff pwave" points="
  -255.01   3472.65
  -201.02   3478.89

@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p PnPn &#45;&#45;deg 10 &#45;&#45;svg </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -319,7 +319,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   10.00    10.0   PnPn    151.38    13.754     45.94    45.84    10.00   = PnPn</desc>
     <g>
-      <desc>seg 1/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <desc>seg 1/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust from 0.00 deg, 10.0 km to 0.28 deg, 35.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
     0.00  -6361.00
     5.17  -6356.00
@@ -332,7 +332,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle</desc>
+      <desc>seg 2/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle from 0.28 deg, 35.0 km to 4.58 deg, 35.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
    30.83  -6335.93
   125.99  -6334.75
@@ -343,7 +343,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <desc>seg 3/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust from 4.58 deg, 35.0 km to 4.95 deg, 0.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
   506.15  -6315.75
   517.01  -6322.40
@@ -361,7 +361,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 4/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <desc>seg 4/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust from 4.95 deg, 0.0 km to 5.33 deg, 35.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
   550.13  -6347.20
   551.31  -6345.84
@@ -378,7 +378,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 5/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle</desc>
+      <desc>seg 5/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle from 5.33 deg, 35.0 km to 9.63 deg, 35.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
   588.03  -6308.65
   682.73  -6299.11
@@ -389,7 +389,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 6/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <desc>seg 6/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust from 9.63 deg, 35.0 km to 10.00 deg, 0.0 km</desc>
       <polyline class="path phase_PnPn pwave" points="
  1059.74  -6246.75
  1071.14  -6252.41

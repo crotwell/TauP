@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p 2kmps &#45;&#45;deg 35 &#45;&#45;svg </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -274,7 +274,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   35.00    10.0   2kmps   1945.91    55.597      0.00     0.00    35.00   = 2kmps</desc>
     <g>
-      <desc>seg 1/1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+      <desc>seg 1/1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust from 0.00 deg, 0.0 km to 35.00 deg, 0.0 km</desc>
       <polyline class="path phase_2kmps swave" points="
     0.00  -6371.00
   111.19  -6370.03
@@ -318,7 +318,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   35.00    10.0   2kmps  18069.18    55.597      0.00     0.00   325.00   = 2kmps</desc>
     <g>
-      <desc>seg 1/1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+      <desc>seg 1/1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust from -0.00 deg, 0.0 km to -325.00 deg, 0.0 km</desc>
       <polyline class="path phase_2kmps swave" points="
     0.00  -6371.00
  -111.19  -6370.03

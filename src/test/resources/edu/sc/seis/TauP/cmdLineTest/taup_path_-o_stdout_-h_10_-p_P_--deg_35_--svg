@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p P &#45;&#45;deg 35 &#45;&#45;svg </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -319,7 +319,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   35.00    10.0   P    412.43     8.613     26.74    26.70    35.00   = P</desc>
     <g>
-      <desc>seg 1/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
+      <desc>seg 1/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle from 0.00 deg, 10.0 km to 17.48 deg, 842.9 km</desc>
       <polyline class="path phase_P pwave" points="
     0.00  -6361.00
     2.52  -6356.00
@@ -420,7 +420,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
+      <desc>seg 2/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle from 17.48 deg, 842.9 km to 35.00 deg, 0.0 km</desc>
       <polyline class="path phase_P pwave" points="
  1660.24  -5272.88
  1748.84  -5248.64

@@ -107,7 +107,9 @@ public class ArrivalPathSegment extends AbstractPathSegment {
 
     @Override
     public String description() {
-        return "seg "+segmentIndex+"/"+totalNumSegments+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
+        return "seg "+segmentIndex+"/"+totalNumSegments+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange()+
+                " from "+Outputs.formatDistanceNoPad(getPathStart().getDistDeg())+" deg, "+Outputs.formatDepthNoPad(getPathStart().getDepth())+" km to "+
+                Outputs.formatDistanceNoPad(getPathEnd().getDistDeg())+" deg, "+Outputs.formatDepthNoPad(getPathEnd().getDepth())+" km";
 
     }
 

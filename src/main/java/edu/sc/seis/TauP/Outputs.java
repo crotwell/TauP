@@ -188,6 +188,10 @@ public class Outputs {
         return String.format(locale, depthFormat, depth);
     }
 
+    public static String formatDepthNoPad(double depth) {
+        return String.format(locale, depthFormatNoPad, depth);
+    }
+
     public static String formatVelocity(double velocity) {
         return String.format(locale, velocityFormat, velocity);
     }
@@ -243,6 +247,8 @@ public class Outputs {
     public static Locale locale = Locale.ROOT;
 
     public static String depthFormat = "%8.1f";
+
+    public static String depthFormatNoPad = "%.1f";
 
     public static String distanceFormat = "%8.2f";
 

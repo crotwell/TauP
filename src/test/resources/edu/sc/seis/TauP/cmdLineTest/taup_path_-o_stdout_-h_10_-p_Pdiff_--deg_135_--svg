@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p Pdiff &#45;&#45;deg 135 &#45;&#45;svg </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -271,7 +271,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>  135.00    10.0   Pdiff    980.43     4.439     13.41    13.39   135.00   = Pdiff</desc>
     <g>
-      <desc>seg 1/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 1/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from 0.00 deg, 10.0 km to 49.18 deg, 2889.0 km</desc>
       <polyline class="path phase_Pdiff pwave" points="
     0.00  -6361.00
     1.19  -6356.00
@@ -480,7 +480,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
+      <desc>seg 2/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle from 49.18 deg, 2889.0 km to 85.80 deg, 2889.0 km</desc>
       <polyline class="path phase_Pdiff pwave" points="
  2635.00  -2276.20
  2673.93  -2230.35
@@ -523,7 +523,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <desc>seg 3/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle from 85.80 deg, 2889.0 km to 135.00 deg, 0.0 km</desc>
       <polyline class="path phase_Pdiff pwave" points="
  3472.65   -255.01
  3478.89   -201.02
