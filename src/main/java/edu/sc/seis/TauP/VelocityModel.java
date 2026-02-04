@@ -871,7 +871,8 @@ public class VelocityModel implements Cloneable, Serializable {
                  * This layer has a negative or zero P velocity.
                  */
                 Alert.warning("There is a negative P velocity layer in the "
-                        + "velocity model at layer " + layerNum);
+                        + "velocity model at layer " + layerNum+"\n"+
+                        currVelocityLayer);
                 return false;
             }
             if(currVelocityLayer.getTopSVelocity() < 0.0
@@ -880,7 +881,8 @@ public class VelocityModel implements Cloneable, Serializable {
                  * This layer has a negative S velocity.
                  */
                 Alert.warning("There is a negative S velocity layer in the "
-                        + "velocity model at layer " + layerNum);
+                        + "velocity model at layer " + layerNum+"\n"+
+                        currVelocityLayer);
                 return false;
             }
             if((currVelocityLayer.getTopPVelocity() != 0.0 && currVelocityLayer.getBotPVelocity() == 0.0)
@@ -894,7 +896,8 @@ public class VelocityModel implements Cloneable, Serializable {
                         + layerNum
                         + "\nThis would cause a divide by zero within this "
                         + "depth range. Try making the velocity small, followed by a "
-                        + "discontinuity to zero velocity.");
+                        + "discontinuity to zero velocity.\n"+
+                        currVelocityLayer);
                 return false;
             }
             if((currVelocityLayer.getTopSVelocity() != 0.0 && currVelocityLayer.getBotSVelocity() == 0.0)
@@ -908,7 +911,8 @@ public class VelocityModel implements Cloneable, Serializable {
                         + layerNum
                         + "\nThis would cause a divide by zero within this "
                         + "depth range. Try making the velocity small, followed by a "
-                        + "discontinuity to zero velocity.");
+                        + "discontinuity to zero velocity.\n"+
+                        currVelocityLayer);
                 return false;
             }
             prevVelocityLayer = currVelocityLayer;

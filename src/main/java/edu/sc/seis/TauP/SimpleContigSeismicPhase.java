@@ -213,11 +213,22 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return minRayParam;
     }
 
+    /**
+     * Index within TauModel.rayParams that corresponds to maxRayParam. Note
+     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
+     * increasing index.
+     */
     @Override
     public int getMaxRayParamIndex() {
         return maxRayParamIndex;
     }
 
+
+    /**
+     * Index within TauModel.rayParams that corresponds to minRayParam. Note
+     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
+     * increasing index.
+     */
     @Override
     public int getMinRayParamIndex() {
         return minRayParamIndex;
