@@ -21,6 +21,15 @@ public enum AxisType {
     amp,
     amppsv,
     ampsh,
+    phase,
+    phasepsv,
+    phasesh,
+    phasedeg,
+    phasedegpsv,
+    phasedegsh,
+    unwrapphasedeg,
+    unwrapphasedegpsv,
+    unwrapphasedegsh,
     geospread,
     refltran,
     refltranpsv,
@@ -69,6 +78,15 @@ public enum AxisType {
             case amp:
             case amppsv:
             case ampsh:
+            case phase:
+            case phasepsv:
+            case phasesh:
+            case phasedeg:
+            case phasedegpsv:
+            case phasedegsh:
+            case unwrapphasedeg:
+            case unwrapphasedegpsv:
+            case unwrapphasedegsh:
             case refltran:
             case refltranpsv:
             case refltransh:
@@ -110,6 +128,15 @@ public enum AxisType {
             case refltran:
             case refltranpsv:
             case refltransh:
+            case phase:
+            case phasepsv:
+            case phasesh:
+            case phasedeg:
+            case phasedegpsv:
+            case phasedegsh:
+            case unwrapphasedeg:
+            case unwrapphasedegpsv:
+            case unwrapphasedegsh:
                 needs = false;
                 break;
             case tstar:

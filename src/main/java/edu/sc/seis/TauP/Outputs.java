@@ -153,6 +153,15 @@ public class Outputs {
             case amp:
             case amppsv:
             case ampsh:
+            case phase:
+            case phasepsv:
+            case phasesh:
+            case phasedeg:
+            case phasedegpsv:
+            case phasedegsh:
+            case unwrapphasedeg:
+            case unwrapphasedegpsv:
+            case unwrapphasedegsh:
             case geospread:
             case refltran:
             case refltranpsv:

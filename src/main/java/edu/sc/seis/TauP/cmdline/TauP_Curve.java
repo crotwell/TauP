@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 import static edu.sc.seis.TauP.XYPlottingData.trimAllToMinMax;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -314,6 +315,69 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 }
             }
             out = amp;
+        } else if (axisType==AxisType.phase ||
+                axisType==AxisType.phasepsv ||
+                axisType==AxisType.phasesh  ||
+                axisType==AxisType.phasedeg ||
+                axisType==AxisType.phasedegpsv ||
+                axisType==AxisType.phasedegsh  ||
+                axisType==AxisType.unwrapphasedeg ||
+                axisType==AxisType.unwrapphasedegpsv ||
+                axisType==AxisType.unwrapphasedegsh
+        ) {
+            System.err.println("zero index "+phase.getName()+" int causetic: "+arrivalAtIndex(0, phase).getReflTransPSV().getInternalCaustics());
+            boolean isAmpSH = axisType==AxisType.phasesh || axisType==AxisType.phasedegsh || axisType==AxisType.unwrapphasedegsh;
+            double[] dist = phase.getDist();
+            double[] phaseShift = new double[dist.length];
+            if (! isAmpSH || phase.isAllSWave()) {
+                // only do Sh calc for all S wave legs in phase, otherwise zeros
+                for (int i = 0; i < dist.length; i++) {
+                    Arrival arrival = arrivalAtIndex(i, phase);
+                    SeismicPhaseReflTransHolder reflTransHolder;
+                    if (isAmpSH) {
+                        phaseShift[i] = arrival.getReflTransSH().getPhase();
+                    } else {
+                        phaseShift[i] = arrival.getReflTransPSV().getPhase();
+                    }
+                }
+            }
+            if (axisType==AxisType.unwrapphasedeg || axisType==AxisType.unwrapphasedegpsv || axisType==AxisType.unwrapphasedegsh) {
+                double prev = phaseShift[phaseShift.length-1];
+                System.err.println("PhaseShift at end: "+prev*RtoD);
+
+                System.err.println("PhaseShift at zero: "+phaseShift[0]*RtoD);
+                double pishift = 0;
+                phaseShift[phaseShift.length-1] += pishift;
+                if (phaseShift[phaseShift.length-1] > Math.PI) {
+                    pishift -= TWOPI;
+                    phaseShift[phaseShift.length-1] -= TWOPI;
+                } else if (phaseShift[phaseShift.length-1] <  -1*Math.PI) {
+                    pishift += TWOPI;
+                    phaseShift[phaseShift.length-1] += TWOPI;
+                }
+                for (int i = phaseShift.length-2; i >= 0; i--) {
+                    if (prev-phaseShift[i] > Math.PI) {
+                        pishift += TWOPI;
+                        System.err.println("Unwrap "+i+" "+prev+" "+phaseShift[i]);
+                    } else if (phaseShift[i] - prev > Math.PI) {
+                        pishift -= TWOPI;
+                        System.err.println("Unwrap "+i+" "+prev+" "+phaseShift[i]);
+                    }
+                    prev = phaseShift[i];
+                    phaseShift[i] += pishift;
+                }
+            }
+            if (axisType==AxisType.phasedeg ||
+                    axisType==AxisType.phasedegpsv ||
+                    axisType==AxisType.phasedegsh ||
+                    axisType==AxisType.unwrapphasedeg ||
+                    axisType==AxisType.unwrapphasedegpsv ||
+                    axisType==AxisType.unwrapphasedegsh) {
+                for (int i = 0; i < phaseShift.length; i++) {
+                    phaseShift[i] *= RtoD;
+                }
+            }
+            out = phaseShift;
         } else if (axisType==AxisType.geospread) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
@@ -633,6 +697,24 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Amplitude (m) Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
             case amppsv:
                 return "Amplitude (m) PSv "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+            case phase:
+                return "Phase (rad) PSv,Sh ";
+            case phasesh:
+                return "Phase (rad) Sh ";
+            case phasepsv:
+                return "Phase (rad) PSv ";
+            case phasedeg:
+                return "Phase (deg) PSv,Sh ";
+            case phasedegsh:
+                return "Phase (deg) Sh ";
+            case phasedegpsv:
+                return "Phase (deg) PSv ";
+            case unwrapphasedeg:
+                return "Unweapped Phase (deg) PSv,Sh ";
+            case unwrapphasedegpsv:
+                return "Unwrapped Phase (deg) Sh ";
+            case unwrapphasedegsh:
+                return "Unwerapped Phase (deg) Sh ";
             case time:
                 return "Time (s)";
             case degree:
@@ -664,6 +746,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Incident Angle (deg)";
             case turndepth:
                 return "Turn Depth (km)";
+            case dpddelta:
+                return "dp/ddelta (rad)";
+            case dpddeg:
+                return "dp/ddelta (deg)";
             case refltran:
                 return "Energy Flux Factor Reflection/Transmission Coef. PSv,Sh";
             case refltranpsv:
