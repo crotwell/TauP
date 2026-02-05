@@ -59,12 +59,19 @@ public class TimeRay extends RayCalculateable {
     }
 
     @Override
-    public boolean isLatLonable() {
-        return false;
+    public LatLonable getLatLonable() {
+        if (isLatLonable()) {
+            if (evtLatLon != null) {
+                return new EventAzimuth(evtLatLon, azimuth, geodesic);
+            } else {
+                return new StationBackAzimuth(staLatLon, backAzimuth, geodesic);
+            }
+        }
+        return null;
     }
 
     @Override
-    public LatLonable getLatLonable() {
-        throw new IllegalArgumentException("TimeRay not latlonable");
+    public boolean isLatLonable() {
+        return (evtLatLon != null && azimuth != null) || (staLatLon != null && backAzimuth != null);
     }
 }
