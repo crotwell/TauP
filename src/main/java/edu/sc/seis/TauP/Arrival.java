@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static edu.sc.seis.TauP.PhaseInteraction.TURN;
 import static edu.sc.seis.TauP.SphericalCoords.ONE_DEG_AS_RADIAN;
 
 /**
@@ -246,6 +247,17 @@ public class Arrival {
                 prevArr = currArr;
                 prevNear = currNear;
             }
+        }
+        boolean hasTurn = false;
+        for (SeismicPhaseSegment seg : simpleContigSeismicPhase.getPhaseSegments()) {
+            if (seg.prevEndAction == TURN) {
+                hasTurn = true;
+            }
+        }
+        if (hasTurn && getDRayParamDDelta()>0) {
+            // Choy and Richards, BSSA 1975
+            // is possible for multiple overlapping retrograde branchs to cause more than one internal caustic?
+            internalCaustic++;
         }
         return internalCaustic;
     }
