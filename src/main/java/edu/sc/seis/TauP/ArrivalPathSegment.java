@@ -134,7 +134,35 @@ public class ArrivalPathSegment extends AbstractPathSegment {
         return arrival;
     }
 
+    public ArrivalPathSegment asNegativeDistance() {
+        return new ArrivalPathSegment(negativeDistance(), isPWave, segmentName, prevEnd,
+                arrival, phaseSegment, segmentIndex, totalNumSegments);
+    }
+
     SeismicPhaseSegment phaseSegment;
 
     Arrival arrival;
+
+    public static boolean raysCross(ArrivalPathSegment a, ArrivalPathSegment b) {
+        double ax1 = a.getPathStart().getDistRadian();
+        double ay1 = a.getPathStart().getDepth();
+        double ax2 = a.getPathEnd().getDistRadian();
+        double ay2 = a.getPathEnd().getDepth();
+        double bx1 = b.getPathStart().getDistRadian();
+        double by1 = b.getPathStart().getDepth();
+        double bx2 = b.getPathEnd().getDistRadian();
+        double by2 = b.getPathEnd().getDepth();
+        return raysCross(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2);
+    }
+    public static boolean raysCross(double ax1, double ay1, double ax2, double ay2, double bx1, double by1, double bx2, double by2) {
+        double tnum = (ax1-bx1)*(by1-by2)-(ay1-by1)*(bx1-bx2);
+        double tdenom = (ax1-ax2)*(by1-by2)-(ay1-ay2)*(bx1-bx2);
+        double unum = (bx1-ax1)*(ay1-ay2)-(by1-ay1)*(ax1-ax2);
+        double udenom = (bx1-bx2)*(ay1-ay2)-(by1-by2)*(ax1-ax2);
+        double t = tnum/tdenom;
+        double u = unum/udenom;
+        return 0 <= t && t <= 1 && 0 <= u && u <= 1;
+    }
 }
+
+
