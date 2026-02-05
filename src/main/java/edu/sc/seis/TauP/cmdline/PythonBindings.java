@@ -418,6 +418,7 @@ public class PythonBindings {
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
             out.println("from .dataclass import (");
+            out.println("    DataClassJsonEncoder,");
             out.println("    Amplitude, Arrival, Curve, CurveSegment, Daz, Fault, Isochron,");
             out.println("    PathSegment, RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
             out.println("    Wavefront, WavefrontResult");
@@ -431,6 +432,7 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("    \"" + capToolname + "Query\",");
             }
+            out.println("    \"DataClassJsonEncoder\",");
             out.println("    \"Amplitude\",");
             out.println("    \"Arrival\",");
             out.println("    \"Curve\",");
