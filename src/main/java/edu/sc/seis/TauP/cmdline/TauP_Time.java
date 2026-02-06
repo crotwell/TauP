@@ -311,8 +311,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance ",
                 " ", String.format(phasePuristFormat, "Name   ")));
         if (withAmplitude) {
-            lineOne.addAll(List.of("    Amp  ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  "));
-            lineTwo.addAll(List.of("  Factor PSv", "   Sh"));
+            lineOne.addAll(List.of("    Amp     ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  ", "     ", "          "));
+            lineTwo.addAll(List.of("  Factor PSv", "  Phase   ", " Sh  ", "     Phase"));
         }
         if (!relativePhaseName.isEmpty()) {
             String allRelPhase = "";

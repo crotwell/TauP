@@ -1166,7 +1166,7 @@ public class Arrival {
             line.addAll(common);
         }
         if (withAmp) {
-            line.addAll(List.of("Amp PSv", "Amp Sh"));
+            line.addAll(List.of("Amp PSv", "Phase", "Amp Sh", "Phase"));
         }
         if (withRelPhase) {
             line.addAll(List.of("Rel Time", "Rel Name"));
@@ -1216,9 +1216,13 @@ public class Arrival {
         if (withAmp) {
             try {
                 double ampFactorPSV = getAmplitudeFactorPSV();
+                double phaseFactorPSV = getReflTransPSV().getPhase();
                 double ampFactorSH = getAmplitudeFactorSH();
+                double phaseFactorSH = getReflTransSH().getPhase();
                 line.addAll(List.of(" " + Outputs.formatAmpFactor(ampFactorPSV),
-                        " " + Outputs.formatAmpFactor(ampFactorSH)));
+                        " "+Outputs.formatDistance(phaseFactorPSV),
+                        " " + Outputs.formatAmpFactor(ampFactorSH),
+                        " "+Outputs.formatDistance(phaseFactorSH)));
             } catch (SlownessModelException | TauModelException e) {
                 throw new RuntimeException("Should not happen", e);
             }

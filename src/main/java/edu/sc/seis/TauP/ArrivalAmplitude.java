@@ -16,6 +16,9 @@ public class ArrivalAmplitude {
     float mgtokg;
     float refltranpsv;
     float refltransh;
+    float phaseFactorpsv;
+    float phaseFactorsh;
+    int internalCaustic = 0;
     SeismicSource source;
 
     public ArrivalAmplitude(Arrival arr) throws TauModelException, SlownessModelException {
@@ -35,5 +38,8 @@ public class ArrivalAmplitude {
         mgtokg = (float) 1e-3;
         refltranpsv = (float) arr.getEnergyFluxFactorReflTransPSV();
         refltransh = (float) arr.getEnergyFluxFactorReflTransSH();
+        internalCaustic = arr.internalCausticCount();
+        phaseFactorpsv = (float) arr.getReflTransPSV().getPhase();
+        phaseFactorsh = (float) arr.getReflTransSH().getPhase();
     }
 }
