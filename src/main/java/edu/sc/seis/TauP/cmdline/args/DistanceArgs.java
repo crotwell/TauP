@@ -162,6 +162,36 @@ public class DistanceArgs {
         return rpList;
     }
 
+    public List<TimeRay> getTimeRays() throws TauPException {
+        List<TimeRay> rpList = new ArrayList<>();
+        for (Double d : distArgs.timeList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (geodeticArgs.isGeodetic()) {
+                    throw new IllegalArgumentException("geodetic not yet for az from event...");
+                } else {
+                    for (LatLonLocatable evt : getEventLatLon()) {
+                        TimeRay evtDr = new TimeRay(d);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        rpList.add(evtDr);
+                    }
+                }
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (geodeticArgs.isGeodetic()) {
+                    throw new IllegalArgumentException("geodetic not yet for baz from station...");
+                } else {
+                    for (LatLonLocatable sta : getStationLatLon()) {
+                        TimeRay staDr = new TimeRay(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
+                }
+            } else {
+                rpList.add(new TimeRay(d));
+            }
+        }
+        return rpList;
+    }
+
     public List<RayParamRay> getRayParamDegRays() throws TauPException {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
@@ -388,6 +418,7 @@ public class DistanceArgs {
         out.addAll(getDistances());
         out.addAll(getRayParamDegRays());
         out.addAll(getRayParamKmRays());
+        out.addAll(getTimeRays());
         out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
         out.addAll(getIncidentAngleRays());
@@ -505,6 +536,7 @@ public class DistanceArgs {
         distArgs.distKilometersList.clear();
         distArgs.shootRaypList.clear();
         distArgs.shootKmRaypList.clear();
+        distArgs.timeList.clear();
         distArgs.shootRadianRaypList.clear();
         distArgs.shootIndexRaypList.clear();
     }

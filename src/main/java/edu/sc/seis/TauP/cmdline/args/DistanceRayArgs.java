@@ -94,6 +94,13 @@ public class DistanceRayArgs extends DistanceLengthArgs {
             split = ",")
     public List<Integer> shootIndexRaypList = new ArrayList<>();
 
+
+    @CommandLine.Option(names = {"--seconds"},
+            paramLabel = "s",
+            description = "arrival time in seconds",
+            split = ",")
+    public List<Double> timeList = new ArrayList<>();
+
     @CommandLine.Option(names = {"--allindex"},
             description = "all arrivals at sampling of model"
     )
@@ -108,6 +115,7 @@ public class DistanceRayArgs extends DistanceLengthArgs {
                 && exactKilometerRange.isEmpty()
                 && shootIndexRaypList.isEmpty()
                 && shootKmRaypList.isEmpty()
+                && timeList.isEmpty()
                 && shootRadianRaypList.isEmpty()
                 && shootRaypList.isEmpty()
                 && takeoffAngle.isEmpty()
