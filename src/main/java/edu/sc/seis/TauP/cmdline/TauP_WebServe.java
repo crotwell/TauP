@@ -50,13 +50,17 @@ public class TauP_WebServe extends TauP_Tool {
 
     }
 
-    @Override
-    public void start() {
+    public void printWelcomeMessage() {
         System.out.println();
+        System.out.println("   TauP Web is available at:");
         System.out.println("   http://localhost:"+port);
         System.out.println("or");
         System.out.println("   http://localhost:"+port+"/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion);
         System.out.println();
+    }
+
+    @Override
+    public void start() {
 
         HttpHandler taupToolHandler = new HttpHandler() {
             @Override
@@ -280,6 +284,7 @@ public class TauP_WebServe extends TauP_Tool {
                 .addHttpListener(port, host)
                 .setHandler(new BlockingHandler(pathHandler)).build();
         server.start();
+        printWelcomeMessage();
     }
 
     @Override
