@@ -57,7 +57,7 @@ public class TauP_DistAz extends TauP_Tool {
         staList.addAll(geodeticArgs.getStationLocations());
         staList.addAll(qmlStaxmlArgs.getStationLocations());
 
-        List<DistanceAngleRay> distList = new ArrayList<>();
+        List<DistanceRay> distList = new ArrayList<>();
 
         Geodesic geodesic = null;
         if (geodeticArgs.isGeodetic()) {
@@ -66,12 +66,14 @@ public class TauP_DistAz extends TauP_Tool {
         DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs);
         List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(radiusArgs.getRadiusOfEarth());
         for (RayCalculateable ray : rayList) {
-            if (ray instanceof DistanceAngleRay) {
-                distList.add((DistanceAngleRay) ray);
+            if (ray instanceof DistanceRay) {
+                distList.add((DistanceRay) ray);
+            } else {
+                throw new TauPException("Only DistanceRay allowed in TauP_DistAz: "+ray);
             }
         }
 
-        distList.sort(Comparator.comparingDouble(DistanceAngleRay::getDegrees));
+        distList.sort(Comparator.comparingDouble(DistanceRay::getDegrees));
         List<Daz> dazList = new ArrayList<>();
         double radius;
         if (geodeticArgs.isGeodetic()) {
@@ -79,7 +81,7 @@ public class TauP_DistAz extends TauP_Tool {
         } else {
             radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
         }
-        for (DistanceAngleRay ray : distList) {
+        for (DistanceRay ray : distList) {
             dazList.add(new Daz(ray));
         }
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());

@@ -81,6 +81,8 @@ taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35
 taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35 --geodetic
 taup distaz -o stdout --evt 35 -82 --evt 33 -81 --az 135 --deg 35
 taup distaz -o stdout --evt 35 -82 --evt 33 -81 --az 135 --deg 35 --geodetic
+taup distaz -o stdout --evt -11 21 --az 35 --km 3000
+taup distaz -o stdout --evt -11 21 --az 35 --km 3000 --geodetic
 taup phase -p Pdiff
 taup phase -p P410diff
 taup phase -p Pv410p,PV410p

@@ -4,9 +4,9 @@ import edu.sc.seis.seisFile.LatLonLocatable;
 
 public class Daz {
     protected String description;
-    protected DistanceAngleRay ray;
+    protected DistanceRay ray;
 
-    public Daz(DistanceAngleRay ray) {
+    public Daz(DistanceRay ray) {
         this.ray = ray;
         this.description = ray.getDescription();
     }
