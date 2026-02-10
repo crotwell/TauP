@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Calculations &#8212; TauP 3.2.0-SNAPSHOT3 documentation</title>
+    <title>Calculations &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=5c1cf889"></script>
+    <script src="_static/documentation_options.js?v=04156637"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT3</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
 
 
 
@@ -132,7 +132,8 @@ an earthquake at due north (30,0) of the same station, 29.83 degrees. Because Ta
 spherical, the default is to not take the elliptical nature of the earth
 into account when calculating these distances. But this can be changed with
 the <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code> parameter, which implies that the given latitudes
-are geodetic instead of geocentric.
+are geodetic instead of geocentric. Geodetic calculations use the
+geographiclib package of <span id="id2">Karney [<a class="reference internal" href="bibliography.html#id17" title="Charles F. F. Karney. Algorithms for geodesics. Journal of Geodesy, 87(1):43–55, Jan 2013. URL: https://doi.org/10.1007/s00190-012-0578-z, doi:10.1007/s00190-012-0578-z.">Kar13</a>]</span> <cite>Karney</cite>.
 And for use with models of other planets,
 the default flattening can be changed with the <code class="code docutils literal notranslate"><span class="pre">--geodeticflattening</span></code>
 parameter.</p>
@@ -167,7 +168,7 @@ is ongoing.</p>
 <p>TauP can calculate an amplitude factor estimate for some simple phases, as long
 as the phase path is simple turning or reflection, but not for head or diffracted
 phases. The amplitude factor, given for both the P-Sv and Sh systems is the
-product of multiple factors. For details, see <span id="id2">Ammon <em>et al.</em> [<a class="reference internal" href="bibliography.html#id20" title="Charles J. Ammon, Aaron A. Velasco, Thorne Lay, and Terry C. Wallace. Foundations of Modern Global Seismology. Academic Press, second edition edition, 2020. ISBN 978-0-12-815679-7. doi:10.1016/C2017-0-03756-4.">AVLW20</a>]</span>
+product of multiple factors. For details, see <span id="id3">Ammon <em>et al.</em> [<a class="reference internal" href="bibliography.html#id24" title="Charles J. Ammon, Aaron A. Velasco, Thorne Lay, and Terry C. Wallace. Foundations of Modern Global Seismology. Academic Press, second edition edition, 2020. ISBN 978-0-12-815679-7. doi:10.1016/C2017-0-03756-4.">AVLW20</a>]</span>
 <a class="reference external" href="https://doi.org/10.1016/C2017-0-03756-4">chapter 13</a>.</p>
 <p>The factors that contribute to this estimate are:</p>
 <ul class="simple">
@@ -230,7 +231,7 @@ radius, a linear velocity is not a linear slowness. Moreover, the
 choice of interpolation needs to be integrable for the time and
 distance increments a ray parameter accumulates over that slowness layer
 and linear slowness is not easily integrable. We follow
-<span id="id3">Buland and Chapman [<a class="reference internal" href="bibliography.html#id2" title="Ray Buland and C. H. Chapman. The computation of seismic travel times. Bull. Seism. Soc. Am., 73(5):1271-1302, 1983. doi:10.1785/BSSA0730051271.">BC83</a>]</span> and use a Mohorovicic or Bullen law p=A*r^B
+<span id="id4">Buland and Chapman [<a class="reference internal" href="bibliography.html#id2" title="Ray Buland and C. H. Chapman. The computation of seismic travel times. Bull. Seism. Soc. Am., 73(5):1271-1302, 1983. doi:10.1785/BSSA0730051271.">BC83</a>]</span> and use a Mohorovicic or Bullen law p=A*r^B
 which is integrable for time and distance, but is not the same as linear
 velocity.</p>
 <p>We can quantify the error this interpolant causes in the vertical ray case,
@@ -289,7 +290,7 @@ is still possible that some bugs remain. Buyer beware.</p>
     <div class="clearer"></div>
   </div> 
     <div class="footer">
-      &#169;2025, Philip Crotwell.
+      &#169;2026, Philip Crotwell.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>

@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Pierce &#8212; TauP 3.2.0-SNAPSHOT3 documentation</title>
+    <title>TauP Pierce &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=5c1cf889"></script>
+    <script src="_static/documentation_options.js?v=04156637"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT3</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
 
 
 
@@ -201,18 +201,20 @@ Using the <code class="docutils literal notranslate"><span class="pre">--geodeti
 latitudes and longitudes.
 Here is the output,
 distance, depth, latitude and longitude, respectively.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1423.51 seconds at    93.63 degrees for a    200.0 km deep source in the prem model with rayParam    8.718 s/deg, -28.00/122.00 to 12.00/34.20.
-   31.57  2591.0  552.69    -17.87     89.40
-   61.38  2591.0  821.30     -3.93     62.47
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1424.23 seconds at    93.71 degrees for a    200.0 km deep source in the prem model with rayParam    8.717 s/deg, -28.00/122.00 to 12.00/34.20.
+   31.55  2591.0  552.54    -28.00    122.00
+   61.48  2591.0  822.16    -28.00    122.00
 </pre></div>
 </div>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
-                   [--nodiscon] [--rev] [--turn] [--under] [--verbose]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
+                   [--help] [--nodiscon] [--rev] [--turn] [--under] [--verbose]
                    [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
                    [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                   [--geodeticflattening=f] [--mw=&lt;mw&gt;]
+                   [--equitorialradius=m] [--equitorialradius=m]
+                   [--invflattening=f] [--invflattening=f] [--mw=&lt;mw&gt;]
                    [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
+                   [--planet=&lt;planet&gt;] [--planet=&lt;planet&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
                    [--pierce=depth[,depth...]]... [--sid=sta[,sta...]]...
@@ -226,10 +228,11 @@ distance, depth, latitude and longitude, respectively.</p>
                    deg...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
                    s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
                    [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
-                   [--takeoff=deg[,deg...]]... [--degreerange=[step][min max]
-                   [min max step]]... [--exactdegreerange=[step][min max][min
-                   max step]]... [--exactkilometerrange=[step][min max][min max
-                   step]]... [--incidentrange=[step][min max][min max step]]...
+                   [--seconds=s[,s...]]... [--takeoff=deg[,deg...]]...
+                   [--degreerange=[step][min max][min max step]]...
+                   [--exactdegreerange=[step][min max][min max step]]...
+                   [--exactkilometerrange=[step][min max][min max step]]...
+                   [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
                    [--html | --json | --text]
@@ -247,15 +250,6 @@ Options:
                                station is also given.
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
-      --geodeticflattening=f Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
                                default is 4.0
@@ -348,6 +342,7 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
+      --seconds=s[,s...]     arrival time in seconds
       --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
                                down, 90 horizontal, 180 is up.
       --takeoffrange=[step][min max][min max step]
@@ -357,8 +352,25 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
+      --equitorialradius=m   Equitorial radius in meters for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --invflattening, --geodeticflattening=f
+                             Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
+      --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
+                               when --geodetic, one of: EARTH, MOON, MARS,
+                               VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
+                               NEPTUNE.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
@@ -378,7 +390,7 @@ Output Type:
     <div class="clearer"></div>
   </div> 
     <div class="footer">
-      &#169;2025, Philip Crotwell.
+      &#169;2026, Philip Crotwell.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>

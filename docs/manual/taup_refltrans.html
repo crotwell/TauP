@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP ReflTrans &#8212; TauP 3.2.0-SNAPSHOT3 documentation</title>
+    <title>TauP ReflTrans &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=5c1cf889"></script>
+    <script src="_static/documentation_options.js?v=04156637"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT3</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
 
 
 
@@ -144,7 +144,7 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
   <metadata>
     <taup>
       <command>taup refltrans &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
@@ -586,6 +586,156 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           fill: magenta;
           stroke: transparent;
         }
+        .RppPhase {
+          stroke: blue;
+        }
+        .RppPhase.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppPhase {
+          stroke: cyan;
+        }
+        .TppPhase.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsPhase {
+          stroke: green;
+        }
+        .RpsPhase.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsPhase {
+          stroke: gold;
+        }
+        .TpsPhase.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspPhase {
+          stroke: mediumslateblue;
+        }
+        .RspPhase.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspPhase {
+          stroke: magenta;
+        }
+        .TspPhase.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssPhase {
+          stroke: red;
+        }
+        .RssPhase.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssPhase {
+          stroke: grey;
+        }
+        .TssPhase.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshPhase {
+          stroke: orange;
+        }
+        .RshshPhase.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshPhase {
+          stroke: violet;
+        }
+        .TshshPhase.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase text {
+          fill: violet;
+          stroke: transparent;
+        }
 
 
 text.title {
@@ -768,7 +918,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
+<text class="title" x="208.0" y="0">ak135 at 35.0 km, inc. down</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
@@ -1895,7 +2045,7 @@ circle.discontinuity.iocb {
   <metadata>
     <taup>
       <command>taup refltrans &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;energyflux &#45;&#45;svg -o stdout </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="0.0" ymax="1.0000166798651702" />
     </taup>
@@ -2337,6 +2487,156 @@ circle.discontinuity.iocb {
           fill: magenta;
           stroke: transparent;
         }
+        .RppPhase {
+          stroke: blue;
+        }
+        .RppPhase.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppPhase {
+          stroke: cyan;
+        }
+        .TppPhase.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsPhase {
+          stroke: green;
+        }
+        .RpsPhase.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsPhase {
+          stroke: gold;
+        }
+        .TpsPhase.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspPhase {
+          stroke: mediumslateblue;
+        }
+        .RspPhase.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspPhase {
+          stroke: magenta;
+        }
+        .TspPhase.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssPhase {
+          stroke: red;
+        }
+        .RssPhase.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssPhase {
+          stroke: grey;
+        }
+        .TssPhase.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshPhase {
+          stroke: orange;
+        }
+        .RshshPhase.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshPhase {
+          stroke: violet;
+        }
+        .TshshPhase.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase text {
+          fill: violet;
+          stroke: transparent;
+        }
 
 
 text.title {
@@ -2519,7 +2819,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
+<text class="title" x="208.0" y="0">ak135 at 35.0 km, inc. down</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Energy Coeff.</text>
@@ -3627,8 +3927,8 @@ circle.discontinuity.iocb {
 </svg>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup refltrans [--abs] [--angles] [--debug] [--down] [--energyflux]
-                      [--fsrf] [--help] [--legend] [--pwave] [--shwave]
-                      [--swave] [--up] [--verbose] [--anglestep=deg]
+                      [--fsrf] [--help] [--legend] [--phase] [--pwave]
+                      [--shwave] [--swave] [--up] [--verbose] [--anglestep=deg]
                       [--depth=&lt;depth&gt;] [--mapwidth=&lt;mapwidth&gt;]
                       [--mapwidthunit=&lt;mapWidthUnit&gt;] [-o=&lt;outFile&gt;]
                       [--prop=&lt;toolPropsFilename&gt;] [--rpstep=s/km] [-x=type]
@@ -3661,6 +3961,7 @@ Options:
       --mapwidthunit=&lt;mapWidthUnit&gt;
                            plot width unit, i for inch, c for cm or p for px.
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
+      --phase              all displacement phase coefficients, like TppPhase
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
       --pwave              incident P wave
@@ -3677,10 +3978,12 @@ Options:
                              Tpp, Tps, Tsp, Tss, Rshsh, Tshsh, RppEnergy,
                              TppEnergy, RpsEnergy, TpsEnergy, RspEnergy,
                              TspEnergy, RssEnergy, TssEnergy, RshshEnergy,
-                             TshshEnergy, RpAngle, RsAngle, TpAngle, TsAngle,
-                             FreeRecFuncPr, FreeRecFuncSvr, FreeRecFuncPz,
-                             FreeRecFuncSvz, FreeRecFuncSh, default is all
-                             displacement coef.
+                             TshshEnergy, RppPhase, TppPhase, RpsPhase,
+                             TpsPhase, RspPhase, TspPhase, RssPhase, TssPhase,
+                             RshshPhase, TshshPhase, RpAngle, RsAngle, TpAngle,
+                             TsAngle, FreeRecFuncPr, FreeRecFuncSvr,
+                             FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh,
+                             default is all displacement coef.
       --yminmax=y y        min and max y axis for plotting
 Output Type:
       --gmt                outputs as GMT
@@ -3714,7 +4017,7 @@ Model Args
     <div class="clearer"></div>
   </div> 
     <div class="footer">
-      &#169;2025, Philip Crotwell.
+      &#169;2026, Philip Crotwell.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>

@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT3 documentation</title>
+    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=5c1cf889"></script>
+    <script src="_static/documentation_options.js?v=04156637"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT3</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
 
 
 
@@ -132,7 +132,7 @@
 generates  the
 angular distances from the epicenter along the path at which the specified rays
 travel. The output can be JSON, an SVG image or
-in GMT <span id="id2">Wessel and Smith [<a class="reference internal" href="bibliography.html#id8" title="P. Wessel and W. H. F. Smith. New version of the Generic Mapping Tools released. Eos, 76:329, 1995.">WS95</a>]</span> <code class="code docutils literal notranslate"><span class="pre">psxy</span></code> format, and is
+in GMT <span id="id2">Wessel and Smith [<a class="reference internal" href="bibliography.html#id9" title="P. Wessel and W. H. F. Smith. New version of the Generic Mapping Tools released. Eos, 76:329, 1995.">WS95</a>]</span> <code class="code docutils literal notranslate"><span class="pre">psxy</span></code> format, and is
 placed into the file <cite>taup_path</cite> with approproate extension.
 If you specify the <cite>–gmt</cite> flag then this
 is a complete script with the appropriate <cite>psxy</cite> command prepended, so if you
@@ -154,7 +154,7 @@ phases like <code class="code docutils literal notranslate"><span class="pre">Sd
   <metadata>
     <taup>
       <command>taup path &#45;&#45;mod iasp91 -h 550 &#45;&#45;deg 74 -p S,ScS,sS,sScS &#45;&#45;svg -o stdout </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -538,7 +538,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   74.00   550.0   S   1168.49    10.906     35.18    19.24    74.00   = S</desc>
     <g>
-      <desc>seg 1/2 S of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in mantle</desc>
+      <desc>seg 1/2 S of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in mantle from 0.00 deg, 550.0 km to 35.56 deg, 2036.0 km</desc>
       <polyline class="path phase_S swave" points="
     0.00  -5821.00
     7.07  -5811.00
@@ -664,7 +664,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 S of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in crust/mantle</desc>
+      <desc>seg 2/2 S of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in crust/mantle from 35.56 deg, 2036.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_S swave" points="
  2521.10  -3526.56
  2572.01  -3493.02
@@ -867,7 +867,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   74.00   550.0   ScS   1197.99     8.057     25.19    14.09    74.00   * Scs</desc>
     <g>
-      <desc>seg 1/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in mantle</desc>
+      <desc>seg 1/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in mantle from 0.00 deg, 550.0 km to 36.01 deg, 2889.0 km</desc>
       <polyline class="path phase_ScS swave" points="
     0.00  -5821.00
     4.72  -5811.00
@@ -1032,7 +1032,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle</desc>
+      <desc>seg 2/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_ScS swave" points="
  2047.05  -2816.72
  2091.21  -2800.18
@@ -1274,7 +1274,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   74.00   550.0   sS   1373.84    11.626    142.11    20.57    74.00   = sS</desc>
     <g>
-      <desc>seg 1/3 s of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle</desc>
+      <desc>seg 1/3 s of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle from 0.00 deg, 550.0 km to 3.14 deg, 0.0 km</desc>
       <polyline class="path phase_sS swave" points="
     0.00  -5821.00
     4.84  -5827.24
@@ -1354,7 +1354,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/3 S of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle</desc>
+      <desc>seg 2/3 S of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle from 3.14 deg, 0.0 km to 38.57 deg, 1817.2 km</desc>
       <polyline class="path phase_sS swave" points="
   348.98  -6361.44
   349.38  -6360.16
@@ -1539,7 +1539,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 S of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle</desc>
+      <desc>seg 3/3 S of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle from 38.57 deg, 1817.2 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_sS swave" points="
  2839.14  -3560.36
  2895.79  -3519.03
@@ -1728,7 +1728,7 @@ circle.discontinuity.iocb {
 <g>
     <desc>   74.00   550.0   sScS   1419.40     7.945    155.18    13.89    74.00   * sScs</desc>
     <g>
-      <desc>seg 1/3 s of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle</desc>
+      <desc>seg 1/3 s of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 0.00 deg, 550.0 km to 1.95 deg, 0.0 km</desc>
       <polyline class="path phase_sScS swave" points="
     0.00  -5821.00
     2.88  -5827.24
@@ -1808,7 +1808,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle</desc>
+      <desc>seg 2/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 1.95 deg, 0.0 km to 37.98 deg, 2889.0 km</desc>
       <polyline class="path phase_sScS swave" points="
   217.11  -6367.30
   217.38  -6366.04
@@ -2045,7 +2045,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle</desc>
+      <desc>seg 3/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_sScS swave" points="
  2142.61  -2744.73
  2199.94  -2723.86
@@ -2289,13 +2289,15 @@ circle.discontinuity.iocb {
   </g> 
 </svg>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
-                 [--onlynameddiscon] [--verbose] [--withlatlon] [--withtime]
-                 [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                 [--baz=&lt;backAzimuth&gt;] [--color=&lt;coloring&gt;]
-                 [--geodeticflattening=f] [--mapwidth=&lt;mapwidth&gt;]
-                 [--mapwidthunit=&lt;mapWidthUnit&gt;] [--maxpathinc=&lt;maxPathInc&gt;]
-                 [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--geodetic] [--help] [--label]
+                 [--legend] [--onlynameddiscon] [--verbose] [--withlatlon]
+                 [--withtime] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
+                 [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+                 [--color=&lt;coloring&gt;] [--equitorialradius=m]
+                 [--equitorialradius=m] [--invflattening=f] [--invflattening=f]
+                 [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
+                 [--maxpathinc=&lt;maxPathInc&gt;] [-o=&lt;outFile&gt;] [--planet=&lt;planet&gt;]
+                 [--planet=&lt;planet&gt;] [--prop=&lt;toolPropsFilename&gt;]
                  [--qml=&lt;quakemlFilename&gt;] [--staxml=&lt;stationxmlFilename&gt;]
                  [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
                  [--sid=sta[,sta...]]... [--degminmax=min max]...
@@ -2308,11 +2310,11 @@ circle.discontinuity.iocb {
                  [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]... [--degreerange=[step][min max][min max step]]...
-                 [--exactdegreerange=[step][min max][min max step]]...
-                 [--exactkilometerrange=[step][min max][min max step]]...
-                 [--incidentrange=[step][min max][min max step]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--seconds=s[,s...]]...
+                 [--takeoff=deg[,deg...]]... [--degreerange=[step][min max][min
+                 max step]]... [--exactdegreerange=[step][min max][min max
+                 step]]... [--exactkilometerrange=[step][min max][min max
+                 step]]... [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--gmt |
                  --html | --json | --svg | --text]
@@ -2320,140 +2322,146 @@ Plot ray paths, distance vs. depth, through the earth.
 
 Options:
 
-      --color=&lt;coloring&gt;    style of coloring for paths and wavefronts, one of:
-                              auto, wavetype, phase, none
-      --debug               enable debugging output
-      --degminmax=min max   min and max distance in degrees for plotting
-      --depthminmax=min max min and max depth, km,  for plotting
-      --eid=evt[,evt...]    event id, like us7000pn9s, for lookup via USGS fdsn
-                              event web service. Creates a distance if station
-                              is also given.
-      --geodetic            use geodetic latitude for distance calculations,
-                              which implies an ellipticity. Default is
-                              spherical. Note this only affects calculation of
-                              distance from lat/lon pairs, all travel time
-                              calculations are done in a purely spherical model.
-      --geodeticflattening=f
-                            Inverse Elliptical flattening for distance
-                              calculations when --geodetic, defaults to WGS84 ~
-                              298.257. The distance calculation uses 1/x.
-      --help                display this help message
-      --label               label with phase name
-      --legend              create a legend
-      --mapwidth=&lt;mapwidth&gt; plot width in units from --mapwidthunit.
+      --color=&lt;coloring&gt;     style of coloring for paths and wavefronts, one
+                               of: auto, wavetype, phase, none
+      --debug                enable debugging output
+      --degminmax=min max    min and max distance in degrees for plotting
+      --depthminmax=min max  min and max depth, km,  for plotting
+      --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               station is also given.
+      --help                 display this help message
+      --label                label with phase name
+      --legend               create a legend
+      --mapwidth=&lt;mapwidth&gt;  plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
-                            plot width unit, i for inch, c for cm or p for px.
+                             plot width unit, i for inch, c for cm or p for px.
       --maxpathinc=&lt;maxPathInc&gt;
-                            Maximum distance increment in degrees between path
-                              points, avoid visible segmentation in plots
-  -o, --output=&lt;outFile&gt;    output to file, default is stdout.
-      --onlynameddiscon     only draw circles on the plot for named
-                              discontinuities like moho, cmb, iocb
+                             Maximum distance increment in degrees between path
+                               points, avoid visible segmentation in plots
+  -o, --output=&lt;outFile&gt;     output to file, default is stdout.
+      --onlynameddiscon      only draw circles on the plot for named
+                               discontinuities like moho, cmb, iocb
       --prop=&lt;toolPropsFilename&gt;
-                            load defaults from properties file
+                             load defaults from properties file
       --qml, --quakeml=&lt;quakemlFilename&gt;
-                            QuakeML file to load for earthquake origins to use
-      --sid=sta[,sta...]    station id, like CO.HAW or FDSN:CO_HAW, for lookup
-                              via fedcat web service. Creates a distance if
-                              event is also given.
+                             QuakeML file to load for earthquake origins to use
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --staxml=&lt;stationxmlFilename&gt;
-                            StationXML file to extract station latitudes and
-                              longitudes from
-      --verbose             enable verbose output
-      --withlatlon          include lat,lon for path points in output.
-      --withtime            include time for each path point, no effect for SVG.
-      --xaxis=type          x axis type, the depth/radius axis, one of degree,
-                              radian, kilometer
-                            No effect for SVG output.
-      --yaxis=type          y axis type, the depth/radius axis, one of depth,
-                              radius
-                            No effect for SVG output.
+                             StationXML file to extract station latitudes and
+                               longitudes from
+      --verbose              enable verbose output
+      --withlatlon           include lat,lon for path points in output.
+      --withtime             include time for each path point, no effect for
+                               SVG.
+      --xaxis=type           x axis type, the depth/radius axis, one of degree,
+                               radian, kilometer
+                             No effect for SVG output.
+      --yaxis=type           y axis type, the depth/radius axis, one of depth,
+                               radius
+                             No effect for SVG output.
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
-                            source depth in km
+                             source depth in km
       --mod, --model=&lt;modelName&gt;
-                            use velocity model &quot;modelName&quot; for calculations.
-                            Default is iasp91. Other builtin models include
-                              prem, ak135, ak135fcont, and ak135favg.
+                             use velocity model &quot;modelName&quot; for calculations.
+                             Default is iasp91. Other builtin models include
+                               prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=depth deg
-                            scattering depth and distance in degrees, which may
-                              be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
-                              in the phase name.
+                             scattering depth and distance in degrees, which
+                               may be negative. Only effects phases with &#39;o&#39; or
+                               &#39;O&#39; in the phase name.
       --stadepth, --receiverdepth=depth[,depth...]
-                            the receiver depth in km for stations not at the
-                              surface
+                             the receiver depth in km for stations not at the
+                               surface
 Phase Names
   -p, --ph, --phase=phase[,phase...]
-                            seismic phase names
+                             seismic phase names
       --phasefile=&lt;phaseFiles&gt;
-                            read list of phase names from file
+                             read list of phase names from file
 Distance is given by:
-      --allindex            all arrivals at sampling of model
+      --allindex             all arrivals at sampling of model
       --deg, --degree=d[,d...]
-                            distance in degrees
+                             distance in degrees
       --degreerange=[step][min max][min max step]
-                            regular distance range in degrees, one of step; min
-                              max or min max step. Default min is 0, max is 180
-                              and step is 10.
-      --exactdegree=d[,d...]
-                            exact distance traveled in degrees, not 360-d
+                             regular distance range in degrees, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 180 and step is 10.
+      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactdegreerange=[step][min max][min max step]
-                            regular distance range in exact degrees, not
-                              360-deg, one of step; min max or min max step.
-                              Default min is 0, max is 180 and step is 10.
+                             regular distance range in exact degrees, not
+                               360-deg, one of step; min max or min max step.
+                               Default min is 0, max is 180 and step is 10.
       --exactkilometer=km[,km...]
-                            exact distance traveled in kilometers, not 360-k
+                             exact distance traveled in kilometers, not 360-k
       --exactkilometerrange=[step][min max][min max step]
-                            regular distance range in kilometers, not 360-k,
-                              one of step; min max or min max step. Default min
-                              is 0, max is 1000 and step is 100.
+                             regular distance range in kilometers, not 360-k,
+                               one of step; min max or min max step. Default
+                               min is 0, max is 1000 and step is 100.
       --incident=deg[,deg...]
-                            incident angle in degrees at the receiver, zero is
-                              down, 90 horizontal, 180 is up.
+                             incident angle in degrees at the receiver, zero is
+                               down, 90 horizontal, 180 is up.
       --incidentrange=[step][min max][min max step]
-                            regular range in incident angle in degrees, one of
-                              step; min max or min max step. Default min is 0
-                              and step is 10.
+                             regular range in incident angle in degrees, one of
+                               step; min max or min max step. Default min is 0
+                               and step is 10.
       --kilometerrange=[step][min max][min max step]
-                            regular distance range in kilometers, one of step;
-                              min max or min max step. Default min is 0, max is
-                              1000 and step is 100.
+                             regular distance range in kilometers, one of step;
+                               min max or min max step. Default min is 0, max
+                               is 1000 and step is 100.
       --km, --kilometer=km[,km...]
-                            distance in kilometers along surface.
+                             distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
-                            ray parameter from the source in s/deg, up or down
-                              is determined by the phase
-      --rayparamidx=i[,i...]
-                            ray parameter from the source as index into model
-                              sampling, up or down is determined by the phase
+                             ray parameter from the source in s/deg, up or down
+                               is determined by the phase
+      --rayparamidx=i[,i...] ray parameter from the source as index into model
+                               sampling, up or down is determined by the phase
       --rayparamkm=s/km[,s/km...]
-                            ray parameter from the source in s/km, up or down
-                              is determined by the phase
+                             ray parameter from the source in s/km, up or down
+                               is determined by the phase
       --rayparamrad=s/rad[,s/rad...]
-                            ray parameter from the source in s/rad, up or down
-                              is determined by the phase
-      --takeoff=deg[,deg...]
-                            takeoff angle in degrees from the source, zero is
-                              down, 90 horizontal, 180 is up.
+                             ray parameter from the source in s/rad, up or down
+                               is determined by the phase
+      --seconds=s[,s...]     arrival time in seconds
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
+                               down, 90 horizontal, 180 is up.
       --takeoffrange=[step][min max][min max step]
-                            regular range in takeoff angle in degrees, one of
-                              step; min,max or min,max,step. Default min is 0
-                              and step is 10.
+                             regular range in takeoff angle in degrees, one of
+                               step; min,max or min,max,step. Default min is 0
+                               and step is 10.
 Lat,Lon influenced by:
-      --az=&lt;azimuth&gt;        azimuth in degrees, source to receiver
-      --baz=&lt;backAzimuth&gt;   backazimuth in degrees, receiver to source
-      --evt, --event=lat lon
-                            event latitude and longitude.  Creates a distance
-                              if station is also given.
+      --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
+      --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
+      --equitorialradius=m   Equitorial radius in meters for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 6378137 meters.
+      --evt, --event=lat lon event latitude and longitude.  Creates a distance
+                               if station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --invflattening, --geodeticflattening=f
+                             Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
+      --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
+                               when --geodetic, one of: EARTH, MOON, MARS,
+                               VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
+                               NEPTUNE.
       --sta, --station=lat lon
-                            station latitude and longitude. Creates a distance
-                              if event is also given.
+                             station latitude and longitude. Creates a distance
+                               if event is also given.
 Output Type:
-      --gmt                 outputs as GMT
-      --html                outputs as SVG in HTML
-      --json                outputs as JSON
-      --svg                 outputs as SVG
-      --text                outputs as Text
+      --gmt                  outputs as GMT
+      --html                 outputs as SVG in HTML
+      --json                 outputs as JSON
+      --svg                  outputs as SVG
+      --text                 outputs as Text
 </pre></div>
 </div>
 </section>
@@ -2466,7 +2474,7 @@ Output Type:
     <div class="clearer"></div>
   </div> 
     <div class="footer">
-      &#169;2025, Philip Crotwell.
+      &#169;2026, Philip Crotwell.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
