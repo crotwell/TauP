@@ -591,7 +591,7 @@ public class Arrival {
         double ampFactor = getAmplitudeFactorPSV(getRayCalculateable().getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
         if (getRayCalculateable().hasFaultPlane() && getRayCalculateable().hasAzimuth() ) {
             FaultPlane faultPlane = getRayCalculateable().getFaultPlane();
-            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( searchCalc.getAzimuth(), getTakeoffAngleDegree());
+            RadiationAmplitude radiationPattern = faultPlane.calcRadiationPatDegree( getRayCalculateable().getAzimuth(), getTakeoffAngleDegree());
             double radTerm = 1;
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern.getRadialAmplitude();
