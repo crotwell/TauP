@@ -37,9 +37,9 @@ public class DistAzVsKarney {
         double valDeg = distKm/DistAz.kmPerDeg(avgRaduis);
         DistanceKmRay drKm = DistanceRay.ofKilometers(distKm);
         DistanceAngleRay drDeg = DistanceRay.ofDegrees(valDeg);
-        assertEquals(valDeg, drDeg.getDegrees(avgRaduis), 0.00001);
-        assertEquals(distKm, drKm.getKilometers(avgRaduis), 0.00001);
-        assertEquals(distKm, drDeg.getKilometers(avgRaduis), 0.00001);
+        assertEquals(valDeg, drDeg.getDegrees(), 0.00001);
+        assertEquals(distKm, drKm.getKilometers(), 0.00001);
+        assertEquals(distKm, drDeg.getKilometers(), 0.00001);
         assertEquals(distaz.getDelta(), valDeg, 1.0); // ellip vs spherical can be large
     }
 
@@ -61,7 +61,7 @@ public class DistAzVsKarney {
         assertEquals(GeoMath.AngNormalize(distAz.getAz()), azimuth, 0.1, "spherical is close");
         double backazimuth = evtStaDR.getBackAzimuth();
         assertEquals(GeoMath.AngNormalize(distAz.getBaz()), backazimuth, 0.1, "spherical is close");
-        double evtStaDegree = evtStaDR.getDegrees(avgRaduis);
+        double evtStaDegree = evtStaDR.getDegrees();
         assertEquals(distAz.getDelta(), evtStaDegree, 0.1, "spherical is close");
 
         DistanceRay evtAzDR = DistanceRay.ofDegrees(evtStaDegree);

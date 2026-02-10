@@ -1,13 +1,16 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.LatLonSimple;
+import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.GeodesicLine;
+
+import static edu.sc.seis.TauP.SphericalCoords.DtoR;
+
 public class DistanceAngleRay extends DistanceRay {
 
     public boolean isDegrees() {
         return this.degrees != null;
-    }
-
-    public double getDegrees(double radius) {
-        return getDegrees();
     }
 
     public double getDegrees() {
@@ -20,12 +23,14 @@ public class DistanceAngleRay extends DistanceRay {
         throw new RuntimeException("One of degrees or radians must be set");
     }
 
-    public double getKilometers(double radius) {
-        return getRadians(radius)*radius;
-    }
-
-    public double getRadians(double radius) {
-        return getRadians();
+    public double getKilometers() {
+        double radius;
+        if (isGeodetic()) {
+            radius = RayCalculateable.averageRadiusKm(getGeodesic());
+        } else {
+            radius = getRadiusOfEarth();
+        }
+        return getRadians()*radius;
     }
 
     public double getRadians() {
@@ -37,7 +42,6 @@ public class DistanceAngleRay extends DistanceRay {
         }
         throw new RuntimeException("One of degrees or radians must be set");
     }
-
 
     public String toString() {
         String out = "";
