@@ -63,7 +63,7 @@ public class TauP_DistAz extends TauP_Tool {
         if (geodeticArgs.isGeodetic()) {
             geodesic = geodeticArgs.getGeodesic();
         }
-        DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs);
+        DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs, qmlStaxmlArgs);
         List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(radiusArgs.getRadiusOfEarth());
         for (RayCalculateable ray : rayList) {
             if (ray instanceof DistanceRay) {

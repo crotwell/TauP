@@ -13,7 +13,7 @@ import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeKm;
 
 public class DistanceLengthArgs {
 
-    public DistanceArgs createDistanceArgs(GeodeticArgs geodeticArgs) {
+    public DistanceArgs createDistanceArgs(GeodeticArgs geodeticArgs, QmlStaxmlArgs qmlStaxmlArgs) {
         DistanceArgs out = new DistanceArgs();
         out.distArgs = new DistanceRayArgs();
         out.distArgs.degreeRange = degreeRange;
@@ -21,6 +21,7 @@ public class DistanceLengthArgs {
         out.distArgs.distKilometersList = distKilometersList;
         out.distArgs.kilometerRange = kilometerRange;
         out.geodeticArgs = geodeticArgs;
+        out.qmlStaxmlArgs = qmlStaxmlArgs;
         return out;
     }
 
