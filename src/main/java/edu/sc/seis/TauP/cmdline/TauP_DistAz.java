@@ -85,8 +85,8 @@ public class TauP_DistAz extends TauP_Tool {
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
-            out.println("Degrees      Km     Azimuth  BackAzimuth  Description   ("+geoditic+")  ");
-            out.println("----------------------------------------------------------------------");
+            out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+geoditic+")  ");
+            out.println("---------------------------------------------------------------------------------------------");
             for (Daz dr : dazList) {
                 out.println(Outputs.formatDistance(dr.getDegrees())
                         +" "+Outputs.formatKilometer (dr.getKilometers())
@@ -99,13 +99,15 @@ public class TauP_DistAz extends TauP_Tool {
             }
         } else if (outputTypeArgs.isHTML()) {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
-            List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Description   ("+geoditic+")  ");
+            List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Source","Receiver","Description   ("+geoditic+")  ");
             List<List<String>> values = new ArrayList<>();
             for (Daz dr : dazList) {
                 List<String> row = List.of(Outputs.formatDistance(dr.getDegrees()),
                         Outputs.formatKilometer (dr.getKilometers()),
                         Outputs.formatDistance(dr.getNormalizedAzimuth()),
                         Outputs.formatDistance(dr.getNormalizedBackAzimuth()),
+                        dr.getSource().getLocationDescription(),
+                        dr.getReceiver().getLocationDescription(),
                         (dr.hasDescription() ? dr.getDescription() : "")
                 );
                 values.add(row);
