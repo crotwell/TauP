@@ -378,7 +378,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public void start() throws IOException, TauPException {
-		List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables();
+		List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(getRadiusOfEarth());
 		List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
 		PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
 		printResult(writer, arrivalList);

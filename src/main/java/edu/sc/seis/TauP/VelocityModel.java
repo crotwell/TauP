@@ -29,6 +29,8 @@
  */
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +164,14 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double getRadiusOfEarth() {
         return radiusOfEarth;
+    }
+
+    /**
+     * Create a spherical geodesic with radius of the model and zero flattenning.
+     * @return geodesic of correct radius.
+     */
+    public Geodesic createGeodesic() {
+        return new Geodesic(getRadiusOfEarth(), 0);
     }
 
     public boolean isDisconDepth(double depth) {

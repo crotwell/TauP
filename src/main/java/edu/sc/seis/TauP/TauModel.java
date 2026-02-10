@@ -16,6 +16,8 @@
  */
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
@@ -388,6 +390,14 @@ public class TauModel implements Serializable {
      */
     public double getRadiusOfEarth() {
         return radiusOfEarth;
+    }
+
+    /**
+     * Create a spherical geodesic with radius of the model and zero flattenning.
+     * @return geodesic of correct radius.
+     */
+    public Geodesic createGeodesic() {
+        return new Geodesic(getRadiusOfEarth(), 0);
     }
 
     /**

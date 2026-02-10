@@ -106,10 +106,10 @@ public class ScatterTest {
         boolean backscatter = false;
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhase inboundPhase = SeismicPhaseFactory.createPhase(toScatPhase, tMod, sourceDepth, scat.depth, false);
-        Arrival inArr = inboundPhase.getEarliestArrival(scat.dist.getDegrees(tMod.getRadiusOfEarth()));
+        Arrival inArr = inboundPhase.getEarliestArrival(scat.dist.getDegrees());
         assertNotNull(inArr);
         SimpleSeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scat.depth, receiverDepth, false);
-        Arrival outArr = outboundPhase.getEarliestArrival(dist-scat.dist.getDegrees(tMod.getRadiusOfEarth()));
+        Arrival outArr = outboundPhase.getEarliestArrival(dist-scat.dist.getDegrees());
         assertNotNull(outArr);
         ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scat, backscatter);
         List<Arrival> arrList = DistanceRay.ofDegrees(dist).calcScatteredPhase(scatPhase);

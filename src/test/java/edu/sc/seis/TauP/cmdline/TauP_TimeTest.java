@@ -17,7 +17,8 @@ public class TauP_TimeTest {
         time.getDistanceArgs().setDegreeList(List.of(5.0, 10.0, 15.0));
         time.getPhaseArgs().setPhaseNames(List.of("P"));
         time.init();
-        List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), time.getDistanceArgs().getRayCalculatables());
-        assertEquals(arrivals.size(), time.getDistanceArgs().getRayCalculatables().size());
+        List<RayCalculateable> rays = time.getDistanceArgs().getRayCalculatables( time.getRadiusOfEarth());
+        List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), rays);
+        assertEquals(arrivals.size(), rays.size());
     }
 }

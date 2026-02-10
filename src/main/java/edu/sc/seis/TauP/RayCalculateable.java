@@ -86,7 +86,21 @@ public abstract class RayCalculateable {
         return staLatLon;
     }
     public boolean hasAzimuth() {
-        return azimuth != null || (this.staLatLon!=null && this.evtLatLon!=null);
+        return azimuth != null
+                || (this.staLatLon!=null && this.evtLatLon!=null);
+    }
+
+    public boolean hasGeodesic() {
+        return geodesic != null;
+    }
+
+    public Geodesic getGeodesic() {
+        return geodesic;
+    }
+
+    public void setGeodesic(Geodesic geodesic) {
+        this.geodesic = geodesic;
+        this.radiusOfEarth = RayCalculateable.averageRadiusKm(geodesic);
     }
 
     public boolean isGeodetic() { return geodetic;}
@@ -95,6 +109,16 @@ public abstract class RayCalculateable {
         return invFlattening;
     }
 
+    public boolean hasRadiusOfEarth() {
+        return this.radiusOfEarth != null;
+    }
+
+    public double getRadiusOfEarth() {
+        return this.radiusOfEarth;
+    }
+    public void setRadiusOfEarth(double modelRadius) {
+        this.radiusOfEarth = modelRadius;
+    }
 
     public static double averageRadiusKm(Geodesic geodesic) {
         // use mean radius, r = (2*er+pr)/3, mean of two equitorial radii and polar radius
@@ -156,7 +180,9 @@ public abstract class RayCalculateable {
 
 
     public boolean hasBackAzimuth() {
-        return backAzimuth != null || (this.evtLatLon!=null && this.staLatLon!=null);
+        return backAzimuth != null
+                || (this.evtLatLon!=null && this.staLatLon!=null)
+                || (this.evtLatLon!=null && this.azimuth!=null);
     }
     /**
      * Returns back azimuth, if available, in the range -180&lt;baz&lt;=180.
@@ -184,8 +210,9 @@ public abstract class RayCalculateable {
             } else {
                 return SphericalCoords.azimuth(staLatLon, evtLatLon);
             }
-        } else if (this.staLatLon!=null && this.azimuth!=null) {
-            // don't think this can happen, we have station and az, but not baz or event, and may not know dist???
+        } else if (this.evtLatLon!=null && this.azimuth!=null) {
+
+            // don't think this can happen, we have event and az, but not baz or station, and may not know dist???
             // shoudl be able to calc
             if (getLatLonable().isGeodetic()) {
                 return null;
@@ -298,6 +325,7 @@ public abstract class RayCalculateable {
     protected Double backAzimuth = null;
     protected boolean geodetic = false;
     protected Double invFlattening = null;
+    protected Double radiusOfEarth = null;
     protected Geodesic geodesic = null;
     protected String description = null;
 

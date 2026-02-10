@@ -189,7 +189,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         for (DistanceRay dr : degreesList) {
             List<Arrival> allArrivals = new ArrayList<>();
             List<MSeed3Record> componentRecords = new ArrayList<>();
-            double degrees = dr.getDegrees(getRadiusOfEarth());
+            double degrees = dr.getDegrees();
             for (SeismicPhase phase : phaseList) {
                 List<Arrival> phaseArrivals = dr.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
@@ -262,7 +262,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
 
         // assume single source
         double sourceDepth = modelArgs.getSourceDepths().isEmpty() ? 0 : modelArgs.getSourceDepths().get(0);
-        Float deg = (float) dr.getDegrees(getRadiusOfEarth());
+        Float deg = (float) dr.getDegrees();
         Float az = dr.hasAzimuth() ? dr.getAzimuth().floatValue() : null;
         Float baz = dr.hasBackAzimuth() ? dr.getBackAzimuth().floatValue() : null;
 
@@ -303,8 +303,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             sta.setLatitude((float) dr.getReceiver().asLocation().getLatitude());
             sta.setLongitude((float) dr.getReceiver().asLocation().getLongitude());
         } else if (dr.hasAzimuth()  && !dr.isGeodetic()) {
-            sta.setLatitude((float) SphericalCoords.latFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
-            sta.setLongitude((float) SphericalCoords.lonFor(origin.asLocation(), dr.getDegrees(getRadiusOfEarth()), dr.getAzimuth()));
+            sta.setLatitude((float) SphericalCoords.latFor(origin.asLocation(), dr.getDegrees(), dr.getAzimuth()));
+            sta.setLongitude((float) SphericalCoords.lonFor(origin.asLocation(), dr.getDegrees(), dr.getAzimuth()));
         } else {
             //System.err.println("cannot calc station loc: rec: "+dr.hasReceiver()+" az: "+dr.hasAzimuth()+" geod: "+dr.isGeodetic());
         }
@@ -402,7 +402,7 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float)( 1/sps),  1000);
         Instant sourceTime = new MSeed3Record().getStartInstant();
         for (DistanceRay dr : degreesList) {
-            double degrees = dr.getDegrees(getRadiusOfEarth());
+            double degrees = dr.getDegrees();
             List<Arrival> allArrivals = new ArrayList<>();
             for (SeismicPhase phase : phaseList) {
                 List<Arrival> phaseArrivals = dr.calculate(phase);

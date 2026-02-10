@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
+import net.sf.geographiclib.Geodesic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ExactDistanceRay extends DistanceRay {
     public List<Arrival> calculate(SeismicPhase phase) {
         List<Arrival> phaseArrivals;
         if (phase instanceof SimpleSeismicPhase) {
-            phaseArrivals = ((SimpleSeismicPhase) phase).calcTimeExactDistance(getRadians(phase.getTauModel().getRadiusOfEarth()));
+            phaseArrivals = ((SimpleSeismicPhase) phase).calcTimeExactDistance(getRadians());
         } else {
             phaseArrivals = calcScatteredPhase((ScatteredSeismicPhase) phase);
         }
@@ -31,7 +32,7 @@ public class ExactDistanceRay extends DistanceRay {
 
 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
-        double deg = getDegrees(phase.getTauModel().getRadiusOfEarth());
+        double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
         FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg);
 
@@ -55,26 +56,26 @@ public class ExactDistanceRay extends DistanceRay {
         distanceRay.copyFrom(dr);
     }
 
-    public double getDegrees(double radius) {
-        return distanceRay.getDegrees(radius);
+    public double getDegrees() {
+        return distanceRay.getDegrees();
     }
 
-    public double getRadians(double radius) {
-        return distanceRay.getRadians(radius);
+    public double getRadians() {
+        return distanceRay.getRadians();
     }
 
-    public double getKilometers(double radius) {
-        return distanceRay.getKilometers(radius);
-    }
-
-    @Override
-    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
-        distanceRay.withEventAzimuth(evt, azimuth);
+    public double getKilometers() {
+        return distanceRay.getKilometers();
     }
 
     @Override
-    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
-        distanceRay.withStationBackAzimuth(sta, backazimuth);
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth, Geodesic geodesic) {
+        distanceRay.withEventAzimuth(evt, azimuth, geodesic);
+    }
+
+    @Override
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth, Geodesic geodesic) {
+        distanceRay.withStationBackAzimuth(sta, backazimuth, geodesic);
     }
 
     @Override
@@ -198,7 +199,7 @@ public class ExactDistanceRay extends DistanceRay {
     }
 
     public List<Double> calcRadiansInRange(double minRadian, double maxRadian, double radius, boolean phaseBothHemisphere) {
-        double radianVal = distanceRay.getRadians(radius);
+        double radianVal = distanceRay.getRadians();
         if (phaseBothHemisphere) {
             radianVal = Math.abs(radianVal);
         }

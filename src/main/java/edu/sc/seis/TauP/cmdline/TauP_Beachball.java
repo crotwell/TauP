@@ -10,6 +10,7 @@ import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(sourceArgs);
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(sourceArgs, getRadiusOfEarth());
         Set<FaultPlane> uniqFaultPlaneList = new HashSet<>();
         // in case no arrivals, still use given source arg
         if (sourceArgs.hasStrikeDipRake()) {

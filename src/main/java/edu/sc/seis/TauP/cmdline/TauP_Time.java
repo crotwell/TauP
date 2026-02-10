@@ -569,7 +569,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables( this.sourceArgs, getRadiusOfEarth());
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         if (getDistanceArgs().isAllIndexRays()) {
             List<Arrival> indexArrivalList = calcAllIndexRays(getSeismicPhases());
@@ -590,7 +590,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         super.validateArguments();
         sourceArgs.validateArguments();
         if (isWithAmplitude()) {
-            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs));
+            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs, getRadiusOfEarth()));
         }
     }
 

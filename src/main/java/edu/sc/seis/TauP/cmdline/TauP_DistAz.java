@@ -7,6 +7,7 @@ import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -58,51 +59,28 @@ public class TauP_DistAz extends TauP_Tool {
 
         List<DistanceAngleRay> distList = new ArrayList<>();
 
-        if (geodeticArgs.hasAzimuth()) {
-            for (LatLonLocatable evtLoc : eventLocs) {
-                Location eLoc = evtLoc.asLocation();
-                for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(eLoc, d, geodeticArgs.getAzimuth());
-                    double lon = SphericalCoords.lonFor(eLoc, d, geodeticArgs.getAzimuth());
-                    LatLonSimple loc = new LatLonSimple(lat, lon);
-                    DistanceAngleRay dr = DistanceRay.ofEventStation(evtLoc, loc);
-                    //dr.setAzimuth(latLonArgs.getAzimuth());
-                    dr.setDescription(evtLoc.getLocationDescription()+" to "+loc.getLocationDescription());
-                    distList.add(dr);
-                }
+        Geodesic geodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            geodesic = geodeticArgs.getGeodesic();
+        }
+        DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs);
+        List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(radiusArgs.getRadiusOfEarth());
+        for (RayCalculateable ray : rayList) {
+            if (ray instanceof DistanceAngleRay) {
+                distList.add((DistanceAngleRay) ray);
             }
         }
-        if (geodeticArgs.hasBackAzimuth()) {
-            for (LatLonLocatable staLoc : staList) {
-                for (Double d : createDistDegreeList()) {
-                    double lat = SphericalCoords.latFor(staLoc.asLocation(), d, geodeticArgs.getBackAzimuth());
-                    double lon = SphericalCoords.lonFor(staLoc.asLocation(), d, geodeticArgs.getBackAzimuth());
-                    LatLonSimple loc = new LatLonSimple(lat, lon);
-                    DistanceAngleRay dr = DistanceRay.ofEventStation(loc, staLoc);
-                    //dr.setBackAzimuth(latLonArgs.getBackAzimuth());
-                    dr.setDescription(loc.getLocationDescription()+" to "+staLoc.getLocationDescription());
-                    distList.add(dr);
-                }
-            }
-        }
-        for (LatLonLocatable evtLoc : eventLocs) {
-            for (LatLonLocatable staLoc : staList) {
-                DistanceAngleRay dr;
-                if (geodeticArgs.isGeodetic()) {
-                    dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getGeodesic());
-                } else {
-                    dr = DistanceRay.ofEventStation(evtLoc, staLoc);
-                }
 
-                dr.setDescription(evtLoc.getLocationDescription()+" to "+staLoc.getLocationDescription());
-                distList.add(dr);
-            }
-        }
         distList.sort(Comparator.comparingDouble(DistanceAngleRay::getDegrees));
         List<Daz> dazList = new ArrayList<>();
-        double radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
+        double radius;
+        if (geodeticArgs.isGeodetic()) {
+            radius = RayCalculateable.averageRadiusKm(geodeticArgs.getGeodesic());
+        } else {
+            radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
+        }
         for (DistanceAngleRay ray : distList) {
-            dazList.add(new Daz(ray, radius));
+            dazList.add(new Daz(ray));
         }
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
@@ -114,6 +92,8 @@ public class TauP_DistAz extends TauP_Tool {
                         +" "+Outputs.formatKilometer (dr.getKilometers())
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
+                        +" "+dr.getSource().getLocationDescription()
+                        +" "+dr.getReceiver().getLocationDescription()
                         +"      "+(dr.hasDescription() ? dr.getDescription() : "")
                 );
             }
@@ -194,7 +174,12 @@ public class TauP_DistAz extends TauP_Tool {
     }
 
     public Double kmToDeg() {
-        double r = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
+        double r;
+        if (geodeticArgs.isGeodetic()) {
+            r = RayCalculateable.averageRadiusKm(geodeticArgs.getGeodesic());
+        } else {
+            r = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
+        }
         return  180.0 / Math.PI / r; // default radius
     }
 

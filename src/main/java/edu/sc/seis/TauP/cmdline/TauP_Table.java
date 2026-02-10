@@ -612,7 +612,7 @@ public class TauP_Table extends TauP_Tool {
                 throw new TauPException("RayCalc is not a distance: "+rayCalc);
             }
             DistanceRay dr = (DistanceRay)rayCalc;
-            out.print(String.format(distanceFormat, dr.getDegrees(tMod.getRadiusOfEarth())));
+            out.print(String.format(distanceFormat, dr.getDegrees()));
             if(distNum % 10 == 9) {
                 out.println();
             }
@@ -626,7 +626,7 @@ public class TauP_Table extends TauP_Tool {
             List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
             for (RayCalculateable distCalc : rayCalcList) {
                 DistanceRay dr = (DistanceRay)distCalc;
-                double distance = dr.getDegrees(tMod.getRadiusOfEarth());
+                double distance = dr.getDegrees();
                 List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 String outString = String.format(timeFormat, -1.0) + "    none\n";
                 for (Arrival currArrival : arrivals) {

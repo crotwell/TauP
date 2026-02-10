@@ -11,20 +11,28 @@ public class DistanceKmRay extends DistanceRay {
     }
 
     @Override
-    public double getDegrees(double radius) {
+    public double getDegrees() {
+        double radius;
+        if (isGeodetic()) {
+            radius = RayCalculateable.averageRadiusKm(getGeodesic());
+        } else {
+            radius = getRadiusOfEarth();
+        }
         return kilometers/DistAz.kmPerDeg(radius);
     }
 
     @Override
-    public double getRadians(double radius) {
+    public double getRadians() {
+        double radius;
+        if (isGeodetic()) {
+            radius = RayCalculateable.averageRadiusKm(getGeodesic());
+        } else {
+            radius = getRadiusOfEarth();
+        }
         return kilometers/radius;
     }
 
     @Override
-    public double getKilometers(double radius) {
-        return kilometers;
-    }
-
     public double getKilometers() {
         return kilometers;
     }

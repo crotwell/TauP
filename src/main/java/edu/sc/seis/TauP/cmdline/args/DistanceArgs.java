@@ -107,7 +107,7 @@ public class DistanceArgs {
                     for (LatLonLocatable staLoc : stationList) {
                         DistanceRay staDr = DistanceRay.duplicate(dr);
                         staDr.withStationBackAzimuth(staLoc, getBackAzimuth(), mygeodesic);
-                        staDr.setDescription("baz "+Outputs.formatDistance(getAzimuth())+" to "+staLoc.getLocationDescription());
+                        staDr.setDescription("baz "+Outputs.formatDistance(getBackAzimuth())+" from "+staLoc.getLocationDescription());
                         staOut.add(staDr);
                     }
                 }
@@ -385,16 +385,27 @@ public class DistanceArgs {
         return out;
     }
 
-    public List<RayCalculateable> getRayCalculatables() throws TauPException {
-        return getRayCalculatables(null);
+    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs, double modelRadius) throws TauPException {
+        return getRayCalculatables(null, sourceArgs, modelRadius);
+    }
+    public List<RayCalculateable> getRayCalculatables(double modelRadius) throws TauPException {
+        return getRayCalculatables(null, null, modelRadius);
     }
 
-    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) throws TauPException {
+    /**
+     * Creates ray calculatables for all distances, times, ray parameters, etc.
+     * @param geodesic default Geodesic for rays that do not have one already
+     * @param sourceArgs initialize seismic source information
+     * @param modelRadius default model radius for rays that do not have geodesic and no default geodesic, from velocity model
+     * @return
+     * @throws TauPException
+     */
+    public List<RayCalculateable> getRayCalculatables(Geodesic geodesic, SeismicSourceArgs sourceArgs, double modelRadius) throws TauPException {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
+        out.addAll(getTimeRays());
         out.addAll(getRayParamDegRays());
         out.addAll(getRayParamKmRays());
-        out.addAll(getTimeRays());
         out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
         out.addAll(getIncidentAngleRays());
@@ -403,6 +414,26 @@ public class DistanceArgs {
             for (RayCalculateable rc : out) {
                 if (!rc.hasAzimuth()) {
                     rc.setAzimuth(getAzimuth());
+                }
+            }
+        }
+        if (hasBackAzimuth()) {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasBackAzimuth()) {
+                    rc.setBackAzimuth(getBackAzimuth());
+                }
+            }
+        }
+        if (geodesic != null) {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasGeodesic()) {
+                    rc.setGeodesic(geodesic); // also set rofe
+                }
+            }
+        } else {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasGeodesic() && !rc.hasRadiusOfEarth()) {
+                    rc.setRadiusOfEarth(modelRadius);
                 }
             }
         }

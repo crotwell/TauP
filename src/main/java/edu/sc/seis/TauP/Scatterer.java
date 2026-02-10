@@ -16,7 +16,7 @@ public class Scatterer {
 
     public double getDistanceDegree() {
         // we know created via ofDegrees, so do not need radius to calc
-        return dist.getDegrees(0);
+        return dist.getDegrees();
     }
 
     public final double depth;

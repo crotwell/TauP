@@ -17,8 +17,7 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
     }
 
     public boolean isNegativeHemisphere() {
-        double R = 6371; // doesn't matter here as just want sign
-        return getRadians(R) % (2*Math.PI) > Math.PI;
+        return getRadians() % (2*Math.PI) > Math.PI;
     }
 
     @Override
@@ -32,18 +31,18 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
     }
 
     @Override
-    public double getDegrees(double radius) {
-        return distanceRay.getDegrees(radius);
+    public double getDegrees() {
+        return distanceRay.getDegrees();
     }
 
     @Override
-    public double getRadians(double radius) {
-        return distanceRay.getRadians(radius);
+    public double getRadians() {
+        return distanceRay.getRadians();
     }
 
     @Override
-    public double getKilometers(double radius) {
-        return distanceRay.getKilometers(radius);
+    public double getKilometers() {
+        return distanceRay.getKilometers();
     }
 
     public List<Arrival> fixNegDistance(List<Arrival> arrivalList) {
@@ -60,7 +59,7 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
 
     public List<Double> calcRadiansInRange(double minRadian, double maxRadian, double radius, boolean phaseBothHemisphere) {
         List<Double> out = new ArrayList<>();
-        double radianVal = getRadians(radius) % (TWOPI); // 0 <= r < 2 Pi
+        double radianVal = getRadians() % (TWOPI); // 0 <= r < 2 Pi
         if (phaseBothHemisphere) {
             if (radianVal > Math.PI) {
                 radianVal = TWOPI - radianVal;

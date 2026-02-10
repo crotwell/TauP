@@ -120,7 +120,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public void setScatterer(Scatterer scatterer) {
         clearPhases();
-        modelArgs.setScatterer(scatterer.depth, scatterer.dist.getDegrees(getRadiusOfEarth()));
+        modelArgs.setScatterer(scatterer.depth, scatterer.dist.getDegrees());
     }
 
     public String getTauModelName() {

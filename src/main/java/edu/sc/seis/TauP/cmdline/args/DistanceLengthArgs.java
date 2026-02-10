@@ -13,6 +13,17 @@ import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeKm;
 
 public class DistanceLengthArgs {
 
+    public DistanceArgs createDistanceArgs(GeodeticArgs geodeticArgs) {
+        DistanceArgs out = new DistanceArgs();
+        out.distArgs = new DistanceRayArgs();
+        out.distArgs.degreeRange = degreeRange;
+        out.distArgs.degreesList = degreesList;
+        out.distArgs.distKilometersList = distKilometersList;
+        out.distArgs.kilometerRange = kilometerRange;
+        out.geodeticArgs = geodeticArgs;
+        return out;
+    }
+
     public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getLengthDistances());

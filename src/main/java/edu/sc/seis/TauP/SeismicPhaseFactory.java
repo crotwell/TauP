@@ -195,7 +195,7 @@ public class SeismicPhaseFactory {
             List<Arrival> inArrivals = scat.dist.calculate(inPhase);
             if (inArrivals.isEmpty()) {
                 StringBuffer failReason = new StringBuffer("No inbound arrivals to the scatterer for "+name
-                        +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())
+                        +" at "+scat.depth+" km depth and "+scat.dist.getDegrees()
                         +" deg. Distance range for scatterer at this depth is"
                         +" "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg");
 
@@ -208,7 +208,7 @@ public class SeismicPhaseFactory {
                     scatTMod, scat.depth, receiverDepth, debug);
             for (Arrival inArr : inArrivals) {
                 Arrival flipInArr = inArr;
-                if (inArr.getDistDeg() == -1 * scat.dist.getDegrees(scatPhase.getTauModel().getRadiusOfEarth())) {
+                if (inArr.getDistDeg() == -1 * scat.dist.getDegrees()) {
                     flipInArr = inArr.negateDistance();
                 }
                 ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(

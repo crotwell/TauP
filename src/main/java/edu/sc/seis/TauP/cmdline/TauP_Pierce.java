@@ -165,7 +165,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs, getRadiusOfEarth());
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         if (getDistanceArgs().isAllIndexRays()) {
             List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
@@ -215,7 +215,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
                 if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
                         || (onlyRevPoints
                         && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getTauModel().getRadiusOfEarth()))
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees())
                 )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                         || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
@@ -282,7 +282,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
                 if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
                         || (onlyRevPoints
                         && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getTauModel().getRadiusOfEarth()))
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees())
                 )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                         || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())

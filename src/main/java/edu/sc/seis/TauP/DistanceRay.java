@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.Geodesic;
 import net.sf.geographiclib.GeodesicData;
@@ -91,9 +92,9 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                                                 sLoc.getLatitude(), sLoc.getLongitude());
         GeodesicLine bazGLine = geod.InverseLine(sLoc.getLatitude(), sLoc.getLongitude(),
                                                  eLoc.getLatitude(), eLoc.getLongitude());
-        double avgRaduis = geod.EquatorialRadius()* (3- geod.Flattening()) / 3;
-        DistanceKmRay valKm = ofKilometers(azGLine.Distance()/1000);
-        DistanceAngleRay val = ofDegrees(valKm.getDegrees(avgRaduis));
+        double avgRadius = averageRadiusKm(geod);
+        double distKm = azGLine.Distance()/1000;
+        DistanceAngleRay val = ofDegrees(distKm/DistAz.kmPerDeg(avgRadius));
         // maybe should just use km ray? But causes issue with TauP_DistAz
         val.staLatLon = sta;
         val.evtLatLon = evt;
@@ -104,6 +105,121 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         val.insertSeismicSource(evt);
         return val;
     }
+
+
+    @Override
+    public boolean hasAzimuth() {
+        return super.hasAzimuth()
+                || (this.staLatLon!= null && this.backAzimuth!= null);
+    }
+    @Override
+    public Double getAzimuth() {
+        Double outAz = null;
+        if (super.hasAzimuth()) {outAz = super.getAzimuth();}
+        if (outAz == null && this.staLatLon!=null && this.backAzimuth!=null) {
+            // maybe can calculate since we know distance
+            if (isGeodetic()) {
+                Location sta = staLatLon.asLocation();
+
+                double km = getKilometers();
+                GeodesicLine gLine = geodesic.DirectLine(sta.getLatitude(),
+                        sta.getLongitude(), this.backAzimuth.doubleValue(), km*1000);
+                outAz = gLine.Position(km).azi2;
+            } else {
+                double deg = getDegrees();
+                double elat = SphericalCoords.latFor(staLatLon.asLocation(), deg, this.backAzimuth);
+                double elon = SphericalCoords.lonFor(staLatLon.asLocation(), deg, this.backAzimuth);
+                outAz = SphericalCoords.azimuth(new LatLonSimple(elat, elon), staLatLon.asLocation());
+            }
+        }
+        return outAz;
+    }
+
+
+    @Override
+    public boolean hasBackAzimuth() {
+        return super.hasBackAzimuth()
+                || (this.evtLatLon!= null && this.azimuth!= null);
+    }
+    @Override
+    public Double getBackAzimuth() {
+        Double outAz = null;
+        if (super.hasBackAzimuth()) {outAz = super.getBackAzimuth();}
+        if (outAz == null && this.evtLatLon!=null && this.azimuth!=null) {
+            // maybe can calculate since we know distance
+            if (isGeodetic()) {
+                Location evt = evtLatLon.asLocation();
+
+                double km = getKilometers();
+                GeodesicLine gLine = geodesic.DirectLine(evt.getLatitude(),
+                        evt.getLongitude(), this.azimuth.doubleValue(), km*1000);
+                outAz = gLine.Position(km).azi2;
+            } else {
+                double deg = getDegrees();
+                double slat = SphericalCoords.latFor(evtLatLon.asLocation(), deg, this.azimuth);
+                double slon = SphericalCoords.lonFor(evtLatLon.asLocation(), deg, this.azimuth);
+                return SphericalCoords.azimuth(new LatLonSimple(slat, slon), evtLatLon.asLocation());
+            }
+        }
+        return outAz;
+    }
+
+    @Override
+    public boolean hasReceiver() {
+        return super.hasReceiver() || (this.evtLatLon!=null && this.azimuth!=null);
+    }
+
+    @Override
+    public boolean hasSource() {
+        return super.hasSource() || (this.staLatLon!=null && this.backAzimuth!=null);
+    }
+
+    @Override
+    public LatLonLocatable getSource() {
+        LatLonLocatable evtLatLon = super.getSource();
+        if (evtLatLon == null && (staLatLon!=null && this.backAzimuth!=null)) {
+            // maybe can calculate since we know distance
+            if (isGeodetic()) {
+                Location sta = staLatLon.asLocation();
+
+                double km = getKilometers();
+                double meters = km*1000;
+                GeodesicLine gLine = geodesic.DirectLine(sta.getLatitude(),
+                        sta.getLongitude(), this.backAzimuth.doubleValue(), meters);
+                evtLatLon = new LatLonSimple(gLine.Position(meters).lat2, gLine.Position(meters).lon2);
+            } else {
+                double deg = getDegrees();
+                double elat = SphericalCoords.latFor(staLatLon.asLocation(), deg, this.backAzimuth);
+                double elon = SphericalCoords.lonFor(staLatLon.asLocation(), deg, this.backAzimuth);
+                evtLatLon = new LatLonSimple(elat, elon);
+            }
+        }
+        return evtLatLon;
+    }
+
+    @Override
+    public LatLonLocatable getReceiver() {
+        LatLonLocatable staLatLon = super.getReceiver();
+        if (staLatLon == null && (evtLatLon!=null && this.azimuth!=null)) {
+            // maybe can calculate since we know distance
+            if (isGeodetic()) {
+                Location evt = evtLatLon.asLocation();
+
+                double km = getKilometers();
+                double meters = km*1000;
+                GeodesicLine gLine = geodesic.DirectLine(evt.getLatitude(),
+                        evt.getLongitude(), this.azimuth.doubleValue(), meters);
+                staLatLon = new LatLonSimple(gLine.Position(meters).lat2, gLine.Position(meters).lon2);
+            } else {
+                double deg = getDegrees();
+                double slat = SphericalCoords.latFor(evtLatLon.asLocation(), deg, this.azimuth);
+                double slon = SphericalCoords.lonFor(evtLatLon.asLocation(), deg, this.azimuth);
+                staLatLon = new LatLonSimple(slat, slon);
+            }
+        }
+        return staLatLon;
+    }
+
 
     @Override
     public List<Arrival> calculate(SeismicPhase phase) {
@@ -131,7 +247,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     }
 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
-        double deg = getDegrees(phase.getTauModel().getRadiusOfEarth());
+        double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
         ExactDistanceRay scatRay = ofExactDegrees(Math.abs(scatDistDeg));
 
@@ -156,15 +272,15 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         return scatArrivals;
     }
 
-    public abstract double getDegrees(double radius);
+    public abstract double getDegrees();
 
-    public abstract double getRadians(double radius);
+    public abstract double getRadians();
 
-    public abstract double getKilometers(double radius);
+    public abstract double getKilometers();
 
     public List<Double> calcRadiansInRange(double minRadian, double maxRadian, double radius, boolean phaseBothHemisphere) {
         List<Double> out = new ArrayList<>();
-        double radianVal = getRadians(radius) % (2*Math.PI); // 0 <= r < 2 Pi
+        double radianVal = getRadians() % (2*Math.PI); // 0 <= r < 2 Pi
         if ((radianVal-minRadian) % (2*Math.PI) == 0.0) {
             out.add(minRadian);
         }
