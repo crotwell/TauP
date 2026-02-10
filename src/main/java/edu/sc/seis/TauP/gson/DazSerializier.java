@@ -2,6 +2,7 @@ package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
 import edu.sc.seis.TauP.Daz;
+import edu.sc.seis.TauP.DistanceAngleRay;
 import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.seisFile.Location;
 
@@ -31,15 +32,15 @@ public class DazSerializier implements JsonSerializer<Daz> {
     public JsonElement serialize(Daz src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject out = new JsonObject();
         out.add(JSONLabels.DEG, new JsonPrimitive((float)src.getDegrees()));
-        if (src.getKm() != null) {
-            out.add(JSONLabels.KM, new JsonPrimitive(src.getKm().floatValue()));
-        }
+        out.add(JSONLabels.KM, new JsonPrimitive(src.getKilometers().floatValue()));
+
         out.add(JSONLabels.AZ, new JsonPrimitive(src.getAzimuth().floatValue()));
 
         out.add(JSONLabels.BAZ, new JsonPrimitive(src.getBackAzimuth().floatValue()));
         if (src.isGeodetic()) {
             out.add(JSONLabels.CALCTYPE, new JsonPrimitive(GEODETIC));
             out.add(JSONLabels.INVFLATTENING, new JsonPrimitive(src.getInvFlattening()));
+            out.add(JSONLabels.EQUITORIALRADIUS, new JsonPrimitive(src.getEquitorialRadius()));
         } else {
             out.add(JSONLabels.CALCTYPE, new JsonPrimitive(SPHERICAL));
         }

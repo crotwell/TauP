@@ -66,6 +66,7 @@ public interface JSONLabels {
 
     String CALCTYPE = "calctype";
     String INVFLATTENING = "invflattening";
+    String EQUITORIALRADIUS = "equitorialradius";
     String SOURCE_LIST = "sources";
     String RECEIVER_LIST = "receivers";
     String LAT = "lat";

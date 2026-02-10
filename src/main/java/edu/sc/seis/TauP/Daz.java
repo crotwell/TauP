@@ -3,73 +3,51 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.seisFile.LatLonLocatable;
 
 public class Daz {
-    protected double deg;
-    protected double km;
-    protected LatLonLocatable staLatLon = null;
-    protected LatLonLocatable evtLatLon = null;
-    protected double azimuth;
-    protected double backAzimuth;
-    protected boolean geodetic = false;
-    protected Double invFlattening = null;
     protected String description;
+    protected DistanceAngleRay ray;
 
-    public Daz(DistanceAngleRay ray, double radiusOfEarth) {
-        this(ray.getDegrees(radiusOfEarth),
-                ray.getKilometers(radiusOfEarth),
-                ray.getAzimuth(),
-                ray.getBackAzimuth(),
-                ray.getDescription());
-        if (ray.hasReceiver()) {
-            this.evtLatLon = ray.getReceiver();
-        }
-        if (ray.hasSource()) {
-            this.staLatLon = ray.getSource();
-        }
-        if (ray.isGeodetic()) {
-            this.geodetic = true;
-            this.invFlattening = ray.getInvFlattening();
-        }
-    }
-    public Daz(double deg, double km, double az, double baz, String description) {
-        this.deg = deg;
-        this.km = km;
-        this.azimuth = az;
-        this.backAzimuth = baz;
-        this.description = description;
+    public Daz(DistanceAngleRay ray) {
+        this.ray = ray;
+        this.description = ray.getDescription();
     }
 
     public double getDegrees() {
-        return deg;
+        return ray.getDegrees();
     }
 
-    public LatLonLocatable getStaLatLon() {
-        return staLatLon;
-    }
     public LatLonLocatable getSource() {
-        return getStaLatLon();
+        return ray.getSource();
     }
 
-    public LatLonLocatable getEvtLatLon() {
-        return evtLatLon;
-    }
     public LatLonLocatable getReceiver() {
-        return getEvtLatLon();
+        return ray.getReceiver();
     }
 
     public Double getAzimuth() {
-        return azimuth;
+        return ray.getAzimuth();
     }
 
     public Double getBackAzimuth() {
-        return backAzimuth;
+        return ray.getBackAzimuth();
     }
 
     public boolean isGeodetic() {
-        return geodetic;
+        return ray.isGeodetic();
     }
 
     public Double getInvFlattening() {
-        return invFlattening;
+        if (ray.getInvFlattening() != null) {
+            return ray.getInvFlattening();
+        } else if (ray.getGeodesic() != null) {
+            return 1.0/ray.getGeodesic().Flattening();
+        }
+        return null;
+    }
+    public Double getEquitorialRadius() {
+        if (ray.getGeodesic() != null) {
+            return ray.getGeodesic().EquatorialRadius();
+        }
+        return null;
     }
 
     public String getDescription() {
@@ -77,18 +55,18 @@ public class Daz {
     }
 
     public Double getKilometers() {
-        return km;
+        return ray.getKilometers();
     }
     public Double getKm() {
-        return km;
+        return ray.getKilometers();
     }
 
     public boolean hasSource() {
-        return staLatLon != null;
+        return ray.hasSource();
     }
 
     public boolean hasReceiver() {
-        return evtLatLon != null;
+        return ray.hasReceiver();
     }
 
     public double getNormalizedAzimuth() {
@@ -102,4 +80,5 @@ public class Daz {
     public boolean hasDescription() {
         return this.description != null && !this.description.isEmpty();
     }
+
 }
