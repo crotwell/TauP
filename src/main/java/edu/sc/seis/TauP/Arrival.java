@@ -445,7 +445,7 @@ public class Arrival {
      */
     public double getSearchDistDeg() {
         if (this.searchCalc instanceof DistanceRay) {
-            return ((DistanceRay)this.searchCalc).getDegrees(getTauModel().getRadiusOfEarth());
+            return ((DistanceRay)this.searchCalc).getDegrees();
         }
         return this.getDistDeg();
     }
