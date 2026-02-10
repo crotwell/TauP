@@ -120,10 +120,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 }
             }
         }
-        if (isIncidentDown()) {
-            title += ", inc. down";
-        } else {
+        if ( fsrf || ! isIncidentDown()) {
             title += ", inc. up";
+        } else {
+            title += ", inc. down";
         }
         xyOut.setTitle(title);
         String yAxisActual = "";

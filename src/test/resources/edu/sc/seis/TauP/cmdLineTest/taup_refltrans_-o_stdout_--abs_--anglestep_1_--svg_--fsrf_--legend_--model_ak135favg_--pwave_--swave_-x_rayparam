@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup refltrans -o stdout &#45;&#45;abs &#45;&#45;anglestep 1 &#45;&#45;svg &#45;&#45;fsrf &#45;&#45;legend &#45;&#45;model ak135favg &#45;&#45;pwave &#45;&#45;swave -x rayparam </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="0.6896544736007165" ymin="0.0" ymax="2.0" />
     </taup>
@@ -446,6 +446,156 @@
           fill: magenta;
           stroke: transparent;
         }
+        .RppPhase {
+          stroke: blue;
+        }
+        .RppPhase.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppPhase text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppPhase {
+          stroke: cyan;
+        }
+        .TppPhase.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppPhase text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsPhase {
+          stroke: green;
+        }
+        .RpsPhase.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsPhase text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsPhase {
+          stroke: gold;
+        }
+        .TpsPhase.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsPhase text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspPhase {
+          stroke: mediumslateblue;
+        }
+        .RspPhase.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspPhase text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspPhase {
+          stroke: magenta;
+        }
+        .TspPhase.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspPhase text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssPhase {
+          stroke: red;
+        }
+        .RssPhase.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssPhase text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssPhase {
+          stroke: grey;
+        }
+        .TssPhase.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssPhase text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshPhase {
+          stroke: orange;
+        }
+        .RshshPhase.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshPhase text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshPhase {
+          stroke: violet;
+        }
+        .TshshPhase.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshPhase text {
+          fill: violet;
+          stroke: transparent;
+        }
 
 
 text.title {
@@ -628,7 +778,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">ak135favg at  surface</text>
+<text class="title" x="208.0" y="0">ak135favg at  surface, inc. up</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Free Surface RF Coeff.</text>
