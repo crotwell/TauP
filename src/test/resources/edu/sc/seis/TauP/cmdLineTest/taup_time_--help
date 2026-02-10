@@ -1,9 +1,11 @@
 Usage: taup time [--amp] [--debug] [--derivative] [--first] [--geodetic]
-                 [--help] [--rayp] [--time] [--verbose]
+                 [--geodetic] [--help] [--rayp] [--time] [--verbose]
                  [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                  [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                 [--geodeticflattening=f] [--mw=<mw>]
+                 [--equitorialradius=m] [--equitorialradius=m]
+                 [--invflattening=f] [--invflattening=f] [--mw=<mw>]
                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                 [--planet=<planet>] [--planet=<planet>]
                  [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                  [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
                  [--rel=phase[,phase...]]... [--sid=sta[,sta...]]... [--evt=lat
@@ -16,11 +18,11 @@ Usage: taup time [--amp] [--debug] [--derivative] [--first] [--geodetic]
                  [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]... [--degreerange=[step][min max][min max step]]...
-                 [--exactdegreerange=[step][min max][min max step]]...
-                 [--exactkilometerrange=[step][min max][min max step]]...
-                 [--incidentrange=[step][min max][min max step]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--seconds=s[,s...]]...
+                 [--takeoff=deg[,deg...]]... [--degreerange=[step][min max][min
+                 max step]]... [--exactdegreerange=[step][min max][min max
+                 step]]... [--exactkilometerrange=[step][min max][min max
+                 step]]... [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--csv |
                  --html | --json | --text]
@@ -39,15 +41,6 @@ Options:
                                station is also given.
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
-      --geodeticflattening=f Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude,
                                default is 4.0
@@ -135,6 +128,7 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
+      --seconds=s[,s...]     arrival time in seconds
       --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
                                down, 90 horizontal, 180 is up.
       --takeoffrange=[step][min max][min max step]
@@ -144,8 +138,25 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=<azimuth>         azimuth in degrees, source to receiver
       --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --equitorialradius=m   Equitorial radius in meters for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --invflattening, --geodeticflattening=f
+                             Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
+      --planet=<planet>      Geodesic for planets, for distance calculations
+                               when --geodetic, one of: EARTH, MOON, MARS,
+                               VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
+                               NEPTUNE.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.

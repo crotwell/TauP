@@ -50,10 +50,13 @@ Options:
                              radian, radian180, degree, degree180, kilometer,
                              kilometer180, rayparamrad, rayparamdeg,
                              rayparamkm, time, tau, takeoffangle,
-                             incidentangle, turndepth, amp, amppsv, ampsh,
-                             geospread, refltran, refltranpsv, refltransh,
-                             index, tstar, attenuation, theta, energygeospread,
-                             pathlength, radiation, radiationpsv, radiationsh
+                             incidentangle, turndepth, dpddelta, dpddeg, amp,
+                             amppsv, ampsh, phase, phasepsv, phasesh, phasedeg,
+                             phasedegpsv, phasedegsh, unwrapphasedeg,
+                             unwrapphasedegpsv, unwrapphasedegsh, geospread,
+                             refltran, refltranpsv, refltransh, index, tstar,
+                             attenuation, theta, energygeospread, pathlength,
+                             radiation, radiationpsv, radiationsh
       --xabs               X axis is absolute value
       --xlog               X axis is log
       --xminmax=x x        min and max x axis for plotting
@@ -61,10 +64,13 @@ Options:
                              radian180, degree, degree180, kilometer,
                              kilometer180, rayparamrad, rayparamdeg,
                              rayparamkm, time, tau, takeoffangle,
-                             incidentangle, turndepth, amp, amppsv, ampsh,
-                             geospread, refltran, refltranpsv, refltransh,
-                             index, tstar, attenuation, theta, energygeospread,
-                             pathlength, radiation, radiationpsv, radiationsh
+                             incidentangle, turndepth, dpddelta, dpddeg, amp,
+                             amppsv, ampsh, phase, phasepsv, phasesh, phasedeg,
+                             phasedegpsv, phasedegsh, unwrapphasedeg,
+                             unwrapphasedegpsv, unwrapphasedegsh, geospread,
+                             refltran, refltranpsv, refltransh, index, tstar,
+                             attenuation, theta, energygeospread, pathlength,
+                             radiation, radiationpsv, radiationsh
       --yabs               Y axis is absolute value
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting

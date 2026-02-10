@@ -1,6 +1,6 @@
 Usage: taup refltrans [--abs] [--angles] [--debug] [--down] [--energyflux]
-                      [--fsrf] [--help] [--legend] [--pwave] [--shwave]
-                      [--swave] [--up] [--verbose] [--anglestep=deg]
+                      [--fsrf] [--help] [--legend] [--phase] [--pwave]
+                      [--shwave] [--swave] [--up] [--verbose] [--anglestep=deg]
                       [--depth=<depth>] [--mapwidth=<mapwidth>]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--rpstep=s/km] [-x=type]
@@ -33,6 +33,7 @@ Options:
       --mapwidthunit=<mapWidthUnit>
                            plot width unit, i for inch, c for cm or p for px.
   -o, --output=<outFile>   output to file, default is stdout.
+      --phase              all displacement phase coefficients, like TppPhase
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --pwave              incident P wave
@@ -49,10 +50,12 @@ Options:
                              Tpp, Tps, Tsp, Tss, Rshsh, Tshsh, RppEnergy,
                              TppEnergy, RpsEnergy, TpsEnergy, RspEnergy,
                              TspEnergy, RssEnergy, TssEnergy, RshshEnergy,
-                             TshshEnergy, RpAngle, RsAngle, TpAngle, TsAngle,
-                             FreeRecFuncPr, FreeRecFuncSvr, FreeRecFuncPz,
-                             FreeRecFuncSvz, FreeRecFuncSh, default is all
-                             displacement coef.
+                             TshshEnergy, RppPhase, TppPhase, RpsPhase,
+                             TpsPhase, RspPhase, TspPhase, RssPhase, TssPhase,
+                             RshshPhase, TshshPhase, RpAngle, RsAngle, TpAngle,
+                             TsAngle, FreeRecFuncPr, FreeRecFuncSvr,
+                             FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh,
+                             default is all displacement coef.
       --yminmax=y y        min and max y axis for plotting
 Output Type:
       --gmt                outputs as GMT

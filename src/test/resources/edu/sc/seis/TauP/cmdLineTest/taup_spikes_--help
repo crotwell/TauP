@@ -1,13 +1,15 @@
 Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
                    [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                   [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
+                   [--baz=<backAzimuth>] [--equitorialradius=m]
+                   [--invflattening=f] [--mw=<mw>]
                    [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
-                   [--otime=<origintime>] [--prop=<toolPropsFilename>]
-                   [--pulsewidth=<pulseWidth>] [--qml=<quakemlFilename>]
-                   [sps=<sps>] [--staxml=<stationxmlFilename>] [--deg=d[,
-                   d...]]... [--eid=evt[,evt...]]... [--km=km[,km...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
-                   lon]... [--degreerange=[step][min max][min max step]]...
+                   [--otime=<origintime>] [--planet=<planet>]
+                   [--prop=<toolPropsFilename>] [--pulsewidth=<pulseWidth>]
+                   [--qml=<quakemlFilename>] [sps=<sps>]
+                   [--staxml=<stationxmlFilename>] [--deg=d[,d...]]...
+                   [--eid=evt[,evt...]]... [--km=km[,km...]]... [--sid=sta[,
+                   sta...]]... [--evt=lat lon]... [--sta=lat lon]...
+                   [--degreerange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--strikediprake=strike dip rake]... [[--mod=<modelName>]
                    [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
@@ -30,15 +32,6 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
-      --geodeticflattening=f Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --kilometerrange=[step][min max][min max step]
                              regular distance range in kilometers, one of step;
@@ -99,8 +92,25 @@ Output Type
 Lat,Lon influenced by:
       --az=<azimuth>         azimuth in degrees, source to receiver
       --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --equitorialradius=m   Equitorial radius in meters for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --invflattening, --geodeticflattening=f
+                             Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
+      --planet=<planet>      Geodesic for planets, for distance calculations
+                               when --geodetic, one of: EARTH, MOON, MARS,
+                               VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
+                               NEPTUNE.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
