@@ -31,10 +31,13 @@ spherical, the default is to not take the elliptical nature of the earth
 into account when calculating these distances. But this can be changed with
 the :code:`--geodetic` parameter, which implies that the given latitudes
 are geodetic instead of geocentric. Geodetic calculations use the
-geographiclib package of :cite:t:`Karney2013` `Karney`.
+geographiclib package of :cite:t:`Karney2013` `Karney` where the geocentric
+angle is determined from the surface distance (km) and the average radius
+of the geodesic, (2*equitorial+polar)/3.
 And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`
-parameter.
+parameter or the  :code:`--planet` for well know flattening values of the
+planets.
 
 Oceans
 ------
