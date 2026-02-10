@@ -37,17 +37,23 @@ public abstract class RayCalculateable {
 
     public abstract List<Arrival> calculate(SeismicPhase phase) throws TauPException;
 
-    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth, Geodesic geodesic) {
         this.evtLatLon = evt;
+        this.staLatLon = null;
         this.azimuth = azimuth;
         this.backAzimuth = null;
         this.insertSeismicSource(evt);
+        this.geodesic = geodesic;
+        this.geodetic = (this.geodesic != null);
     }
 
-    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth, Geodesic geodesic) {
+        this.evtLatLon = null;
         this.staLatLon = sta;
         this.azimuth = null;
         this.backAzimuth = backazimuth;
+        this.geodesic = geodesic;
+        this.geodetic = (this.geodesic != null);
     }
 
     public abstract boolean isLatLonable();
@@ -87,6 +93,12 @@ public abstract class RayCalculateable {
 
     public Double getInvFlattening() {
         return invFlattening;
+    }
+
+
+    public static double averageRadiusKm(Geodesic geodesic) {
+        // use mean radius, r = (2*er+pr)/3, mean of two equitorial radii and polar radius
+        return geodesic.EquatorialRadius()* (3- geodesic.Flattening()) / 3 / 1000; // m to km
     }
 
     /**

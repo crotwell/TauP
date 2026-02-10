@@ -3,7 +3,10 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.Geodesic;
+import net.sf.geographiclib.GeodesicData;
 import net.sf.geographiclib.GeodesicLine;
+
+import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 
 /**
  * Calculatable ray that knows its receiver lot,lon and back azimuth of the arriving ray.
@@ -22,9 +25,12 @@ public class StationBackAzimuth extends LatLonable {
         Location staLoc = staLatLon.asLocation();
         if (isGeodetic()) {
             double backDistance = totalDist - calcDist;
-            GeodesicLine gLine = geodesic.ArcDirectLine(staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth, backDistance);
-            out[0] = gLine.Latitude();
-            out[1] = gLine.Longitude();
+
+            double km = backDistance*DtoR*DistanceRay.averageRadiusKm(geodesic);
+            GeodesicLine gLine = new GeodesicLine(geodesic, staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth);
+            GeodesicData gdata = gLine.Position(km*1000);
+            out[0] = gdata.lat2;
+            out[1] = gdata.lon2;
         } else {
             // spherical
             double evtLat = SphericalCoords.latFor(staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth, totalDist);

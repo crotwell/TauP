@@ -2,6 +2,7 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.LatLonLocatable;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 
@@ -75,7 +76,10 @@ public class DistanceArgs {
         }
         hasStation = ! stationList.isEmpty();
 
-
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         if (hasEvent && getAzimuth() != null && !hasStation) {
             List<DistanceRay> evtOut = new ArrayList<>();
             for (DistanceRay dr : simpleDistanceList) {
@@ -85,7 +89,7 @@ public class DistanceArgs {
                 } else {
                     for (LatLonLocatable evtLoc : quakes) {
                         DistanceRay evtDr = DistanceRay.duplicate(dr);
-                        evtDr.withEventAzimuth(evtLoc, getAzimuth());
+                        evtDr.withEventAzimuth(evtLoc, getAzimuth(), mygeodesic);
                         evtDr.setDescription(evtLoc.getLocationDescription()+" to az "+Outputs.formatDistance(getAzimuth()).trim());
                         evtDr.insertSeismicSource(evtLoc);
                         evtOut.add(evtDr);
@@ -102,7 +106,7 @@ public class DistanceArgs {
                 } else {
                     for (LatLonLocatable staLoc : stationList) {
                         DistanceRay staDr = DistanceRay.duplicate(dr);
-                        staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
+                        staDr.withStationBackAzimuth(staLoc, getBackAzimuth(), mygeodesic);
                         staDr.setDescription("baz "+Outputs.formatDistance(getAzimuth())+" to "+staLoc.getLocationDescription());
                         staOut.add(staDr);
                     }
@@ -117,7 +121,7 @@ public class DistanceArgs {
                 for (LatLonLocatable staLoc : stationList) {
                     DistanceRay dr;
                     if (geodeticArgs.isGeodetic()) {
-                        dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getGeodesic());
+                        dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, mygeodesic);
                     } else {
                         dr = DistanceRay.ofEventStation(evtLoc, staLoc);
                     }
@@ -133,27 +137,23 @@ public class DistanceArgs {
     }
 
     public List<RayParamKmRay> getRayParamKmRays() throws TauPException {
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         List<RayParamKmRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootKmRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for az from event...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        RayParamKmRay evtDr = new RayParamKmRay(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    RayParamKmRay evtDr = new RayParamKmRay(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for baz from station...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        RayParamKmRay staDr = new RayParamKmRay(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    RayParamKmRay staDr = new RayParamKmRay(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(new RayParamKmRay(d));
@@ -164,26 +164,22 @@ public class DistanceArgs {
 
     public List<TimeRay> getTimeRays() throws TauPException {
         List<TimeRay> rpList = new ArrayList<>();
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Double d : distArgs.timeList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for az from event...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        TimeRay evtDr = new TimeRay(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    TimeRay evtDr = new TimeRay(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for baz from station...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        TimeRay staDr = new TimeRay(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    TimeRay staDr = new TimeRay(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(new TimeRay(d));
@@ -194,26 +190,22 @@ public class DistanceArgs {
 
     public List<RayParamRay> getRayParamDegRays() throws TauPException {
         List<RayParamRay> rpList = new ArrayList<>();
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Double d : distArgs.shootRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        RayParamRay evtDr = RayParamRay.ofRayParamSDegree(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    RayParamRay evtDr = RayParamRay.ofRayParamSDegree(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for baz from station...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        RayParamRay staDr = RayParamRay.ofRayParamSDegree(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    RayParamRay staDr = RayParamRay.ofRayParamSDegree(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(RayParamRay.ofRayParamSDegree(d));
@@ -224,26 +216,22 @@ public class DistanceArgs {
 
     public List<RayParamRay> getRayParamRadianRays() throws TauPException {
         List<RayParamRay> rpList = new ArrayList<>();
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Double d : distArgs.shootRadianRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        RayParamRay evtDr = RayParamRay.ofRayParamSRadian(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    RayParamRay evtDr = RayParamRay.ofRayParamSRadian(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet for baz from station...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        RayParamRay staDr = RayParamRay.ofRayParamSRadian(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    RayParamRay staDr = RayParamRay.ofRayParamSRadian(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(RayParamRay.ofRayParamSRadian(d));
@@ -255,26 +243,22 @@ public class DistanceArgs {
 
     public List<RayParamIndexRay> getRayParamIndexRays() throws TauPException {
         List<RayParamIndexRay> rpList = new ArrayList<>();
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Integer d : distArgs.shootIndexRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        RayParamIndexRay evtDr = new RayParamIndexRay(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    RayParamIndexRay evtDr = new RayParamIndexRay(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        RayParamIndexRay staDr = new RayParamIndexRay(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    RayParamIndexRay staDr = new RayParamIndexRay(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(new RayParamIndexRay(d));
@@ -290,29 +274,25 @@ public class DistanceArgs {
         if (!distArgs.takeoffRange.isEmpty()) {
             takeoffInputList.addAll(createListFromRangeDeg(distArgs.takeoffRange));
         }
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Double d : takeoffInputList) {
             if (d < 0 || d > 180) {
                 throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: "+d);
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        TakeoffAngleRay evtDr = new TakeoffAngleRay(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    TakeoffAngleRay evtDr = new TakeoffAngleRay(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        TakeoffAngleRay staDr = new TakeoffAngleRay(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    TakeoffAngleRay staDr = new TakeoffAngleRay(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(TakeoffAngleRay.ofTakeoffAngle(d));
@@ -328,29 +308,25 @@ public class DistanceArgs {
         if (!distArgs.incidentRange.isEmpty()) {
             incidentAngleInputList.addAll(createListFromRangeDeg(distArgs.incidentRange));
         }
+        Geodesic mygeodesic = null;
+        if (geodeticArgs.isGeodetic()) {
+            mygeodesic = geodeticArgs.getGeodesic();
+        }
         for (Double d : incidentAngleInputList) {
             if (d < 0 || d > 180) {
                 throw new IllegalArgumentException("Incident angle should be between 0 and 180 degrees: "+d);
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable evt : getEventLatLon()) {
-                        IncidentAngleRay evtDr = new IncidentAngleRay(d);
-                        evtDr.withEventAzimuth(evt, getAzimuth());
-                        rpList.add(evtDr);
-                    }
+                for (LatLonLocatable evt : getEventLatLon()) {
+                    IncidentAngleRay evtDr = new IncidentAngleRay(d);
+                    evtDr.withEventAzimuth(evt, getAzimuth(), mygeodesic);
+                    rpList.add(evtDr);
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (geodeticArgs.isGeodetic()) {
-                    throw new IllegalArgumentException("geodetic not yet...");
-                } else {
-                    for (LatLonLocatable sta : getStationLatLon()) {
-                        IncidentAngleRay staDr = new IncidentAngleRay(d);
-                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                        rpList.add(staDr);
-                    }
+                for (LatLonLocatable sta : getStationLatLon()) {
+                    IncidentAngleRay staDr = new IncidentAngleRay(d);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth(), mygeodesic);
+                    rpList.add(staDr);
                 }
             } else {
                 rpList.add(IncidentAngleRay.ofIncidentAngle(d));
