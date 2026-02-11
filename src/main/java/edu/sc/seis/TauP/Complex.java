@@ -793,6 +793,13 @@ public class Complex implements java.io.Serializable, Cloneable {
     }
 
     /**
+     * Returns the absolute value (modulus) of this Complex, |z|.
+     */
+    public double abs() {
+        return abs(this);
+    }
+
+    /**
      * Returns the absolute value (modulus) of a Complex, |z|.
      * 
      * @param z

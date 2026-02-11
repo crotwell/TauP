@@ -684,16 +684,16 @@ public class ReflTransTest {
         for (double flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {
             assertEquals(Math.abs(coeff.getRpp(flatRP)), Math.sqrt(coeff.getEnergyFluxRpp(flatRP)), 1e-9, "Rpp "+flatRP);
             assertEquals(Math.abs(coeff.getRss(flatRP)), Math.sqrt(coeff.getEnergyFluxRss(flatRP)), 1e-9, "Rss "+flatRP);
-            assertEquals(coeff.getRpp(flatRP), coeff.getEnergyFluxFactorRpp(flatRP), 1e-15);
-            assertEquals(coeff.getRss(flatRP), coeff.getEnergyFluxFactorRss(flatRP), 1e-15);
+            assertEquals(Math.abs(coeff.getRpp(flatRP)), coeff.getEnergyFluxFactorRpp(flatRP), 1e-15);
+            assertEquals(Math.abs(coeff.getRss(flatRP)), coeff.getEnergyFluxFactorRss(flatRP), 1e-15);
         }
 
         // non vertical incidence, up to value where we get complex results
         for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.01) {
             assertEquals(Math.abs(flip.getRpp(flatRP)), Math.sqrt(flip.getEnergyFluxRpp(flatRP)), 1e-9, "Rpp");
             assertEquals(Math.abs(flip.getRss(flatRP)), Math.sqrt(flip.getEnergyFluxRss(flatRP)), 1e-9, "Rss");
-            assertEquals(flip.getRpp(flatRP), flip.getEnergyFluxFactorRpp(flatRP), 1e-15);
-            assertEquals(flip.getRss(flatRP), flip.getEnergyFluxFactorRss(flatRP), 1e-15);
+            assertEquals(Math.abs(flip.getRpp(flatRP)), flip.getEnergyFluxFactorRpp(flatRP), 1e-15);
+            assertEquals(Math.abs(flip.getRss(flatRP)), flip.getEnergyFluxFactorRss(flatRP), 1e-15);
         }
 
     }

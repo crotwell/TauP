@@ -183,7 +183,13 @@ public abstract class ReflTrans {
         return getPhase(getComplexTshsh(rayParam));
     }
 
+    /**
+     * Returns abs of input complex, unless it is very close to a negative real, then return negative abs.
+     * @param coef
+     * @return
+     */
     public static double getRealCoefficient(Complex coef) {
+        // do we want the sign, or just return abs always?
         if (Math.abs(coef.im) > 1e-6) {
             return Complex.abs(coef);
         }
@@ -271,7 +277,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Rpp_calc = getRpp(flatRP);
+        double Rpp_calc = getComplexRpp(flatRP).abs();
         return Rpp_calc * Math.sqrt(topDensity * topVp * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -287,7 +293,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0.0) { return 0;}
-        double Tpp_calc = getTpp(flatRP);
+        double Tpp_calc = getComplexTpp(flatRP).abs();
         return Tpp_calc * Math.sqrt(botDensity * botVp * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -304,7 +310,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Rps_calc = getRps(flatRP);
+        double Rps_calc = getComplexRps(flatRP).abs();
         return Rps_calc * Math.sqrt(topDensity * topVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -321,7 +327,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Tps_calc = getTps(flatRP);
+        double Tps_calc = getComplexTps(flatRP).abs();
         return Tps_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -339,7 +345,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Rsp_calc = getRsp(flatRP);
+        double Rsp_calc = getComplexRsp(flatRP).abs();
         return Rsp_calc * Math.sqrt(topDensity * topVp * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -356,7 +362,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Tsp_calc = getTsp(flatRP);
+        double Tsp_calc = getComplexTsp(flatRP).abs();
         return Tsp_calc * Math.sqrt(botDensity * botVp * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -377,7 +383,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 1.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 1.0;}
-        double Rss_calc = getRss(flatRP);
+        double Rss_calc = getComplexRss(flatRP).abs();
         return Rss_calc * Math.sqrt(topDensity * topVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -394,7 +400,7 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
         if ( topVs == 0.0  || botVs == 0.0) { return 0;}
-        double Tss_calc = getTss(flatRP);
+        double Tss_calc = getComplexTss(flatRP).abs();
         return Tss_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -417,7 +423,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Rshsh_calc = getRshsh(flatRP);
+        double Rshsh_calc = getComplexRshsh(flatRP).abs();
         return Rshsh_calc * Math.sqrt( topDensity * topVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
@@ -434,7 +440,7 @@ public abstract class ReflTrans {
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
-        double Tshsh_calc = getTshsh(flatRP);
+        double Tshsh_calc = getComplexTshsh(flatRP).abs();
         return Tshsh_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
                 / inboundEnergy);
     }
