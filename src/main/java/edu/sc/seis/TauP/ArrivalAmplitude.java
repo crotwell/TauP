@@ -38,7 +38,7 @@ public class ArrivalAmplitude {
         mgtokg = (float) 1e-3;
         refltranpsv = (float) arr.getEnergyFluxFactorReflTransPSV();
         refltransh = (float) arr.getEnergyFluxFactorReflTransSH();
-        internalCaustic = arr.internalCausticCount();
+        internalCaustic = arr.getInternalCausticCount();
         phaseFactorpsv = (float) arr.getReflTransPSV().getPhase();
         phaseFactorsh = (float) arr.getReflTransSH().getPhase();
     }

@@ -221,7 +221,13 @@ public class Arrival {
         return nearArrival;
     }
 
-    public int internalCausticCount() {
+    /**
+     * Count internal caustics, places where neighboring rays cross and reverse sense of relative orientation,
+     * like a bowtie.
+     *
+     * @return number of internal caustics
+     */
+    public int getInternalCausticCount() {
         int internalCaustic = 0;
         Arrival near = nearbyArrival(0.01);
         List<ArrivalPathSegment> arrSegList = getPathSegments();
