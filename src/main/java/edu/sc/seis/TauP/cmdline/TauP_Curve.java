@@ -372,6 +372,20 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 }
             }
             out = phaseShift;
+        } else if (axisType==AxisType.intcausticpsv || axisType== AxisType.intcausticsh) {
+            double[] dist = phase.getDist();
+            double[] caustics = new double[dist.length];
+            boolean isAmpSH = axisType==AxisType.intcausticsh;
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = arrivalAtIndex(i, phase);
+                SeismicPhaseReflTransHolder reflTransHolder;
+                if (isAmpSH) {
+                    caustics[i] = arrival.getReflTransSH().getInternalCaustics();
+                } else {
+                    caustics[i] = arrival.getReflTransPSV().getInternalCaustics();
+                }
+            }
+            out = caustics;
         } else if (axisType==AxisType.geospread) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
