@@ -10,7 +10,7 @@ generates  depth versus
 angular distances from the epicenter for the phases, but done at time slices instead of depth slices.
 The output is in GMT, :cite:t:`GMT`, plot format, and is
 placed into the file `taup_wavefront.gmt`.
-The colums are distance, depth, time and ray param, although only the first two are used by the GMT script.
+The columns are distance, depth, time and ray parameter, although only the first two are used by the GMT script.
 If you specify the `-gmt` flag then this
 is a complete script with the appropriate `psxy` command prepended, so if you
 have GMT installed, you can just:

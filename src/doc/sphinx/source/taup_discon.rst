@@ -11,7 +11,7 @@ immediately above and below these lines are the velocity and density
 just above and below the discontinuity. If a discontinuity is named, that
 will also be printed on the discontinuity line.
 
-For example, the lists the depths of disconinuties in the `ak135fcont` model:
+For example, the lists the depths of discontinuities in the `ak135fcont` model:
 
 .. literalinclude:: examples/taup_discon_--mod_ak135fcont.cmd
   :language: text

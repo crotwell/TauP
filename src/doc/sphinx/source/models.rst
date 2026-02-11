@@ -48,7 +48,7 @@ more crustal boundaries and synonyms. User defined labels are also allowed but
 must start with a non-number character, include only letters, numbers and the
 dash symbol and care should be taken when using
 in phase names to avoid confusing the phase parser.
-The phase parser uses the underscore to deliniate custom names, so an underscore
+The phase parser uses the underscore to delineate custom names, so an underscore
 cannot be used within the custom names. These labels
 are placed on a line by themselves between the two lines representing the
 sample points above and below the depth of the
@@ -234,7 +234,7 @@ Notes on Standard Models
   This may have a small effect on outer core phases. The
   missing line does appear in the ak135f models, which are supposed to share
   the velocity structure, but to be consistent with the published paper we
-  have not changed the file. We do recomment using ak135fcont instead,
+  have not changed the file. We do recommend using ak135fcont instead,
   which is ak135 with Q and the "continental structure" above 120 km.
 
   .. code-block::
@@ -244,7 +244,7 @@ Notes on Standard Models
     4801.580     10.1415      0.0000     11.9414
     4851.910     10.1739      0.0000     11.9722
 
-  The source web page for ak135f lists attentuation parameters as Qkappa and Qmu,
+  The source web page for ak135f lists attenuation parameters as Qkappa and Qmu,
   but the reference paper, :cite:t:`kennett:ak135f` says:
 
   :quote: We did not attempt to invert for Q K ,which is
@@ -252,7 +252,7 @@ Notes on Standard Models
     is very close to zero except in the core.
 
   and so it seems reasonable that this column is actually Qp (or equivalently
-  Q_alpha) and is derived from the Qs =Q_mu paramter via equation 2.6 where
+  Q_alpha) and is derived from the Qs =Q_mu parameter via equation 2.6 where
 
     1/Q_alpha = (4/3)(beta/alpha)^2 (1/Q_beta)
 
@@ -316,7 +316,7 @@ Notes on Standard Models
 
 * Syngine/Instaseis
 
-  The very useful syngine web service hosted by IRIS,
+  The very useful Syngine web service hosted by IRIS,
   https://service.iris.edu/irisws/syngine/1/
   allows calculation of synthetic seismograms for several 1D earth models. The
   ak135f model used by Syngine appears to be a variant of the ak135favg model
@@ -325,11 +325,11 @@ Notes on Standard Models
   crust with constant velocity. Note this is different from the ak135fcont
   model that includes a thicker, 35 km thick layer crust and a slightly different
   uppermost mantle structure, from 35 to 120 km. Travel times from TauP
-  for ak135f will thus be similar, but not exactly match the output of syngine.
+  for ak135f will thus be similar, but not exactly match the output of Syngine.
   We have included a ak135fsyngine model with these modifications for
   compatibility.
 
-  The model used within syngine, embedded as FORTRAN and using cubic splines,
+  The model used within Syngine, embedded as FORTRAN and using cubic splines,
   is here, lines 184-305:
   https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90
 

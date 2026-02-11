@@ -25,7 +25,7 @@ often easier to depend on the publication within the
 `Maven Central <https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview>`_
 repository
 as this facilitates download and updates and provides for automatic dependency
-resolution when using a build tool like maven or gradle.
+resolution when using a build tool like Maven or Gradle.
 
 Converting the initial model for a source depth is more costly than calculating
 arrivals at a distance, so it is usually more efficient to process all stations

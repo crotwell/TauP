@@ -50,8 +50,8 @@ with running this command:
 
 Adding this to your .bash_profile or .zshrc will enable it for future logins.
 
-Note, for bash 3.2, which the default verion on OSX, there is a bug that
-prevents this from working. The alterantive is to save it as a file like:
+Note, for bash 3.2, which the default version on OSX, there is a bug that
+prevents this from working. The alternative is to save it as a file like:
 
 :code:`taup generate-completion > taup_completion`
 
@@ -99,7 +99,7 @@ the zip file contains:
 +-----------------+----------------------------------------------------------------+
 | lib             | all the Java classes included in the package, along with       |
 |                 | saved models for prem, iasp91, and ak135 in the TauP jar file. |
-|                 | Also included are dependancy jars.                             |
+|                 | Also included are dependency jars.                             |
 +-----------------+----------------------------------------------------------------+
 | docs            | a directory with the TauP paper published in SRL and this      |
 |                 | manual,installation instructions are in the appendix. Also     |
@@ -154,7 +154,7 @@ so users should not expect the exact command from version 2 to work identically
 in version 3. However, in most cases the differences are minor.
 
 The difference most likely to break is the number of dashes for arguments. In
-version 2, TauP would accept one or two dashes for most argmunents, so
+version 2, TauP would accept one or two dashes for most arguments, so
 
 :code:`taup time -ph P -deg 35`
 

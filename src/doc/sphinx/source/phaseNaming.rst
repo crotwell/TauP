@@ -7,7 +7,7 @@ Phases
 A major feature of the TauP Toolkit is the implementation of a phase name parser
 that allows the user to define essentially arbitrary phases through the earth.
 Thus, the TauP Toolkit is extremely flexible in this respect since it is
-not limited to a pre-defined set of phases.
+not limited to a predefined set of phases.
 Phase names are not hard-coded into the software, rather the names are interpreted
 and the appropriate propagation path and resulting times are constructed at run time.
 Designing a phase-naming convention that is general enough to support arbitrary phases
@@ -69,7 +69,7 @@ the depth to an interface involved in an interaction.
     :code:`diff`     appended to phase like P, with an optional boundary, to represent a diffracted wave, e.g. along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
     :code:`diffdn`   appended to phase like P, with an optional boundary, to represent a diffracted wave that turns down after diffracting, e.g. PdiffdnKP diffracts along the core-mantle boundary, but then goes down to turn in the outer core
     :code:`kmps`     appended to a velocity to represent a horizontal phase velocity
-    :code:`_`        delimits a named discontinuty within a phase
+    :code:`_`        delimits a named discontinuity within a phase
     ==============   ================================================================
 
 3.  Exclusively upgoing and downgoing:
@@ -126,7 +126,7 @@ the depth to an interface involved in an interaction.
 
     In addition, models given in the *named discontinuities* format,
     the name for a discontinuity can be used instead of the depth within a phase.
-    The name is pre and postpended by an underscore, :code:`_`, and can only
+    The name is prepended and postpended by an underscore, :code:`_`, and can only
     contain letters, numbers and the dash symbol, :code:`-`.
     For example, if a model contained a discontinuity at 1000 km depth that
     was named `mid-mantle`, then the phase :code:`Pv1000p` and

@@ -18,7 +18,7 @@ between two latitude and longitude points can be based on the surface distance
 or the angle from the center of the earth. In a sphere, these are equivalent,
 but on an ellipsoid they are not. It is generally more accurate to base the
 traveltime calculations based on the geocentric angle instead of the surface
-arc distance. This discrepancy arrised from the difference in definition of
+arc distance. This discrepancy arose from the difference in definition of
 the
 `geodetic and geocentic latitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
 Geodetic is defined as the angle between the surface normal plane and the equatorial
@@ -29,7 +29,7 @@ to a station at (0/0) is 30 degrees,
 which is slightly larger than the geodetic distance between
 an earthquake at due north (30,0) of the same station, 29.86 degrees
 and slightly smaller than the geodetic distance from
-an earthquake due east (30,0), 30.03 degreres, using the WGS84 ellipsoid.
+an earthquake due east (30,0), 30.03 degrees, using the WGS84 ellipsoid.
 The `best` method of calculating distance from latitude and longitude will
 depend on the phases of interest and the area of interest.
 Because TauP is
@@ -39,7 +39,7 @@ the :code:`--geodetic` parameter, which implies that the given latitudes
 are geodetic instead of geocentric. Geodetic calculations use the
 geographiclib package of :cite:t:`Karney2013` `Karney` where the geocentric
 angle is determined from the surface distance (km) and the average radius
-of the geodesic, (2*equitorial+polar)/3.
+of the geodesic, (2*equatorial+polar)/3.
 And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`
 parameter or the  :code:`--planet` for well know flattening values of the
@@ -50,7 +50,7 @@ Oceans
 
 TauP is capable of handling models,
 like `ak135favg <_static/StdModels/ak135favg.nd>`_, that have an ocean layer.
-However, care should be taken with S waves as they cannot propigate in a fliud
+However, care should be taken with S waves as they cannot propagate in a fluid
 layer. So the phase SS doesn't exist in ak135favg, but the phase
 `S^3S` potentially does, if the source and receiver are below the ocean layer.
 Also, a phase like `PP` is generally thought of as a reflection off of the
@@ -58,7 +58,7 @@ free surface of the solid earth, but in this model that phase
 is a reflection from the surface of the ocean. Probably reflecting off of
 the sea floor would be more accurate, using `P^3P`.
 Also, the default station
-depth is the model surface, but we generall don't think of seismic stations
+depth is the model surface, but we general don't think of seismic stations
 floating on top of the ocean, so it may be more appropriate to locate the
 station at depth, on the bottom of the ocean layer. Or perhaps in this case,
 using `ak135fcont <_static/StdModels/ak135fcont.nd>`_
@@ -115,9 +115,9 @@ or in cases where the ray parameter at a boundary has
 one or more of the reflected and transmitted P or S waves do not propagate,
 like for SKKS where the ray parameter cannot exist as a P wave in the
 mantle at the KK reflection. In
-this case an effervesant wave results, with purely imaginary amplitude
+this case an evanescent  wave results, with purely imaginary amplitude
 coefficient. The remaining reflections and transmissions that do exist as
-propogating rays, must collectively have an imaginary component as well in
+propagating rays, must collectively have an imaginary component as well in
 order to satisfy the boundary conditions and energy conservation at the
 interface. Both of these cases will result in a phase shift of the arrival.
 

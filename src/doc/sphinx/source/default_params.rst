@@ -33,7 +33,7 @@ The currently used properties are:
 * :code:`taup.model.path`
   search path for models. There is no default,
   but the value
-  in the .taup file will be concatinated with any value of taup.model.path
+  in the .taup file will be concatenated with any value of taup.model.path
   from the system properties. For example, the environment variable TAUPPATH
   is put into the system property taup.model.path by the wrapper shell scripts.
 * :code:`taup.source.depth`
@@ -77,12 +77,14 @@ The currently used properties are:
   Note this is not the total distance, only the segment along the CMB. The default is 60 degrees.
 * :code:`taup.maxKmpsLaps`
   The maximum number of laps around the earth for
-  kpms style phases.
+  kmps style phases.
   Note this is the number of laps, not number of arrivals, so a value of 1
   would give 2 arrivals, one going the short path and one the long way around. This can be fractional, so 0.5 would exclude the long way around
   path. The default is 1.
 * :code:`taup.path.maxPathInc`
-  maximum distance in degrees between points of a path. This does a simple linear interpolant between nearby values in order to make plots look better. There is noo improvement in the accuracy of the path.
+  maximum distance in degrees between points of a path. This does a simple
+  linear interpolant between nearby values in order to make plots look better.
+  There is no improvement in the accuracy of the path.
 * :code:`taup.table.locsat.maxdiff`
   maximum distance in degrees for which Pdiff
   or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will
@@ -90,11 +92,11 @@ The currently used properties are:
   TauP Time. Instead, the next later arriving phase, if any, will be used
   instead. The default is 105 degrees.
 * :code:`taup.table.locsat.depth.precision`
-  precison for depth for locsat output, defaults to 2 decimal digits.
+  precision for depth for locsat output, defaults to 2 decimal digits.
 * :code:`taup.table.locsat.distance.precision`
-  precison for distance for locsat output, defaults to 2 decimal digits.
+  precision for distance for locsat output, defaults to 2 decimal digits.
 * :code:`taup.table.locsat.time.precision`
-  precison for time for locsat output, defaults to 4 decimal digits.
+  precision for time for locsat output, defaults to 4 decimal digits.
 * :code:`taup.create.minDeltaP`
   Minimum difference in slowness between
   successive slowness samples. This is used to decide when to stop adding new
@@ -141,7 +143,7 @@ spaces, commas or newlines. In section :ref:`phasenaming` the details of
 the phase naming convention are introduced.
 By and large, it is compatible with traditional
 seismological naming conventions, with a few additions and exceptions.
-Also, for compatiblity with *ttimes*, you may specify
+Also, for compatibility with *ttimes*, you may specify
 :code:`ttp`, :code:`ttp+`, :code:`tts`, :code:`tts+`,
 :code:`ttbasic` or :code:`ttall` to get a phase list corresponding
 to the *ttimes* options.

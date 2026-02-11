@@ -22,7 +22,7 @@ precomputed `.taup` file is more efficient.
 The :code:`--nd` format is preferred
 because the depths, and thus identities, of the major internal boundaries can
 be unambiguously determined, making phase name parsing easier.
-For compatiblity, we support the :code:`--tvel` format
+For compatibility, we support the :code:`--tvel` format
 currently used by the latest ttimes package, :cite:t:`kennett:ak135`.
 
 The output will be a file named after the name of the

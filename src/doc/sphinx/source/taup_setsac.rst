@@ -20,7 +20,7 @@ inserted into the corresponding :code:`user0`-:code:`user9` header.
 
 Note that triplicated phases are a problem as there is only one
 spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
-one can be put into the choosen header. TauP SetSac assumes that the first arrival
+one can be put into the chosen header. TauP SetSac assumes that the first arrival
 is the most important, and uses it. Additional header variables may be appended for
 the times of the multiples. For example, S-458 would put the first S arrival into
 header :code:`t4` and the second into :code:`t5` and the third into :code:`t8`.

@@ -38,7 +38,7 @@ release = verjson['version']
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['myst_parser', 'sphinxcontrib.bibtex']
+extensions = ['myst_parser', 'sphinxcontrib.bibtex', 'sphinxcontrib.spelling']
 
 templates_path = ['_templates']
 exclude_patterns = []

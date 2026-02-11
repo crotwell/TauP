@@ -8,7 +8,7 @@ TauP VelocityMerge overlays a partial velocity model over the given base
 velocity model. This makes is easy to overlay a new crust and
 upper mantle structure on an existing global model.
 
-One common source of errors with cusom models is users forgetting that TauP
+One common source of errors with custom models is users forgetting that TauP
 requires a full earth model because the radius of the earth is given by
 the deepest sample in the velocity model. A model file that shows depths
 only down to 30 kilometers may look like a model of the crust of the earth,

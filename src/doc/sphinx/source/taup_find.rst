@@ -8,7 +8,7 @@ TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
 given constraints. It does not yet include diffracted or head waves, but these
-can be added manually via the :code:`-p` argument. 
+can be added manually via the :code:`-p` argument.
 The output is either a simple list of possible phase names or
 travel times in the same format as :code:`taup time`.
 
@@ -62,7 +62,7 @@ This command:
 .. literalinclude:: examples/taup_find_--max_2_--deg_35_-h_100_--time_400_420_--exclude_210.cmd
   :language: text
 
-gives simimar phases to the previous, but also limits to arrivals between 400
+gives similar phases to the previous, but also limits to arrivals between 400
 and 420 seconds at 35 degrees away. If your seismogram contained what appears
 to be an arrival at roughly 410 seconds, this would give some possible phases
 that may explain it.

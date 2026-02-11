@@ -9,7 +9,7 @@ generates  the
 angular distances from the epicenter along the path at which the specified rays
 travel. The output can be JSON, an SVG image or
 in GMT :cite:t:`GMT` :code:`psxy` format, and is
-placed into the file `taup_path` with approproate extension.
+placed into the file `taup_path` with appropriate extension.
 If you specify the `--gmt` flag then this
 is a complete script with the appropriate `psxy` command prepended, so if you
 have GMT installed, you can just:

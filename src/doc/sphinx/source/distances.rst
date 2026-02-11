@@ -20,7 +20,7 @@ But if we want a regular sampling, we can give
 :code:`--degreerange 30,60` to get every 10 degrees from 30 to 60, or even
 :code:`--degreerange 30,60,5` to get every 5 degrees from 30 to 60.
 The :code:`--kilometerrange` argument provides the same functionality,
-except for kilometers along the surface, with defaul step of 100 and
+except for kilometers along the surface, with default step of 100 and
 default maximum of 1000.
 
 Some times it is helpful to generate only arrivals at an exact distance
