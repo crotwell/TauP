@@ -20,7 +20,7 @@ public abstract class RayCalculateable {
         if (evtLoc instanceof Event) {
             Event event = (Event)evtLoc;
 
-            if (event.getFocalMechanismList().size()>0) {
+            if (!event.getFocalMechanismList().isEmpty()) {
                 FocalMechanism fm = event.getFocalMechanismList().get(0);
                 if (fm.getNodalPlane().length>0) {
                     FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
