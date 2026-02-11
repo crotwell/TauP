@@ -1,5 +1,9 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
+import static java.lang.Math.PI;
+
 public class SeismicPhaseReflTransHolder {
 
     Complex complexReflTran;
@@ -31,12 +35,24 @@ public class SeismicPhaseReflTransHolder {
     }
 
     public double getPhase() {
-        return Complex.argument(complexReflTran) +internalCaustics*PI_TWO;
+        Complex intCaustic = Complex.pow(new Complex(0, 1), internalCaustics);
+        double phaseRadians = (Complex.argument(complexReflTran.times(intCaustic)));
+        while(phaseRadians > PI) {
+            phaseRadians -= TWOPI;
+        }
+        while (phaseRadians < -1*PI) {
+            phaseRadians+= TWOPI;
+        }
+        return phaseRadians;
+    }
+
+    public double getPhaseDeg() {
+        return getPhase()*RtoD;
     }
 
     public int getInternalCaustics() {
         return internalCaustics;
     }
 
-    static double PI_TWO = Math.PI/2;
+    static double PI_TWO = PI/2;
 }

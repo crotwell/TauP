@@ -1218,9 +1218,9 @@ public class Arrival {
         if (withAmp) {
             try {
                 double ampFactorPSV = getAmplitudeFactorPSV();
-                double phaseFactorPSV = getReflTransPSV().getPhase();
+                double phaseFactorPSV = getReflTransPSV().getPhaseDeg();
                 double ampFactorSH = getAmplitudeFactorSH();
-                double phaseFactorSH = getReflTransSH().getPhase();
+                double phaseFactorSH = getReflTransSH().getPhaseDeg();
                 line.addAll(List.of(" " + Outputs.formatAmpFactor(ampFactorPSV),
                         " "+Outputs.formatDistance(phaseFactorPSV),
                         " " + Outputs.formatAmpFactor(ampFactorSH),
