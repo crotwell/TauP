@@ -23,10 +23,16 @@ the
 `geodetic and geocentic latitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
 Geodetic is defined as the angle between the surface normal plane and the equatorial
 plane while geocentric is angle between the radius to the point and to the equator.
-For example, the geocentric angle between
+For example, the spherical, geocentric angle between
 an earthquake on the equator, at latitude, longitude (0,30),
-to a station at (0/0) is 30 degrees, which is slightly larger than that between
-an earthquake at due north (30,0) of the same station, 29.83 degrees. Because TauP is
+to a station at (0/0) is 30 degrees,
+which is slightly larger than the geodetic distance between
+an earthquake at due north (30,0) of the same station, 29.86 degrees
+and slightly smaller than the geodetic distance from
+an earthquake due east (30,0), 30.03 degreres, using the WGS84 ellipsoid.
+The `best` method of calculating distance from latitude and longitude will
+depend on the phases of interest and the area of interest.
+Because TauP is
 spherical, the default is to not take the elliptical nature of the earth
 into account when calculating these distances. But this can be changed with
 the :code:`--geodetic` parameter, which implies that the given latitudes
@@ -68,7 +74,7 @@ Amplitude
   allow feedback from the community, but testing of their correctness
   is ongoing.
 
-TauP can calculate an amplitude factor estimate for some simple phases, as long
+TauP can calculate an amplitude and complex phase factor estimate for some simple phases, as long
 as the phase path is simple turning or reflection, but not for head or diffracted
 phases. The amplitude factor, given for both the P-Sv and Sh systems is the
 product of multiple factors. For details, see :cite:t:`fmgs`
@@ -100,6 +106,20 @@ comparing relative amplitude between phases at a distance,
 or for the same phase at multiple distances, rather than expecting the
 observed amplitude on a real seismogram to match to any accuracy.
 
+While most seismic arrivals have either no phase shift, or a simple inversion
+equivalent to a :math:`\pi`, or 180 degree, phase shift, there are cases where the phase
+shift is different. In general these happen when the amplitude coefficient
+is not purely real, e.g. it has a non-zero imaginary component. This can occur due
+to "internal caustics", such as the :math:`\pi/2` shift for SS,
+or in cases where the ray parameter at a boundary has
+one or more of the reflected and transmitted P or S waves do not propagate,
+like for SKKS where the ray parameter cannot exist as a P wave in the
+mantle at the KK reflection. In
+this case an effervesant wave results, with purely imaginary amplitude
+coefficient. The remaining reflections and transmissions that do exist as
+propogating rays, must collectively have an imaginary component as well in
+order to satisfy the boundary conditions and energy conservation at the
+interface. Both of these cases will result in a phase shift of the arrival.
 
 Time Errors
 ------------

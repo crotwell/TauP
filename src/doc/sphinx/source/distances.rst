@@ -34,7 +34,8 @@ for kilometers with :code:`--exactkilometer`.
 If we know the event and station locations, we can use the :code:`--evt` and
 :code:`--sta` to give the latitude and longitudes and TauP can calculate the
 distance. The :code:`--geodetic` argument does the distance calculation using
-an ellipticity, the default is purely spherical. The internal time calculations
+an ellipticity using the geographiclib package of :cite:t:`Karney2013`,
+the default is purely spherical. The internal time calculations
 are always spherical. We can also read station locations from a StationXML
 file with :code:`--staxml` and event locations from a QuakeML file with
 :code:`--qml`. Even more fun is to give a station id,
@@ -54,13 +55,15 @@ and :code:`--rayparamrad` for ray parameters of seconds per degree, kilometer
 or radian. Or we can give a takeoff angle with :code:`--takeoff` and a range
 of takeoff angles with :code:`--takeoffrange` similar to the distance range
 arguments. And we can give an incident angle with :code:`--incident` and a range
-of incident angles with :code:`--incidentrange`.
+of incident angles with :code:`--incidentrange`. The :code:`--seconds` argument
+allows searching for arrivals at a known time.
 
-As long as we are using spherical calulcations, not :code:`--geodetic`, then
-if we give event location via :code:`--evt` and azimuth via :code:`--az`, then
+If we give event location via :code:`--evt` and azimuth via :code:`--az`, then
 the resulting station location will be calculated. The reverse, giving
 station location via :code:`--sta` and back azimuth via :code:`--baz` will
-calculate the event location.
+calculate the event location. Both cases with use purely spherical calculations
+unless the :code:`--geodetic` argument is given, in which case these are
+calculated via geographiclib, :cite:t:`Karney2013`.
 
 For debugging purposes, the :code:`--allindex` and :code:`--rayparamidx`
 will show the calculation at the model sampling, for all or one ray by
