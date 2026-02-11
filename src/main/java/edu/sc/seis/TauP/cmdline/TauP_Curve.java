@@ -325,7 +325,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 axisType==AxisType.unwrapphasedegpsv ||
                 axisType==AxisType.unwrapphasedegsh
         ) {
-            System.err.println("zero index "+phase.getName()+" int causetic: "+arrivalAtIndex(0, phase).getReflTransPSV().getInternalCaustics());
             boolean isAmpSH = axisType==AxisType.phasesh || axisType==AxisType.phasedegsh || axisType==AxisType.unwrapphasedegsh;
             double[] dist = phase.getDist();
             double[] phaseShift = new double[dist.length];
@@ -343,9 +342,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
             if (axisType==AxisType.unwrapphasedeg || axisType==AxisType.unwrapphasedegpsv || axisType==AxisType.unwrapphasedegsh) {
                 double prev = phaseShift[phaseShift.length-1];
-                System.err.println("PhaseShift at end: "+prev*RtoD);
-
-                System.err.println("PhaseShift at zero: "+phaseShift[0]*RtoD);
                 double pishift = 0;
                 phaseShift[phaseShift.length-1] += pishift;
                 if (phaseShift[phaseShift.length-1] > Math.PI) {
@@ -358,10 +354,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 for (int i = phaseShift.length-2; i >= 0; i--) {
                     if (prev-phaseShift[i] > Math.PI) {
                         pishift += TWOPI;
-                        System.err.println("Unwrap "+i+" "+prev+" "+phaseShift[i]);
                     } else if (phaseShift[i] - prev > Math.PI) {
                         pishift -= TWOPI;
-                        System.err.println("Unwrap "+i+" "+prev+" "+phaseShift[i]);
                     }
                     prev = phaseShift[i];
                     phaseShift[i] += pishift;
