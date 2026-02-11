@@ -252,12 +252,14 @@ public class Arrival {
         for (SeismicPhaseSegment seg : simpleContigSeismicPhase.getPhaseSegments()) {
             if (seg.prevEndAction == TURN) {
                 hasTurn = true;
+                break;
             }
         }
         if (hasTurn && getDRayParamDDelta()>0) {
             // Choy and Richards, BSSA 1975
             // is possible for multiple overlapping retrograde branchs to cause more than one internal caustic?
-            internalCaustic++;
+            //but I think this is counted by the above ray calculation
+            //internalCaustic++;
         }
         return internalCaustic;
     }
