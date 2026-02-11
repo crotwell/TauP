@@ -55,7 +55,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
         double finalPathDist = lastSeg.getPathEnd().getDistRadian()- firstPoint.getDistRadian();
         if (finalPathDist != 0.0 && !inPath.isEmpty()) {
             double shifty = calcShiftyForDist(firstPoint, lastSeg.getPathEnd(), arrival);
-            if (Math.abs(1.0-shifty) > .02 && Math.abs(1+shifty) > 1e-5 ) {
+            if (Math.abs(1.0-Math.abs(shifty)) > 0.02  ) {
                 // don't flag shifty that just reflects, ie -1
                 Alert.warning("Path error is greater than 2%, correction may cause errors. "+shifty);
                 Alert.warning("  "+arrival);
