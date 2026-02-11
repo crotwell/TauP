@@ -488,6 +488,11 @@ distributions {
   }
 }
 
+tasks.register<Exec>("sphinxSpelling") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "spelling")
+}
+
 tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
@@ -498,6 +503,7 @@ tasks.register<Exec>("sphinxMakeHtml") {
   dependsOn("copyCmdLineHelpFiles")
   dependsOn("copyStdModelsToSphinx")
   dependsOn("copyDocExampleFiles")
+  dependsOn("sphinxSpelling")
 }
 tasks.register<Sync>("copySphinxToDocs") {
   from(tasks.named("sphinxMakeHtml"))
