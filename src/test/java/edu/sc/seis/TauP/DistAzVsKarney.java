@@ -36,7 +36,9 @@ public class DistAzVsKarney {
         double distKm = azGLine.Distance()/1000;
         double valDeg = distKm/DistAz.kmPerDeg(avgRaduis);
         DistanceKmRay drKm = DistanceRay.ofKilometers(distKm);
+        drKm.setRadiusOfEarth(avgRaduis);
         DistanceAngleRay drDeg = DistanceRay.ofDegrees(valDeg);
+        drDeg.setRadiusOfEarth(avgRaduis);
         assertEquals(valDeg, drDeg.getDegrees(), 0.00001);
         assertEquals(distKm, drKm.getKilometers(), 0.00001);
         assertEquals(distKm, drDeg.getKilometers(), 0.00001);
