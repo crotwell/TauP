@@ -5,7 +5,6 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.LatLonLocatable;
-import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
@@ -77,7 +76,7 @@ public class TauP_DistAz extends TauP_Tool {
         List<Daz> dazList = new ArrayList<>();
         double radius;
         if (geodeticArgs.isGeodetic()) {
-            radius = RayCalculateable.averageRadiusKm(geodeticArgs.getGeodesic());
+            radius = DistAzKarney.averageRadiusKm(geodeticArgs.getGeodesic());
         } else {
             radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
         }
@@ -180,7 +179,7 @@ public class TauP_DistAz extends TauP_Tool {
     public Double kmToDeg() {
         double r;
         if (geodeticArgs.isGeodetic()) {
-            r = RayCalculateable.averageRadiusKm(geodeticArgs.getGeodesic());
+            r = DistAzKarney.averageRadiusKm(geodeticArgs.getGeodesic());
         } else {
             r = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
         }

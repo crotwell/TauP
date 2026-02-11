@@ -100,7 +100,7 @@ public abstract class RayCalculateable {
 
     public void setGeodesic(Geodesic geodesic) {
         this.geodesic = geodesic;
-        this.radiusOfEarth = RayCalculateable.averageRadiusKm(geodesic);
+        this.radiusOfEarth = DistAzKarney.averageRadiusKm(geodesic);
     }
 
     public boolean isGeodetic() { return geodetic;}
@@ -118,11 +118,6 @@ public abstract class RayCalculateable {
     }
     public void setRadiusOfEarth(double modelRadius) {
         this.radiusOfEarth = modelRadius;
-    }
-
-    public static double averageRadiusKm(Geodesic geodesic) {
-        // use mean radius, r = (2*er+pr)/3, mean of two equitorial radii and polar radius
-        return geodesic.EquatorialRadius()* (3- geodesic.Flattening()) / 3 / 1000; // m to km
     }
 
     /**

@@ -2,7 +2,6 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.LatLonSimple;
-import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.GeoMath;
 import net.sf.geographiclib.Geodesic;
 import net.sf.geographiclib.GeodesicData;
@@ -48,7 +47,7 @@ public class DistAzVsKarney {
     @Test
     public void latlonableGeodetic() {
         Geodesic geod = Geodesic.WGS84;
-        double avgRaduis = RayCalculateable.averageRadiusKm(geod);
+        double avgRaduis = DistAzKarney.averageRadiusKm(geod);
         double eLat = 52.19;
         double eLon = -33.27;
         LatLonLocatable evt = new LatLonSimple(eLat, eLon);

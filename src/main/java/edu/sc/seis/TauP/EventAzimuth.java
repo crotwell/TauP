@@ -27,11 +27,7 @@ public class EventAzimuth extends LatLonable {
         double[] out =  new double[2];
         Location evtLoc = evtLatLon.asLocation();
         if (isGeodetic()) {
-            double km = calcDist*DtoR*DistanceRay.averageRadiusKm(geodesic);
-            GeodesicLine gLine = new GeodesicLine(geodesic, evtLoc.getLatitude(), evtLoc.getLongitude(), azimuth);
-
-            //GeodesicLine gLine = geodesic.DirectLine(evtLoc.getLatitude(), evtLoc.getLongitude(), azimuth, km*1000);
-            GeodesicData gdata = gLine.Position(km*1000);
+            GeodesicData gdata = DistAzKarney.calcLocationDeg(evtLoc, azimuth, calcDist, geodesic);
             out[0] = gdata.lat2;
             out[1] = gdata.lon2;
         } else {

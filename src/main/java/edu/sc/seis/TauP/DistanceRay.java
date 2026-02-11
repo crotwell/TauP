@@ -4,7 +4,6 @@ import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.Geodesic;
-import net.sf.geographiclib.GeodesicData;
 import net.sf.geographiclib.GeodesicLine;
 
 import java.util.ArrayList;
@@ -92,7 +91,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                                                 sLoc.getLatitude(), sLoc.getLongitude());
         GeodesicLine bazGLine = geod.InverseLine(sLoc.getLatitude(), sLoc.getLongitude(),
                                                  eLoc.getLatitude(), eLoc.getLongitude());
-        double avgRadius = averageRadiusKm(geod);
+        double avgRadius = DistAzKarney.averageRadiusKm(geod);
         double distKm = azGLine.Distance()/1000;
         DistanceAngleRay val = ofDegrees(distKm/DistAz.kmPerDeg(avgRadius));
         // maybe should just use km ray? But causes issue with TauP_DistAz

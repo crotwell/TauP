@@ -25,10 +25,7 @@ public class StationBackAzimuth extends LatLonable {
         Location staLoc = staLatLon.asLocation();
         if (isGeodetic()) {
             double backDistance = totalDist - calcDist;
-
-            double km = backDistance*DtoR*DistanceRay.averageRadiusKm(geodesic);
-            GeodesicLine gLine = new GeodesicLine(geodesic, staLoc.getLatitude(), staLoc.getLongitude(), backAzimuth);
-            GeodesicData gdata = gLine.Position(km*1000);
+            GeodesicData gdata = DistAzKarney.calcLocationDeg(staLoc, backAzimuth, backDistance, geodesic);
             out[0] = gdata.lat2;
             out[1] = gdata.lon2;
         } else {

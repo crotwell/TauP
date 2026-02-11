@@ -1,9 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.seisFile.Location;
-import net.sf.geographiclib.GeodesicData;
-import net.sf.geographiclib.GeodesicLine;
-
 public class DistanceKmRay extends DistanceRay {
 
     public DistanceKmRay(double km) {
@@ -14,7 +10,7 @@ public class DistanceKmRay extends DistanceRay {
     public double getDegrees() {
         double radius;
         if (isGeodetic()) {
-            radius = RayCalculateable.averageRadiusKm(getGeodesic());
+            radius = DistAzKarney.averageRadiusKm(getGeodesic());
         } else {
             radius = getRadiusOfEarth();
         }
@@ -25,7 +21,7 @@ public class DistanceKmRay extends DistanceRay {
     public double getRadians() {
         double radius;
         if (isGeodetic()) {
-            radius = RayCalculateable.averageRadiusKm(getGeodesic());
+            radius = DistAzKarney.averageRadiusKm(getGeodesic());
         } else {
             radius = getRadiusOfEarth();
         }
