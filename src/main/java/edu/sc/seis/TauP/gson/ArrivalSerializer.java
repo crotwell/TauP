@@ -45,7 +45,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         a.addProperty(JSONLabels.DISTDEG_LABEL, (float)arr.getModuloDistDeg());
         a.addProperty(JSONLabels.PHASE, arr.getName());
         a.addProperty(JSONLabels.TIME, (float)arr.getTime());
-        a.addProperty(JSONLabels.RAYPARAM, (float)(Math.PI / 180.0 * arr.getRayParam()));
+        a.addProperty(JSONLabels.RAYPARAM, (float)(arr.getRayParamDeg()));
         a.addProperty(JSONLabels.TAKEOFF, (float) arr.getTakeoffAngleDegree());
         a.addProperty(JSONLabels.INCIDENT, (float) arr.getIncidentAngleDegree());
         if (arr.getRayCalculateable().hasAzimuth()) {

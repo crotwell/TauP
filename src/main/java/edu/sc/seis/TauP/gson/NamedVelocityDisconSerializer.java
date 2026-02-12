@@ -26,8 +26,8 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
             if (abDiscon.above != null) {
                 JsonObject above = new JsonObject();
                 above.addProperty(JSONLabels.VP, abDiscon.above.getBotPVelocity());
-                above.addProperty(JSONLabels.VS, abDiscon.above.getBotPVelocity());
-                above.addProperty(JSONLabels.DENSITY, abDiscon.above.getBotPVelocity());
+                above.addProperty(JSONLabels.VS, abDiscon.above.getBotSVelocity());
+                above.addProperty(JSONLabels.DENSITY, abDiscon.above.getBotDensity());
                 if (!abDiscon.above.QIsDefault()) {
                     above.addProperty(JSONLabels.QP, abDiscon.above.getBotQp());
                     above.addProperty(JSONLabels.QS, abDiscon.above.getBotQs());
@@ -42,12 +42,12 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
             }
             if (abDiscon.below != null) {
                 JsonObject below = new JsonObject();
-                below.addProperty(JSONLabels.VP, abDiscon.below.getBotPVelocity());
-                below.addProperty(JSONLabels.VS, abDiscon.below.getBotPVelocity());
-                below.addProperty(JSONLabels.DENSITY, abDiscon.below.getBotPVelocity());
+                below.addProperty(JSONLabels.VP, abDiscon.below.getTopPVelocity());
+                below.addProperty(JSONLabels.VS, abDiscon.below.getTopSVelocity());
+                below.addProperty(JSONLabels.DENSITY, abDiscon.below.getTopDensity());
                 if (!abDiscon.below.QIsDefault()) {
-                    below.addProperty(JSONLabels.QP, (float)abDiscon.below.getBotQp());
-                    below.addProperty(JSONLabels.QS, (float)abDiscon.below.getBotQs());
+                    below.addProperty(JSONLabels.QP, (float)abDiscon.below.getTopQp());
+                    below.addProperty(JSONLabels.QS, (float)abDiscon.below.getTopQs());
                 }
                 below.addProperty(JSONLabels.SLOWP, abDiscon.getBelowSlownessP());
                 if (Double.isFinite(abDiscon.getBelowSlownessS())) {
