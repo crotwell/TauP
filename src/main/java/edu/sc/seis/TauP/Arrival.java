@@ -221,6 +221,23 @@ public class Arrival {
         return nearArrival;
     }
 
+
+    /**
+     * Count number of turns in phase. Depending on the ray parameter, some of the turns could be
+     * critically reflected instead of true turning rays.
+     *
+     * @return number of internal caustics
+     */
+    public int getTurnCount() {
+        int turns = 0;
+        for (ArrivalPathSegment seg : getPathSegments()) {
+            if (seg.getPhaseSegment().endAction == TURN) {
+                turns++;
+            }
+        }
+        return turns;
+    }
+
     /**
      * Count internal caustics, places where neighboring rays cross and reverse sense of relative orientation,
      * like a bowtie.

@@ -1133,6 +1133,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         }
         reflTranValue = reflTranValue.times( prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH)); // last seg can't change phase at end
         reflTranValue.internalCaustics = arrival.getInternalCausticCount();
+        reflTranValue.turns = arrival.getTurnCount();
         return reflTranValue;
     }
 
@@ -1143,22 +1144,14 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         boolean isAllS = isAllSWave();
         if ( ! isAllS) { return SeismicPhaseReflTransHolder.zero(); }
         boolean calcSH = true;
-        boolean hasTurn = false;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
             reflTranValue = reflTranValue.times( prevSeg.calcReflTran(arrival, seg.isPWave, calcSH));
-            if (seg.prevEndAction == TURN) {
-                hasTurn = true;
-            }
             prevSeg = seg;
         }
         reflTranValue = reflTranValue.times(prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH)); // last seg can't change phase at end
         reflTranValue.internalCaustics = arrival.getInternalCausticCount();
-        if (hasTurn && arrival.getDRayParamDDelta()>0) {
-            // Choy and Richards, BSSA 1975
-            // is possible for multiple overlapping retrograde branchs to cause more than one internal caustic?
-            reflTranValue.internalCaustics++;
-        }
+        reflTranValue.turns = arrival.getTurnCount();
         return reflTranValue;
     }
 
