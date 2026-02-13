@@ -27,17 +27,21 @@ public class PythonBindings {
         autoCodeGenComment(writer);
 
         List<String> timeResultTools = List.of("time", "pierce", "path");
-        if (timeResultTools.contains(toolname)) {
-            writer.println("from .dataclass import TimeResult");
-            writer.println();
+
+        String dataclassType = null;
+        if (timeResultTools.contains(toolname) ) {
+            dataclassType = "TimeResult";
+        } else if (toolname.equals("discon")) {
+            dataclassType = "DisconResult";
         } else if (toolname.equals("distaz")) {
-            writer.println("from .dataclass import DistazResult");
-            writer.println();
+            dataclassType = "DistazResult";
         } else if (toolname.equals("curve")) {
-            writer.println("from .dataclass import CurveResult");
-            writer.println();
+            dataclassType = "CurveResult";
         } else if (toolname.equals("wavefront")) {
-            writer.println("from .dataclass import WavefrontResult");
+            dataclassType = "WavefrontResult";
+        }
+        if (dataclassType != null) {
+            writer.println("from .dataclass import "+dataclassType);
             writer.println();
         }
 
@@ -92,26 +96,13 @@ public class PythonBindings {
             paramsWriter.println("      params[\""+name+"\"] = self._"+name);
 
         }
-
-        if (timeResultTools.contains(toolname)
-                || toolname.equals("distaz")
-                ||  toolname.equals("curve")
-                || toolname.equals("wavefront")) {
+        if (dataclassType != null) {
             writer.println();
             writer.println("  def calc(self, taupServer):");
             writer.println("    \"\"\"");
             writer.println("    Sends all params to the server, returns the result parsed from JSON into dataclasses.");
             writer.println("    \"\"\"");
-            writer.println("    params = self.create_params()");
-            if (timeResultTools.contains(toolname) ) {
-                writer.println("    return TimeResult.from_json(self.calcJson(taupServer))");
-            } else if (toolname.equals("distaz")) {
-                writer.println("    return DistazResult.from_json(self.calcJson(taupServer))");
-            } else if (toolname.equals("curve")) {
-                writer.println("    return CurveResult.from_json(self.calcJson(taupServer))");
-            } else if (toolname.equals("wavefront")) {
-                writer.println("    return WavefrontResult.from_json(self.calcJson(taupServer))");
-            }
+            writer.println("    return "+dataclassType+".from_json(self.calcJson(taupServer))");
         }
 
         writer.println();
@@ -408,7 +399,7 @@ public class PythonBindings {
 
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
-            out.println("__version__ = \"0.2.0\"");
+            out.println("__version__ = \"0.2.0-alpha4\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
@@ -419,7 +410,8 @@ public class PythonBindings {
             }
             out.println("from .dataclass import (");
             out.println("    DataClassJsonEncoder,");
-            out.println("    Amplitude, Arrival, Curve, CurveSegment, Daz, Fault, Isochron,");
+            out.println("    Amplitude, Arrival, Curve, CurveSegment, Daz,");
+            out.println("    DisconLayer, Discontinuity, ModelDiscon, DisconResult, Fault, Isochron,");
             out.println("    PathSegment, RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
             out.println("    Wavefront, WavefrontResult");
             out.println(")");
@@ -438,6 +430,10 @@ public class PythonBindings {
             out.println("    \"Curve\",");
             out.println("    \"CurveSegment\",");
             out.println("    \"Daz\",");
+            out.println("    \"DisconLayer\",");
+            out.println("    \"Discontinuity\",");
+            out.println("    \"ModelDiscon\",");
+            out.println("    \"DisconResult\",");
             out.println("    \"Fault\",");
             out.println("    \"Isochron\",");
             out.println("    \"PathSegment\",");
