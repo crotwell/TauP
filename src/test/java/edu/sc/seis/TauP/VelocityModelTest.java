@@ -110,17 +110,53 @@ public class VelocityModelTest {
     @Test
     public void testElevation() throws IOException, VelocityModelException, TauModelException {
         String crustModelName = "myelevation.nd";
-        float elevation = 3; // 3km
+        float elevation = 3000; // 3km
+        float elevationKm = elevation/1000;
         TauModel tMod = TauModelLoader.load("ak135");
         SlownessModel sMod = tMod.getSlownessModel();
         VelocityModel baseVMod = sMod.getVelocityModel();
         VelocityModel outVMod = baseVMod.elevationLayer(elevation, crustModelName);
 
         assertEquals(baseVMod.getNumLayers() + 1, outVMod.getNumLayers());
-        assertEquals(baseVMod.getMohoDepth() + elevation, outVMod.getMohoDepth(), 0.00000001, crustModelName + " moho ");
-        assertEquals(baseVMod.getCmbDepth() + elevation, outVMod.getCmbDepth(), 0.00000001, crustModelName + " cmb ");
-        assertEquals(baseVMod.getIocbDepth() + elevation, outVMod.getIocbDepth(), 0.00000001, crustModelName + " iocb ");
-        assertEquals(baseVMod.getRadiusOfEarth() + elevation, outVMod.getRadiusOfEarth(), 0.00000001, crustModelName + " radius ");
+        assertEquals(baseVMod.getMohoDepth() + elevationKm, outVMod.getMohoDepth(), 0.00000001, crustModelName + " moho ");
+        assertEquals(baseVMod.getCmbDepth() + elevationKm, outVMod.getCmbDepth(), 0.00000001, crustModelName + " cmb ");
+        assertEquals(baseVMod.getIocbDepth() + elevationKm, outVMod.getIocbDepth(), 0.00000001, crustModelName + " iocb ");
+        assertEquals(baseVMod.getRadiusOfEarth() + elevationKm, outVMod.getRadiusOfEarth(), 0.00000001, crustModelName + " radius ");
+    }
+
+    @Test
+    public void testChopOceanElevation() throws IOException, VelocityModelException, TauModelException {
+        String crustModelName = "myelevation.nd";
+        float elevation = -3000; // negative 1km, chop off the ocean
+        float elevationKm = elevation/1000;
+        TauModel tMod = TauModelLoader.load("ak135favg");
+        SlownessModel sMod = tMod.getSlownessModel();
+        VelocityModel baseVMod = sMod.getVelocityModel();
+        VelocityModel outVMod = baseVMod.elevationLayer(elevation, crustModelName);
+
+        assertEquals(baseVMod.getNumLayers()-1 , outVMod.getNumLayers()); // same num layers
+        assertEquals(baseVMod.getMohoDepth() + elevationKm, outVMod.getMohoDepth(), 0.00000001, crustModelName + " moho ");
+        assertEquals(baseVMod.getCmbDepth() + elevationKm, outVMod.getCmbDepth(), 0.00000001, crustModelName + " cmb ");
+        assertEquals(baseVMod.getIocbDepth() + elevationKm, outVMod.getIocbDepth(), 0.00000001, crustModelName + " iocb ");
+        assertEquals(baseVMod.getRadiusOfEarth() + elevationKm, outVMod.getRadiusOfEarth(), 0.00000001, crustModelName + " radius ");
+    }
+
+    @Test
+    public void testNegativeElevation() throws IOException, VelocityModelException, TauModelException {
+        String crustModelName = "myelevation.nd";
+        float elevation = -20000; // negative 20km, chop off top crust layer and part of lower crust of PREM
+        float elevationKm = elevation/1000;
+        TauModel tMod = TauModelLoader.load("prem");
+        SlownessModel sMod = tMod.getSlownessModel();
+        VelocityModel baseVMod = sMod.getVelocityModel();
+        VelocityModel outVMod = baseVMod.elevationLayer(elevation, crustModelName);
+
+        assertEquals(baseVMod.getNumLayers()-1 , outVMod.getNumLayers()); // same num layers
+        assertEquals(4.4, outVMod.getMohoDepth(), 0.00000001, crustModelName + " moho ");
+        assertEquals(baseVMod.getMohoDepth() + elevationKm, outVMod.getMohoDepth(), 0.00000001, crustModelName + " moho ");
+        assertEquals(baseVMod.getCmbDepth() + elevationKm, outVMod.getCmbDepth(), 0.00000001, crustModelName + " cmb ");
+        assertEquals(baseVMod.getIocbDepth() + elevationKm, outVMod.getIocbDepth(), 0.00000001, crustModelName + " iocb ");
+        assertEquals(baseVMod.getRadiusOfEarth() + elevationKm, outVMod.getRadiusOfEarth(), 0.00000001, crustModelName + " radius ");
     }
 
     @Test

@@ -651,39 +651,69 @@ public class VelocityModel implements Cloneable, Serializable {
 
     /*
      * expands the velocity model with a new layer at the top to represent a station at
-     * elevation. This changes the radius of the earth and depths to all existing layers.
+     * elevation in meters. This changes the radius of the earth and depths to all existing layers.
+     * If elevation is negative, the topmost layers are reduced in thickness to accommodate.
      */
-    public VelocityModel elevationLayer(float elevation,
+    public VelocityModel elevationLayer(float elevationMeters,
                                        String name)
             throws VelocityModelException {
+        float elevationKm = elevationMeters/1000;
             List<VelocityLayer> outLayers = new ArrayList<>();
-
-            int numAdded = 0;
-            VelocityLayer elevationLayer = getVelocityLayer(0).cloneRenumber(numAdded);
-            elevationLayer.setTopDepth(0);
-            elevationLayer.setBotDepth(elevation);
-            outLayers.add(elevationLayer);
-            for(int i = 0; i<getNumLayers(); i++) {
-                numAdded++;
-                VelocityLayer vLayer = getVelocityLayer(i).cloneRenumber(numAdded);
-                vLayer.setTopDepth(vLayer.getTopDepth()+elevation);
-                vLayer.setBotDepth(vLayer.getBotDepth()+elevation);
-                outLayers.add(vLayer);
+            if (elevationKm>0) {
+                int numAdded = 1;
+                VelocityLayer elevationLayer = getVelocityLayer(0).cloneRenumber(0);
+                elevationLayer.setTopDepth(0);
+                elevationLayer.setBotDepth(elevationKm);
+                outLayers.add(elevationLayer);
+                for (int i = 0; i < getNumLayers(); i++) {
+                    VelocityLayer vLayer = getVelocityLayer(i).cloneRenumber(i+numAdded);
+                    vLayer.setTopDepth(vLayer.getTopDepth() + elevationKm);
+                    vLayer.setBotDepth(vLayer.getBotDepth() + elevationKm);
+                    outLayers.add(vLayer);
+                }
+            } else {
+                // elevationKm < 0, so cut layers
+                int numRemoved = 0;
+                float elevationLeft = -1*elevationKm;
+                int currLayer;
+                for (currLayer = 0; currLayer < getNumLayers(); currLayer++) {
+                    VelocityLayer vLayer = getVelocityLayer(currLayer);
+                    if (elevationLeft == 0) {
+                        break;
+                    } else if (vLayer.getThickness() > elevationLeft) {
+                        // partial layer
+                        VelocityLayer elevationLayer = getVelocityLayer(currLayer).cloneRenumber(0);
+                        elevationLayer.setTopDepth(0);
+                        elevationLayer.setBotDepth(vLayer.getThickness()-elevationLeft);
+                        outLayers.add(elevationLayer);
+                        elevationLeft=0;
+                        numRemoved++;
+                        break;
+                    } else {
+                        numRemoved++;
+                        elevationLeft -= vLayer.getThickness();
+                    }
+                }
+                for (int i = numRemoved; i < getNumLayers(); i++) {
+                    VelocityLayer vLayer = getVelocityLayer(i).cloneRenumber(-1*numRemoved);
+                    vLayer.setTopDepth(vLayer.getTopDepth() + elevationKm);
+                    vLayer.setBotDepth(vLayer.getBotDepth() + elevationKm);
+                    outLayers.add(vLayer);
+                }
             }
-
             VelocityModel outVMod = new VelocityModel(name,
-                    getRadiusOfEarth()+elevation,
-                    getMohoDepth()+elevation,
-                    getCmbDepth()+elevation,
-                    getIocbDepth()+elevation,
+                    getRadiusOfEarth()+elevationKm,
+                    (-1*elevationKm < getMohoDepth()) ? getMohoDepth()+elevationKm : 0,
+                    (-1*elevationKm < getCmbDepth()) ? getCmbDepth()+elevationKm : 0,
+                    (-1*elevationKm < getIocbDepth()) ? getIocbDepth()+elevationKm : 0,
                     getMinRadius(),
-                    getMaxRadius()+elevation,
+                    getMaxRadius()+elevationKm,
                     getSpherical(),
                     outLayers);
             outVMod.fixDisconDepths();
             boolean isValid = outVMod.validate();
             if ( ! isValid) {
-                throw new VelocityModelException("replace layers but now is not valid.");
+                throw new VelocityModelException("replaced layers for elevation "+elevationMeters+"m, but now is not valid.");
             }
             return outVMod;
     }

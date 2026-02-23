@@ -61,8 +61,8 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 Alert.debug("no merge model requested.");
             }
         }
-        if (elevation != 0) {
-            outVMod = outVMod.elevationLayer(elevation, overlayModelArgs.getModelFilename());
+        if (elevationMeters != 0) {
+            outVMod = outVMod.elevationLayer(elevationMeters, overlayModelArgs.getModelFilename());
         }
 
         PrintWriter dos;
@@ -90,8 +90,8 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
-        if (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().isEmpty()) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "merge model cannot be empty, use one of --ndmerge or --tvelmerge");
+        if (elevationMeters ==0.0f && (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().isEmpty())) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "elev and merge model cannot be empty, use one of --elev, --ndmerge or --tvelmerge");
         }
     }
 
@@ -128,7 +128,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
     String outfile = "stdout";
 
-    @CommandLine.ArgGroup(multiplicity = "1", heading = "Merge Velocity Model %n")
+    @CommandLine.ArgGroup(multiplicity = "0..1", heading = "Merge Velocity Model %n")
     OverlayVelocityModelArgs overlayModelArgs = new OverlayVelocityModelArgs();
 
     @CommandLine.Option(names = {"--smoothtop"}, description = "smooth merge at top")
@@ -138,7 +138,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     boolean smoothBottom = false;
 
     @CommandLine.Option(names = "--elev", description = "increase topmost layer by elevation (meters)")
-    float elevation = 0;
+    float elevationMeters = 0;
 
 
     VelModelOutputTypeArgs outputTypeArgs;
