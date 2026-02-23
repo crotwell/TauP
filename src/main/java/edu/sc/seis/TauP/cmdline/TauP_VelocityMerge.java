@@ -137,7 +137,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     @CommandLine.Option(names = {"--smoothbot"}, description = "smooth merge at bottom")
     boolean smoothBottom = false;
 
-    @CommandLine.Option(names = "--elev", description = "increase topmost layer by elevation (meters)")
+    @CommandLine.Option(names = "--elev", description = "modify topmost layers for an elevation (meters), may be negative")
     float elevationMeters = 0;
 
 
