@@ -1,7 +1,7 @@
 import { setupAnimation, startAnimation } from './wavefront_animation.js';
 import {loadSyngine, syngineModelName} from './syngine.js';
 
-import * as sp from './seisplotjs_3.1.5-SNAPSHOT_standalone.mjs';
+import * as sp from './seisplotjs_3.2.0_standalone.mjs';
 
 export let localmode = false;
 
