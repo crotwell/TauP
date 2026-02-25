@@ -245,6 +245,9 @@ public class Arrival {
      * @return number of internal caustics
      */
     public int getInternalCausticCount() {
+        // I think this may overcount phase change when due to critical reflection off of an internal layer
+        // as part of a triplication like moho, 410 and 660 as the complex refl-trans coefficients will also
+        // add that shift
         int internalCaustic = 0;
         Arrival near = nearbyArrival(0.01);
         List<ArrivalPathSegment> arrSegList = getPathSegments();
