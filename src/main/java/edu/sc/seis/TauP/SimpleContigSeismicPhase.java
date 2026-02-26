@@ -606,10 +606,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             return right;
         }
 
-        double arrivalRayParam = (searchDist - right.getDist())
-                * (left.getRayParam() - right.getRayParam())
-                / (left.getDist() - right.getDist())
-                + right.getRayParam();
+        double arrivalRayParam = LinearInterpolation.linearInterp(
+                left.getDist(), left.getRayParam(),
+                right.getDist(), right.getRayParam(),
+                searchDist);
 
         // use closest edge to interpolate time
         double arrivalTime;
