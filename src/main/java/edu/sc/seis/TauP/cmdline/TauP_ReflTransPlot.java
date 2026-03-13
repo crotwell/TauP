@@ -359,6 +359,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RppReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RppReal,
+                        reflTranCoef::getRppReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.RppImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RppImag,
+                        reflTranCoef::getRppImag
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tpp)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
@@ -380,6 +394,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TppPhase,
                         reflTranCoef::getTppPhase
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TppReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TppReal,
+                        reflTranCoef::getTppReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TppImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TppImag,
+                        reflTranCoef::getTppImag
                 );
                 out.add(xyp);
             }
@@ -408,6 +436,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 out.add(xyp);
             }
 
+            if (yAxisType.contains(ReflTransAxisType.RpsReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpsReal,
+                        reflTranCoef::getRpsReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.RpsImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpsImag,
+                        reflTranCoef::getRpsImag
+                );
+                out.add(xyp);
+            }
             if (yAxisType.contains(ReflTransAxisType.Tps)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.Tps,
@@ -428,6 +470,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TpsPhase,
                         reflTranCoef::getTpsPhase
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TpsReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpsReal,
+                        reflTranCoef::getTpsReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TpsImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpsImag,
+                        reflTranCoef::getTpsImag
                 );
                 out.add(xyp);
             }
@@ -522,6 +578,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RspReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RspReal,
+                        reflTranCoef::getRspReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.RspImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RspImag,
+                        reflTranCoef::getRspImag
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tsp)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -542,6 +612,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TspPhase,
                         reflTranCoef::getTspPhase
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TspReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TspReal,
+                        reflTranCoef::getTspReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TspImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TspImag,
+                        reflTranCoef::getTspImag
                 );
                 out.add(xyp);
             }
@@ -567,6 +651,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RssReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RssReal,
+                        reflTranCoef::getRssReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.RssImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RssImag,
+                        reflTranCoef::getRssImag
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tss)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -586,6 +684,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TssPhase,
                         reflTranCoef::getTssPhase
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TssReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TssReal,
+                        reflTranCoef::getTssReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TssImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TssImag,
+                        reflTranCoef::getTssImag
                 );
                 out.add(xyp);
             }
@@ -672,6 +784,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
+            if (yAxisType.contains(ReflTransAxisType.RshshReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RshshReal,
+                        reflTranCoef::getRshshReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.RshshImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RshshImag,
+                        reflTranCoef::getRshshImag
+                );
+                out.add(xyp);
+            }
 
             if (yAxisType.contains(ReflTransAxisType.Tshsh)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
@@ -691,6 +817,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.TshshPhase,
                         reflTranCoef::getTshshPhase
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TshshReal)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TshshReal,
+                        reflTranCoef::getTshshReal
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.TshshImag)) {
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TshshImag,
+                        reflTranCoef::getTshshImag
                 );
                 out.add(xyp);
             }

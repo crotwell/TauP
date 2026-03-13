@@ -19,6 +19,13 @@ public enum ReflTransAxisType {
     RppPhase, TppPhase, RpsPhase, TpsPhase,
     RspPhase, TspPhase, RssPhase, TssPhase,
     RshshPhase, TshshPhase,
+
+    RppReal, TppReal, RpsReal, TpsReal,
+    RspReal, TspReal, RssReal, TssReal,
+    RshshReal, TshshReal,
+    RppImag, TppImag, RpsImag, TpsImag,
+    RspImag, TspImag, RssImag, TssImag,
+    RshshImag, TshshImag,
     RpAngle, RsAngle, TpAngle, TsAngle,
     FreeRecFuncPr, FreeRecFuncSvr, FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh;
 
@@ -42,6 +49,14 @@ public enum ReflTransAxisType {
             RspPhase, TspPhase, RssPhase, TssPhase,
             RshshPhase, TshshPhase);
 
+    public static final List<ReflTransAxisType> allRealImag = List.of(
+            RppReal, TppReal, RpsReal, TpsReal,
+            RspReal, TspReal, RssReal, TssReal,
+            RshshReal, TshshReal,
+            RppImag, TppImag, RpsImag, TpsImag,
+            RspImag, TspImag, RssImag, TssImag,
+            RshshImag, TshshImag);
+
     public static String labelFor(ReflTransAxisType axisType) {
         switch (axisType) {
             case Rpp:
@@ -55,6 +70,29 @@ public enum ReflTransAxisType {
             case Rshsh:
             case Tshsh:
                 return axisType.name()+" Displacement";
+
+            case RppReal:
+            case RpsReal:
+            case TppReal:
+            case TpsReal:
+            case RspReal:
+            case RssReal:
+            case TspReal:
+            case TssReal:
+            case RshshReal:
+            case TshshReal:
+                return axisType.name().replace("Real", " Real Displacement");
+            case RppImag:
+            case RpsImag:
+            case TppImag:
+            case TpsImag:
+            case RspImag:
+            case RssImag:
+            case TspImag:
+            case TssImag:
+            case RshshImag:
+            case TshshImag:
+                return axisType.name().replace("Imag", " Imag Displacement");
             case RppEnergy:
             case RpsEnergy:
             case TppEnergy:

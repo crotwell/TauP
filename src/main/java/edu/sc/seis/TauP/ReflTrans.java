@@ -62,6 +62,18 @@ public abstract class ReflTrans {
     public double getRppPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexRpp(rayParam));
     }
+    /**
+     * Calculates real part of incident P wave to reflected P wave coefficient.
+     */
+    public double getRppReal(double rayParam) throws VelocityModelException {
+        return getComplexRpp(rayParam).re;
+    }
+    /**
+     * Calculates phase of incident P wave to reflected P wave coefficient.
+     */
+    public double getRppImag(double rayParam) throws VelocityModelException {
+        return getComplexRpp(rayParam).im;
+    }
 
     /**
      * Calculates incident P wave to reflected SV wave coefficient.
@@ -75,6 +87,18 @@ public abstract class ReflTrans {
      */
     public double getRpsPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexRps(rayParam));
+    }
+    /**
+     * Calculates incident P wave to reflected SV wave coefficient.
+     */
+    public double getRpsReal(double rayParam) throws VelocityModelException {
+        return getComplexRps(rayParam).re;
+    }
+    /**
+     * Calculates incident P wave to reflected SV wave coefficient.
+     */
+    public double getRpsImag(double rayParam) throws VelocityModelException {
+        return getComplexRps(rayParam).im;
     }
 
     /**
@@ -90,6 +114,18 @@ public abstract class ReflTrans {
     public double getTppPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexTpp(rayParam));
     }
+    /**
+     * Calculates incident P wave to transmitted P wave coefficient.
+     */
+    public double getTppReal(double rayParam) throws VelocityModelException {
+        return getComplexTpp(rayParam).re;
+    }
+    /**
+     * Calculates incident P wave to transmitted P wave coefficient.
+     */
+    public double getTppImag(double rayParam) throws VelocityModelException {
+        return getComplexTpp(rayParam).im;
+    }
 
     /**
      * Calculates incident P wave to transmitted SV wave coefficient.
@@ -104,6 +140,18 @@ public abstract class ReflTrans {
     public double getTpsPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexTps(rayParam));
     }
+    /**
+     * Calculates incident P wave to transmitted SV wave coefficient.
+     */
+    public double getTpsReal(double rayParam) throws VelocityModelException {
+        return getComplexTps(rayParam).re;
+    }
+    /**
+     * Calculates incident P wave to transmitted SV wave coefficient.
+     */
+    public double getTpsImag(double rayParam) throws VelocityModelException {
+        return getComplexTps(rayParam).im;
+    }
 
     /**
      * Calculates incident SV wave to reflected P wave coefficient.
@@ -116,6 +164,18 @@ public abstract class ReflTrans {
      */
     public double getRspPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexRsp(rayParam));
+    }
+    /**
+     * Calculates incident SV wave to reflected P wave phase.
+     */
+    public double getRspReal(double rayParam) throws VelocityModelException {
+        return getComplexRsp(rayParam).re;
+    }
+    /**
+     * Calculates incident SV wave to reflected P wave phase.
+     */
+    public double getRspImag(double rayParam) throws VelocityModelException {
+        return getComplexRsp(rayParam).im;
     }
 
     /**
@@ -130,6 +190,18 @@ public abstract class ReflTrans {
     public double getRssPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexRss(rayParam));
     }
+    /**
+     * Calculates incident SV wave to reflected SV wave phase.
+     */
+    public double getRssReal(double rayParam) throws VelocityModelException {
+        return getComplexRss(rayParam).re;
+    }
+    /**
+     * Calculates incident SV wave to reflected SV wave phase.
+     */
+    public double getRssImag(double rayParam) throws VelocityModelException {
+        return getComplexRss(rayParam).im;
+    }
 
     /**
      * Calculates incident SV wave to transmitted P wave coefficient.
@@ -142,6 +214,18 @@ public abstract class ReflTrans {
      */
     public double getTspPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexTsp(rayParam));
+    }
+    /**
+     * Calculates incident SV wave to transmitted P wave phase.
+     */
+    public double getTspReal(double rayParam) throws VelocityModelException {
+        return getComplexTsp(rayParam).re;
+    }
+    /**
+     * Calculates incident SV wave to transmitted P wave phase.
+     */
+    public double getTspImag(double rayParam) throws VelocityModelException {
+        return getComplexTsp(rayParam).im;
     }
 
     /**
@@ -156,6 +240,18 @@ public abstract class ReflTrans {
     public double getTssPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexTss(rayParam));
     }
+    /**
+     * Calculates incident SV wave to transmitted SV wave phase.
+     */
+    public double getTssReal(double rayParam) throws VelocityModelException {
+        return getComplexTss(rayParam).re;
+    }
+    /**
+     * Calculates incident SV wave to transmitted SV wave phase.
+     */
+    public double getTssImag(double rayParam) throws VelocityModelException {
+        return getComplexTss(rayParam).im;
+    }
 
     /**
      * Calculates incident SH wave to reflected SH wave coefficient.
@@ -169,6 +265,18 @@ public abstract class ReflTrans {
     public double getRshshPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexRshsh(rayParam));
     }
+    /**
+     * Calculates incident SH wave to reflected SH wave phase.
+     */
+    public double getRshshReal(double rayParam) throws VelocityModelException {
+        return getComplexRshsh(rayParam).re;
+    }
+    /**
+     * Calculates incident SH wave to reflected SH wave phase.
+     */
+    public double getRshshImag(double rayParam) throws VelocityModelException {
+        return getComplexRshsh(rayParam).im;
+    }
 
     /**
      * Calculates incident SH wave to transmitted SH wave coefficient.
@@ -181,6 +289,18 @@ public abstract class ReflTrans {
      */
     public double getTshshPhase(double rayParam) throws VelocityModelException {
         return getPhase(getComplexTshsh(rayParam));
+    }
+    /**
+     * Calculates incident SH wave to transmitted SH wave phase.
+     */
+    public double getTshshReal(double rayParam) throws VelocityModelException {
+        return getComplexTshsh(rayParam).re;
+    }
+    /**
+     * Calculates incident SH wave to transmitted SH wave phase.
+     */
+    public double getTshshImag(double rayParam) throws VelocityModelException {
+        return getComplexTshsh(rayParam).im;
     }
 
     /**
