@@ -838,12 +838,6 @@ public class TauBranch implements Serializable, Cloneable {
      * @see Cloneable
      */
     public TauBranch clone() {
-//        double[] newDist = new double[dist.length];
-//        System.arraycopy(dist, 0, newDist, 0, dist.length);
-//        double[] newTime = new double[time.length];
-//        System.arraycopy(time, 0, newTime, 0, dist.length);
-//        double[] newTau = new double[tau.length];
-//        System.arraycopy(tau, 0, newTau, 0, dist.length);
         TauBranch tb = new TauBranch(sMod,
                 isPWave,
                 topDepth,
