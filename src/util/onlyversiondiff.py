@@ -25,39 +25,45 @@ def isOnlyVersion(diff_lines, filename):
     return (False, None)
 
 def checkFile(filename, newdir, olddir):
-    newFile = Path(newdir, filename)
-    oldFile = Path(olddir, filename)
-    if not newFile.exists():
-        print(f"new missing, unlink {filename}")
-        oldFile.unlink(missing_ok=True)
-    elif not oldFile.exists():
-        print(f"old missing, copy to {filename}")
-        shutil.copy(newFile, olddir)
-    else:
-        if newFile.is_file() and oldFile.is_file():
-            if filename.endswith(".ms3") or filename.endswith(".sac"):
-                print(f"sac or ms3 file, {filename}, copying anyway")
-                actualDiff=True
-                line="binary file"
-            else:
-                with open(newFile, "r") as inNew:
-                    newLines = inNew.readlines()
-                with open(oldFile, "r") as inOld:
-                    oldLines = inOld.readlines()
-                difflines = difflib.ndiff(newLines, oldLines)
-                (actualDiff, line) = isOnlyVersion(difflines, filename)
-            if actualDiff:
-                print(f"Found diff in {filename}: {line}")
-                shutil.copy(newFile, olddir)
+    try:
+        newFile = Path(newdir, filename)
+        oldFile = Path(olddir, filename)
+        if not newFile.exists():
+            print(f"new missing, unlink {filename}")
+            oldFile.unlink(missing_ok=True)
+        elif not oldFile.exists():
+            print(f"old missing, copy to {filename}")
+            shutil.copy(newFile, olddir)
         else:
-            print(f"skip, not a file: {filename}")
-            return
-def checkDir(newdir, olddir):
+            if newFile.is_file() and oldFile.is_file():
+                if filename.endswith(".ms3") or filename.endswith(".sac"):
+                    print(f"sac or ms3 file, {filename}, copying anyway")
+                    actualDiff=True
+                    line="binary file"
+                else:
+                    with open(newFile, "r") as inNew:
+                        newLines = inNew.readlines()
+                    with open(oldFile, "r") as inOld:
+                        oldLines = inOld.readlines()
+                    difflines = difflib.ndiff(newLines, oldLines)
+                    (actualDiff, line) = isOnlyVersion(difflines, filename)
+                if actualDiff:
+                    print(f"Found diff in {filename}: {line}")
+                    shutil.copy(newFile, olddir)
+            else:
+                print(f"skip, not a file: {filename}")
+                return
+    except:
+        print(f"Error with file: {olddir}/{filename}")
+        raise
+def checkDir(newdir, olddir, exclude=['.DS_Store']):
     allFiles = set()
     for f in olddir.iterdir():
-        allFiles.add(f.name)
+        if f.is_file() and f.name not in exclude:
+            allFiles.add(f.name)
     for f in newdir.iterdir():
-        allFiles.add(f.name)
+        if f.is_file() and f.name not in exclude:
+            allFiles.add(f.name)
     for filename in allFiles:
         try:
             #print(file.name)
