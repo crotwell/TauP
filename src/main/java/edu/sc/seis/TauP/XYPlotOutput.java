@@ -242,7 +242,19 @@ public class XYPlotOutput {
         float xtrans = (float)  minmax[0];
         float ytrans = (float)  minmax[2];
         float minMaxScaleX = (float)(plotWidth / (minmax[1]-minmax[0]));
+        float xScaleFactor = 1;
+        float MAX_NO_SCALE = 10000;
+        float MIN_NO_SCALE = 0.0001f;
+        if (Math.abs(minMaxScaleX) > MAX_NO_SCALE || Math.abs(minMaxScaleX) < MIN_NO_SCALE) {
+            xScaleFactor = (float) Math.pow(10, Math.floor(Math.log10(minMaxScaleX)));
+            minMaxScaleX = minMaxScaleX/xScaleFactor;
+        }
         float minMaxScaleY = (float)( plotWidth / (minmax[3]-minmax[2]));
+        float yScaleFactor = 1;
+        if (Math.abs(minMaxScaleY) > MAX_NO_SCALE || Math.abs(minMaxScaleY) < MIN_NO_SCALE) {
+            yScaleFactor = (float) Math.pow(10, Math.floor(Math.log10(minMaxScaleY)));
+            minMaxScaleY = minMaxScaleY/yScaleFactor;
+        }
 
         SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], numXTicks, false,
                 axisMinMax[2], axisMinMax[3], numYTicks, false,
@@ -264,7 +276,7 @@ public class XYPlotOutput {
             if (xAxisInvert || yAxisInvert) {
                 writer.println("<g transform=\"scale(" + xflip + "," + yflip + ") translate("+xfliptrans+", "+yfliptrans+")\" > <!-- invert axis -->");
             }
-            xyplotItem.asSVG(writer);
+            xyplotItem.asSVG(writer, xScaleFactor, yScaleFactor);
             if (xAxisInvert || yAxisInvert) {
                 writer.println("    </g> <!-- end invert axis -->");
             }

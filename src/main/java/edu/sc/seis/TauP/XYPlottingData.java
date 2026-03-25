@@ -106,9 +106,7 @@ public class XYPlottingData {
     public String cssClassesAsString() {
         String cssClassParam = "";
         if (cssClasses != null && !cssClasses.isEmpty()) {
-            for (String s : cssClasses) {
-                cssClassParam += " " + s;
-            }
+            cssClassParam += String.join(" ", cssClasses);
         }
         return cssClassParam.trim();
     }
@@ -127,11 +125,11 @@ public class XYPlottingData {
      *
      * @param writer to write to
      */
-    public void asSVG(PrintWriter writer) {
+    public void asSVG(PrintWriter writer, float xScaleFactor, float yScaleFactor) {
         String cssClassParam = createCSSClassParam();
         writer.println("    <g "+cssClassParam+" tauplabel=\"" + description + "\" " +" >");
         for (XYSegment segment : segmentList) {
-            segment.asSVG(writer, "");
+            segment.asSVG(writer, "", xScaleFactor, yScaleFactor);
         }
         writer.println("    </g> <!-- end "+ description+" -->");
     }

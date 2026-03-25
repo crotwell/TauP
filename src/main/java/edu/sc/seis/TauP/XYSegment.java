@@ -358,33 +358,28 @@ public class XYSegment {
      * @param writer to write to
      * @param css_class optional class to add to css class attribute
      */
-    public void asSVG(PrintWriter writer, String css_class) {
-        asSVG(writer, css_class, "%f", "%f");
-    }
-
-    public void asSVG(PrintWriter writer, String css_class, String xFormat, String yFormat) {
-
+    public void asSVG(PrintWriter writer, String css_class, float xscaleFactor, float yscaleFactor) {
         String cssClassParam = ""+css_class;
         if (cssClasses != null && !cssClasses.isEmpty()){
-            cssClassParam = "";
-            for (String s : cssClasses) {
-                cssClassParam += " " + s;
-            }
+            cssClassParam += String.join(" ", cssClasses);
         }
         cssClassParam = cssClassParam.trim();
         if (!cssClassParam.isEmpty()) {
             cssClassParam = "class=\""+cssClassParam+"\"";
         }
         writer.println("  <g>");
-        writer.println("    <desc>" + description + "</desc>");
+        String descWithScale = description;
+        if (xscaleFactor != 1 || yscaleFactor  != 1) {
+            descWithScale += String.format("scaled by (%g, %g)", xscaleFactor, yscaleFactor);
+        }
+        writer.println("    <desc>" + descWithScale + "</desc>");
         writer.println("    <polyline " + cssClassParam + " points=\"");
         boolean priorIsFinite = true;
         for (int i = 0; i < x.length; i++) {
             float xf = (float)x[i];
             float yf = (float)y[i];
             if (Float.isFinite(xf) && Float.isFinite(yf)) {
-                //writer.println(String.format(xFormat + " " + yFormat, xf, yf));
-                writer.println(xf+"  "+ yf);
+                writer.println(xf*xscaleFactor + "  " + yf*yscaleFactor);
                 priorIsFinite = true;
             } else if (i != 0 && i != x.length-1 && priorIsFinite) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
