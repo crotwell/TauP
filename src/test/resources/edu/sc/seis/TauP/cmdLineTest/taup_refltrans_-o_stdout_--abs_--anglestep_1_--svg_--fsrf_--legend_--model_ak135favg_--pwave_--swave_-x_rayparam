@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup refltrans -o stdout &#45;&#45;abs &#45;&#45;anglestep 1 &#45;&#45;svg &#45;&#45;fsrf &#45;&#45;legend &#45;&#45;model ak135favg &#45;&#45;pwave &#45;&#45;swave -x rayparam </command>
-      <version>3.2.0-SNAPSHOT6</version>
+      <version>3.2.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="0.6896544736007165" ymin="0.0" ymax="2.0" />
     </taup>
@@ -593,6 +593,306 @@
           fill: violet;
         }
         .legend .TshshPhase text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .RppReal {
+          stroke: blue;
+        }
+        .RppReal.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppReal {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppReal text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppReal {
+          stroke: cyan;
+        }
+        .TppReal.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppReal {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppReal text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsReal {
+          stroke: green;
+        }
+        .RpsReal.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsReal {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsReal text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsReal {
+          stroke: gold;
+        }
+        .TpsReal.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsReal {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsReal text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspReal {
+          stroke: mediumslateblue;
+        }
+        .RspReal.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspReal {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspReal text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspReal {
+          stroke: magenta;
+        }
+        .TspReal.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspReal {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .TspReal text {
+          fill: magenta;
+          stroke: transparent;
+        }
+        .RssReal {
+          stroke: red;
+        }
+        .RssReal.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssReal {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssReal text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssReal {
+          stroke: grey;
+        }
+        .TssReal.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssReal {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssReal text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshReal {
+          stroke: orange;
+        }
+        .RshshReal.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshReal {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshReal text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshReal {
+          stroke: violet;
+        }
+        .TshshReal.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshReal {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshReal text {
+          fill: violet;
+          stroke: transparent;
+        }
+        .RppImag {
+          stroke: blue;
+        }
+        .RppImag.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppImag {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .RppImag text {
+          fill: blue;
+          stroke: transparent;
+        }
+        .TppImag {
+          stroke: cyan;
+        }
+        .TppImag.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppImag {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .TppImag text {
+          fill: cyan;
+          stroke: transparent;
+        }
+        .RpsImag {
+          stroke: green;
+        }
+        .RpsImag.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsImag {
+          stroke: green;
+          fill: green;
+        }
+        .legend .RpsImag text {
+          fill: green;
+          stroke: transparent;
+        }
+        .TpsImag {
+          stroke: gold;
+        }
+        .TpsImag.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsImag {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .TpsImag text {
+          fill: gold;
+          stroke: transparent;
+        }
+        .RspImag {
+          stroke: mediumslateblue;
+        }
+        .RspImag.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspImag {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .RspImag text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
+        .TspImag {
+          stroke: null;
+        }
+        .TspImag.label {
+          stroke: null;
+          fill: null;
+        }
+        .legend .TspImag {
+          stroke: null;
+          fill: null;
+        }
+        .legend .TspImag text {
+          fill: null;
+          stroke: transparent;
+        }
+        .RssImag {
+          stroke: red;
+        }
+        .RssImag.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssImag {
+          stroke: red;
+          fill: red;
+        }
+        .legend .RssImag text {
+          fill: red;
+          stroke: transparent;
+        }
+        .TssImag {
+          stroke: grey;
+        }
+        .TssImag.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssImag {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .TssImag text {
+          fill: grey;
+          stroke: transparent;
+        }
+        .RshshImag {
+          stroke: orange;
+        }
+        .RshshImag.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshImag {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .RshshImag text {
+          fill: orange;
+          stroke: transparent;
+        }
+        .TshshImag {
+          stroke: violet;
+        }
+        .TshshImag.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshImag {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .TshshImag text {
           fill: violet;
           stroke: transparent;
         }

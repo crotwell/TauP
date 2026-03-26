@@ -52,7 +52,11 @@ Options:
                              TspEnergy, RssEnergy, TssEnergy, RshshEnergy,
                              TshshEnergy, RppPhase, TppPhase, RpsPhase,
                              TpsPhase, RspPhase, TspPhase, RssPhase, TssPhase,
-                             RshshPhase, TshshPhase, RpAngle, RsAngle, TpAngle,
+                             RshshPhase, TshshPhase, RppReal, TppReal, RpsReal,
+                             TpsReal, RspReal, TspReal, RssReal, TssReal,
+                             RshshReal, TshshReal, RppImag, TppImag, RpsImag,
+                             TpsImag, RspImag, TspImag, RssImag, TssImag,
+                             RshshImag, TshshImag, RpAngle, RsAngle, TpAngle,
                              TsAngle, FreeRecFuncPr, FreeRecFuncSvr,
                              FreeRecFuncPz, FreeRecFuncSvz, FreeRecFuncSh,
                              default is all displacement coef.

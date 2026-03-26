@@ -1,15 +1,17 @@
 Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
-                     [--elev=<elevation>] [-o=<outFile>]
+                     [--elev=<elevationMeters>] [-o=<outFile>]
                      [--prop=<toolPropsFilename>] (--mod=<modelName> |
                      --nd=<nDModelFilename> | --tvel=<tvelModelFilename>)
-                     (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
-                     --tvelmerge=<tvelModelFilename>)
+                     [--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
+                     --tvelmerge=<tvelModelFilename>]
 Merge part of one model into another.
 
 Options:
 
       --debug              enable debugging output
-      --elev=<elevation>   increase topmost layer by elevation (meters)
+      --elev=<elevationMeters>
+                           modify topmost layers for an elevation (meters), may
+                             be negative
       --help               display this help message
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>

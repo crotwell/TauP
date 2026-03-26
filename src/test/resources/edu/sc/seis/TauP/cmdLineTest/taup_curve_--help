@@ -56,7 +56,7 @@ Options:
                              unwrapphasedegpsv, unwrapphasedegsh, geospread,
                              refltran, refltranpsv, refltransh, index, tstar,
                              attenuation, theta, energygeospread, pathlength,
-                             radiation, radiationpsv, radiationsh
+                             radiation, radiationpsv, radiationsh, intcaustic
       --xabs               X axis is absolute value
       --xlog               X axis is log
       --xminmax=x x        min and max x axis for plotting
@@ -70,7 +70,7 @@ Options:
                              unwrapphasedegpsv, unwrapphasedegsh, geospread,
                              refltran, refltranpsv, refltransh, index, tstar,
                              attenuation, theta, energygeospread, pathlength,
-                             radiation, radiationpsv, radiationsh
+                             radiation, radiationpsv, radiationsh, intcaustic
       --yabs               Y axis is absolute value
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting
