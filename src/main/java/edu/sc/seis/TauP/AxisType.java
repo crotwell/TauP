@@ -43,8 +43,7 @@ public enum AxisType {
     radiation,
     radiationpsv,
     radiationsh,
-    intcausticpsv,
-    intcausticsh;
+    intcaustic;
 
     public static boolean needsDensity(AxisType axisType) {
         boolean needs;
@@ -89,8 +88,7 @@ public enum AxisType {
             case unwrapphasedeg:
             case unwrapphasedegpsv:
             case unwrapphasedegsh:
-            case intcausticpsv:
-            case intcausticsh:
+            case intcaustic:
             case refltran:
             case refltranpsv:
             case refltransh:
@@ -141,8 +139,7 @@ public enum AxisType {
             case unwrapphasedeg:
             case unwrapphasedegpsv:
             case unwrapphasedegsh:
-            case intcausticpsv:
-            case intcausticsh:
+            case intcaustic:
                 needs = false;
                 break;
             case tstar:

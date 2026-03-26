@@ -179,8 +179,7 @@ public class Outputs {
                 outFormat = rayParamFormat;
                 break;
             case index:
-            case intcausticpsv:
-            case intcausticsh:
+            case intcaustic:
                 outFormat = "%8.0f";
                 break;
             default:
