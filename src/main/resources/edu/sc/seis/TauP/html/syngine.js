@@ -1,4 +1,4 @@
-import * as sp from './seisplotjs_3.2.0_standalone.mjs';
+import * as sp from './seisplotjs_3.2.2_standalone.mjs';
 
 export function syngineModelName(modelName) {
   if (modelName === "ak135fsyngine") {
