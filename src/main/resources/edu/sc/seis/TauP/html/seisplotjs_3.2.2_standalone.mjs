@@ -20423,7 +20423,7 @@ var require_parser = __commonJS({
           throw new Error(str);
         },
         parse: function parse5(input) {
-          var self2 = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+          var self2 = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF2 = 1;
           this.lexer.setInput(input);
           this.lexer.yy = this.yy;
           this.yy.lexer = this.lexer;
@@ -43194,10 +43194,12 @@ __export(datalink_exports, {
 var util_exports = {};
 __export(util_exports, {
   BINARY_MIME: () => BINARY_MIME,
+  DEBUG_ELEMENT: () => DEBUG_ELEMENT,
   JSONAPI_MIME: () => JSONAPI_MIME,
   JSON_MIME: () => JSON_MIME,
   SVG_MIME: () => SVG_MIME,
   SVG_NS: () => SVG_NS,
+  SeisPlotDebugElement: () => SeisPlotDebugElement,
   TEXT_MIME: () => TEXT_MIME,
   UTC_OPTIONS: () => UTC_OPTIONS,
   WAY_FUTURE: () => WAY_FUTURE,
@@ -43207,6 +43209,7 @@ __export(util_exports, {
   anplusb: () => anplusb,
   asStringDictionary: () => asStringDictionary,
   calcClockOffset: () => calcClockOffset,
+  centerTimeDuration: () => centerTimeDuration,
   checkLuxonValid: () => checkLuxonValid,
   checkProtocol: () => checkProtocol,
   checkStringOrDate: () => checkStringOrDate,
@@ -43258,7 +43261,7 @@ __export(util_exports, {
 });
 
 // src/version.ts
-var version = "3.2.0";
+var version = "3.2.2";
 
 // src/util.ts
 var XML_MIME = "application/xml";
@@ -43419,14 +43422,24 @@ function toError(maybeError) {
     return new Error(String(maybeError));
   }
 }
+var DEBUG_ELEMENT = "sp-debug";
+var SeisPlotDebugElement = class extends HTMLDivElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+};
+customElements.define(DEBUG_ELEMENT, SeisPlotDebugElement);
 function warn(msg) {
   if (console) {
     console.assert(false, `${stringify(msg)}`);
   }
   if (typeof document !== "undefined" && document !== null) {
-    const p = document.createElement("p");
-    p.textContent = `${stringify(msg)}`;
-    document.querySelector("div#debug").appendChild(p);
+    document.querySelectorAll(DEBUG_ELEMENT).forEach((spDebug) => {
+      const pre = spDebug.appendChild(document.createElement("pre"));
+      const code = pre.appendChild(document.createElement("code"));
+      code.textContent = `${stringify(msg)}`;
+    });
   }
 }
 function stringify(value) {
@@ -43500,6 +43513,20 @@ function durationEnd(duration3, end) {
   } else {
     return Interval.before(end, duration3);
   }
+}
+function centerTimeDuration(center2, duration3) {
+  if (isStringArg(center2)) {
+    center2 = isoToDateTime(center2);
+  }
+  if (isStringArg(duration3)) {
+    duration3 = Duration.fromISO(duration3);
+  } else if (isNumArg(duration3)) {
+    duration3 = Duration.fromMillis(1e3 * duration3);
+  }
+  if (duration3.valueOf() < 0) {
+    duration3 = duration3.negate();
+  }
+  return Interval.fromDateTimes(center2.minus(duration3), center2.plus(duration3));
 }
 function calcClockOffset(serverTimeUTC) {
   return DateTime.utc().diff(serverTimeUTC).toMillis() * 1e3;
@@ -43816,7 +43843,7 @@ function mightBeXml(buf) {
   }
   return true;
 }
-function updateVersionText(selector = "#sp-version") {
+function updateVersionText(selector = ".sp_version") {
   document.querySelectorAll(selector).forEach((el) => {
     el.textContent = version;
   });
@@ -45679,6 +45706,8 @@ __export(stationxml_exports, {
   fetchStationXml: () => fetchStationXml,
   findChannels: () => findChannels,
   findChannelsForSourceId: () => findChannelsForSourceId,
+  isChannelClickCustomEvent: () => isChannelClickCustomEvent,
+  isStationClickCustomEvent: () => isStationClickCustomEvent,
   mightBeStatonXml: () => mightBeStatonXml,
   parseStationXml: () => parseStationXml,
   parseUtil: () => parseUtil,
@@ -45797,6 +45826,20 @@ var FAKE_START_DATE = DateTime.fromISO("1900-01-01T00:00:00Z");
 var FAKE_EMPTY_XML = '<?xml version="1.0" encoding="ISO-8859-1"?> <FDSNStationXML xmlns="http://www.fdsn.org/xml/station/1" schemaVersion="1.0" xsi:schemaLocation="http://www.fdsn.org/xml/station/1 http://www.fdsn.org/xml/station/fdsn-station-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:iris="http://www.fdsn.org/xml/station/1/iris"> </FDSNStationXML>';
 var CHANNEL_CLICK_EVENT = "channelclick";
 var STATION_CLICK_EVENT = "stationclick";
+function isChannelClickCustomEvent(event) {
+  if ("detail" in event) {
+    const customEvent = event;
+    return "channel" in customEvent.detail;
+  }
+  return false;
+}
+function isStationClickCustomEvent(event) {
+  if ("detail" in event) {
+    const customEvent = event;
+    return "station" in customEvent.detail;
+  }
+  return false;
+}
 function createChannelClickEvent(sta, mouseclick) {
   const detail = {
     mouseevent: mouseclick,
@@ -46901,10 +46944,22 @@ function* activeChannels(networks, atTime) {
     }
   }
 }
-function* findChannels(networks, netCode, staCode, locCode, chanCode) {
+function* findChannels(networks, netCode = ".*", staCode = ".*", locCode = ".*", chanCode = ".*") {
+  if (netCode.length == 0) {
+    netCode = ".*";
+  }
   const netRE = new RegExp(`^${netCode}$`);
+  if (staCode.length == 0) {
+    staCode = ".*";
+  }
   const staRE = new RegExp(`^${staCode}$`);
+  if (locCode.length == 0) {
+    locCode = ".*";
+  }
   const locRE = new RegExp(`^${locCode}$`);
+  if (chanCode.length == 0) {
+    chanCode = ".*";
+  }
   const chanRE = new RegExp(`^${chanCode}$`);
   for (const n2 of networks.filter((n3) => netRE.test(n3.networkCode))) {
     for (const s2 of n2.stations.filter((s3) => staRE.test(s3.stationCode))) {
@@ -48763,6 +48818,7 @@ __export(quakeml_exports, {
   createQuakeClickEvent: () => createQuakeClickEvent,
   createQuakeFromValues: () => createQuakeFromValues,
   fetchQuakeML: () => fetchQuakeML,
+  isQuakeClickCustomEvent: () => isQuakeClickCustomEvent,
   mightBeQuakeML: () => mightBeQuakeML,
   parseQuakeML: () => parseQuakeML,
   parseUtil: () => parseUtil2
@@ -48811,6 +48867,13 @@ var UNKNOWN_PUBLIC_ID = "unknownId";
 var FAKE_ORIGIN_TIME = DateTime.fromISO("1900-01-01T00:00:00Z");
 var FAKE_EMPTY_XML2 = '<?xml version="1.0"?><q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"><eventParameters publicID="quakeml:fake/empty"></eventParameters></q:quakeml>';
 var QUAKE_CLICK_EVENT = "quakeclick";
+function isQuakeClickCustomEvent(event) {
+  if ("detail" in event) {
+    const customEvent = event;
+    return "quake" in customEvent.detail;
+  }
+  return false;
+}
 function createQuakeClickEvent(q, mouseclick) {
   const detail = {
     mouseevent: mouseclick,
@@ -48833,9 +48896,10 @@ var BaseElement = class {
     __publicField(this, "creationInfo");
   }
   populate(qml) {
-    const pid = _grabAttribute3(qml, "publicID");
+    let pid = _grabAttribute3(qml, "publicID");
     if (!isNonEmptyStringArg(pid)) {
-      throw new Error("missing publicID");
+      warn(`missing publicID on ${qml.localName}`);
+      pid = `${UNKNOWN_PUBLIC_ID}_${qml.localName}`;
     }
     this.publicId = pid;
     this.comments = _grabAllElComment(qml, "comment");
@@ -49004,7 +49068,11 @@ var Quake = class _Quake extends BaseElement {
    * @param   host optional source of the xml to help determine the event id style
    * @returns     Extracted Id, or "unknownEventId" if we can't figure it out
    */
-  static extractEventId(qml, host) {
+  static extractEventId(qml, _host) {
+    const dataId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "dataid");
+    if (isNonEmptyStringArg(dataId)) {
+      return dataId;
+    }
     const eventId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "eventid");
     const catalogEventSource = _grabAttributeNS2(
       qml,
@@ -49012,7 +49080,7 @@ var Quake = class _Quake extends BaseElement {
       "eventsource"
     );
     if (isNonEmptyStringArg(eventId)) {
-      if (host === USGS_HOST && isNonEmptyStringArg(catalogEventSource)) {
+      if (isNonEmptyStringArg(catalogEventSource)) {
         return catalogEventSource + eventId;
       } else {
         return eventId;
@@ -49030,6 +49098,12 @@ var Quake = class _Quake extends BaseElement {
       if (parsed) {
         return parsed[1];
       }
+      re2 = /quakeml:se.anss.org\/Event\/([\w\d]+)\/([\w\d]+)/;
+      parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1] + parsed[2];
+      }
+      return publicid;
     }
     return UNKNOWN_PUBLIC_ID;
   }
@@ -50165,10 +50239,20 @@ var MomentTensor = class _MomentTensor extends BaseElement {
     if (momentMagnitudeID && !out.momentMagnitude) {
       throw new Error("No magnitude with ID " + momentMagnitudeID);
     }
-    out.scalarMoment = _grabFirstElRealQuantity(
-      momentTensorQML,
-      "scalarMoment"
-    );
+    try {
+      out.scalarMoment = _grabFirstElRealQuantity(
+        momentTensorQML,
+        "scalarMoment"
+      );
+    } catch (err) {
+      const scalMom = _grabFirstElFloat3(momentTensorQML, "scalarMoment");
+      if (scalMom != null) {
+        out.scalarMoment = new Quantity(scalMom);
+      } else {
+        warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
+      }
+      warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
+    }
     out.tensor = _grabFirstElType(Tensor.createFromXml.bind(Tensor))(
       momentTensorQML,
       "tensor"
@@ -57672,14 +57756,14 @@ function formatLocale(locale3) {
   utcFormats.c = newFormat(locale_dateTime, utcFormats);
   function newFormat(specifier, formats2) {
     return function(date6) {
-      var string4 = [], i = -1, j = 0, n2 = specifier.length, c, pad2, format2;
+      var string4 = [], i = -1, j = 0, n2 = specifier.length, c, pad3, format2;
       if (!(date6 instanceof Date)) date6 = /* @__PURE__ */ new Date(+date6);
       while (++i < n2) {
         if (specifier.charCodeAt(i) === 37) {
           string4.push(specifier.slice(j, i));
-          if ((pad2 = pads[c = specifier.charAt(++i)]) != null) c = specifier.charAt(++i);
-          else pad2 = c === "e" ? " " : "0";
-          if (format2 = formats2[c]) c = format2(date6, pad2);
+          if ((pad3 = pads[c = specifier.charAt(++i)]) != null) c = specifier.charAt(++i);
+          else pad3 = c === "e" ? " " : "0";
+          if (format2 = formats2[c]) c = format2(date6, pad3);
           string4.push(c);
           j = i + 1;
         }
@@ -58114,9 +58198,9 @@ function number3(t) {
 }
 function calendar(ticks2, tickInterval, year, month, week, day, hour, minute, second2, format2) {
   var scale = continuous(), invert = scale.invert, domain2 = scale.domain;
-  var formatMillisecond = format2(".%L"), formatSecond = format2(":%S"), formatMinute = format2("%I:%M"), formatHour = format2("%I %p"), formatDay = format2("%a %d"), formatWeek = format2("%b %d"), formatMonth = format2("%B"), formatYear2 = format2("%Y");
+  var formatMillisecond = format2(".%L"), formatSecond = format2(":%S"), formatMinute = format2("%I:%M"), formatHour = format2("%I %p"), formatDay = format2("%a %d"), formatWeek = format2("%b %d"), formatMonth = format2("%B"), formatYear3 = format2("%Y");
   function tickFormat2(date6) {
-    return (second2(date6) < date6 ? formatMillisecond : minute(date6) < date6 ? formatSecond : hour(date6) < date6 ? formatMinute : day(date6) < date6 ? formatHour : month(date6) < date6 ? week(date6) < date6 ? formatDay : formatWeek : year(date6) < date6 ? formatMonth : formatYear2)(date6);
+    return (second2(date6) < date6 ? formatMillisecond : minute(date6) < date6 ? formatSecond : hour(date6) < date6 ? formatMinute : day(date6) < date6 ? formatHour : month(date6) < date6 ? week(date6) < date6 ? formatDay : formatWeek : year(date6) < date6 ? formatMonth : formatYear3)(date6);
   }
   scale.invert = function(y2) {
     return new Date(invert(y2));
@@ -58274,10 +58358,7 @@ function insertCSS(cssText, id2) {
   if (id2) {
     for (const c of Array.from(head.children)) {
       if (isIdStyleElement(c, id2)) {
-        if (typeof c.parentNode !== "undefined" && c.parentNode !== null) {
-          c.parentNode.removeChild(c);
-        }
-        break;
+        document.head.removeChild(c);
       }
     }
   }
@@ -58286,7 +58367,6 @@ function insertCSS(cssText, id2) {
     styleElement.id = id2;
   }
   styleElement.type = "text/css";
-  styleElement.classList.add(AUTO_CLASSED);
   styleElement.appendChild(document.createTextNode(cssText));
   head.insertBefore(styleElement, head.firstChild);
   return styleElement;
@@ -58304,7 +58384,7 @@ function isCSSInserted(id2) {
   return false;
 }
 function isIdStyleElement(c, id2) {
-  return c.localName === "style" && c.id === id2 && c.classList.contains(AUTO_CLASSED);
+  return c.localName === "style" && c.id === id2;
 }
 
 // src/seismographconfig.ts
@@ -60123,6 +60203,12 @@ function addStyleToElement(element, css, id2) {
   if (!shadowRoot) {
     shadowRoot = element.attachShadow({ mode: "open" });
   }
+  if (id2 != null) {
+    const oldStyle = shadowRoot.querySelector(`#${id2}`);
+    if (oldStyle != null) {
+      shadowRoot.removeChild(oldStyle);
+    }
+  }
   const styleEl = document.createElement("style");
   styleEl.textContent = css;
   if (id2) {
@@ -60412,7 +60498,7 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
   connectedCallback() {
     if (this.seismographConfig.linkedAmplitudeScale) {
       this.beforeFirstDraw = false;
-      this.seismographConfig.linkedAmplitudeScale.recalculate();
+      this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
     } else {
       this.redraw();
     }
@@ -61272,7 +61358,7 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
     this.recheckAmpScaleDomain();
     if (!this.beforeFirstDraw) {
       if (this.seismographConfig.linkedAmplitudeScale) {
-        this.seismographConfig.linkedAmplitudeScale.recalculate();
+        this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
       } else {
         this.redraw();
       }
@@ -61960,6 +62046,138 @@ __export(infotable_exports, {
   latlonFormat: () => latlonFormat2,
   magFormat: () => magFormat2
 });
+
+// node_modules/d3-dsv/src/dsv.js
+var EOL = {};
+var EOF = {};
+var QUOTE = 34;
+var NEWLINE = 10;
+var RETURN = 13;
+function objectConverter(columns) {
+  return new Function("d", "return {" + columns.map(function(name, i) {
+    return JSON.stringify(name) + ": d[" + i + '] || ""';
+  }).join(",") + "}");
+}
+function customConverter(columns, f) {
+  var object2 = objectConverter(columns);
+  return function(row, i) {
+    return f(object2(row), i, columns);
+  };
+}
+function inferColumns(rows) {
+  var columnSet = /* @__PURE__ */ Object.create(null), columns = [];
+  rows.forEach(function(row) {
+    for (var column in row) {
+      if (!(column in columnSet)) {
+        columns.push(columnSet[column] = column);
+      }
+    }
+  });
+  return columns;
+}
+function pad2(value, width) {
+  var s2 = value + "", length = s2.length;
+  return length < width ? new Array(width - length + 1).join(0) + s2 : s2;
+}
+function formatYear2(year) {
+  return year < 0 ? "-" + pad2(-year, 6) : year > 9999 ? "+" + pad2(year, 6) : pad2(year, 4);
+}
+function formatDate(date6) {
+  var hours = date6.getUTCHours(), minutes = date6.getUTCMinutes(), seconds2 = date6.getUTCSeconds(), milliseconds2 = date6.getUTCMilliseconds();
+  return isNaN(date6) ? "Invalid Date" : formatYear2(date6.getUTCFullYear(), 4) + "-" + pad2(date6.getUTCMonth() + 1, 2) + "-" + pad2(date6.getUTCDate(), 2) + (milliseconds2 ? "T" + pad2(hours, 2) + ":" + pad2(minutes, 2) + ":" + pad2(seconds2, 2) + "." + pad2(milliseconds2, 3) + "Z" : seconds2 ? "T" + pad2(hours, 2) + ":" + pad2(minutes, 2) + ":" + pad2(seconds2, 2) + "Z" : minutes || hours ? "T" + pad2(hours, 2) + ":" + pad2(minutes, 2) + "Z" : "");
+}
+function dsv_default(delimiter) {
+  var reFormat = new RegExp('["' + delimiter + "\n\r]"), DELIMITER = delimiter.charCodeAt(0);
+  function parse5(text, f) {
+    var convert2, columns, rows = parseRows(text, function(row, i) {
+      if (convert2) return convert2(row, i - 1);
+      columns = row, convert2 = f ? customConverter(row, f) : objectConverter(row);
+    });
+    rows.columns = columns || [];
+    return rows;
+  }
+  function parseRows(text, f) {
+    var rows = [], N = text.length, I = 0, n2 = 0, t, eof = N <= 0, eol = false;
+    if (text.charCodeAt(N - 1) === NEWLINE) --N;
+    if (text.charCodeAt(N - 1) === RETURN) --N;
+    function token() {
+      if (eof) return EOF;
+      if (eol) return eol = false, EOL;
+      var i, j = I, c;
+      if (text.charCodeAt(j) === QUOTE) {
+        while (I++ < N && text.charCodeAt(I) !== QUOTE || text.charCodeAt(++I) === QUOTE) ;
+        if ((i = I) >= N) eof = true;
+        else if ((c = text.charCodeAt(I++)) === NEWLINE) eol = true;
+        else if (c === RETURN) {
+          eol = true;
+          if (text.charCodeAt(I) === NEWLINE) ++I;
+        }
+        return text.slice(j + 1, i - 1).replace(/""/g, '"');
+      }
+      while (I < N) {
+        if ((c = text.charCodeAt(i = I++)) === NEWLINE) eol = true;
+        else if (c === RETURN) {
+          eol = true;
+          if (text.charCodeAt(I) === NEWLINE) ++I;
+        } else if (c !== DELIMITER) continue;
+        return text.slice(j, i);
+      }
+      return eof = true, text.slice(j, N);
+    }
+    while ((t = token()) !== EOF) {
+      var row = [];
+      while (t !== EOL && t !== EOF) row.push(t), t = token();
+      if (f && (row = f(row, n2++)) == null) continue;
+      rows.push(row);
+    }
+    return rows;
+  }
+  function preformatBody(rows, columns) {
+    return rows.map(function(row) {
+      return columns.map(function(column) {
+        return formatValue(row[column]);
+      }).join(delimiter);
+    });
+  }
+  function format2(rows, columns) {
+    if (columns == null) columns = inferColumns(rows);
+    return [columns.map(formatValue).join(delimiter)].concat(preformatBody(rows, columns)).join("\n");
+  }
+  function formatBody(rows, columns) {
+    if (columns == null) columns = inferColumns(rows);
+    return preformatBody(rows, columns).join("\n");
+  }
+  function formatRows(rows) {
+    return rows.map(formatRow).join("\n");
+  }
+  function formatRow(row) {
+    return row.map(formatValue).join(delimiter);
+  }
+  function formatValue(value) {
+    return value == null ? "" : value instanceof Date ? formatDate(value) : reFormat.test(value += "") ? '"' + value.replace(/"/g, '""') + '"' : value;
+  }
+  return {
+    parse: parse5,
+    parseRows,
+    format: format2,
+    formatBody,
+    formatRows,
+    formatRow,
+    formatValue
+  };
+}
+
+// node_modules/d3-dsv/src/csv.js
+var csv = dsv_default(",");
+var csvParse = csv.parse;
+var csvParseRows = csv.parseRows;
+var csvFormat = csv.format;
+var csvFormatBody = csv.formatBody;
+var csvFormatRows = csv.formatRows;
+var csvFormatRow = csv.formatRow;
+var csvFormatValue = csv.formatValue;
+
+// src/infotable.ts
 var INFO_ELEMENT = "sp-station-quake-table";
 var QUAKE_INFO_ELEMENT = "sp-quake-table";
 var QUAKE_COLUMN = /* @__PURE__ */ ((QUAKE_COLUMN2) => {
@@ -62120,6 +62338,9 @@ table {
     overflow-x: auto;
     white-space: nowrap;
 }
+caption {
+    caption-side: bottom;
+}
 `;
 var QuakeStationTable = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
@@ -62173,6 +62394,7 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
     __publicField(this, "_columnValues");
+    __publicField(this, "_caption");
     if (!quakeList) {
       quakeList = [];
     }
@@ -62232,6 +62454,28 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
   set timeZone(timezone) {
     this._timezone = timezone;
     this.draw();
+  }
+  get caption() {
+    return this._caption;
+  }
+  set caption(cap) {
+    this._caption = cap;
+    const table = this.shadowRoot?.querySelector("table");
+    if (table && this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
+  }
+  addColumn(key, label, valueFn) {
+    this.columnLabels.set(key, label);
+    this.columnValues.set(key, valueFn);
   }
   /**
    * Time format, passed to luxon toLocaleString()
@@ -62296,6 +62540,17 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
       return;
     }
     const table = this.shadowRoot?.querySelector("table");
+    if (this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
     table.deleteTHead();
     const theader = table.createTHead().insertRow();
     this.headers().forEach((h) => {
@@ -62340,12 +62595,40 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
           cell.textContent = localQuakeTime.toISO();
         }
       } else {
-        cell.textContent = this.getQuakeValue(q, h);
+        const cellValue = this.getQuakeValue(q, h);
+        if (cellValue instanceof HTMLElement) {
+          cell.appendChild(cellValue);
+        } else {
+          cell.textContent = cellValue;
+        }
       }
       if (index !== -1) {
         index++;
       }
     });
+  }
+  tableToCSV() {
+    const out = [];
+    const headRow = [];
+    out.push(headRow);
+    this.headers().forEach((h) => {
+      let label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      label = label ? label : "";
+      headRow.push(label);
+    });
+    this._quakeList.forEach((q) => {
+      const row = [];
+      out.push(row);
+      this.headers().forEach((h) => {
+        const cellValue = this.getQuakeValue(q, h);
+        if (cellValue instanceof HTMLElement) {
+          row.push(cellValue.textContent);
+        } else {
+          row.push(cellValue);
+        }
+      });
+    });
+    return csvFormatRows(out);
   }
   getQuakeValue(q, h) {
     const fn = this._columnValues.has(h) ? this._columnValues.get(h) : null;
@@ -62408,13 +62691,15 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
 };
 customElements.define(QUAKE_INFO_ELEMENT, QuakeTable);
 var ChannelTable = class _ChannelTable extends HTMLElement {
-  constructor(channelList, columnLabels) {
+  constructor(channelList, columnLabels, columnValues) {
     super();
     __publicField(this, "_columnLabels");
+    __publicField(this, "_columnValues");
     __publicField(this, "_channelList");
     __publicField(this, "_rowToChannel");
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
+    __publicField(this, "_caption");
     if (!channelList) {
       channelList = [];
     }
@@ -62434,6 +62719,23 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
     this._channelList = channelList;
     this._columnLabels = columnLabels;
     this._rowToChannel = /* @__PURE__ */ new Map();
+    if (!columnValues) {
+      columnValues = /* @__PURE__ */ new Map();
+      const defColumnValues = _ChannelTable.createDefaultColumnValues();
+      for (const key of columnLabels.keys()) {
+        if (defColumnValues.has(key)) {
+          const fn = defColumnValues.get(key);
+          if (fn != null) {
+            columnValues.set(key, fn);
+          } else {
+            throw new Error(`ChannelTable function for key is missing: ${key}`);
+          }
+        } else {
+          throw new Error(`Unknown ChannelTable key: ${key}`);
+        }
+      }
+    }
+    this._columnValues = columnValues;
     const shadow = this.attachShadow({ mode: "open" });
     const table = document.createElement("table");
     table.setAttribute("class", "wrapper");
@@ -62454,6 +62756,35 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
     this._columnLabels = cols;
     this.draw();
   }
+  get columnValues() {
+    return this._columnValues;
+  }
+  set columnValues(cols) {
+    this._columnValues = cols;
+    this.draw();
+  }
+  addColumn(key, label, valueFn) {
+    this.columnLabels.set(key, label);
+    this.columnValues.set(key, valueFn);
+  }
+  get caption() {
+    return this._caption;
+  }
+  set caption(cap) {
+    this._caption = cap;
+    const table = this.shadowRoot?.querySelector("table");
+    if (table && this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
+  }
   addStyle(css, id2) {
     return addStyleToElement(this, css, id2);
   }
@@ -62462,11 +62793,23 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
       return;
     }
     const table = this.shadowRoot?.querySelector("table");
+    if (this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
     table.deleteTHead();
     const theader = table.createTHead().insertRow();
     this.headers().forEach((h) => {
       const cell = theader.appendChild(document.createElement("th"));
-      cell.textContent = h;
+      const label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      cell.textContent = `${label}`;
       cell.addEventListener("click", () => {
         this.sort(h, cell);
       });
@@ -62490,11 +62833,66 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
     this._rowToChannel.set(row, q);
     this.headers().forEach((h) => {
       const cell = row.insertCell(index);
-      cell.textContent = _ChannelTable.getChannelValue(q, h);
+      const cellValue = this.getChannelValue(q, h);
+      if (cellValue instanceof HTMLElement) {
+        cell.appendChild(cellValue);
+      } else {
+        cell.textContent = cellValue;
+      }
       if (index !== -1) {
         index++;
       }
     });
+  }
+  tableToCSV() {
+    const out = [];
+    const headRow = [];
+    out.push(headRow);
+    this.headers().forEach((h) => {
+      let label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      label = label ? label : "";
+      headRow.push(label);
+    });
+    this._channelList.forEach((q) => {
+      const row = [];
+      out.push(row);
+      this.headers().forEach((h) => {
+        const cellValue = this.getChannelValue(q, h);
+        if (cellValue instanceof HTMLElement) {
+          row.push(cellValue.textContent);
+        } else {
+          row.push(cellValue);
+        }
+      });
+    });
+    return csvFormatRows(out);
+  }
+  getChannelValue(c, h) {
+    const fn = this._columnValues.has(h) ? this._columnValues.get(h) : null;
+    if (fn != null) {
+      return fn(c);
+    } else {
+      return `unknown: ${String(h)}`;
+    }
+  }
+  static createDefaultColumnValues() {
+    const columnValues = /* @__PURE__ */ new Map();
+    columnValues.set("Start" /* START */, (c) => stringify(c.startDate.toISO()));
+    columnValues.set("End" /* END */, (c) => c.endDate ? stringify(c.endDate.toISO()) : "");
+    columnValues.set("Lat" /* LAT */, (c) => latlonFormat2.format(c.latitude));
+    columnValues.set("Lon" /* LON */, (c) => latlonFormat2.format(c.longitude));
+    columnValues.set("Elev" /* ELEVATION */, (c) => depthMeterFormat2.format(c.elevation));
+    columnValues.set("Depth" /* DEPTH */, (c) => depthFormat2.format(c.depth));
+    columnValues.set("Az" /* AZIMUTH */, (c) => latlonFormat2.format(c.azimuth));
+    columnValues.set("Dip" /* DIP */, (c) => latlonFormat2.format(c.dip));
+    columnValues.set("SourceId" /* SOURCEID */, (c) => stringify(c.sourceId.toString()));
+    columnValues.set("Code" /* CODE */, (c) => stringify(c.codes()));
+    columnValues.set("NetworkCode" /* NETWORK_CODE */, (c) => c.networkCode);
+    columnValues.set("StationCode" /* STATION_CODE */, (c) => c.stationCode);
+    columnValues.set("LocationCode" /* LOCATION_CODE */, (c) => c.locationCode);
+    columnValues.set("ChannelCode" /* CHANNEL_CODE */, (c) => c.channelCode);
+    columnValues.set("Code" /* CODE */, (c) => stringify(c.codes()));
+    return columnValues;
   }
   static getChannelValue(q, h) {
     if (h === "Start" /* START */) {
@@ -62562,8 +62960,8 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
           } else if (h === "Elev" /* ELEVATION */) {
             out = qa.elevation - qb.elevation;
           } else {
-            const ta = _ChannelTable.getChannelValue(qa, h);
-            const tb = _ChannelTable.getChannelValue(qb, h);
+            const ta = this.getChannelValue(qa, h);
+            const tb = this.getChannelValue(qb, h);
             if (ta < tb) {
               out = -1;
             } else if (ta > tb) {
@@ -62603,6 +63001,7 @@ var StationTable = class _StationTable extends HTMLElement {
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
     __publicField(this, "_columnValues");
+    __publicField(this, "_caption");
     if (!stationList) {
       stationList = [];
     }
@@ -62656,6 +63055,28 @@ var StationTable = class _StationTable extends HTMLElement {
     this._columnValues = cols;
     this.draw();
   }
+  addColumn(key, label, valueFn) {
+    this.columnLabels.set(key, label);
+    this.columnValues.set(key, valueFn);
+  }
+  get caption() {
+    return this._caption;
+  }
+  set caption(cap) {
+    this._caption = cap;
+    const table = this.shadowRoot?.querySelector("table");
+    if (table && this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
+  }
   addStyle(css, id2) {
     return addStyleToElement(this, css, id2);
   }
@@ -62664,11 +63085,23 @@ var StationTable = class _StationTable extends HTMLElement {
       return;
     }
     const table = this.shadowRoot?.querySelector("table");
+    if (this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
     table.deleteTHead();
     const theader = table.createTHead().insertRow();
     this.headers().forEach((h) => {
       const cell = theader.appendChild(document.createElement("th"));
-      cell.textContent = h;
+      const label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      cell.textContent = `${label}`;
       cell.addEventListener("click", () => {
         this.sort(h, cell);
       });
@@ -62692,11 +63125,39 @@ var StationTable = class _StationTable extends HTMLElement {
     this._rowToStation.set(row, q);
     this.headers().forEach((h) => {
       const cell = row.insertCell(index);
-      cell.textContent = this.getStationValue(q, h);
+      const cellValue = this.getStationValue(q, h);
+      if (cellValue instanceof HTMLElement) {
+        cell.appendChild(cellValue);
+      } else {
+        cell.textContent = cellValue;
+      }
       if (index !== -1) {
         index++;
       }
     });
+  }
+  tableToCSV() {
+    const out = [];
+    const headRow = [];
+    out.push(headRow);
+    this.headers().forEach((h) => {
+      let label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      label = label ? label : "";
+      headRow.push(label);
+    });
+    this._stationList.forEach((q) => {
+      const row = [];
+      out.push(row);
+      this.headers().forEach((h) => {
+        const cellValue = this.getStationValue(q, h);
+        if (cellValue instanceof HTMLElement) {
+          row.push(cellValue.textContent);
+        } else {
+          row.push(cellValue);
+        }
+      });
+    });
+    return csvFormatRows(out);
   }
   static createDefaultColumnLabels() {
     const columnLabels = /* @__PURE__ */ new Map();
@@ -62814,13 +63275,15 @@ var StationTable = class _StationTable extends HTMLElement {
 var STATION_INFO_ELEMENT = "sp-station-table";
 customElements.define(STATION_INFO_ELEMENT, StationTable);
 var SeismogramTable = class _SeismogramTable extends HTMLElement {
-  constructor(sddList, columnLabels) {
+  constructor(sddList, columnLabels, columnValues) {
     super();
     __publicField(this, "_columnLabels");
+    __publicField(this, "_columnValues");
     __publicField(this, "_sddList");
     __publicField(this, "_rowToSDD");
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
+    __publicField(this, "_caption");
     if (!sddList) {
       sddList = [];
     }
@@ -62839,6 +63302,23 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
     this._sddList = sddList;
     this._columnLabels = columnLabels;
     this._rowToSDD = /* @__PURE__ */ new Map();
+    if (!columnValues) {
+      columnValues = /* @__PURE__ */ new Map();
+      const defColumnValues = _SeismogramTable.createDefaultColumnValues();
+      for (const key of columnLabels.keys()) {
+        if (defColumnValues.has(key)) {
+          const fn = defColumnValues.get(key);
+          if (fn != null) {
+            columnValues.set(key, fn);
+          } else {
+            throw new Error(`SeismogramTable function for key is missing: ${key}`);
+          }
+        } else {
+          throw new Error(`Unknown SeismogramTable key: ${key}`);
+        }
+      }
+    }
+    this._columnValues = columnValues;
     const shadow = this.attachShadow({ mode: "open" });
     const table = document.createElement("table");
     table.setAttribute("class", "wrapper");
@@ -62859,6 +63339,35 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
     this._columnLabels = cols;
     this.draw();
   }
+  get columnValues() {
+    return this._columnValues;
+  }
+  set columnValues(cols) {
+    this._columnValues = cols;
+    this.draw();
+  }
+  addColumn(key, label, valueFn) {
+    this.columnLabels.set(key, label);
+    this.columnValues.set(key, valueFn);
+  }
+  get caption() {
+    return this._caption;
+  }
+  set caption(cap) {
+    this._caption = cap;
+    const table = this.shadowRoot?.querySelector("table");
+    if (table && this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
+  }
   addStyle(css, id2) {
     return addStyleToElement(this, css, id2);
   }
@@ -62867,11 +63376,23 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
       return;
     }
     const table = this.shadowRoot?.querySelector("table");
+    if (this._caption) {
+      let captionEl = table.createCaption();
+      if (this._caption instanceof HTMLElement) {
+        captionEl.innerHTML = "";
+        captionEl.appendChild(this._caption);
+      } else {
+        captionEl.textContent = this._caption;
+      }
+    } else {
+      table.deleteCaption();
+    }
     table.deleteTHead();
     const theader = table.createTHead().insertRow();
     this.headers().forEach((h) => {
       const cell = theader.appendChild(document.createElement("th"));
-      cell.textContent = h;
+      const label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      cell.textContent = `${label}`;
       cell.addEventListener("click", () => {
         this.sort(h, cell);
       });
@@ -62892,11 +63413,62 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
     this._rowToSDD.set(row, q);
     this.headers().forEach((h) => {
       const cell = row.insertCell(index);
-      cell.textContent = _SeismogramTable.getSeismogramValue(q, h);
+      const cellValue = this.getSeismogramValue(q, h);
+      if (cellValue instanceof HTMLElement) {
+        cell.appendChild(cellValue);
+      } else {
+        cell.textContent = cellValue;
+      }
       if (index !== -1) {
         index++;
       }
     });
+  }
+  tableToCSV() {
+    const out = [];
+    const headRow = [];
+    out.push(headRow);
+    this.headers().forEach((h) => {
+      let label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      label = label ? label : "";
+      headRow.push(label);
+    });
+    this._sddList.forEach((q) => {
+      const row = [];
+      out.push(row);
+      this.headers().forEach((h) => {
+        const cellValue = this.getSeismogramValue(q, h);
+        if (cellValue instanceof HTMLElement) {
+          row.push(cellValue.textContent);
+        } else {
+          row.push(cellValue);
+        }
+      });
+    });
+    return csvFormatRows(out);
+  }
+  getSeismogramValue(q, h) {
+    const fn = this._columnValues.has(h) ? this._columnValues.get(h) : null;
+    if (fn != null) {
+      return fn(q);
+    } else {
+      return `unknown: ${String(h)}`;
+    }
+  }
+  static createDefaultColumnValues() {
+    const columnValues = /* @__PURE__ */ new Map();
+    columnValues.set("Start" /* START */, (q) => stringify(q.start.toISO()));
+    columnValues.set("End" /* END */, (q) => stringify(q.start.toISO()));
+    columnValues.set("Duration" /* DURATION */, (q) => stringify(q.timeRange.toDuration().toISO()));
+    columnValues.set("Num Pts" /* NUM_POINTS */, (q) => `${q.numPoints}`);
+    columnValues.set("Sample Rate" /* SAMPLE_RATE */, (q) => `${q._seismogram?.sampleRate}`);
+    columnValues.set("Sample Period" /* SAMPLE_PERIOD */, (q) => `${q._seismogram?.samplePeriod}`);
+    columnValues.set("Segments" /* SEGMENTS */, (q) => `${q._seismogram?.segments.length}`);
+    columnValues.set("SourceId" /* SOURCEID */, (q) => `${q.sourceId.toString()}`);
+    columnValues.set("Codes" /* CODE */, (q) => `${q.codes()}`);
+    columnValues.set("NetworkCode" /* NETWORK_CODE */, (q) => `${q.networkCode}`);
+    columnValues.set("StationCode" /* STATION_CODE */, (q) => `${q.stationCode}`);
+    return columnValues;
   }
   static getSeismogramValue(q, h) {
     if (h === "Start" /* START */) {
@@ -62993,36 +63565,48 @@ var leafletutil_exports = {};
 __export(leafletutil_exports, {
   CENTER_LAT: () => CENTER_LAT,
   CENTER_LON: () => CENTER_LON,
+  CROSS: () => CROSS,
   DEFAULT_CENTER_LAT: () => DEFAULT_CENTER_LAT,
   DEFAULT_CENTER_LON: () => DEFAULT_CENTER_LON,
   DEFAULT_MAG_SCALE: () => DEFAULT_MAG_SCALE,
   DEFAULT_MAX_ZOOM: () => DEFAULT_MAX_ZOOM,
   DEFAULT_TILE_TEMPLATE: () => DEFAULT_TILE_TEMPLATE,
   DEFAULT_ZOOM_LEVEL: () => DEFAULT_ZOOM_LEVEL,
+  DOWNTRIANGLE: () => DOWNTRIANGLE,
   FIT_BOUNDS: () => FIT_BOUNDS,
+  HIGHLIGHT: () => HIGHLIGHT,
   InactiveStationMarkerClassName: () => InactiveStationMarkerClassName,
+  LEAFLET_CSS_ID: () => LEAFLET_CSS_ID,
   MAG_SCALE: () => MAG_SCALE,
+  MAP_CSS_ID: () => MAP_CSS_ID,
   MAP_ELEMENT: () => MAP_ELEMENT,
+  MARKER_CSS_ID: () => MARKER_CSS_ID,
   MAX_ZOOM: () => MAX_ZOOM,
   QUAKE_MARKER_STYLE_EL: () => QUAKE_MARKER_STYLE_EL,
   QuakeMarkerClassName: () => QuakeMarkerClassName,
   QuakeStationMap: () => QuakeStationMap,
+  SQUARE: () => SQUARE,
   STATION_CODE_SEP: () => STATION_CODE_SEP,
+  STATION_ICON_SIZE: () => STATION_ICON_SIZE,
   STATION_MARKER_STYLE_EL: () => STATION_MARKER_STYLE_EL,
   StationMarkerClassName: () => StationMarkerClassName,
   TILE_ATTRIBUTION: () => TILE_ATTRIBUTION,
   TILE_TEMPLATE: () => TILE_TEMPLATE,
+  TRIANGLE: () => TRIANGLE,
   ZOOM_LEVEL: () => ZOOM_LEVEL,
   createQuakeMarker: () => createQuakeMarker,
   createStationMarker: () => createStationMarker,
+  createStationSVG: () => createStationSVG,
+  cssClassForNetworkCode: () => cssClassForNetworkCode,
   cssClassForQuake: () => cssClassForQuake,
   cssClassForStationCodes: () => cssClassForStationCodes,
+  defaultMapElement_css: () => defaultMapElement_css,
+  defaultMarker_css: () => defaultMarker_css,
   getRadiusForMag: () => getRadiusForMag,
   inactiveStationIcon: () => inactiveStationIcon,
   leaflet_css: () => leaflet_css2,
   stationIcon: () => stationIcon,
-  stationMarker_css: () => stationMarker_css,
-  triangle: () => triangle
+  stationMarker_css: () => stationMarker_css
 });
 
 // src/leaflet_css.ts
@@ -63703,6 +64287,7 @@ __export(fdsncommon_exports, {
   LatLonBox: () => LatLonBox,
   LatLonRadius: () => LatLonRadius,
   LatLonRegion: () => LatLonRegion,
+  appendToPath: () => appendToPath,
   defaultPortStringForProtocol: () => defaultPortStringForProtocol
 });
 var IRIS_HOST = "service.iris.edu";
@@ -63746,6 +64331,15 @@ var FDSNCommon = class {
 function defaultPortStringForProtocol(protocol, port) {
   return (protocol === "http" || protocol === "http:" || protocol === "https" || protocol === "https:") && (port === 80 || port === 443) ? "" : ":" + String(port);
 }
+function appendToPath(baseUrl, addPath) {
+  let out = baseUrl + (baseUrl.endsWith("/") ? "" : "/");
+  if (addPath.startsWith("/")) {
+    out += addPath.substring(1);
+  } else {
+    out += addPath;
+  }
+  return out;
+}
 var LatLonRegion = class {
 };
 var LatLonBox = class extends LatLonRegion {
@@ -63783,18 +64377,25 @@ var LatLonRadius = class extends LatLonRegion {
 
 // src/leafletutil.ts
 var L2 = __toESM(require_leaflet_src(), 1);
+var HIGHLIGHT = "highlight";
 var MAP_ELEMENT = "sp-station-quake-map";
-var triangle = "\u25B2";
+var TRIANGLE = "triangle";
+var DOWNTRIANGLE = "downtriangle";
+var SQUARE = "square";
+var CROSS = "cross";
 var StationMarkerClassName = "stationMapMarker";
 var InactiveStationMarkerClassName = "inactiveStationMapMarker";
 var QuakeMarkerClassName = "quakeMapMarker";
+var STATION_ICON_SIZE = 18;
 var stationIcon = L2.divIcon({
-  className: StationMarkerClassName
+  className: StationMarkerClassName,
+  iconSize: [STATION_ICON_SIZE, STATION_ICON_SIZE]
 });
 var inactiveStationIcon = L2.divIcon({
-  className: InactiveStationMarkerClassName
+  className: InactiveStationMarkerClassName,
+  iconSize: [STATION_ICON_SIZE, STATION_ICON_SIZE]
 });
-var stationMarker_css = `
+var defaultMapElement_css = `
 
 :host {
   display: block
@@ -63809,43 +64410,76 @@ div.wrapper {
   height: 100%;
   width: 100%;
 }
-
+`;
+var defaultMarker_css = `
 .${StationMarkerClassName}.${InactiveStationMarkerClassName} {
-  color: darkgrey;
-  font-size: large;
+  fill: darkgrey;
+  stroke: darkgrey;
   z-index: 1;
-  text-shadow: 1px 1px 0 dimgrey, -1px 1px 0 dimgrey, -2px 1px 0 dimgrey, -1px -1px 0 dimgrey, 0 -3px 0 dimgrey, 1px -1px 0 dimgrey, 2px 1px 0 dimgrey;
-}
-.${InactiveStationMarkerClassName}:after{
-  content: "${triangle}";
 }
 .${StationMarkerClassName} {
-  color: blue;
-  font-size: large;
   z-index: 10;
-  text-shadow: 1px 1px 0 dimgrey, -1px 1px 0 dimgrey, -2px 1px 0 dimgrey, -1px -1px 0 dimgrey, 0 -3px 0 dimgrey, 1px -1px 0 dimgrey, 2px 1px 0 dimgrey;
+  fill: royalblue;
+  stroke: royalblue;
+}
+.${StationMarkerClassName} svg  {
+  background: none;
 }
 
-.${StationMarkerClassName}:after{
-  content: "${triangle}";
-}
 .${QuakeMarkerClassName} {
   stroke: red;
   fill: #f03;
   fill-opacity: 0.15;
 }
+.${StationMarkerClassName}.${HIGHLIGHT} {
+  stroke: white;
+}
+.${QuakeMarkerClassName}.${HIGHLIGHT} {
+  stroke: white;
+}
 `;
+var stationMarker_css = defaultMarker_css;
 function cssClassForStationCodes(station) {
   return `sta_${station.codes(STATION_CODE_SEP)}`;
 }
-function createStationMarker(station, classList2, isactive = true, centerLon = 0) {
-  const allClassList = classList2 ? classList2.slice() : [];
+function cssClassForNetworkCode(network) {
+  return `net_${network.networkCode}`;
+}
+function createStationSVG(iconSize = STATION_ICON_SIZE, symbol2 = TRIANGLE) {
+  const strokeWidth = 2;
+  const xCent = iconSize / 2;
+  const yCent = iconSize / 2;
+  const shift = (iconSize - strokeWidth) / 2;
+  let out = `<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" width="${iconSize}" height="${iconSize}">`;
+  if (symbol2 === DOWNTRIANGLE) {
+    out += `<polygon points="${xCent},${yCent + shift} ${xCent + shift},${yCent - shift} ${xCent - shift},${yCent - shift}" stroke-width="${strokeWidth}""/>
+      `;
+  } else if (symbol2 === SQUARE) {
+    out += `<polygon points="${xCent - shift},${yCent - shift} ${xCent + shift},${yCent - shift} ${xCent + shift},${yCent + shift} ${xCent - shift},${yCent + shift}" stroke-width="${strokeWidth}""/>
+      `;
+  } else if (symbol2 === CROSS) {
+    out += `<line x1="${xCent - shift}" y1="${yCent}" x2="${xCent + shift}" y2="${yCent}" stroke-width="${strokeWidth}"/>
+    <line x1="${xCent}" y1="${yCent - shift}" x2="${xCent}" y2="${yCent + shift}"  stroke-width="${strokeWidth}"/>`;
+  } else {
+    out += `
+    <polygon points="${xCent},${yCent - shift} ${xCent + shift},${yCent + shift} ${xCent - shift},${yCent + shift}" stroke-width="${strokeWidth}""/>
+      `;
+  }
+  out += "</svg>";
+  return out;
+}
+function createStationMarker(station, classList2, isactive = true, centerLon = 0, iconSize = STATION_ICON_SIZE, iconSymbol = TRIANGLE) {
+  const allClassList = classList2 != null ? classList2.slice() : [];
   allClassList.push(
     isactive ? StationMarkerClassName : InactiveStationMarkerClassName
   );
   allClassList.push(cssClassForStationCodes(station));
+  allClassList.push(cssClassForNetworkCode(station.network));
   const icon = L2.divIcon({
-    className: allClassList.join(" ")
+    html: createStationSVG(iconSize, iconSymbol),
+    className: allClassList.join(" "),
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize / 2, iconSize / 2]
   });
   const sLon = station.longitude - centerLon <= 180 ? station.longitude : station.longitude - 360;
   const m = L2.marker([station.latitude, sLon], {
@@ -63895,6 +64529,9 @@ var FIT_BOUNDS = "fitBounds";
 var QUAKE_MARKER_STYLE_EL = "quakeMarkerStyle";
 var STATION_MARKER_STYLE_EL = "staMarkerStyle";
 var STATION_CODE_SEP = "_";
+var LEAFLET_CSS_ID = "leafletcss";
+var MAP_CSS_ID = "stationquakemapcss";
+var MARKER_CSS_ID = "defaultmarkercss";
 var QuakeStationMap = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
@@ -63910,12 +64547,15 @@ var QuakeStationMap = class extends SeisPlotElement {
     __publicField(this, "quakeLayerName", "Quakes");
     __publicField(this, "stationLayer", L2.layerGroup());
     __publicField(this, "stationLayerName", "Stations");
+    __publicField(this, "stationIconSize", STATION_ICON_SIZE);
+    __publicField(this, "stationIconSymbol", TRIANGLE);
     this.map = null;
     this.classToColor = /* @__PURE__ */ new Map();
     this.stationClassMap = /* @__PURE__ */ new Map();
     this.quakeClassMap = /* @__PURE__ */ new Map();
-    this.addStyle(leaflet_css2);
-    this.addStyle(stationMarker_css);
+    this.addStyle(leaflet_css2, LEAFLET_CSS_ID);
+    this.addStyle(defaultMapElement_css, MAP_CSS_ID);
+    this.addStyle(stationMarker_css, MARKER_CSS_ID);
     const wrapper = document.createElement("div");
     wrapper.setAttribute("class", "wrapper");
     this.getShadowRoot().appendChild(wrapper);
@@ -63937,6 +64577,10 @@ var QuakeStationMap = class extends SeisPlotElement {
         this.quakeAddClass(quake, cn);
       });
     }
+  }
+  allQuakes() {
+    const quakes = this.quakeList.concat(uniqueQuakes(this.seisData));
+    return quakes;
   }
   /**
    * Adds a css class for the quake icon for additional styling,
@@ -63987,7 +64631,21 @@ var QuakeStationMap = class extends SeisPlotElement {
    * @param  classname   class to remove
    */
   quakeRemoveAllClass(classname) {
-    this.quakeList.forEach((q) => this.quakeRemoveClass(q, classname));
+    this.allQuakes().forEach((q) => this.quakeRemoveClass(q, classname));
+  }
+  quakeUnhighlight() {
+    this.allQuakes().forEach((q) => {
+      this.quakeRemoveClass(q, HIGHLIGHT);
+    });
+  }
+  quakeHighlight(quakeList) {
+    if (!Array.isArray(quakeList)) {
+      quakeList = [quakeList];
+    }
+    this.quakeUnhighlight();
+    quakeList.forEach((q) => {
+      this.quakeAddClass(q, HIGHLIGHT);
+    });
   }
   addStation(station, classname) {
     const re2 = /\s+/;
@@ -64003,6 +64661,22 @@ var QuakeStationMap = class extends SeisPlotElement {
     } else {
       this.stationList.push(station);
       classList2.forEach((cn) => this.stationAddClass(station, cn));
+    }
+  }
+  /**
+   * Get all stations on the map. Some from seisData and some added directly
+   * to stationList.
+   * @return list of Stations
+   */
+  allStations() {
+    const stations = this.stationList.concat(uniqueStations2(this.seisData));
+    return stations;
+  }
+  stationIcon(iconSize = STATION_ICON_SIZE, iconSymbol = TRIANGLE) {
+    this.stationIconSize = iconSize;
+    this.stationIconSymbol = iconSymbol;
+    if (iconSize < 0) {
+      throw new Error(`icon size must be postive number: ${iconSize}`);
     }
   }
   /**
@@ -64040,10 +64714,24 @@ var QuakeStationMap = class extends SeisPlotElement {
       this.stationClassMap.set(station.codes(STATION_CODE_SEP), classList2);
     }
     const markerList = this.getShadowRoot().querySelectorAll(
-      `div.${station.codes(STATION_CODE_SEP)}`
+      `div.${cssClassForStationCodes(station)}`
     );
     markerList.forEach((c) => {
       c.classList.remove(classname);
+    });
+  }
+  stationUnhighlight() {
+    this.allStations().forEach((sta) => {
+      this.stationRemoveClass(sta, HIGHLIGHT);
+    });
+  }
+  stationHighlight(stationList) {
+    if (!Array.isArray(stationList)) {
+      stationList = [stationList];
+    }
+    this.stationUnhighlight();
+    stationList.forEach((sta) => {
+      this.stationAddClass(sta, HIGHLIGHT);
     });
   }
   /**
@@ -64181,7 +64869,7 @@ var QuakeStationMap = class extends SeisPlotElement {
   }
   drawQuakeLayer() {
     this.quakeLayer.clearLayers();
-    const quakes = this.quakeList.concat(uniqueQuakes(this.seisData));
+    const quakes = this.allQuakes();
     quakes.forEach((q) => {
       const circle2 = createQuakeMarker(
         q,
@@ -64202,13 +64890,15 @@ var QuakeStationMap = class extends SeisPlotElement {
   }
   drawStationLayer() {
     this.stationLayer.clearLayers();
-    const stations = this.stationList.concat(uniqueStations2(this.seisData));
+    const stations = this.allStations();
     stations.forEach((s2) => {
       const m = createStationMarker(
         s2,
         this.stationClassMap.get(s2.codes(STATION_CODE_SEP)),
         true,
-        this.centerLon
+        this.centerLon,
+        this.stationIconSize,
+        this.stationIconSymbol
       );
       m.addTo(this.stationLayer);
       this.mapItems.push([s2.latitude, s2.longitude]);
@@ -64285,8 +64975,9 @@ var QuakeStationMap = class extends SeisPlotElement {
     let style = "";
     this.classToColor.forEach((color2, classname) => {
       style = `${style}
-div.leaflet-marker-icon.${classname} {
-  color: ${color2};
+div.leaflet-marker-icon.${StationMarkerClassName}.${classname}  {
+  fill: ${color2};
+  stroke: ${color2};
 }
 `;
     });
@@ -64848,26 +65539,11 @@ var OrganizedDisplayItem = class extends SeisPlotElement {
       const mapid = "map" + ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
       const seismap = new QuakeStationMap(this.seisData);
       seismap.setAttribute("id", mapid);
-      const centerLat = parseFloat(
-        getFromQueryParams(queryParams, "centerLat", "35")
-      );
-      seismap.setAttribute(CENTER_LAT, `${centerLat}`);
-      const centerLon = parseFloat(
-        getFromQueryParams(queryParams, "centerLon", "-100")
-      );
-      seismap.setAttribute(CENTER_LON, `${centerLon}`);
-      const mapZoomLevel = parseInt(
-        getFromQueryParams(queryParams, "zoom", "1")
-      );
-      seismap.setAttribute(ZOOM_LEVEL, `${mapZoomLevel}`);
-      const tileUrl = getFromQueryParams(queryParams, TILE_TEMPLATE, DEFAULT_TILE_TEMPLATE);
-      seismap.setAttribute(TILE_TEMPLATE, `${tileUrl}`);
-      const tileAttr = getFromQueryParams(queryParams, TILE_ATTRIBUTION, "");
-      seismap.setAttribute(TILE_ATTRIBUTION, `${tileAttr}`);
-      const magScale = parseFloat(
-        getFromQueryParams(queryParams, "magScale", "5.0")
-      );
-      seismap.setAttribute(MAG_SCALE, `${magScale}`);
+      for (const mapAttr of QuakeStationMap.observedAttributes) {
+        if (queryParams[mapAttr]) {
+          seismap.setAttribute(mapAttr, getFromQueryParams(queryParams, mapAttr));
+        }
+      }
       wrapper.appendChild(seismap);
     } else if (this.plottype.startsWith(INFO2)) {
       const infotable = new QuakeStationTable(
@@ -65213,6 +65889,24 @@ var OrganizedDisplay = class extends SeisPlotElement {
     if (this.bottomSeismographConfig != null && seisDispItems.length > 1) {
       seisDispItems[seisDispItems.length - 1].seismographConfig = this.bottomSeismographConfig;
     }
+    seisDispItems.forEach((odi) => {
+      if (odi.plottype === SEISMOGRAPH) {
+        odi.addEventListener("mouseenter", (evt) => {
+          const mapElement = wrapper.querySelector(MAP_ELEMENT);
+          if (mapElement) {
+            mapElement.stationHighlight(uniqueStations2(odi.seisData));
+            mapElement.quakeHighlight(uniqueQuakes(odi.seisData));
+          }
+        });
+        odi.addEventListener("mouseleave", (evt) => {
+          const mapElement = wrapper.querySelector(MAP_ELEMENT);
+          if (mapElement) {
+            mapElement.stationUnhighlight();
+            mapElement.quakeUnhighlight();
+          }
+        });
+      }
+    });
     let allOrgDispItems = new Array();
     allOrgDispItems = allOrgDispItems.concat(seisDispItems);
     allOrgDispItems.forEach((oi) => {
@@ -65657,7 +66351,6 @@ function internalCreateRealtimeDisplay(config2) {
       } else {
       }
     } else {
-      console.log(`Did not find SDD ${codes}, create new`);
       const sdd = SeismogramDisplayData.fromSeismogramSegment(seisSegment);
       rawSeisData.push(sdd);
       if (config2.networkList) {
@@ -65682,7 +66375,6 @@ function internalCreateRealtimeDisplay(config2) {
   );
 }
 function trim(orgDisplay, timeRange) {
-  console.log(`trim rt orgDisplay: ${timeRange}`);
   orgDisplay.seisData.forEach((sdd) => {
     sdd.trimInPlace(timeRange);
     sdd.timeRange = timeRange;
@@ -67057,6 +67749,22 @@ var TraveltimeQuery = class extends FDSNCommon {
   getTimeout() {
     return this._timeoutSec;
   }
+  queryVersion() {
+    const url2 = this.formVersionURL();
+    const fetchInit = defaultFetchInitObj(TEXT_MIME);
+    return doFetchWithTimeout(url2, fetchInit, this._timeoutSec * 1e3).then((response) => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error(
+          "Fetching over network was not ok: " + response.status + " " + response.statusText
+        );
+      }
+    });
+  }
+  formVersionURL() {
+    return appendToPath(this.formBaseURL(), "version");
+  }
   queryText() {
     this.format(TEXT_FORMAT);
     const url2 = this.formURL();
@@ -67151,7 +67859,7 @@ var TraveltimeQuery = class extends FDSNCommon {
     return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formURL() {
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (isDef(this._noheader) && this._noheader) {
       url2 = url2 + "noheader=true&";
     }
@@ -67194,7 +67902,9 @@ var TraveltimeQuery = class extends FDSNCommon {
     return url2;
   }
   queryTauPVersion() {
-    return fetch(this.formTauPVersionURL()).then((response) => {
+    const url2 = this.formTauPVersionURL();
+    const fetchInit = defaultFetchInitObj(TEXT_MIME);
+    return doFetchWithTimeout(url2, fetchInit, this._timeoutSec * 1e3).then((response) => {
       if (response.ok) {
         return response.text();
       } else {
@@ -67205,10 +67915,10 @@ var TraveltimeQuery = class extends FDSNCommon {
     });
   }
   formTauPVersionURL() {
-    return this.formBaseURL() + "/taupversion";
+    return appendToPath(this.formBaseURL(), "taupversion");
   }
   formWadlURL() {
-    return this.formBaseURL() + "/application.wadl";
+    return appendToPath(this.formBaseURL(), "application.wadl");
   }
 };
 var FAKE_EMPTY_TEXT_MODEL = `Model: `;
@@ -68738,7 +69448,7 @@ var AvailabilityQuery = class extends FDSNCommon {
       const fetchInit = defaultFetchInitObj(JSON_MIME);
       fetchInit.method = "POST";
       fetchInit.body = this.createPostBody(channelTimeList);
-      return fetch(this.formBaseURL() + `/${method}?`, fetchInit).then(
+      return fetch(appendToPath(this.formBaseURL(), `${method}?`), fetchInit).then(
         function(response) {
           if (response.ok) {
             return response;
@@ -68854,7 +69564,7 @@ var AvailabilityQuery = class extends FDSNCommon {
     return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -68881,7 +69591,7 @@ var AvailabilityQuery = class extends FDSNCommon {
     if (hasNoArgs(method)) {
       method = "query";
     }
-    let url2 = this.formBaseURL() + `/${method}?`;
+    let url2 = appendToPath(this.formBaseURL(), `/${method}?`);
     if (this._networkCode) {
       url2 = url2 + makeParam("net", this._networkCode);
     }
@@ -69440,7 +70150,7 @@ var DataSelectQuery = class _DataSelectQuery extends FDSNCommon {
     return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -69461,10 +70171,10 @@ var DataSelectQuery = class _DataSelectQuery extends FDSNCommon {
     );
   }
   formPostURL() {
-    return this.formBaseURL() + "/query";
+    return appendToPath(this.formBaseURL(), "query");
   }
   formURL() {
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (isStringArg(this._networkCode) && this._networkCode.length > 0 && this._networkCode !== "*") {
       url2 = url2 + makeParam("net", this._networkCode);
     }
@@ -70204,7 +70914,7 @@ var EventQuery = class extends FDSNCommon {
    * @returns the url
    */
   formCatalogsURL() {
-    return this.formBaseURL() + "/catalogs";
+    return appendToPath(this.formBaseURL(), "catalogs");
   }
   /**
    * Queries the remote web service to get known catalogs
@@ -70249,7 +70959,7 @@ var EventQuery = class extends FDSNCommon {
    * @returns the url
    */
   formContributorsURL() {
-    return this.formBaseURL() + "/contributors";
+    return appendToPath(this.formBaseURL(), "contributors");
   }
   /**
    * Queries the remote web service to get known contributors
@@ -70291,7 +71001,7 @@ var EventQuery = class extends FDSNCommon {
    * @returns the url
    */
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -70321,7 +71031,7 @@ var EventQuery = class extends FDSNCommon {
     if (this._protocol.endsWith(colon)) {
       colon = "";
     }
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (this._eventId) {
       url2 = url2 + makeParam("eventid", this._eventId);
     }
@@ -71262,7 +71972,7 @@ var StationQuery = class extends FDSNCommon {
    * @returns the url
    */
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -71297,7 +72007,7 @@ var StationQuery = class extends FDSNCommon {
     return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formPostURL() {
-    return this.formBaseURL() + "/query";
+    return appendToPath(this.formBaseURL(), "query");
   }
   /**
    * Form URL to query the remote web service, encoding the query parameters.
@@ -71306,7 +72016,7 @@ var StationQuery = class extends FDSNCommon {
    * @returns url
    */
   formURL(level) {
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (!isStringArg(level)) {
       throw new Error(
         "level not specified, should be one of network, station, channel, response."
@@ -71733,7 +72443,7 @@ var DataCentersQuery = class extends FDSNCommon {
    * @returns         version
    */
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -71760,7 +72470,7 @@ var DataCentersQuery = class extends FDSNCommon {
    */
   formURL() {
     const method = "query";
-    let url2 = this.formBaseURL() + `/${method}?`;
+    let url2 = appendToPath(this.formBaseURL(), `${method}?`);
     if (this._name) {
       url2 = url2 + makeParam("name", this._name);
     }
@@ -72531,7 +73241,7 @@ var Helicorder = class extends SeisPlotElement {
         seismographWrapper.insertBefore(utcDiv, seismographWrapper.firstChild);
       }
       if (this.heliConfig.lineSeisConfig.linkedAmplitudeScale) {
-        this.heliConfig.lineSeisConfig.linkedAmplitudeScale.recalculate();
+        this.heliConfig.lineSeisConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
       } else {
         seismograph.redraw();
       }
@@ -72608,6 +73318,9 @@ var Helicorder = class extends SeisPlotElement {
     return out;
   }
   calcDetailForEvent(evt) {
+    if (!(evt instanceof MouseEvent)) {
+      throw new Error("expect mouse event but not instanceof");
+    }
     const heliMargin = this.heliConfig.margin;
     const margin = this.heliConfig.lineSeisConfig.margin;
     const nl = this.heliConfig.numLines;
@@ -72630,10 +73343,15 @@ var Helicorder = class extends SeisPlotElement {
           (clickLine + timeLineFraction) * secondsPerLine * 1e3
         )
       );
+      let channel = null;
+      if (this.seisData.length > 0) {
+        channel = this.seisData[0].channel;
+      }
       return {
         mouseevent: evt,
         time: clickTime,
-        lineNum: clickLine
+        lineNum: clickLine,
+        channel
       };
     } else {
       throw new Error("Helicorder must be fixedTimeScale");
@@ -72884,12 +73602,12 @@ var MSeedArchive = class {
     let t = startTime.minus(recordTime);
     const urlList = [];
     while (t < endTime) {
-      const url2 = this.rootUrl + "/" + this.fillTimePattern(basePattern, t);
+      const url2 = appendToPath(this.rootUrl, this.fillTimePattern(basePattern, t));
       t = t.plus(Duration.fromObject({ hour: 1 }));
       urlList.push(url2);
     }
     if (t.plus(recordTime) > endTime) {
-      const url2 = this.rootUrl + "/" + this.fillTimePattern(basePattern, t);
+      const url2 = appendToPath(this.rootUrl, this.fillTimePattern(basePattern, t));
       urlList.push(url2);
     }
     return loadDataRecords(urlList).then((dataRecords) => {
@@ -87021,6 +87739,7 @@ __export(ringserverweb_exports, {
 var ringserverweb4_exports = {};
 __export(ringserverweb4_exports, {
   DATALINK_PATH: () => DATALINK_PATH,
+  EARTHSCOPE_HOST: () => EARTHSCOPE_HOST2,
   IRIS_HOST: () => IRIS_HOST2,
   RingserverConnection: () => RingserverConnection,
   SEEDLINK_PATH: () => SEEDLINK_PATH,
@@ -87054,6 +87773,7 @@ var StreamsResult = external_exports.object({
   accessTime: external_exports.custom((d) => d instanceof DateTime).optional()
 });
 var IRIS_HOST2 = "rtserve.iris.washington.edu";
+var EARTHSCOPE_HOST2 = "rtserve.earthscope.org";
 var RingserverConnection = class {
   constructor(host, port) {
     /** @private */
@@ -87083,6 +87803,10 @@ var RingserverConnection = class {
       this._host = hostStr;
       this._port = 80;
       this._prefix = "/";
+    }
+    if (this._host === EARTHSCOPE_HOST2) {
+      this._protocol = "https:";
+      this._port = 443;
     }
     if (isNumArg(port)) {
       this._port = port;
@@ -87180,7 +87904,7 @@ var RingserverConnection = class {
    */
   pullId() {
     return pullJson(this.formIdURL(), this._timeoutSec).catch((_err) => {
-      return pullText(this.formBaseURL() + "id", this._timeoutSec).then((rawlines) => {
+      return pullText(appendToPath(this.formBaseURL(), "id"), this._timeoutSec).then((rawlines) => {
         const lines = rawlines.split("\n");
         let dlinfo = [`DLPROTO:1.0`];
         let slinfo = ["SLPROTO:3.1"];
@@ -87295,7 +88019,7 @@ var RingserverConnection = class {
    * @returns the id url
    */
   formIdURL() {
-    return this.formBaseURL() + "id/json";
+    return appendToPath(this.formBaseURL(), "id/json");
   }
   /**
    * Forms the ringserver streams/json url using the query parameters.
@@ -87304,7 +88028,7 @@ var RingserverConnection = class {
    * @returns the streams url
    */
   formStreamsURL(queryParams) {
-    return this.formBaseURL() + "streams/json" + (isNonEmptyStringArg(queryParams) && queryParams.length > 0 ? "?" + queryParams : "");
+    return appendToPath(this.formBaseURL(), "streams/json") + (isNonEmptyStringArg(queryParams) && queryParams.length > 0 ? "?" + queryParams : "");
   }
   /**
    * Forms the ringserver stream ids url using the query parameters.
@@ -87313,7 +88037,7 @@ var RingserverConnection = class {
    * @returns the stream ids url
    */
   formStreamIdsURL(queryParams) {
-    return this.formBaseURL() + "streamids" + (queryParams && queryParams.length > 0 ? "?" + queryParams : "");
+    return appendToPath(this.formBaseURL(), "streamids") + (queryParams && queryParams.length > 0 ? "?" + queryParams : "");
   }
 };
 function stationsFromStreams(streams) {
@@ -87604,7 +88328,7 @@ var RingserverConnection2 = class {
    * @returns the id url
    */
   formIdURL() {
-    return this.formBaseURL() + "id";
+    return appendToPath(this.formBaseURL(), "id");
   }
   /**
    * Forms the ringserver streams url using the query parameters.
@@ -87613,7 +88337,7 @@ var RingserverConnection2 = class {
    * @returns the streams url
    */
   formStreamsURL(queryParams) {
-    return this.formBaseURL() + "streams" + (isNonEmptyStringArg(queryParams) && queryParams.length > 0 ? "?" + queryParams : "");
+    return appendToPath(this.formBaseURL(), "streams") + (isNonEmptyStringArg(queryParams) && queryParams.length > 0 ? "?" + queryParams : "");
   }
   /**
    * Forms the ringserver stream ids url using the query parameters.
@@ -87622,7 +88346,7 @@ var RingserverConnection2 = class {
    * @returns the stream ids url
    */
   formStreamIdsURL(queryParams) {
-    return this.formBaseURL() + "streamids" + (queryParams && queryParams.length > 0 ? "?" + queryParams : "");
+    return appendToPath(this.formBaseURL(), "streamids") + (queryParams && queryParams.length > 0 ? "?" + queryParams : "");
   }
 };
 function stationsFromStreams2(streams) {
@@ -88226,7 +88950,7 @@ var FedCatalogDataCenter = class {
     if (this.stationQuery) {
       return this.stationQuery.postQuery(this.level, this.postLines);
     } else {
-      return Promise.all([]);
+      return Promise.resolve([]);
     }
   }
   queryStationRawXml() {
@@ -88253,7 +88977,7 @@ var FedCatalogDataCenter = class {
       });
       return this.dataSelectQuery.postQuerySeismograms(sddList);
     } else {
-      return Promise.all([]);
+      return Promise.resolve([]);
     }
   }
 };
@@ -89141,7 +89865,7 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
    * @returns the url
    */
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -89172,8 +89896,8 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
       colon = "";
     }
     const port = this.defaultPortStringForProtocol(this._protocol);
-    const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    const path2 = appendToPath(appendToPath(this._path_base, this._service), this._specVersion);
+    return appendToPath(`${this._protocol}${colon}//${this._host}${port}`, path2);
   }
   /**
    * Form URL to post the remote web service. No parameters are added
@@ -89182,7 +89906,7 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
    * @returns the URL for posting
    */
   formPostURL() {
-    return this.formBaseURL() + "/query";
+    return appendToPath(this.formBaseURL(), "query");
   }
   /**
    * Form URL to query the remote web service, encoding the query parameters.
@@ -89190,7 +89914,7 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
    * @returns url
    */
   formURL() {
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (isStringArg(this._level)) {
       url2 = url2 + makeParam("level", this._level);
     }
@@ -90479,10 +91203,10 @@ var SyngineQuery = class extends FDSNCommon {
     }
     const port = this.defaultPortStringForProtocol(this._protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return appendToPath(`${this._protocol}${colon}//${this._host}${port}`, path2);
   }
   formVersionURL() {
-    return this.formBaseURL() + "/version";
+    return appendToPath(this.formBaseURL(), "version");
   }
   /**
    * Queries the remote web service to get its version
@@ -90503,7 +91227,7 @@ var SyngineQuery = class extends FDSNCommon {
     );
   }
   formURL() {
-    let url2 = this.formBaseURL() + "/query?";
+    let url2 = appendToPath(this.formBaseURL(), "query?");
     if (isStringArg(this._model) && this._model.length > 0) {
       url2 = url2 + makeParam("model", this._model);
     }
@@ -91010,19 +91734,6 @@ var TauPQuery = class extends FDSNCommon {
       }
     });
   }
-  queryWadl() {
-    return fetch(this.formWadlURL()).then((response) => {
-      if (response.ok) {
-        return response.text().then(
-          (textResponse) => new window.DOMParser().parseFromString(textResponse, "text/xml")
-        );
-      } else {
-        throw new Error(
-          `Fetching over network was not ok: ${response.status} ${response.statusText}`
-        );
-      }
-    });
-  }
   query() {
     if (this._format === JSON_FORMAT2) {
       return this.queryJson();
@@ -91052,7 +91763,7 @@ var TauPQuery = class extends FDSNCommon {
     if (toolname == null) {
       toolname = TAUP_TIME_TOOL;
     }
-    let url2 = `${this.formBaseURL()}/${toolname}?`;
+    let url2 = appendToPath(this.formBaseURL(), `${toolname}?`);
     if (isDef(this._noheader) && this._noheader) {
       url2 = url2 + "noheader=true&";
     }
@@ -91106,10 +91817,7 @@ var TauPQuery = class extends FDSNCommon {
     });
   }
   formTauPVersionURL() {
-    return this.formBaseURL() + "/version";
-  }
-  formWadlURL() {
-    return this.formBaseURL() + "/application.wadl";
+    return appendToPath(this.formBaseURL(), "version");
   }
 };
 var FAKE_EMPTY_TEXT_MODEL2 = `Model: `;
