@@ -27,6 +27,9 @@ public class ExactDistanceRay extends DistanceRay {
         } else {
             phaseArrivals = calcScatteredPhase((ScatteredSeismicPhase) phase);
         }
+        for (Arrival a : phaseArrivals) {
+            a.setSearchValue(this);
+        }
         return phaseArrivals;
     }
 
@@ -35,6 +38,7 @@ public class ExactDistanceRay extends DistanceRay {
         double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
         FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg);
+        scatRay.setSeismicSource(getSeismicSource());
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
         List<Double> arrivalDistList = scatRay.calcRadiansInRange(scatteredPhase.getMinDistance(), scatteredPhase.getMaxDistance(),
@@ -160,16 +164,13 @@ public class ExactDistanceRay extends DistanceRay {
 
     @Override
     public boolean hasSeismicSource() {
-        return distanceRay.hasSeismicSource();
+        return (this.seismicSource != null) || distanceRay.hasSeismicSource();
     }
-
-    @Override
-    public void setSeismicSource(SeismicSource source) {
-        distanceRay.setSeismicSource(source);
-    }
-
     @Override
     public SeismicSource getSeismicSource() {
+        if (this.seismicSource != null) {
+            return this.seismicSource;
+        }
         return distanceRay.getSeismicSource();
     }
 

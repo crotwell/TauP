@@ -613,7 +613,7 @@ public class Arrival {
         SeismicSource sourceArgs = getRayCalculateable().getSeismicSource();
 
         if (sourceArgs == null) {
-            throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable());
+            throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable().getClass().getName()+" "+getRayCalculateable());
         }
 
         double ampFactor = getAmplitudeFactorPSV(getRayCalculateable().getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());

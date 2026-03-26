@@ -38,7 +38,9 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         geodetic = dr.geodetic;
         geodesic = dr.geodesic;
         invFlattening = dr.invFlattening;
+        seismicSource = dr.seismicSource;
     }
+
     public static DistanceAngleRay ofDegrees(double deg) {
         DistanceAngleRay val = new DistanceAngleRay();
         val.degrees = deg;

@@ -45,6 +45,19 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
         return distanceRay.getKilometers();
     }
 
+    @Override
+    public boolean hasSeismicSource() {
+        return (this.seismicSource != null) || distanceRay.hasSeismicSource();
+    }
+
+    @Override
+    public SeismicSource getSeismicSource() {
+        if (this.seismicSource != null) {
+            return this.seismicSource;
+        }
+        return distanceRay.getSeismicSource();
+    }
+
     public List<Arrival> fixNegDistance(List<Arrival> arrivalList) {
         List<Arrival> out = new ArrayList<>();
         for (Arrival arrival : arrivalList ) {
