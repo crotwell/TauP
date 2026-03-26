@@ -177,16 +177,16 @@ public class Arrival {
     public Arrival nearbyArrival(double deltaDistRadian) {
         double dd = deltaDistRadian;
         if (dd > ONE_DEG_AS_RADIAN) { dd = ONE_DEG_AS_RADIAN; } // 1 deg ~ 0.0175 rad
-        double beforeDist = getModuloDist()-dd/2;
+        double beforeDist = getDist()-dd/2;
         if (beforeDist < 0 && getDist() >= 0) {
-            beforeDist = getModuloDist()+dd;
+            beforeDist = getDist()+dd;
         }
-        double afterDist = getModuloDist()+dd/2;
+        double afterDist = getDist()+dd/2;
         List<Arrival> nearArrivalList;
         SimpleContigSeismicPhase contigPhase = getSimpleContigSeismicPhase();
 
-        DistanceRay beforeRay = DistanceRay.ofRadians(beforeDist);
-        DistanceRay afterRay = DistanceRay.ofRadians(afterDist);
+        DistanceRay beforeRay = DistanceRay.ofExactRadians(beforeDist);
+        DistanceRay afterRay = DistanceRay.ofExactRadians(afterDist);
         nearArrivalList = beforeRay.calculate(getPhase());
         nearArrivalList.addAll(afterRay.calculate(getPhase()));
 
@@ -258,7 +258,7 @@ public class Arrival {
         for (int i = 1; i < arrSegList.size(); i++) {
             ArrivalPathSegment aSeg = arrSegList.get(i);
             ArrivalPathSegment nSeg = nearSegList.get(i);
-            if (aSeg.getPhaseSegment().endAction == PhaseInteraction.TURN) {
+            if (aSeg.getPhaseSegment().endAction == PhaseInteraction.TURN || aSeg.getPhaseSegment().endAction == PhaseInteraction.TRANSDOWN) {
                 // combine prev and current segments
                 // what about if cross happens shallower in "transmitup" segment
                 continue;
