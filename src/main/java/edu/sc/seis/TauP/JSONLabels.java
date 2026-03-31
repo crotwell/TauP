@@ -118,4 +118,8 @@ public interface JSONLabels {
     String VELOCITY = "velocity";
     String RADIALSLOWNESS = "radialslowness";
     String RADIUS = "radius";
+    String ENDACTION = "endaction";
+    String PREVENDACTION = "prevendaction";
+    String LEGNAME = "legname";
+    String UPDOWN = "updown";
 }

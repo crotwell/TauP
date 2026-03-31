@@ -339,6 +339,19 @@ public class SeismicPhaseSegment {
 		}
 		return depthRange;
 	}
+
+	public TauModel getTMod() {
+		return tMod;
+	}
+
+	public PhaseInteraction getEndAction() {
+		return endAction;
+	}
+
+	public PhaseInteraction getPrevEndAction() {
+		return prevEndAction;
+	}
+
 	public String getUpDownJSON() {
 		String upDown;
 		if (isFlat) {

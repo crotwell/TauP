@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.JSONLabels.*;
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 
 /**
@@ -167,6 +168,14 @@ public abstract class AbstractPathSegment {
         JsonObject a = new JsonObject();
         a.addProperty(JSONLabels.SEGNAME, segmentName);
         a.addProperty(JSONLabels.WAVETYPE, isPWave ? JSONLabels.PWAVE : JSONLabels.SWAVE);
+        if (this instanceof ArrivalPathSegment) {
+            // we are a ArrivalPathSegment, add extra items
+            ArrivalPathSegment arrSeg = (ArrivalPathSegment) this;
+            String updown = arrSeg.getPhaseSegment().isFlat ? FLAT : (arrSeg.getPhaseSegment().isDownGoing ? DOWN : UP);
+            a.addProperty(JSONLabels.UPDOWN, updown);
+            a.addProperty(JSONLabels.ENDACTION, arrSeg.getPhaseSegment().getEndAction().name());
+            a.addProperty(JSONLabels.PREVENDACTION, arrSeg.getPhaseSegment().getPrevEndAction().name());
+        }
         JsonArray points = new JsonArray();
         a.add(JSONLabels.SEGMENT, points);
         for (TimeDist td : path) {
