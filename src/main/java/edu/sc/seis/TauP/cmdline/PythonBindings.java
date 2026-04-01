@@ -399,7 +399,7 @@ public class PythonBindings {
 
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
-            out.println("__version__ = \"0.2.0-alpha5\"");
+            out.println("__version__ = \"0.2.0-alpha6\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
