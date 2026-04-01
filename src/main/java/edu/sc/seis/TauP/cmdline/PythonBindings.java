@@ -176,7 +176,11 @@ public class PythonBindings {
             bodyWriter.println();
             if ( ! specialSetter(bodyWriter, op, opname)) {
                 // normal setter
-                bodyWriter.println("  def " + opname + "(self, val):");
+                String defValStr = "";
+                if (simpleType.equals("Boolean")) {
+                    defValStr = "=True";
+                }
+                bodyWriter.println("  def " + opname + "(self, val"+defValStr+"):");
                 desc(bodyWriter, op, opname);
 
                 if (simpleType.equals("List")) {
@@ -232,7 +236,11 @@ public class PythonBindings {
             bodyWriter.print(" of " + subtypeFromJavaType(op));
         }
         bodyWriter.println();
-        if (simpleType.equals("List") && !isAppend) {
+
+        if (simpleType.equals("Boolean")) {
+            bodyWriter.println("");
+            bodyWriter.println("    Without arguments sets the value to True. ");
+        } else if (simpleType.equals("List") && !isAppend) {
             if (op.arity().max() == 1) {
                 bodyWriter.println("    If a single " + subtypeFromJavaType(op)
                         + " is passed in, it is automatically wrapped in a list. So");
