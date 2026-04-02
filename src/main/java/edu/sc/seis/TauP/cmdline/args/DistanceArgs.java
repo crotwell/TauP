@@ -445,6 +445,12 @@ public class DistanceArgs {
                         rc.setSeismicSource(new SeismicSource(Mw, sourceArgs.getFaultPlane()));
                     }
                 }
+            } else {
+                for (RayCalculateable rc : out) {
+                    if (!rc.hasMw()) {
+                        rc.setSeismicSource(new SeismicSource(sourceArgs.getMw()));
+                    }
+                }
             }
         }
         return out;
