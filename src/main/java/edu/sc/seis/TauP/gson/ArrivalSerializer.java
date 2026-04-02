@@ -3,6 +3,8 @@ package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.seisFile.LatLonLocatable;
+import edu.sc.seis.seisFile.Location;
 
 import java.lang.reflect.Type;
 
@@ -60,10 +62,12 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             a.addProperty(JSONLabels.DESC, arr.getRayCalculateable().getDescription());
         }
         if (arr.getRayCalculateable().hasSource()) {
-            a.add(JSONLabels.SOURCE_LOC, context.serialize(arr.getRayCalculateable().getSource()));
+            LatLonLocatable source = arr.getRayCalculateable().getSource();
+            a.add(JSONLabels.SOURCE_LOC, locSerial.serialize(source, Location.class, context));
         }
         if (arr.getRayCalculateable().hasReceiver()) {
-            a.add(JSONLabels.RECEIVER_LOC, context.serialize(arr.getRayCalculateable().getReceiver()));
+            LatLonLocatable receiver = arr.getRayCalculateable().getReceiver();
+            a.add(JSONLabels.RECEIVER_LOC, locSerial.serialize(receiver, Location.class, context));
         }
         if (withAmplitude) {
             try {
@@ -129,4 +133,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         }
         return a;
     }
+
+
+    LocationSerializer locSerial = new LocationSerializer();
 }
