@@ -16,11 +16,13 @@ import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
+import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -140,8 +142,13 @@ public class TauP_WebServe extends TauP_Tool {
                             handleCmdLine(tool, exchange);
                         } else if (toolname.equals(PARAM_HELP)) {
                             handleParamHelp(exchange);
-                        } else if (ToolRun.isKnownToolName(toolname)) {
+                        } else if (ToolRun.isKnownWebToolName(toolname)) {
                             handleTauPTool(exchange, namespace, service, version, toolname);
+                        } else {
+                            // fail if one of disabled web tools, like create or setsac
+                            new ResponseCodeHandler(404).handleRequest(exchange);
+                            exchange.getResponseSender().send(createVersionsPage("Tool "+toolname+" unknown"));
+                            return;
                         }
                     } else {
                         Alert.info("Unknown version: "+version);
@@ -165,7 +172,7 @@ public class TauP_WebServe extends TauP_Tool {
                         || toolname.equals(MODEL_NAMES)) {
                     return true;
                 }
-                return ToolRun.isKnownToolName(toolname);
+                return ToolRun.isKnownWebToolName(toolname);
             }
 
             public void handleTauPTool(final HttpServerExchange exchange,
@@ -174,9 +181,20 @@ public class TauP_WebServe extends TauP_Tool {
                                        String version,
                                        String toolname) throws Exception {
                 Alert.debug("Try to run as tool: " + toolname);
-                Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-
-                if ( ! ToolRun.isKnownToolName(toolname)) {
+                Map<String, Deque<String>> queryParams;
+                if (exchange.getRequestMethod().equals(Methods.GET)) {
+                    queryParams = exchange.getQueryParameters();
+                } else if (exchange.getRequestMethod().equals(Methods.POST)) {
+                    BufferedInputStream bufin = new BufferedInputStream(exchange.getInputStream());
+                    String contents = new String(bufin.readAllBytes()).trim();
+                    queryParams = createQueryParamsForPost(contents, exchange);
+                } else {
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("Only GET,POST supported for "
+                            +toolname+", but was "+exchange.getRequestMethod()));
+                    return;
+                }
+                if ( ! ToolRun.isKnownWebToolName(toolname)) {
                     return;
                 }
                 TauP_Tool tool = createTool(toolname);
@@ -280,16 +298,52 @@ public class TauP_WebServe extends TauP_Tool {
         pathHandler.addPrefixPath("/"+wsNamespace+"/"+wsServiceName, serviceVersionList);
         // also add taup tools at root, like /time?deg=35&p=P
         pathHandler.addPrefixPath("/", toolAndResHandler);
-        Undertow server = Undertow.builder()
+        server = Undertow.builder()
                 .addHttpListener(port, host)
                 .setHandler(new BlockingHandler(pathHandler)).build();
         server.start();
         printWelcomeMessage();
     }
 
+    public static Map<String, Deque<String>> createQueryParamsForPost(String contents, HttpServerExchange exchange) {
+        JSONObject postParams = new JSONObject(contents);
+        Map<String, Deque<String>> queryParams = new HashMap<String, Deque<String>>();
+        for (String key : postParams.keySet()) {
+            if (!queryParams.containsKey(key)) {
+                queryParams.put(key, new ArrayDeque<>());
+            }
+            Object val = postParams.get(key);
+            if (val instanceof String) {
+                queryParams.get(key).add((String) val);
+            } else if ( val instanceof Number || val instanceof Boolean) {
+                queryParams.get(key).add(val.toString());
+            } else if (val instanceof JSONArray) {
+                JSONArray a = (JSONArray) val;
+                for( Object o : a.toList()) {
+                    if (o instanceof String) {
+                        queryParams.get(key).add((String) o);
+                    } else if (o instanceof Number) {
+                        queryParams.get(key).add( o.toString());
+                    } else {
+                        throw new RuntimeException("POST params has array with non-string: "+key+" "+val);
+                    }
+                }
+            } else {
+                throw new RuntimeException("POST params has non-string "+key+" "+val);
+            }
+        }
+        return queryParams;
+    }
+
     @Override
     public void destroy() throws TauPException {
-
+        if (server != null) {
+            try {
+                server.stop();
+            } finally {
+                server = null;
+            }
+        }
     }
 
     @Override
@@ -600,6 +654,8 @@ public class TauP_WebServe extends TauP_Tool {
     public String getOutputFormat() {
         return null;
     }
+
+    Undertow server;
 
     // see edu.sc.seis.TauP.TauP_Web for picocli cmd line interface
     public int port = 7409;

@@ -60,6 +60,16 @@ public class TauP_Web implements Callable<Integer> {
             } catch (IOException | URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+            if (expireSeconds > 0) {
+                try {
+                    System.err.println("Server will quit after "+expireSeconds+" idle seconds.");
+                    Thread.sleep(expireSeconds * 1000);
+                } catch (InterruptedException e) {
+                } finally {
+                    System.err.println("Server idle for "+expireSeconds+" seconds, expiring...");
+                    tool.destroy();
+                }
+            }
         } catch (NoClassDefFoundError e) {
             Alert.warning("TauP Web does not seem to be installed, a required jar is not on the classpath.");
             Alert.warning(e.getMessage());
@@ -74,6 +84,10 @@ public class TauP_Web implements Callable<Integer> {
 
     @CommandLine.Option(names = {"--host"}, defaultValue = "localhost", description = "host to expose port on, defaults to ${DEFAULT-VALUE}")
     String host = "localhost";
+
+    @CommandLine.Option(names = {"--expire"}, defaultValue = "3600",
+            description = "quit if no requests received in n seconds, defaults to ${DEFAULT-VALUE}")
+    int expireSeconds = 3600;
 
     public static final String LOCAL_WS = "localws";
 

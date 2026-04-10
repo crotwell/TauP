@@ -115,6 +115,32 @@ public class ToolRun {
 		}
 	}
 
+	public static boolean isKnownWebToolName(String toolToRun) {
+		switch (toolToRun) {
+			case BEACHBALL:
+			case CURVE:
+			case PATH:
+			case PHASE:
+			case FIND:
+			case DISTAZ:
+			case PIERCE:
+			case TIME:
+			case VPLOT:
+			case DISCON:
+			case VELMERGE:
+			case WAVEFRONT:
+			case REFLTRANSPLOT:
+			case SPIKES:
+			case VERSION:
+				return true;
+			case TABLE:
+			case CREATE:
+			case SETSAC:
+			case SETMSEED3:
+			default:
+				return false;
+		}
+	}
 	public static TauP_Tool getToolForName(String toolToRun) {
 		TauP_Tool tool = null;
 		if (toolToRun.contentEquals(CREATE)) {
