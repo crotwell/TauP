@@ -247,8 +247,6 @@ public class QmlStaxmlArgs {
         return quakemlText;
     }
 
-    @CommandLine.Option(names = {"--quakemltext"},
-            description = "Raw QuakeML text to load for earthquake origins to use")
     public void setQuakemlText(String quakemlText) {
         this.quakemlText = quakemlText;
     }
@@ -295,8 +293,6 @@ public class QmlStaxmlArgs {
         return stationxmlText;
     }
 
-    @CommandLine.Option(names = "--staxmltext",
-            description = "Raw StationXML text to extract station latitudes and longitudes from")
     public void setStationxmlText(String stationxmlText) {
         this.stationxmlText = stationxmlText;
     }

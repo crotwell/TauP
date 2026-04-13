@@ -67,6 +67,28 @@ public class PythonBindings {
 
         List<String> doneOptions = new ArrayList<>();
         List<CommandLine.Model.OptionSpec> sortedOptions = new ArrayList<>(spec.options());
+        CommandLine.Model.OptionSpec qmlText = null;
+        CommandLine.Model.OptionSpec staxmlText = null;
+        for (CommandLine.Model.OptionSpec op : sortedOptions) {
+            if (op.longestName().equals("--quakeml")) {
+                qmlText = CommandLine.Model.OptionSpec.builder("--quakemltext")
+                        .paramLabel("xml")
+                        .type(String.class)
+                        .description("Raw QuakeML text to load for earthquake origins to use, similar to --quakeml but is text instead of a file").build();
+            } else if (op.longestName().equals("--staxml")) {
+                staxmlText = CommandLine.Model.OptionSpec.builder("--staxmltext")
+                        .paramLabel("xml")
+                        .type(String.class)
+                        .description("Raw StationXML text to extract station latitudes and longitudes from, similar to --staxml but is text instead of a file").build();
+            }
+        }
+        if (qmlText != null) {
+            sortedOptions.add(qmlText);
+        }
+        if (staxmlText != null) {
+            sortedOptions.add(staxmlText);
+        }
+
         sortedOptions.sort(Comparator.comparing(CommandLine.Model.OptionSpec::longestName));
         for (CommandLine.Model.OptionSpec op : sortedOptions) {
             if (doneOptions.contains(op.longestName())) {
