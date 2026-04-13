@@ -31,6 +31,8 @@ public class PythonBindings {
         String dataclassType = null;
         if (timeResultTools.contains(toolname) ) {
             dataclassType = "TimeResult";
+        } else if (toolname.equals("phase")) {
+            dataclassType = "PhaseResult";
         } else if (toolname.equals("discon")) {
             dataclassType = "DisconResult";
         } else if (toolname.equals("distaz")) {
