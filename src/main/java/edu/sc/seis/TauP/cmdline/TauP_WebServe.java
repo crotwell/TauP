@@ -24,6 +24,7 @@ import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -181,28 +182,41 @@ public class TauP_WebServe extends TauP_Tool {
                                        String version,
                                        String toolname) throws Exception {
                 Alert.debug("Try to run as tool: " + toolname);
+                if ( ! ToolRun.isKnownWebToolName(toolname)) {
+                    return;
+                }
+                TauP_Tool tool = createTool(toolname);
+                if (tool == null) {
+                    Alert.debug("Can't find tool for :"+toolname+" in "+exchange.getRequestPath());
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    exchange.getResponseSender().send(createVersionsPage("Can't find tool for "+toolname));
+                    return;
+                }
+                Alert.debug("Handle via TauP Tool:" + toolname);
                 Map<String, Deque<String>> queryParams;
                 if (exchange.getRequestMethod().equals(Methods.GET)) {
                     queryParams = exchange.getQueryParameters();
+                    webRunTool(tool, queryParams, exchange);
                 } else if (exchange.getRequestMethod().equals(Methods.POST)) {
                     BufferedInputStream bufin = new BufferedInputStream(exchange.getInputStream());
                     String contents = new String(bufin.readAllBytes()).trim();
-                    queryParams = createQueryParamsForPost(contents, exchange);
+                    JSONObject postParams = new JSONObject(contents);
+                    // special values
+                    if (postParams.has("quakemltext")) {
+                        setQuakeML(tool, postParams.getString("quakemltext"));
+                        postParams.remove("quakemltext");
+                    }
+                    if (postParams.has("staxmltext")) {
+                        setStationXML(tool, postParams.getString("staxmltext"));
+                        postParams.remove("staxmltext");
+                    }
+                    queryParams = createQueryParamsFromPost(postParams, exchange);
+                    webRunTool(tool, queryParams, exchange);
                 } else {
                     new ResponseCodeHandler(404).handleRequest(exchange);
                     exchange.getResponseSender().send(createVersionsPage("Only GET,POST supported for "
                             +toolname+", but was "+exchange.getRequestMethod()));
                     return;
-                }
-                if ( ! ToolRun.isKnownWebToolName(toolname)) {
-                    return;
-                }
-                TauP_Tool tool = createTool(toolname);
-                if (tool != null) {
-                    Alert.debug("Handle via TauP Tool:" + toolname);
-                    webRunTool(tool, queryParams, exchange);
-                } else {
-                    Alert.debug("Can't find tool for :"+toolname+" in "+exchange.getRequestPath());
                 }
 
             }
@@ -305,8 +319,35 @@ public class TauP_WebServe extends TauP_Tool {
         printWelcomeMessage();
     }
 
-    public static Map<String, Deque<String>> createQueryParamsForPost(String contents, HttpServerExchange exchange) {
-        JSONObject postParams = new JSONObject(contents);
+    public static void setQuakeML(TauP_Tool tool, String quakemlText) {
+        if (tool instanceof TauP_AbstractRayTool) {
+            ((TauP_AbstractRayTool)tool).getDistanceArgs().setQuakemlText(quakemlText);
+        } else if (tool instanceof TauP_DistAz) {
+            ((TauP_DistAz)tool).setQuakemlText(quakemlText);
+        } else if (tool instanceof TauP_Spikes) {
+            ((TauP_Spikes)tool).setQuakemlText(quakemlText);
+        } else if (tool instanceof TauP_SetMSeed3) {
+            ((TauP_SetMSeed3)tool).setQuakemlText(quakemlText);
+        } else {
+            throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support quakeml");
+        }
+    }
+
+    public static void setStationXML(TauP_Tool tool, String stationxmlText) {
+        if (tool instanceof TauP_AbstractRayTool) {
+            ((TauP_AbstractRayTool)tool).getDistanceArgs().setStationxmlText(stationxmlText);
+        } else if (tool instanceof TauP_DistAz) {
+            ((TauP_DistAz)tool).setStationxmlText(stationxmlText);
+        } else if (tool instanceof TauP_Spikes) {
+            ((TauP_Spikes)tool).setStationxmlText(stationxmlText);
+        } else if (tool instanceof TauP_SetMSeed3) {
+            ((TauP_SetMSeed3)tool).setStationxmlText(stationxmlText);
+        } else {
+            throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support stationxml");
+        }
+    }
+
+    public static Map<String, Deque<String>> createQueryParamsFromPost(JSONObject postParams, HttpServerExchange exchange) {
         Map<String, Deque<String>> queryParams = new HashMap<String, Deque<String>>();
         for (String key : postParams.keySet()) {
             if (!queryParams.containsKey(key)) {
@@ -600,11 +641,25 @@ public class TauP_WebServe extends TauP_Tool {
 
             // Did user request usage help (--help)?
             if (cmd.isUsageHelpRequested()) {
-                cmd.usage(cmd.getOut());
-
+                if (queryParams.containsKey("format") && queryParams.get("format").getFirst().equalsIgnoreCase("json")) {
+                    ByteArrayOutputStream byteOout = new ByteArrayOutputStream();
+                    PrintStream ps = new PrintStream(byteOout);
+                    cmd.usage(ps);
+                    ps.close();
+                    JSONObject out = new JSONObject();
+                    out.put("help", new String(byteOout.toByteArray(), StandardCharsets.UTF_8));
+                    cmd.getOut().write(out.toString());
+                } else {
+                    cmd.usage(cmd.getOut());
+                }
                 // Did user request version help (--version)?
             } else if (cmd.isVersionHelpRequested()) {
-                cmd.printVersionHelp(cmd.getOut());
+                if (queryParams.containsKey("format") && queryParams.get("format").getFirst().equalsIgnoreCase("json")) {
+                    TauP_Version versionTool = new TauP_Version();
+                    versionTool.printResultJSON(cmd.getOut());
+                } else {
+                    cmd.printVersionHelp(cmd.getOut());
+                }
             } else if (tool instanceof TauP_Spikes) {
                 // special because output is not text
                 TauP_Spikes taup_spikes = (TauP_Spikes) tool;

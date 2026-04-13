@@ -230,6 +230,13 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         return ehKey;
     }
 
+    public void setQuakemlText(String quakemlText) {
+        qmlStaxmlArgs.setQuakemlText(quakemlText);
+    }
+    public void setStationxmlText(String staxmlText) {
+        qmlStaxmlArgs.setStationxmlText(staxmlText);
+    }
+
     @CommandLine.Option(names = "--taupeh",
             arity = "0..1",
             fallbackValue = "taup",

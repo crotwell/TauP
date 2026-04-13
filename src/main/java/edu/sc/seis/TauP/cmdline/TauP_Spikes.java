@@ -716,6 +716,13 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return eventLocs;
     }
 
+    public void setQuakemlText(String quakemlText) {
+        qmlStaxmlArgs.setQuakemlText(quakemlText);
+    }
+    public void setStationxmlText(String staxmlText) {
+        qmlStaxmlArgs.setStationxmlText(staxmlText);
+    }
+
     ZonedDateTime defaultOriginTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
 

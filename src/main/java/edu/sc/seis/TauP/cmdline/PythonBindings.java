@@ -283,7 +283,6 @@ public class PythonBindings {
             bodyWriter.println("    self._" + varname + " = [depth, degree]");
             bodyWriter.println("    return self");
             bodyWriter.println();
-            return true;
         } else if (varname.equals("station") || varname.equals("event")) {
             bodyWriter.println("  def " + opname + "(self, lat, lon):");
             desc(bodyWriter, op, opname);
@@ -297,9 +296,26 @@ public class PythonBindings {
             bodyWriter.println("    self._" + varname + " += [lat, lon]");
             bodyWriter.println("    return self");
             bodyWriter.println();
-            return true;
+        } else if (varname.equals("stationxmltext") || varname.equals("staxmltext")
+                || varname.equals("qmltext") || varname.equals("quakemltext")) {
+            String defValStr = "";
+            bodyWriter.println("  def " + opname + "(self, val):");
+            desc(bodyWriter, op, opname);
+            String paramName;
+            if (varname.equals("stationxmltext") || varname.equals("staxmltext")) {
+                paramName = "staxmltext";
+            } else {
+                //if (varname.equals("qml") || varname.equals("quakeml")) {
+                paramName = "quakemltext";
+            }
+
+            bodyWriter.println("    self._" + paramName + " = val");
+            bodyWriter.println("    return self");
+            bodyWriter.println();
+        } else {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public static List<String> outputFormatOptions = List.of(
@@ -319,7 +335,8 @@ public class PythonBindings {
     public static List<String> ignoreOptions = new ArrayList<>(List.of(
             "help", "version", "debug", "verbose",
             "prop", "output", "nd", "tvel",
-            "quakeml", "staxml", "phasefile", "sid", "eid"
+            "staxml", "quakeml", "phasefile",
+            "sid", "eid"
     ));
     static {
         ignoreOptions.addAll(outputFormatOptions);

@@ -21,6 +21,7 @@ import picocli.CommandLine;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -173,11 +174,11 @@ public class QmlStaxmlArgs {
     }
 
     public boolean hasQml() {
-        return getQuakemlFilename() != null || !getEventIdList().isEmpty();
+        return getQuakemlFilename() != null || !getEventIdList().isEmpty() || !getQuakemlText().isEmpty();
     }
 
     public boolean hasStationXML() {
-        return getStationxmlFilename() != null ||  ! this.sidList.isEmpty();
+        return getStationxmlFilename() != null ||  ! this.sidList.isEmpty() || !getStationxmlText().isEmpty();
     }
 
     public Map<Network, List<Station>> loadStationXML() throws TauPException {
@@ -189,6 +190,17 @@ public class QmlStaxmlArgs {
             }
         } catch (IOException | XMLStreamException | SeisFileException e) {
             throw new TauPException("Unable to process stationxml from "+stationxmlFilename, e);
+        }
+        try {
+            if (stationxmlText != null) {
+                FDSNStationXML staxml = FDSNStationXML.loadStationXML(new StringReader(stationxmlText));
+                Map<Network, List<Station>> textNets = staxml.extractAllNetworks();
+                for (Network n : textNets.keySet()) {
+                    networks.put(n, textNets.get(n));
+                }
+            }
+        } catch (IOException | XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process stationxml text", e);
         }
         return networks;
     }
@@ -205,6 +217,16 @@ public class QmlStaxmlArgs {
         } catch (IOException | XMLStreamException | SeisFileException e) {
             throw new TauPException("Unable to process quakeml from "+quakemlFilename, e);
         }
+        try {
+            if (quakemlText != null) {
+                StringReader reader = new StringReader(quakemlText);
+                Quakeml quakeml = Quakeml.loadQuakeML(reader);
+                quakes.addAll(quakeml.extractAllEvents());
+                reader.close();
+            }
+        } catch (IOException | XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process quakeml from text", e);
+        }
         return quakes;
     }
 
@@ -216,6 +238,17 @@ public class QmlStaxmlArgs {
             description = "QuakeML file to load for earthquake origins to use")
     public void setQuakemlFilename(String quakemlFilename) {
         this.quakemlFilename = quakemlFilename;
+    }
+
+
+    public String getQuakemlText() {
+        return quakemlText;
+    }
+
+    @CommandLine.Option(names = {"--quakemltext"},
+            description = "Raw QuakeML text to load for earthquake origins to use")
+    public void setQuakemlText(String quakemlText) {
+        this.quakemlText = quakemlText;
     }
 
 
@@ -256,6 +289,16 @@ public class QmlStaxmlArgs {
         this.stationxmlFilename = stationxmlFilename;
     }
 
+    public String getStationxmlText() {
+        return stationxmlText;
+    }
+
+    @CommandLine.Option(names = "--staxmltext",
+            description = "Raw StationXML text to extract station latitudes and longitudes from")
+    public void setStationxmlText(String stationxmlText) {
+        this.stationxmlText = stationxmlText;
+    }
+
     @CommandLine.Option(names = {"--sid"},
             paramLabel = "sta",
             split = ",",
@@ -269,14 +312,16 @@ public class QmlStaxmlArgs {
 
     public List<Station> getSidLocations() throws TauPException {
         try {
-            return QmlStaxmlArgs.loadStationsForSid(getSidList());
+            return loadStationsForSid(getSidList());
         } catch (FDSNSourceIdException|FDSNWSException e) {
             throw new TauPException("Unable to load station locations from fedcat service", e);
         }
     }
-    
+
     protected String quakemlFilename = null;
+    protected String quakemlText = null;
     protected String stationxmlFilename = null;
+    protected String stationxmlText = null;
 
     public static double MAX_CHANNEL_DEPTH_SAME_STATION = 10.0;
 

@@ -186,6 +186,13 @@ public class TauP_DistAz extends TauP_Tool {
         return  180.0 / Math.PI / r; // default radius
     }
 
+    public void setQuakemlText(String quakemlText) {
+        qmlStaxmlArgs.setQuakemlText(quakemlText);
+    }
+    public void setStationxmlText(String staxmlText) {
+        qmlStaxmlArgs.setStationxmlText(staxmlText);
+    }
+
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs;
 

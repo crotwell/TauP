@@ -510,6 +510,13 @@ public class DistanceArgs {
     @CommandLine.Mixin
     QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();
 
+    public void setQuakemlText(String quakemlText) {
+        qmlStaxmlArgs.setQuakemlText(quakemlText);
+    }
+    public void setStationxmlText(String staxmlText) {
+        qmlStaxmlArgs.setStationxmlText(staxmlText);
+    }
+
     public List<LatLonLocatable> getStationLatLon() throws TauPException {
         List<LatLonLocatable> staList = new ArrayList<>();
         staList.addAll(geodeticArgs.getStationLocations());
