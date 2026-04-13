@@ -174,11 +174,13 @@ public class QmlStaxmlArgs {
     }
 
     public boolean hasQml() {
-        return getQuakemlFilename() != null || !getEventIdList().isEmpty() || !getQuakemlText().isEmpty();
+        return getQuakemlFilename() != null || !getEventIdList().isEmpty()
+                || (getQuakemlText()!=null && !getQuakemlText().isEmpty());
     }
 
     public boolean hasStationXML() {
-        return getStationxmlFilename() != null ||  ! this.sidList.isEmpty() || !getStationxmlText().isEmpty();
+        return getStationxmlFilename() != null ||  ! this.sidList.isEmpty()
+                || (getStationxmlText()!= null && !getStationxmlText().isEmpty());
     }
 
     public Map<Network, List<Station>> loadStationXML() throws TauPException {
