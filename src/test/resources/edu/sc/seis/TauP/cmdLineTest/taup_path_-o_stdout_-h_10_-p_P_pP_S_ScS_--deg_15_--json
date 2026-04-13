@@ -36,6 +36,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -192,6 +195,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.4573503,
@@ -395,6 +401,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -496,6 +505,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.4544635,
@@ -644,6 +656,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -770,6 +785,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.455225,
@@ -943,6 +961,9 @@
         {
           "name": "p",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "REFLECT_UNDERSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -979,6 +1000,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "REFLECT_UNDERSIDE",
           "segment": [
             [
               0.0911174,
@@ -1105,6 +1129,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.545559,
@@ -1253,6 +1280,9 @@
         {
           "name": "p",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "REFLECT_UNDERSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -1289,6 +1319,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "REFLECT_UNDERSIDE",
           "segment": [
             [
               0.085716024,
@@ -1470,6 +1503,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.542858,
@@ -1673,6 +1709,9 @@
         {
           "name": "p",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "REFLECT_UNDERSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -1709,6 +1748,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "REFLECT_UNDERSIDE",
           "segment": [
             [
               0.089435235,
@@ -1865,6 +1907,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.544718,
@@ -2043,6 +2088,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -2344,6 +2392,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.4679904,
@@ -2692,6 +2743,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -2988,6 +3042,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.467415,
@@ -3331,6 +3388,9 @@
         {
           "name": "p",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "REFLECT_UNDERSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -3367,6 +3427,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "REFLECT_UNDERSIDE",
           "segment": [
             [
               0.06402781,
@@ -3693,6 +3756,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.532014,
@@ -4041,6 +4107,9 @@
         {
           "name": "p",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "REFLECT_UNDERSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -4077,6 +4146,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "REFLECT_UNDERSIDE",
           "segment": [
             [
               0.065044805,
@@ -4398,6 +4470,9 @@
         {
           "name": "P",
           "wavetype": "pwave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.532522,
@@ -4741,6 +4816,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -4837,6 +4915,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.4511995,
@@ -4975,6 +5056,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -5201,6 +5285,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.464435,
@@ -5469,6 +5556,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "down",
+          "endaction": "TURN",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -5690,6 +5780,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "TURN",
           "segment": [
             [
               7.463966,
@@ -5953,6 +6046,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "down",
+          "endaction": "REFLECT_TOPSIDE",
+          "prevendaction": "START",
           "segment": [
             [
               0.0,
@@ -7089,6 +7185,9 @@
         {
           "name": "S",
           "wavetype": "swave",
+          "updown": "up",
+          "endaction": "END",
+          "prevendaction": "REFLECT_TOPSIDE",
           "segment": [
             [
               7.496469,
