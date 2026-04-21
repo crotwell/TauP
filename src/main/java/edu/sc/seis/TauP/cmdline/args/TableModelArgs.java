@@ -79,8 +79,7 @@ public class TableModelArgs {
     public Scatterer getScatterer() throws TauModelException {
         if (scattererDepth != null &&  scattererDist != null) {
             return new Scatterer(scattererDepth, scattererDist,
-                    GeoDistType.spherical,
-                    getTauModel().getVelocityModel().sphericalGeodesic());
+                    getTauModel().getVelocityModel().getSphericalDistCalc());
         }
         return null;
     }

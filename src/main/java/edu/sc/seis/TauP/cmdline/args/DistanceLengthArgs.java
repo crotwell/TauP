@@ -31,8 +31,8 @@ public class DistanceLengthArgs {
 
     public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs, GeodeticArgs geodeticArgs, ModelArgs modelArgs) throws TauModelException {
         List<RayCalculateable> out = new ArrayList<>();
-        Map<GeoDistType, Geodesic> geodesicMap = geodeticArgs.createGeodesics(modelArgs.getTauModel().getVelocityModel());
-        out.addAll(getLengthDistances(geodesicMap));
+        List<DistanceCalc> distCalcList = geodeticArgs.createDistanceCalcs(modelArgs.getTauModel().getVelocityModel());
+        out.addAll(getLengthDistances(distCalcList));
         if (sourceArgs != null) {
             SeismicSource ss = new SeismicSource(sourceArgs.getMw(), sourceArgs.getFaultPlane());
             for (RayCalculateable rc : out) {
@@ -45,31 +45,31 @@ public class DistanceLengthArgs {
     }
 
 
-    public List<DistanceRay> getLengthDistances(Map<GeoDistType, Geodesic> geodesicMap) {
+    public List<DistanceRay> getLengthDistances(List<DistanceCalc> distCalcList) {
         List<DistanceRay> simpleDistanceList = new ArrayList<>();
         for (Double d : degreesList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofDegrees(d, distCalc));
             }
         }
 
         if (!degreeRange.isEmpty()) {
             for (Double d : createListFromRangeDeg(degreeRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofDegrees(d, distCalc));
                 }
             }
         }
         for (Double d : distKilometersList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofKilometers(d, distCalc));
             }
         }
 
         if (!kilometerRange.isEmpty()) {
             for (Double d : createListFromRangeKm(kilometerRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofKilometers(d, distCalc));
                 }
             }
         }

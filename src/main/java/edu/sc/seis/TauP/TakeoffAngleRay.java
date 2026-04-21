@@ -7,14 +7,14 @@ import java.util.List;
 
 public class TakeoffAngleRay extends ShootableRay {
 
-    public TakeoffAngleRay(Double takeoffAngle, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public TakeoffAngleRay(Double takeoffAngle, DistanceCalc distCalc) {
+        super(distCalc);
         this.takeoffAngle = takeoffAngle;
         setDescription("Takeoff: "+takeoffAngle);
     }
 
-    public static TakeoffAngleRay ofTakeoffAngle(Double d, GeoDistType geoDistType, Geodesic geodesic) {
-        return new TakeoffAngleRay(d, geoDistType, geodesic);
+    public static TakeoffAngleRay ofTakeoffAngle(Double d, DistanceCalc distCalc) {
+        return new TakeoffAngleRay(d, distCalc);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class TakeoffAngleRay extends ShootableRay {
         } catch (NoArrivalException e) {
             return null;
         }
-        return new RayParamRay(rayParam, getGeoDistType(), getGeodesic());
+        return new RayParamRay(rayParam, getDistCalc());
     }
 
     public Double getTakeoffAngle() {

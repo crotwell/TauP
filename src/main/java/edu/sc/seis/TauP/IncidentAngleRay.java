@@ -7,14 +7,14 @@ import java.util.List;
 
 public class IncidentAngleRay extends ShootableRay {
 
-    public IncidentAngleRay(Double incidentAngle, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public IncidentAngleRay(Double incidentAngle, DistanceCalc distCalc) {
+        super(distCalc);
         this.incidentAngle = incidentAngle;
         setDescription("Incident: "+ incidentAngle);
     }
 
-    public static IncidentAngleRay ofIncidentAngle(Double d, GeoDistType geoDistType, Geodesic geodesic) {
-        return new IncidentAngleRay(d, geoDistType, geodesic);
+    public static IncidentAngleRay ofIncidentAngle(Double d, DistanceCalc distCalc) {
+        return new IncidentAngleRay(d, distCalc);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class IncidentAngleRay extends ShootableRay {
         } catch (NoArrivalException e) {
             return null;
         }
-        return new RayParamRay(rayParam, getGeoDistType(), getGeodesic());
+        return new RayParamRay(rayParam, distCalc);
     }
 
     public Double getIncidentAngle() {

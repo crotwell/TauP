@@ -412,8 +412,9 @@ public class TauP_Table extends TauP_Tool {
         TauModel tMod = modelArgs.getTauModel();
         List<RayCalculateable> rayCalcList = new ArrayList<>();
         double receiverDepth = modelArgs.getReceiverDepths().get(0);
+        DistanceCalc distCalc = tMod.getVelocityModel().getSphericalDistCalc();
         for (double distance : distances) {
-            rayCalcList.add(DistanceRay.ofDegrees(distance, geoDistType, tMod.getVelocityModel().sphericalGeodesic()));
+            rayCalcList.add(DistanceRay.ofDegrees(distance, distCalc));
         }
         if(outputTypeArgs.isCSV()) {
             csvTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);

@@ -13,7 +13,7 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
     private final ExactDistanceRay distanceRay;
 
     public FixedHemisphereDistanceRay(ExactDistanceRay dr) {
-        super(dr.geoDistType, dr.geodesic);
+        super(dr.getDistCalc());
         this.distanceRay = dr;
     }
 

@@ -21,6 +21,7 @@ public class GsonUtil {
     public static void registerSerializers(GsonBuilder gson) {
         gson.registerTypeAdapter(Location.class, new LocationSerializer());
         gson.registerTypeAdapter(DistanceAngleRay.class, new DistanceAngleRaySerializier());
+        gson.registerTypeAdapter(DistanceCalc.class, new DistCalcSerializer());
         gson.registerTypeAdapter(Geodesic.class, new GeodesicSerializer());
         gson.registerTypeAdapter(Daz.class, new DazSerializier());
         gson.registerTypeAdapter(SeismicSource.class, new SeismicSourceSerializer());

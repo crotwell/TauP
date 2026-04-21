@@ -9,8 +9,8 @@ public class TimeRay extends RayCalculateable {
 
     private final double seconds;
 
-    public TimeRay(double seconds, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public TimeRay(double seconds, DistanceCalc distCalc) {
+        super(distCalc);
         this.seconds = seconds;
     }
     
@@ -65,9 +65,9 @@ public class TimeRay extends RayCalculateable {
     public LatLonable getLatLonable() {
         if (isLatLonable()) {
             if (evtLatLon != null) {
-                return new EventAzimuth(evtLatLon, azimuth, geoDistType, geodesic);
+                return new EventAzimuth(evtLatLon, azimuth, distCalc);
             } else {
-                return new StationBackAzimuth(staLatLon, backAzimuth, geoDistType, geodesic);
+                return new StationBackAzimuth(staLatLon, backAzimuth, distCalc);
             }
         }
         return null;

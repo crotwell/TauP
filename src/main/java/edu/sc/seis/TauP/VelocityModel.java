@@ -180,6 +180,10 @@ public class VelocityModel implements Cloneable, Serializable {
         return new Geodesic(getRadiusOfEarthMeters(), 0);
     }
 
+    public DistanceCalcSpherical getSphericalDistCalc() {
+        return new DistanceCalcSpherical(sphericalGeodesic());
+    }
+
     public boolean isDisconDepth(double depth) {
         double[] discons = getDisconDepths();
         for (int i = 0; i < discons.length; i++) {

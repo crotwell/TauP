@@ -21,7 +21,8 @@ public class PierceTest {
         SeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tMod);
         LatLonLocatable evt = new LatLonSimple(35, -50, 100*1000);
         LatLonLocatable sta = new LatLonSimple(30, -81);
-        DistanceRay dr = DistanceRay.ofEventStation(evt, sta, GeoDistType.geodetic, Geodesic.WGS84);
+        DistanceCalcGeodetic distCalc = new DistanceCalcGeodetic(Geodesic.WGS84);
+        DistanceRay dr = DistanceRay.ofEventStation(evt, sta, distCalc);
         List<Arrival> aList = dr.calculate(P_phase);
         assertEquals(3, aList.size());
         Arrival a = aList.get(0);

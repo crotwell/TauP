@@ -9,8 +9,8 @@ import java.util.List;
  */
 public class RayParamKmRay extends ShootableRay {
 
-    public RayParamKmRay(Double rpSecKm, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public RayParamKmRay(Double rpSecKm, DistanceCalc distCalc) {
+        super(distCalc);
         this.rpSecKm = rpSecKm;
         setDescription(rpSecKm+" s/km");
     }
@@ -18,7 +18,7 @@ public class RayParamKmRay extends ShootableRay {
     @Override
     public List<Arrival> calculate(SeismicPhase phase) throws TauPException {
         RayParamRay rpRay = RayParamRay.ofRayParamSRadian(getRayParamSKm()*phase.getTauModel().getRadiusOfEarth(),
-                getGeoDistType(), getGeodesic());
+                distCalc);
         List<Arrival> arrivals = rpRay.calculate(phase);
         for (Arrival a : arrivals) {
             a.setSearchValue(this);

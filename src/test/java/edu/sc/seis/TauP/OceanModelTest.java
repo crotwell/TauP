@@ -35,8 +35,7 @@ public class OceanModelTest {
         double dist = 30;
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
         List<Arrival> arrivals = DistanceRay.ofDegrees(dist,
-                GeoDistType.spherical,
-                vMod.sphericalGeodesic()).calculate(pPhase);
+                vMod.getSphericalDistCalc()).calculate(pPhase);
         assertEquals(1, arrivals.size());
         Arrival a = arrivals.get(0);
         assertEquals(371.95,
@@ -57,11 +56,10 @@ public class OceanModelTest {
         }
         SeismicSource sourceArgs = new SeismicSource();
         double dist = 5;
-        Geodesic geodesic = tMod.getVelocityModel().sphericalGeodesic();
+        DistanceCalc distCalc = tMod.getVelocityModel().getSphericalDistCalc();
         for (SeismicPhase sp : phaseList) {
             DistanceRay dr = DistanceRay.ofDegrees(dist,
-                    GeoDistType.spherical,
-                    geodesic);
+                    distCalc);
             dr.setSeismicSource(sourceArgs);
             List<Arrival> arrivals = dr.calculate(sp);
             for (Arrival aa : arrivals) {
@@ -121,7 +119,7 @@ public class OceanModelTest {
                 true,
                 vlayers);
         TauModel oceanTMod = TauModelLoader.createTauModel(oceanVMod);
-        Geodesic geodesic = oceanVMod.sphericalGeodesic();
+        DistanceCalc distCalc = oceanVMod.getSphericalDistCalc();
         String[] phaseList = new String[]{"P", "S", "PKP", "PKIKP"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
         for (double depth : depths) {
@@ -131,7 +129,7 @@ public class OceanModelTest {
                 SeismicPhase oceanPh = SeismicPhaseFactory.createPhase(phasename, ocean_tmod_depth, depth + ocean.getBotDepth(), ocean.getBotDepth());
                 SeismicPhase crustPh = SeismicPhaseFactory.createPhase(phasename, crust_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    DistanceRay distanceRay = DistanceRay.ofDegrees(deg, GeoDistType.spherical, geodesic);
+                    DistanceRay distanceRay = DistanceRay.ofDegrees(deg, distCalc);
                     List<Arrival> ocean_arr = distanceRay.calculate(oceanPh);
                     List<Arrival> crust_arr = distanceRay.calculate(crustPh);
                     assertEquals(crust_arr.size(), ocean_arr.size());
@@ -162,7 +160,7 @@ public class OceanModelTest {
         assertEquals(900, europaVMod.getCmbDepth());
         assertEquals(europaVMod.getRadiusOfEarth(), europaVMod.getIocbDepth());
         TauModel europaTMod = TauModelLoader.createTauModel(europaVMod);
-        Geodesic geodesic = europaVMod.sphericalGeodesic();
+        DistanceCalc distCalc = europaVMod.getSphericalDistCalc();
 
         String[] phaseList = new String[]{"P", "PKP", "PKIKP",
                 "Pv" + PhaseSymbols.NAMED_DISCON_START + "ocean-crust" + PhaseSymbols.NAMED_DISCON_END + "s"};
@@ -172,7 +170,7 @@ public class OceanModelTest {
             for (String phasename : phaseList) {
                 SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, europa_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    List<Arrival> arrivalList = DistanceRay.ofDegrees(deg, GeoDistType.spherical, geodesic).calculate(seisPh);
+                    List<Arrival> arrivalList = DistanceRay.ofDegrees(deg, distCalc).calculate(seisPh);
                     // this is not a good test, other than that no errors occur
                     assertNotEquals(-1, arrivalList.size(), phasename);
                 }
@@ -199,8 +197,8 @@ public class OceanModelTest {
         String phasename = "KIK";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        Geodesic  geodesic = ioVMod.sphericalGeodesic();
-        DistanceRay distanceRay = DistanceRay.ofDegrees(deg, GeoDistType.spherical, geodesic);
+        DistanceCalc distCalc = ioVMod.getSphericalDistCalc();
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg, distCalc);
         List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);
@@ -223,7 +221,7 @@ public class OceanModelTest {
         String phasename = "I";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        DistanceRay distanceRay = DistanceRay.ofDegrees(deg, GeoDistType.spherical, ioVMod.sphericalGeodesic());
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg, ioVMod.getSphericalDistCalc());
         List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);

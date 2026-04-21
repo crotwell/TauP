@@ -178,10 +178,10 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
                 }
             }
         }
+        DistanceCalc distCalc =
+                modelArgs.getTauModel().getVelocityModel().getSphericalDistCalc();
         for (Double radian : distFromArrival) {
-            DistanceRay dr = DistanceRay.ofRadians(radian,
-                    GeoDistType.spherical,
-                    modelArgs.getTauModel().getVelocityModel().sphericalGeodesic());
+            DistanceRay dr = DistanceRay.ofRadians(radian, distCalc);
             if (!dr.hasAzimuth() && geodeticArgs.hasAzimuth()) {
                 dr.setAzimuth(geodeticArgs.getAzimuth());
             }

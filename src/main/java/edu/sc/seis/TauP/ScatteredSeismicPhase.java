@@ -67,9 +67,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        Geodesic geodesic = getTauModel().getVelocityModel().sphericalGeodesic();
+        DistanceCalc distCalc = getTauModel().getVelocityModel().getSphericalDistCalc();
         return Arrival.getEarliestArrival(
-                DistanceRay.ofDegrees(degrees, GeoDistType.spherical, geodesic).calcScatteredPhase(this));
+                DistanceRay.ofDegrees(degrees, distCalc).calcScatteredPhase(this));
     }
 
     @Override
@@ -256,8 +256,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return new ScatteredArrival(
                 this,
                 DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg(),
-                        scatteredArrival.getRayCalculateable().getGeoDistType(),
-                        scatteredArrival.getRayCalculateable().getGeodesic()),
+                        scatteredArrival.getRayCalculateable().getDistCalc()),
                 inboundArrival,
                 scatteredArrival,
                 isBackscatter());

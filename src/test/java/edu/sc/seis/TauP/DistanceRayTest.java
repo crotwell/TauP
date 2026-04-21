@@ -56,30 +56,32 @@ public class DistanceRayTest {
 
     @Test
     public void testCalcAzBaz() {
+        DistanceCalcSpherical distCalcSph = DistanceCalcSpherical.EARTH_SPHERE;
+        DistanceCalcGeodetic distCalcGeodetic = new DistanceCalcGeodetic(Geodesic.WGS84);
         Location staLoc = new Location(10, 0);
         Location evtLoc = new Location(0, 0);
-        DistanceRay dr = DistanceRay.ofSphericalEventStation(evtLoc, staLoc, Geodesic.WGS84);
+        DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalcSph);
         assertEquals(0, dr.getNormalizedAzimuth(), 0.01);
         assertEquals(180, dr.getNormalizedBackAzimuth(), 0.01);
 
-        DistanceRay gdr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, Geodesic.WGS84);
+        DistanceRay gdr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalcGeodetic);
         assertEquals(dr.getNormalizedAzimuth(), gdr.getNormalizedAzimuth(), 0.1);
         assertEquals(dr.getNormalizedBackAzimuth(), gdr.getNormalizedBackAzimuth(), 0.1);
 
 
         Location staLocE = new Location(10, 10);
-        DistanceRay drE = DistanceRay.ofSphericalEventStation(evtLoc, staLocE, Geodesic.WGS84);
+        DistanceRay drE = DistanceRay.ofEventStation(evtLoc, staLocE, distCalcSph);
         assertEquals(45, drE.getNormalizedAzimuth(), 1);
         assertEquals(-135, drE.getNormalizedBackAzimuth(), 1);
-        DistanceRay gdrE = DistanceRay.ofGeodeticEventStation(evtLoc, staLocE, Geodesic.WGS84);
+        DistanceRay gdrE = DistanceRay.ofEventStation(evtLoc, staLocE, distCalcGeodetic);
         assertEquals(drE.getNormalizedAzimuth(), gdrE.getNormalizedAzimuth(), 0.5, "az");
         assertEquals(drE.getNormalizedBackAzimuth(), gdrE.getNormalizedBackAzimuth(), 0.5, "baz");
 
         Location evtLocW = new Location(0, -10);
-        DistanceRay drW = DistanceRay.ofSphericalEventStation(evtLocW, staLoc, Geodesic.WGS84);
+        DistanceRay drW = DistanceRay.ofEventStation(evtLocW, staLoc, distCalcSph);
         assertEquals(45, drW.getNormalizedAzimuth(), 1);
         assertEquals(-135, drW.getNormalizedBackAzimuth(), 1);
-        DistanceRay gdrW = DistanceRay.ofGeodeticEventStation(evtLocW, staLoc, Geodesic.WGS84);
+        DistanceRay gdrW = DistanceRay.ofEventStation(evtLocW, staLoc, distCalcGeodetic);
         assertEquals(drW.getNormalizedAzimuth(), gdrW.getNormalizedAzimuth(), 0.5);
         assertEquals(drW.getNormalizedBackAzimuth(), gdrW.getNormalizedBackAzimuth(), 0.5);
     }
@@ -96,11 +98,14 @@ public class DistanceRayTest {
 
     @Test
     public void poleToPoleTest() {
+        DistanceCalcSpherical distCalcSph = DistanceCalcSpherical.EARTH_SPHERE;
+        DistanceCalcGeocentric distCalcGeocen = new DistanceCalcGeocentric(Geodesic.WGS84);
+        DistanceCalcGeodetic distCalcGeod = new DistanceCalcGeodetic(Geodesic.WGS84);
         LatLonSimple np = new LatLonSimple(90, 0);
         LatLonSimple equator = new LatLonSimple(0, 0);
-        DistanceRay sphDR = DistanceRay.ofEventStation(np, equator, GeoDistType.spherical, Geodesic.WGS84);
-        DistanceRay gcDR = DistanceRay.ofEventStation(np, equator, GeoDistType.geocentric, Geodesic.WGS84);
-        DistanceRay gdDR = DistanceRay.ofEventStation(np, equator, GeoDistType.geodetic, Geodesic.WGS84);
+        DistanceRay sphDR = DistanceRay.ofEventStation(np, equator, distCalcSph);
+        DistanceRay gcDR = DistanceRay.ofEventStation(np, equator, distCalcGeocen);
+        DistanceRay gdDR = DistanceRay.ofEventStation(np, equator, distCalcGeod);
 
         Geocentric geocentric = new Geocentric(Geodesic.WGS84);
         List<Double> vAList = geocentric.IntForward(np.asLocation().getLatitude(), np.asLocation().getLongitude(), 0, false);

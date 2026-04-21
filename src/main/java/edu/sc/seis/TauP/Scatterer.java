@@ -8,8 +8,8 @@ import net.sf.geographiclib.Geodesic;
  * scattered seismic phase.
  */
 public class Scatterer {
-    public Scatterer(double depth, double dist, GeoDistType geoDistType, Geodesic geodesic) {
-        this(depth, DistanceRay.ofFixedHemisphereDegrees(dist, geoDistType, geodesic));
+    public Scatterer(double depth, double dist, DistanceCalc distCalc) {
+        this(depth, DistanceRay.ofFixedHemisphereDegrees(dist, distCalc));
     }
 
     public Scatterer(double depth, FixedHemisphereDistanceRay dist) {

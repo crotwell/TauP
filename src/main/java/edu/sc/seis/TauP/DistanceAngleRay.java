@@ -5,8 +5,8 @@ import net.sf.geographiclib.Geodesic;
 public class DistanceAngleRay extends DistanceRay {
 
     // see DistanceRay.ofDegrees() and DistanceRay.ofRadians()
-    DistanceAngleRay(GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    DistanceAngleRay(DistanceCalc distCalc) {
+        super(distCalc);
     }
 
     public boolean isDegrees() {
@@ -54,9 +54,9 @@ public class DistanceAngleRay extends DistanceRay {
     protected DistanceAngleRay duplicate()  {
         DistanceAngleRay dr;
         if (degrees != null) {
-            dr = DistanceAngleRay.ofDegrees(degrees, geoDistType, geodesic);
+            dr = DistanceAngleRay.ofDegrees(degrees, distCalc);
         } else {
-            dr = DistanceAngleRay.ofRadians(degrees, geoDistType, geodesic);
+            dr = DistanceAngleRay.ofRadians(radians, distCalc);
         }
         dr.copyFrom(this);
         return dr;

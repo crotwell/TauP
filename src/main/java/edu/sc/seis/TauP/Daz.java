@@ -32,22 +32,14 @@ public class Daz {
         return ray.getBackAzimuth();
     }
 
-    public GeoDistType getGeoDistType() {
-        return ray.getGeoDistType();
+    public DistanceCalc getDistCalc() {
+        return ray.getDistCalc();
     }
 
     public Geodesic getGeodesic() {
         return ray.getGeodesic();
     }
 
-    public Double getInvFlattening() {
-        if (ray.getInvFlattening() != null) {
-            return ray.getInvFlattening();
-        } else if (ray.getGeodesic() != null) {
-            return 1.0/ray.getGeodesic().Flattening();
-        }
-        return null;
-    }
     public Double getEquitorialRadius() {
         if (ray.getGeodesic() != null) {
             return ray.getGeodesic().EquatorialRadius();

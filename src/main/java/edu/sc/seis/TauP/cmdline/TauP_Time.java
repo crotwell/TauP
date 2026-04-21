@@ -133,8 +133,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     calcRecDepth = arrivals.get(0).getReceiverDepth();
                 }
                 DistanceRay distRay = DistanceRay.ofRadians(arrival.getModuloDist(),
-                        arrival.getRayCalculateable().getGeoDistType(),
-                        arrival.getRayCalculateable().getGeodesic());
+                        arrival.getRayCalculateable().getDistCalc());
                 List<Arrival> relativeArrivals = new ArrayList<>();
                 for (SeismicPhase relPhase : relPhaseList) {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
@@ -562,9 +561,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
         for (SeismicPhase phase : seismicPhases) {
             if (phase instanceof SimpleSeismicPhase) {
                 SimpleSeismicPhase simpPhase = (SimpleSeismicPhase) phase;
-                Geodesic geodesic = simpPhase.getTauModel().getVelocityModel().sphericalGeodesic();
+                DistanceCalc distCalc = simpPhase.getTauModel().getVelocityModel().getSphericalDistCalc();
                 for (int i = 0; i < simpPhase.getNumRays(); i++) {
-                    indexArrivalList.addAll(new RayParamIndexRay(i, GeoDistType.spherical, geodesic)
+                    indexArrivalList.addAll(new RayParamIndexRay(i, distCalc)
                             .calculate(simpPhase));
                 }
             }

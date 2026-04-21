@@ -58,8 +58,7 @@ public class Arrival {
                 pierce.get(pierce.size() - 1).getP(),
                 rayParamIndex,
                 new RayParamRay(pierce.get(pierce.size() - 1).getP(),
-                        GeoDistType.spherical,
-                        simpleContigSeismicPhase.gettMod().getVelocityModel().sphericalGeodesic()),
+                        simpleContigSeismicPhase.gettMod().getVelocityModel().getSphericalDistCalc()),
                 phase.getName(),
                 phase.getPuristName(),
                 phase.getSourceDepth(),
@@ -188,8 +187,8 @@ public class Arrival {
         List<Arrival> nearArrivalList;
         SimpleContigSeismicPhase contigPhase = getSimpleContigSeismicPhase();
 
-        DistanceRay beforeRay = DistanceRay.ofExactRadians(beforeDist, getRayCalculateable().geoDistType, getRayCalculateable().getGeodesic());
-        DistanceRay afterRay = DistanceRay.ofExactRadians(afterDist, getRayCalculateable().geoDistType, getRayCalculateable().getGeodesic());
+        DistanceRay beforeRay = DistanceRay.ofExactRadians(beforeDist, getRayCalculateable().getDistCalc());
+        DistanceRay afterRay = DistanceRay.ofExactRadians(afterDist, getRayCalculateable().getDistCalc());
         nearArrivalList = beforeRay.calculate(getPhase());
         nearArrivalList.addAll(afterRay.calculate(getPhase()));
 

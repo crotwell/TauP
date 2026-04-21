@@ -5,8 +5,8 @@ import net.sf.geographiclib.Geodesic;
 public class DistanceKmRay extends DistanceRay {
 
     // see DistanceRay.ofKilometers
-    DistanceKmRay(double km, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    DistanceKmRay(double km, DistanceCalc distCalc) {
+        super(distCalc);
         this.kilometers = km;
     }
 
@@ -37,7 +37,7 @@ public class DistanceKmRay extends DistanceRay {
     }
 
     protected DistanceKmRay duplicate()  {
-        DistanceKmRay dr = DistanceKmRay.ofKilometers(kilometers, geoDistType, geodesic);
+        DistanceKmRay dr = DistanceKmRay.ofKilometers(kilometers, distCalc);
         dr.copyFrom(this);
         return dr;
     }

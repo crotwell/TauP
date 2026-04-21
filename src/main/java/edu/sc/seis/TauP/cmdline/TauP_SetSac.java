@@ -199,16 +199,17 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         RayCalculateable rayCalculateable;
         GeoDistType firstGeoDistType = geodeticArgs.getGeoDistTypes().get(0);
         Geodesic geodesic = geodeticArgs.getGeodesic(firstGeoDistType);
+        DistanceCalc distCalc = DistanceCalc.create(firstGeoDistType, geodesic);
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(isVerbose()) {
                 Alert.debug("Using gcarc: " + header.getGcarc());
             }
-            rayCalculateable = DistanceRay.ofDegrees(header.getGcarc(), firstGeoDistType, geodesic);
+            rayCalculateable = DistanceRay.ofDegrees(header.getGcarc(), distCalc);
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(isVerbose()) {
                 Alert.debug("Using dist: " + header.getDist());
             }
-            rayCalculateable = DistanceRay.ofKilometers(header.getDist(), firstGeoDistType, geodesic);
+            rayCalculateable = DistanceRay.ofKilometers(header.getDist(), distCalc);
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(isVerbose()) {
@@ -219,8 +220,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             rayCalculateable = DistanceRay.ofEventStation(
                     new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
                     new LatLonSimple(header.getStla(), header.getStlo()),
-                    firstGeoDistType,
-                    geodesic
+                    distCalc
             );
         } else {
             /* can't get a distance, skipping */

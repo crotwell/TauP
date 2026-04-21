@@ -9,8 +9,8 @@ import java.util.List;
  */
 public class RayParamIndexRay extends ShootableRay {
 
-    public RayParamIndexRay(int index, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public RayParamIndexRay(int index, DistanceCalc distCalc) {
+        super(distCalc);
         this.index = index;
     }
 

@@ -1,11 +1,9 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
-import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
 import net.sf.geographiclib.Geodesic;
-import net.sf.geographiclib.GeodesicLine;
 
 import java.util.List;
 
@@ -15,10 +13,8 @@ import java.util.List;
  */
 public abstract class RayCalculateable {
 
-
-    public RayCalculateable(GeoDistType geoDistType, Geodesic geodesic) {
-        this.geodesic = geodesic;
-        this.geoDistType = geoDistType;
+    public RayCalculateable(DistanceCalc distCalc) {
+        this.distCalc = distCalc;
     }
 
     public void insertSeismicSource(LatLonLocatable evtLoc) {
@@ -91,20 +87,12 @@ public abstract class RayCalculateable {
                 || (this.staLatLon!=null && this.evtLatLon!=null);
     }
 
-    public boolean hasGeodesic() {
-        return geodesic != null;
+    public DistanceCalc getDistCalc() {
+        return distCalc;
     }
 
     public Geodesic getGeodesic() {
-        return geodesic;
-    }
-
-    public GeoDistType getGeoDistType() {
-        return geoDistType;
-    }
-
-    public Double getInvFlattening() {
-        return invFlattening;
+        return getDistCalc().getGeodesic();
     }
 
     /**
@@ -135,23 +123,10 @@ public abstract class RayCalculateable {
         if (azimuth != null ) {
             return azimuth;
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
-            if (getLatLonable().isGeodetic()) {
-                Location evt = evtLatLon.asLocation();
-                Location sta = staLatLon.asLocation();
-                GeodesicLine gLine = geodesic.InverseLine(
-                        evt.getLatitude(), evt.getLongitude(),
-                        sta.getLatitude(), sta.getLongitude());
-                return gLine.Azimuth();
-            } else {
-                return SphericalCoords.azimuth(evtLatLon.asLocation(), staLatLon.asLocation());
-            }
+            return distCalc.azimuth(evtLatLon.asLocation(), staLatLon.asLocation());
         } else if (this.staLatLon!=null && this.backAzimuth!=null) {
             // don't think this can happen, have station and backAz, but not event or az, and may not know dist
-            if (getLatLonable().isGeodetic()) {
-                return null;
-            } else {
-                return null;
-            }
+            return null;
         } else {
             throw new RuntimeException("should not happen");
         }
@@ -182,25 +157,9 @@ public abstract class RayCalculateable {
         if (backAzimuth != null ) {
             return backAzimuth;
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
-            if (getLatLonable().isGeodetic()) {
-                Location evt = evtLatLon.asLocation();
-                Location sta = staLatLon.asLocation();
-                // station first makes this back azimuth
-                GeodesicLine gLine = geodesic.InverseLine(sta.getLatitude(), sta.getLongitude(),
-                                                          evt.getLatitude(), evt.getLongitude());
-                return gLine.Azimuth();
-            } else {
-                return SphericalCoords.azimuth(staLatLon, evtLatLon);
-            }
+            return distCalc.azimuth(staLatLon.asLocation(), evtLatLon.asLocation());
         } else if (this.evtLatLon!=null && this.azimuth!=null) {
-
-            // don't think this can happen, we have event and az, but not baz or station, and may not know dist???
-            // shoudl be able to calc
-            if (getLatLonable().isGeodetic()) {
-                return null;
-            } else {
-                return null;
-            }
+            return null;
         } else {
             throw new RuntimeException("should not happen");
         }
@@ -305,9 +264,7 @@ public abstract class RayCalculateable {
     protected LatLonLocatable evtLatLon = null;
     protected Double azimuth = null;
     protected Double backAzimuth = null;
-    protected Double invFlattening = null;
-    protected GeoDistType geoDistType = GeoDistType.spherical;
-    protected Geodesic geodesic;
+    protected DistanceCalc distCalc;
     protected String description = null;
 
     /**

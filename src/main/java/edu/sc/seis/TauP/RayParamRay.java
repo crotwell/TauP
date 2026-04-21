@@ -10,21 +10,18 @@ import java.util.List;
  */
 public class RayParamRay extends ShootableRay {
 
-    public RayParamRay(double rayParam) {
-        this(rayParam, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE );
-    }
-    public RayParamRay(double rayParam, GeoDistType geoDistType, Geodesic geodesic) {
-        super(geoDistType, geodesic);
+    public RayParamRay(double rayParam, DistanceCalc distCalc) {
+        super(distCalc);
         this.rayParam = rayParam;
     }
 
-    public static RayParamRay ofRayParamSRadian(double d, GeoDistType geoDistType, Geodesic geodesic) {
-        RayParamRay rp = new RayParamRay(d, geoDistType, geodesic);
+    public static RayParamRay ofRayParamSRadian(double d, DistanceCalc distCalc) {
+        RayParamRay rp = new RayParamRay(d, distCalc);
         rp.setDescription(d+" s/rad");
         return rp;
     }
-    public static RayParamRay ofRayParamSDegree(double d, GeoDistType geoDistType, Geodesic geodesic) {
-        RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor, geoDistType,geodesic);
+    public static RayParamRay ofRayParamSDegree(double d, DistanceCalc distCalc) {
+        RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor, distCalc);
         rp.rayParamSDeg = d;
         rp.setDescription(d+" s/deg");
         return rp;

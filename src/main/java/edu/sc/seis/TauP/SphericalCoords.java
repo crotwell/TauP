@@ -66,10 +66,18 @@ public class SphericalCoords {
                                   double lonA,
                                   double latB,
                                   double lonB) {
-        return rtod
-                * Math.acos(Math.sin(latA * dtor) * Math.sin(latB * dtor)
+        return rtod * distanceRadian(latA, lonA, latB, lonB);
+    }
+    public static double distanceRadian(double latA,
+                                  double lonA,
+                                  double latB,
+                                  double lonB) {
+        return Math.acos(Math.sin(latA * dtor) * Math.sin(latB * dtor)
                         + Math.cos(latA * dtor) * Math.cos(latB * dtor)
                         * Math.cos((lonB - lonA) * dtor));
+    }
+    public static double distanceRadian(Location a, Location b) {
+        return distanceRadian(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
     }
     public static double distance(Location a, Location b) {
         return distance(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());

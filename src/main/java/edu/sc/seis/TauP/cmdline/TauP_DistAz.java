@@ -71,7 +71,8 @@ public class TauP_DistAz extends TauP_Tool {
             vMod = new VelocityModel("radius", radiusArgs.getRadiusOfEarth(), 0, 0, 0, 0, radiusArgs.getRadiusOfEarth(), true, vLayers);
         }
         Map<GeoDistType, Geodesic> geodesicMap = geodeticArgs.createGeodesics(vMod);
-        List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(geodesicMap, new SeismicSourceArgs());
+        List<DistanceCalc> distanceCalcList = geodeticArgs.createDistanceCalcs(vMod);
+        List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(distanceCalcList, new SeismicSourceArgs());
         for (RayCalculateable ray : rayList) {
             if (ray instanceof DistanceRay) {
                 distList.add((DistanceRay) ray);
@@ -111,7 +112,7 @@ public class TauP_DistAz extends TauP_Tool {
                         dr.getSource().getLocationDescription(),
                         dr.getReceiver().getLocationDescription(),
                         (dr.hasDescription() ? dr.getDescription() : ""),
-                        dr.getGeoDistType().toString()
+                        dr.getDistCalc().getCalcType()
                 );
                 values.add(row);
             }

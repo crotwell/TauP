@@ -15,7 +15,7 @@ public class ExactDistanceRay extends DistanceRay {
     private final DistanceRay distanceRay;
 
     ExactDistanceRay(DistanceRay dr) {
-        super(dr.geoDistType, dr.geodesic);
+        super(dr.getDistCalc());
         this.distanceRay = dr;
     }
 
@@ -37,7 +37,7 @@ public class ExactDistanceRay extends DistanceRay {
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
-        FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg, getGeoDistType(), getGeodesic());
+        FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg, getDistCalc());
         scatRay.setSeismicSource(getSeismicSource());
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();

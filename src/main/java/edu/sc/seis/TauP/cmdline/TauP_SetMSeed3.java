@@ -139,18 +139,17 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         GeoDistType firstGeoDistType = geodeticArgs.getGeoDistTypes().get(0);
         Geodesic geodesic = geodeticArgs.createGeodesic(firstGeoDistType,
                 modelArgs.getTauModel().getVelocityModel());
+        DistanceCalc distCalc = DistanceCalc.create(firstGeoDistType, geodesic);
         if (staLoc != null && evLoc != null) {
             // geodetic vs spherical???
             rayCalculateable = DistanceRay.ofEventStation(
                     evLoc,
                     staLoc,
-                    firstGeoDistType,
-                    geodesic
+                    distCalc
             );
         } else if (eh.gcarc() != null) {
             rayCalculateable = DistanceRay.ofDegrees(eh.gcarc(),
-                    firstGeoDistType,
-                    geodesic);
+                    distCalc);
         } else {
             throw new SetSacException("Unable to get distance from MS3 record, skipping. :"+dr3);
         }

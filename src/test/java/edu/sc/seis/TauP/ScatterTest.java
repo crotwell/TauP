@@ -33,7 +33,7 @@ public class ScatterTest {
         double receiverDepth = 0;
         TauModel tMod = TauModelLoader.load("iasp91");
         Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg,
-                GeoDistType.spherical, tMod.getVelocityModel().sphericalGeodesic());
+                tMod.getVelocityModel().getSphericalDistCalc());
         for (String p : badScatPhases) {
             try {
                 List<SeismicPhase> scatPhaseList = SeismicPhaseFactory.createSeismicPhases(
@@ -62,8 +62,8 @@ public class ScatterTest {
         double scatterDepth = 100;
         double scatterDistDeg = 2;
         double dist = 10;
-        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg,
-                GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+        DistanceCalcSpherical distCalc = DistanceCalcSpherical.EARTH_SPHERE;
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg, distCalc);
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
@@ -77,7 +77,7 @@ public class ScatterTest {
         double scatterDistDeg = 20;
         double dist = 50;
         Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg,
-                GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+                DistanceCalcSpherical.EARTH_SPHERE);
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
@@ -86,7 +86,7 @@ public class ScatterTest {
         String scatToRecPhase = "ykp";
         double scatterDepth = 5500;
         SeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, TauModelLoader.load("iasp91"), scatterDepth, 0, false);
-        List<Arrival> outAListIndex = new RayParamRay(0).calculate(outboundPhase);
+        List<Arrival> outAListIndex = new RayParamRay(0, outboundPhase.getTauModel().getVelocityModel().getSphericalDistCalc()).calculate(outboundPhase);
         assertNotEquals(0, outAListIndex.size());
         assertEquals(0.0, outAListIndex.get(0).getRayParam());
         assertEquals(0.0, outAListIndex.get(0).getDist());
@@ -101,7 +101,7 @@ public class ScatterTest {
         double scatterDepth = 5500;
         double scatterDistDeg = 20;
         double dist = 40;
-        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg, DistanceCalcSpherical.EARTH_SPHERE);
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
@@ -221,7 +221,7 @@ public class ScatterTest {
         TauP_Pierce pierce = new TauP_Pierce(modelname);
         double sourceDepth = 0;
         pierce.setSingleSourceDepth(sourceDepth);
-        Scatterer scat = new Scatterer(3500, 120, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+        Scatterer scat = new Scatterer(3500, 120, DistanceCalcSpherical.EARTH_SPHERE);
         pierce.setScatterer(scat);
         pierce.clearPhaseNames();
         String phaseName = "PKoKP";
@@ -271,7 +271,7 @@ public class ScatterTest {
         String modelname = "iasp91";
         double sourceDepth = 0;
         TauP_Path path = new TauP_Path(modelname);
-        Scatterer scat = new Scatterer(800, -10, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+        Scatterer scat = new Scatterer(800, -10, DistanceCalcSpherical.EARTH_SPHERE);
         path.setScatterer(scat);
 
         path.clearPhaseNames();

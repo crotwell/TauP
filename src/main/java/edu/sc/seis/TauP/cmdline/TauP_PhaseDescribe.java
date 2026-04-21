@@ -129,8 +129,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
             writer.println("  <summary>"+phase.getName()+"</summary>");
             writer.println("<div>");
             DistanceRay dr = DistanceRay.ofExactDegrees((phase.getMaxDistanceDeg()+phase.getMinDistanceDeg())/2,
-                GeoDistType.spherical,
-                phase.getTauModel().getVelocityModel().sphericalGeodesic());
+                phase.getTauModel().getVelocityModel().getSphericalDistCalc());
             List<Arrival> arrList = dr.calculate(phase);
             if (!arrList.isEmpty()) {
                 Arrival arr = arrList.get(0);

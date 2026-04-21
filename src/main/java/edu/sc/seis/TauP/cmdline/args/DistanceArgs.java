@@ -19,55 +19,55 @@ public class DistanceArgs {
         this.modelArgs = modelArgs;
     }
 
-    public List<DistanceRay> getDistances(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
-        assert !geodesicMap.isEmpty() : "No geodesics given";
+    public List<DistanceRay> getDistances(List<DistanceCalc> distCalcList) throws TauPException {
+        assert !distCalcList.isEmpty() : "No geodesics given";
         List<DistanceRay> simpleDistanceList = new ArrayList<>();
         for (Double d : distArgs.degreesList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofDegrees(d, distCalc));
             }
         }
         for (Double d : distArgs.exactDegreesList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofExactDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofExactDegrees(d, distCalc));
             }
         }
         if (!distArgs.degreeRange.isEmpty()) {
             for (Double d : createListFromRangeDeg(distArgs.degreeRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofDegrees(d, distCalc));
                 }
             }
         }
         for (Double d : distArgs.distKilometersList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofKilometers(d, distCalc));
             }
         }
         for (Double d : distArgs.exactDistKilometersList) {
-            for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                simpleDistanceList.add(DistanceRay.ofExactKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+            for (DistanceCalc distCalc : distCalcList) {
+                simpleDistanceList.add(DistanceRay.ofExactKilometers(d, distCalc));
             }
         }
 
         if (!distArgs.kilometerRange.isEmpty()) {
             for (Double d : createListFromRangeKm(distArgs.kilometerRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofKilometers(d, distCalc));
                 }
             }
         }
         if (!distArgs.exactDegreeRange.isEmpty()) {
             for (Double d : createListFromRangeDeg(distArgs.exactDegreeRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofExactDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofExactDegrees(d, distCalc));
                 }
             }
         }
         if (!distArgs.exactKilometerRange.isEmpty()) {
             for (Double d : createListFromRangeKm(distArgs.exactKilometerRange)) {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    simpleDistanceList.add(DistanceRay.ofExactKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    simpleDistanceList.add(DistanceRay.ofExactKilometers(d, distCalc));
                 }
             }
         }
@@ -141,8 +141,8 @@ public class DistanceArgs {
             // now add evt-station pairs, already have latlonable
             for (LatLonLocatable evtLoc : quakes) {
                 for (LatLonLocatable staLoc : stationList) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalc);
                         dr.setDescription(evtLoc.getLocationDescription()+" to "+staLoc.getLocationDescription());
                         out.add(dr);
                     }
@@ -155,114 +155,114 @@ public class DistanceArgs {
         return out;
     }
 
-    public List<RayParamKmRay> getRayParamKmRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<RayParamKmRay> getRayParamKmRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<RayParamKmRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootKmRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamKmRay evtDr = new RayParamKmRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamKmRay evtDr = new RayParamKmRay(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamKmRay staDr = new RayParamKmRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamKmRay staDr = new RayParamKmRay(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(new RayParamKmRay(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(new RayParamKmRay(d, distCalc));
                 }
             }
         }
         return rpList;
     }
 
-    public List<TimeRay> getTimeRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<TimeRay> getTimeRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<TimeRay> rpList = new ArrayList<>();
 
         for (Double d : distArgs.timeList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        TimeRay evtDr = new TimeRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        TimeRay evtDr = new TimeRay(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        TimeRay staDr = new TimeRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        TimeRay staDr = new TimeRay(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(new TimeRay(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(new TimeRay(d, distCalc));
                 }
             }
         }
         return rpList;
     }
 
-    public List<RayParamRay> getRayParamDegRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<RayParamRay> getRayParamDegRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamRay evtDr = RayParamRay.ofRayParamSDegree(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamRay evtDr = RayParamRay.ofRayParamSDegree(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamRay staDr = RayParamRay.ofRayParamSDegree(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamRay staDr = RayParamRay.ofRayParamSDegree(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(RayParamRay.ofRayParamSDegree(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(RayParamRay.ofRayParamSDegree(d, distCalc));
                 }
             }
         }
         return rpList;
     }
 
-    public List<RayParamRay> getRayParamRadianRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<RayParamRay> getRayParamRadianRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<RayParamRay> rpList = new ArrayList<>();
 
         for (Double d : distArgs.shootRadianRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamRay evtDr = RayParamRay.ofRayParamSRadian(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamRay evtDr = RayParamRay.ofRayParamSRadian(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamRay staDr = RayParamRay.ofRayParamSRadian(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamRay staDr = RayParamRay.ofRayParamSRadian(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(RayParamRay.ofRayParamSRadian(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(RayParamRay.ofRayParamSRadian(d, distCalc));
                 }
             }
         }
@@ -270,36 +270,36 @@ public class DistanceArgs {
     }
 
 
-    public List<RayParamIndexRay> getRayParamIndexRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<RayParamIndexRay> getRayParamIndexRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<RayParamIndexRay> rpList = new ArrayList<>();
 
         for (Integer d : distArgs.shootIndexRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamIndexRay evtDr = new RayParamIndexRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamIndexRay evtDr = new RayParamIndexRay(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        RayParamIndexRay staDr = new RayParamIndexRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        RayParamIndexRay staDr = new RayParamIndexRay(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(new RayParamIndexRay(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(new RayParamIndexRay(d, distCalc));
                 }
             }
         }
         return rpList;
     }
 
-    public List<TakeoffAngleRay> getTakeoffAngleRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<TakeoffAngleRay> getTakeoffAngleRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<TakeoffAngleRay> rpList = new ArrayList<>();
         List<Double> takeoffInputList = new ArrayList<>();
         takeoffInputList.addAll(distArgs.takeoffAngle);
@@ -313,30 +313,30 @@ public class DistanceArgs {
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        TakeoffAngleRay evtDr = new TakeoffAngleRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        TakeoffAngleRay evtDr = new TakeoffAngleRay(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        TakeoffAngleRay staDr = new TakeoffAngleRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        TakeoffAngleRay staDr = new TakeoffAngleRay(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(TakeoffAngleRay.ofTakeoffAngle(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(TakeoffAngleRay.ofTakeoffAngle(d, distCalc));
                 }
             }
         }
         return rpList;
     }
 
-    public List<IncidentAngleRay> getIncidentAngleRays(Map<GeoDistType, Geodesic> geodesicMap) throws TauPException {
+    public List<IncidentAngleRay> getIncidentAngleRays(List<DistanceCalc> distCalcList) throws TauPException {
         List<IncidentAngleRay> rpList = new ArrayList<>();
         List<Double> incidentAngleInputList = new ArrayList<>();
         incidentAngleInputList.addAll(distArgs.incidentAngle);
@@ -350,23 +350,23 @@ public class DistanceArgs {
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        IncidentAngleRay evtDr = new IncidentAngleRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        IncidentAngleRay evtDr = new IncidentAngleRay(d, distCalc);
                         evtDr.withEventAzimuth(evt, getAzimuth());
                         rpList.add(evtDr);
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
                 for (LatLonLocatable sta : getStationLatLon()) {
-                    for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                        IncidentAngleRay staDr = new IncidentAngleRay(d, geoDistType, geodesicMap.get(geoDistType));
+                    for (DistanceCalc distCalc : distCalcList) {
+                        IncidentAngleRay staDr = new IncidentAngleRay(d, distCalc);
                         staDr.withStationBackAzimuth(sta, getBackAzimuth());
                         rpList.add(staDr);
                     }
                 }
             } else {
-                for (GeoDistType geoDistType : geodesicMap.keySet()) {
-                    rpList.add(IncidentAngleRay.ofIncidentAngle(d, geoDistType, geodesicMap.get(geoDistType)));
+                for (DistanceCalc distCalc : distCalcList) {
+                    rpList.add(IncidentAngleRay.ofIncidentAngle(d, distCalc));
                 }
             }
         }
@@ -430,22 +430,25 @@ public class DistanceArgs {
      * @throws TauPException
      */
     public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) throws TauPException {
-        return getRayCalculatables(createGeodesicMap(), sourceArgs);
+        return getRayCalculatables(createDistanceCalcs(), sourceArgs);
+    }
+    public List<DistanceCalc> createDistanceCalcs() throws TauModelException {
+        return geodeticArgs.createDistanceCalcs(modelArgs.getTauModel().getVelocityModel());
     }
     public Map<GeoDistType, Geodesic> createGeodesicMap() throws TauModelException {
         return geodeticArgs.createGeodesics(modelArgs.getTauModel().getVelocityModel());
     }
 
-    public List<RayCalculateable> getRayCalculatables(Map<GeoDistType, Geodesic> geodesicMap, SeismicSourceArgs sourceArgs) throws TauPException {
+    public List<RayCalculateable> getRayCalculatables(List<DistanceCalc> distCalcList, SeismicSourceArgs sourceArgs) throws TauPException {
         List<RayCalculateable> simpleRays = new ArrayList<>();
-        simpleRays.addAll(getDistances(geodesicMap));
-        simpleRays.addAll(getTimeRays(geodesicMap));
-        simpleRays.addAll(getRayParamDegRays(geodesicMap));
-        simpleRays.addAll(getRayParamKmRays(geodesicMap));
-        simpleRays.addAll(getRayParamRadianRays(geodesicMap));
-        simpleRays.addAll(getTakeoffAngleRays(geodesicMap));
-        simpleRays.addAll(getIncidentAngleRays(geodesicMap));
-        simpleRays.addAll(getRayParamIndexRays(geodesicMap));
+        simpleRays.addAll(getDistances(distCalcList));
+        simpleRays.addAll(getTimeRays(distCalcList));
+        simpleRays.addAll(getRayParamDegRays(distCalcList));
+        simpleRays.addAll(getRayParamKmRays(distCalcList));
+        simpleRays.addAll(getRayParamRadianRays(distCalcList));
+        simpleRays.addAll(getTakeoffAngleRays(distCalcList));
+        simpleRays.addAll(getIncidentAngleRays(distCalcList));
+        simpleRays.addAll(getRayParamIndexRays(distCalcList));
 
         if (hasAzimuth()) {
             for (RayCalculateable rc : simpleRays) {
@@ -477,9 +480,6 @@ public class DistanceArgs {
                     }
                 }
             }
-        }
-        for (RayCalculateable rc : simpleRays) {
-            assert rc.hasGeodesic() : "Geodesic missing on "+rc;
         }
         return simpleRays;
     }

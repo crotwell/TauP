@@ -7,26 +7,15 @@ import net.sf.geographiclib.Geodesic;
  */
 public abstract class LatLonable {
 
-    public LatLonable(GeoDistType geoDistType, Geodesic geodesic) {
-        this.geoDistType = geoDistType;
-        this.geodesic = geodesic;
+    public LatLonable(DistanceCalc distCalc) {
+        this.distCalc = distCalc;
     }
 
     public abstract double[] calcLatLon(double calcDist, double totalDist, double depthKm);
 
-    public boolean isGeodetic() {
-        return geoDistType == GeoDistType.geodetic && this.geodesic != null;
+    public DistanceCalc getDistCalc() {
+        return distCalc;
     }
 
-    public boolean isGeocentric() {
-        return geoDistType == GeoDistType.geocentric && this.geodesic != null;
-    }
-
-    public boolean isSpherical() {
-        return this.geodesic == null || GeoDistType.spherical == this.geoDistType ;
-    }
-
-    Geodesic geodesic = null;
-
-    GeoDistType geoDistType = GeoDistType.spherical;
+    DistanceCalc distCalc;
 }

@@ -120,6 +120,26 @@ public class GeodeticArgs extends LatLonArgs {
         }
     }
 
+    public List<DistanceCalc> createDistanceCalcs(VelocityModel vMod) {
+        List<DistanceCalc> out = new ArrayList<>();
+        for (GeoDistType gdt : getGeoDistTypes()) {
+            out.add(createDistanceCalc(gdt, vMod));
+        }
+        return out;
+    }
+
+    public DistanceCalc createDistanceCalc(GeoDistType geoDistType, VelocityModel vMod) {
+        switch (geoDistType) {
+            case geodetic:
+                return new DistanceCalcGeodetic(createGeodesic(geoDistType, vMod));
+            case geocentric:
+                return new DistanceCalcGeocentric(createGeodesic(geoDistType, vMod));
+            case spherical:
+            default:
+                return vMod.getSphericalDistCalc();
+        }
+    }
+
     public Map<GeoDistType, Geodesic>  createGeodesics(VelocityModel vMod) {
         return createGeodesics(getGeoDistTypes(), vMod);
     }

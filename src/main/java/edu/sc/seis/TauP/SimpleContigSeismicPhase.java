@@ -177,8 +177,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     public Arrival getEarliestArrival(double degrees) {
         return Arrival.getEarliestArrival(
                 DistanceRay.ofDegrees(degrees,
-                    GeoDistType.spherical,
-                    gettMod().getVelocityModel().sphericalGeodesic())
+                    gettMod().getVelocityModel().getSphericalDistCalc())
                         .calcSimplePhase(this));
     }
 
@@ -436,8 +435,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 getRayParams(rayNum),
                 rayNum,
                 new RayParamIndexRay(rayNum,
-                        GeoDistType.spherical,
-                        gettMod().getVelocityModel().sphericalGeodesic()),
+                        gettMod().getVelocityModel().getSphericalDistCalc()),
                 dRPdDist
         );
     }
@@ -533,8 +531,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             double deltaDist = (dist[i + 1] - dist[i]) / numRPs;
             for (int j = 1; j < numRPs; j++) {
                 List<Arrival> aList = DistanceRay.ofExactRadians(dist[i] + j * deltaDist,
-                        GeoDistType.spherical,
-                        gettMod().getVelocityModel().sphericalGeodesic()).calcSimplePhase(this);
+                        gettMod().getVelocityModel().getSphericalDistCalc()).calcSimplePhase(this);
 
                 for (Arrival a : aList) {
                     if (rayParams[i + 1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
