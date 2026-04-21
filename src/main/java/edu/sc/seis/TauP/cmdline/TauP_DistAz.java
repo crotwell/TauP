@@ -92,12 +92,20 @@ public class TauP_DistAz extends TauP_Tool {
             out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+getGeodeticStr()+")  ");
             out.println("---------------------------------------------------------------------------------------------");
             for (Daz dr : dazList) {
+                String sourceDesc = dr.getSource().getLocationDescription();
+                if (sourceDesc.endsWith(" 0.00 m")) {
+                    sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
+                }
+                String receiverDesc = dr.getReceiver().getLocationDescription();
+                if (receiverDesc.endsWith(" 0.00 m")) {
+                    receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
+                }
                 out.println(Outputs.formatDistance(dr.getDegrees())
                         +" "+Outputs.formatKilometer (dr.getKilometers())
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
-                        +" "+dr.getSource().getLocationDescription()
-                        +" "+dr.getReceiver().getLocationDescription()
+                        +" "+sourceDesc
+                        +" "+receiverDesc
                         +"      "+(dr.hasDescription() ? dr.getDescription() : "")
                 );
             }

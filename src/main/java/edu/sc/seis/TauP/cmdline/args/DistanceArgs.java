@@ -111,7 +111,11 @@ public class DistanceArgs {
                     for (LatLonLocatable evtLoc : quakes) {
                         DistanceRay evtDr = DistanceRay.duplicate(dr);
                         evtDr.withEventAzimuth(evtLoc, getAzimuth());
-                        evtDr.setDescription(evtLoc.getLocationDescription() + " to az " + Outputs.formatDistance(getAzimuth()).trim());
+                        String sourceDesc = evtLoc.getLocationDescription();
+                        if (sourceDesc.endsWith(" 0.00 m")) {
+                            sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
+                        }
+                        evtDr.setDescription(sourceDesc + " to az " + Outputs.formatDistance(getAzimuth()).trim());
                         evtDr.insertSeismicSource(evtLoc);
                         evtOut.add(evtDr);
 
@@ -129,7 +133,11 @@ public class DistanceArgs {
                     for (LatLonLocatable staLoc : stationList) {
                         DistanceRay staDr = DistanceRay.duplicate(dr);
                         staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
-                        staDr.setDescription("baz " + Outputs.formatDistance(getBackAzimuth()) + " from " + staLoc.getLocationDescription());
+                        String receiverDesc = staLoc.getLocationDescription();
+                        if (receiverDesc.endsWith(" 0.00 m")) {
+                            receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
+                        }
+                        staDr.setDescription("baz " + Outputs.formatDistance(getBackAzimuth()) + " from " + receiverDesc);
                         staOut.add(staDr);
                     }
                 }
@@ -143,7 +151,15 @@ public class DistanceArgs {
                 for (LatLonLocatable staLoc : stationList) {
                     for (DistanceCalc distCalc : distCalcList) {
                         DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalc);
-                        dr.setDescription(evtLoc.getLocationDescription()+" to "+staLoc.getLocationDescription());
+                        String sourceDesc = dr.getSource().getLocationDescription();
+                        if (sourceDesc.endsWith(" 0.00 m")) {
+                            sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
+                        }
+                        String receiverDesc = dr.getReceiver().getLocationDescription();
+                        if (receiverDesc.endsWith(" 0.00 m")) {
+                            receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
+                        }
+                        dr.setDescription(sourceDesc+" to "+receiverDesc);
                         out.add(dr);
                     }
                 }
