@@ -48,7 +48,7 @@ public class ModelArgs {
      *
      * @return the scatterer
      */
-    public Scatterer getScatterer() {
+    public Scatterer getScatterer() throws TauModelException {
         return modelArgsInner.getScatterer();
     }
     public void setScatterer(double depth, double dist) {
@@ -122,6 +122,7 @@ public class ModelArgs {
 
     static class ModelArgsInner extends TableModelArgs {
 
+        // see also TauP_DistAz for similar cmd line arg
         @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
                 paramLabel = "depth",
                 defaultValue = "0.0",

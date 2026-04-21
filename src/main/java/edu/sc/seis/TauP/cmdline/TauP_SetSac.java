@@ -33,6 +33,7 @@ import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -196,16 +197,18 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                     + filenameForError );
         }
         RayCalculateable rayCalculateable;
+        GeoDistType firstGeoDistType = geodeticArgs.getGeoDistTypes().get(0);
+        Geodesic geodesic = geodeticArgs.getGeodesic(firstGeoDistType);
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(isVerbose()) {
                 Alert.debug("Using gcarc: " + header.getGcarc());
             }
-            rayCalculateable = DistanceRay.ofDegrees(header.getGcarc());
+            rayCalculateable = DistanceRay.ofDegrees(header.getGcarc(), firstGeoDistType, geodesic);
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(isVerbose()) {
                 Alert.debug("Using dist: " + header.getDist());
             }
-            rayCalculateable = DistanceRay.ofKilometers(header.getDist());
+            rayCalculateable = DistanceRay.ofKilometers(header.getDist(), firstGeoDistType, geodesic);
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(isVerbose()) {
@@ -213,18 +216,12 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
             Alert.warning("Warning: Sac header gcarc is not set in "+filenameForError+",",
                           "using lat and lons to calculate distance.");
-            if (geodeticArgs.isGeodetic()) {
-                rayCalculateable = DistanceRay.ofGeodeticEventStation(
-                        new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
-                        new LatLonSimple(header.getStla(), header.getStlo()),
-                        geodeticArgs.getGeodesic()
-                );
-            } else {
-                rayCalculateable = DistanceRay.ofEventStation(
-                        new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
-                        new LatLonSimple(header.getStla(), header.getStlo())
-                );
-            }
+            rayCalculateable = DistanceRay.ofEventStation(
+                    new LatLonSimple(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                    new LatLonSimple(header.getStla(), header.getStlo()),
+                    firstGeoDistType,
+                    geodesic
+            );
         } else {
             /* can't get a distance, skipping */
             throw new SetSacException("Can't get a distance, all distance fields are undef in "+filenameForError);

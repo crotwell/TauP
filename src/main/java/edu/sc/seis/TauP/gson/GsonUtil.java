@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.gson;
 import com.google.gson.*;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.Geodesic;
 
 public class GsonUtil {
 
@@ -20,6 +21,7 @@ public class GsonUtil {
     public static void registerSerializers(GsonBuilder gson) {
         gson.registerTypeAdapter(Location.class, new LocationSerializer());
         gson.registerTypeAdapter(DistanceAngleRay.class, new DistanceAngleRaySerializier());
+        gson.registerTypeAdapter(Geodesic.class, new GeodesicSerializer());
         gson.registerTypeAdapter(Daz.class, new DazSerializier());
         gson.registerTypeAdapter(SeismicSource.class, new SeismicSourceSerializer());
         gson.registerTypeAdapter(Scatterer.class, new ScattererSerializer());

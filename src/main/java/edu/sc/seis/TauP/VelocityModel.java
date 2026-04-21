@@ -165,13 +165,19 @@ public class VelocityModel implements Cloneable, Serializable {
     public double getRadiusOfEarth() {
         return radiusOfEarth;
     }
+    /**
+     * gets radius of the earth (m), by default 6371000 meters.
+     */
+    public double getRadiusOfEarthMeters() {
+        return radiusOfEarth*1000;
+    }
 
     /**
      * Create a spherical geodesic with radius of the model and zero flattenning.
      * @return geodesic of correct radius.
      */
-    public Geodesic createGeodesic() {
-        return new Geodesic(getRadiusOfEarth(), 0);
+    public Geodesic sphericalGeodesic() {
+        return new Geodesic(getRadiusOfEarthMeters(), 0);
     }
 
     public boolean isDisconDepth(double depth) {

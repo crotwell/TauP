@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.TRANSUPDIFFRACT;
-import static edu.sc.seis.TauP.PhaseInteraction.TURN;
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
@@ -176,7 +175,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(DistanceRay.ofDegrees(degrees).calcSimplePhase(this));
+        return Arrival.getEarliestArrival(
+                DistanceRay.ofDegrees(degrees,
+                    GeoDistType.spherical,
+                    gettMod().getVelocityModel().sphericalGeodesic())
+                        .calcSimplePhase(this));
     }
 
     @Override
@@ -432,6 +435,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 getDist(rayNum),
                 getRayParams(rayNum),
                 rayNum,
+                new RayParamIndexRay(rayNum,
+                        GeoDistType.spherical,
+                        gettMod().getVelocityModel().sphericalGeodesic()),
                 dRPdDist
         );
     }
@@ -526,7 +532,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             int numRPs = (int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian);
             double deltaDist = (dist[i + 1] - dist[i]) / numRPs;
             for (int j = 1; j < numRPs; j++) {
-                List<Arrival> aList = DistanceRay.ofExactRadians(dist[i] + j * deltaDist).calcSimplePhase(this);
+                List<Arrival> aList = DistanceRay.ofExactRadians(dist[i] + j * deltaDist,
+                        GeoDistType.spherical,
+                        gettMod().getVelocityModel().sphericalGeodesic()).calcSimplePhase(this);
 
                 for (Arrival a : aList) {
                     if (rayParams[i + 1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
@@ -636,6 +644,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 searchDist,
                 arrivalRayParam,
                 left.getRayParamIndex(),
+                left.getRayCalculateable(),
                 dRPdDist
         );
     }

@@ -1,20 +1,24 @@
 package edu.sc.seis.TauP.cmdline.args;
 
-import edu.sc.seis.TauP.DistanceRay;
-import edu.sc.seis.TauP.RayCalculateable;
-import edu.sc.seis.TauP.SeismicSource;
+import edu.sc.seis.TauP.*;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeDeg;
 import static edu.sc.seis.TauP.cmdline.args.DistanceArgs.createListFromRangeKm;
 
 public class DistanceLengthArgs {
 
-    public DistanceArgs createDistanceArgs(GeodeticArgs geodeticArgs, QmlStaxmlArgs qmlStaxmlArgs) {
-        DistanceArgs out = new DistanceArgs();
+    public DistanceArgs createDistanceArgs(GeodeticArgs geodeticArgs, QmlStaxmlArgs qmlStaxmlArgs, List<Double> sourceDepths, List<Double> receiverDepths) {
+        ModelArgs tmpModelArgs = new ModelArgs();
+        tmpModelArgs.setSourceDepths(sourceDepths);
+        tmpModelArgs.setReceiverDepths(receiverDepths);
+
+        DistanceArgs out = new DistanceArgs(tmpModelArgs);
         out.distArgs = new DistanceRayArgs();
         out.distArgs.degreeRange = degreeRange;
         out.distArgs.degreesList = degreesList;
@@ -25,9 +29,10 @@ public class DistanceLengthArgs {
         return out;
     }
 
-    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) {
+    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs, GeodeticArgs geodeticArgs, ModelArgs modelArgs) throws TauModelException {
         List<RayCalculateable> out = new ArrayList<>();
-        out.addAll(getLengthDistances());
+        Map<GeoDistType, Geodesic> geodesicMap = geodeticArgs.createGeodesics(modelArgs.getTauModel().getVelocityModel());
+        out.addAll(getLengthDistances(geodesicMap));
         if (sourceArgs != null) {
             SeismicSource ss = new SeismicSource(sourceArgs.getMw(), sourceArgs.getFaultPlane());
             for (RayCalculateable rc : out) {
@@ -40,24 +45,32 @@ public class DistanceLengthArgs {
     }
 
 
-    public List<DistanceRay> getLengthDistances() {
+    public List<DistanceRay> getLengthDistances(Map<GeoDistType, Geodesic> geodesicMap) {
         List<DistanceRay> simpleDistanceList = new ArrayList<>();
         for (Double d : degreesList) {
-            simpleDistanceList.add(DistanceRay.ofDegrees(d));
+            for (GeoDistType geoDistType : geodesicMap.keySet()) {
+                simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+            }
         }
 
         if (!degreeRange.isEmpty()) {
             for (Double d : createListFromRangeDeg(degreeRange)) {
-                simpleDistanceList.add(DistanceRay.ofDegrees(d));
+                for (GeoDistType geoDistType : geodesicMap.keySet()) {
+                    simpleDistanceList.add(DistanceRay.ofDegrees(d, geoDistType, geodesicMap.get(geoDistType)));
+                }
             }
         }
         for (Double d : distKilometersList) {
-            simpleDistanceList.add(DistanceRay.ofKilometers(d));
+            for (GeoDistType geoDistType : geodesicMap.keySet()) {
+                simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+            }
         }
 
         if (!kilometerRange.isEmpty()) {
             for (Double d : createListFromRangeKm(kilometerRange)) {
-                simpleDistanceList.add(DistanceRay.ofKilometers(d));
+                for (GeoDistType geoDistType : geodesicMap.keySet()) {
+                    simpleDistanceList.add(DistanceRay.ofKilometers(d, geoDistType, geodesicMap.get(geoDistType)));
+                }
             }
         }
         return simpleDistanceList;

@@ -42,7 +42,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(sourceArgs, getRadiusOfEarth());
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(sourceArgs);
         Set<FaultPlane> uniqFaultPlaneList = new HashSet<>();
         // in case no arrivals, still use given source arg
         if (sourceArgs.hasStrikeDipRake()) {

@@ -15,7 +15,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phaseArgs.setTool(this);
     }
 
-    public TimeResult createTimeResult(boolean isWithAmplitude, SeismicSource sourceArgs, List<Arrival> arrivalList) throws PhaseParseException {
+    public TimeResult createTimeResult(boolean isWithAmplitude, SeismicSource sourceArgs, List<Arrival> arrivalList) throws TauModelException {
         return new TimeResult(modelArgs.getModelName(),
                 modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
                 getPhaseArgs().parsePhaseNameList(),
@@ -110,11 +110,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         clearPhases();
     }
 
-    public double getScattererDepth() {
-        return modelArgs.getScatterer().depth;
+    public double getScattererDepth() throws TauModelException {
+        return getScatterer().depth;
     }
 
-    public Scatterer getScatterer() {
+    public Scatterer getScatterer() throws TauModelException {
         return modelArgs.getScatterer();
     }
 

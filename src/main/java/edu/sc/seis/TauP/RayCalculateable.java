@@ -16,6 +16,11 @@ import java.util.List;
 public abstract class RayCalculateable {
 
 
+    public RayCalculateable(GeoDistType geoDistType, Geodesic geodesic) {
+        this.geodesic = geodesic;
+        this.geoDistType = geoDistType;
+    }
+
     public void insertSeismicSource(LatLonLocatable evtLoc) {
         if (evtLoc instanceof Event) {
             Event event = (Event)evtLoc;
@@ -37,23 +42,19 @@ public abstract class RayCalculateable {
 
     public abstract List<Arrival> calculate(SeismicPhase phase) throws TauPException;
 
-    public void withEventAzimuth(LatLonLocatable evt, double azimuth, Geodesic geodesic) {
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
         this.evtLatLon = evt;
         this.staLatLon = null;
         this.azimuth = azimuth;
         this.backAzimuth = null;
         this.insertSeismicSource(evt);
-        this.geodesic = geodesic;
-        this.geodetic = (this.geodesic != null);
     }
 
-    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth, Geodesic geodesic) {
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
         this.evtLatLon = null;
         this.staLatLon = sta;
         this.azimuth = null;
         this.backAzimuth = backazimuth;
-        this.geodesic = geodesic;
-        this.geodetic = (this.geodesic != null);
     }
 
     public abstract boolean isLatLonable();
@@ -98,26 +99,12 @@ public abstract class RayCalculateable {
         return geodesic;
     }
 
-    public void setGeodesic(Geodesic geodesic) {
-        this.geodesic = geodesic;
-        this.radiusOfEarth = DistAzKarney.averageRadiusKm(geodesic);
+    public GeoDistType getGeoDistType() {
+        return geoDistType;
     }
-
-    public boolean isGeodetic() { return geodetic;}
 
     public Double getInvFlattening() {
         return invFlattening;
-    }
-
-    public boolean hasRadiusOfEarth() {
-        return this.radiusOfEarth != null;
-    }
-
-    public double getRadiusOfEarth() {
-        return this.radiusOfEarth;
-    }
-    public void setRadiusOfEarth(double modelRadius) {
-        this.radiusOfEarth = modelRadius;
     }
 
     /**
@@ -318,10 +305,9 @@ public abstract class RayCalculateable {
     protected LatLonLocatable evtLatLon = null;
     protected Double azimuth = null;
     protected Double backAzimuth = null;
-    protected boolean geodetic = false;
     protected Double invFlattening = null;
-    protected Double radiusOfEarth = null;
-    protected Geodesic geodesic = null;
+    protected GeoDistType geoDistType = GeoDistType.spherical;
+    protected Geodesic geodesic;
     protected String description = null;
 
     /**

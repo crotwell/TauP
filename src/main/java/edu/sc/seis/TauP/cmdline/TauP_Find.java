@@ -68,7 +68,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables(sourceArgs, modelArgs.getTauModel().getRadiusOfEarth());
+        List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables( sourceArgs);
         if (azimuth != null) {
             for (RayCalculateable rc : distanceValues) {
                 rc.setAzimuth(azimuth);
@@ -422,7 +422,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         if (sourceArgs.hasStrikeDipRake() && azimuth == null) {
             throw new TauModelException("strike,dip,rake requires azimuth");
         }
-        if (!distanceArgs.getRayCalculatables(sourceArgs, getRadiusOfEarth()).isEmpty()
+        if (!distanceArgs.getRayCalculatables( sourceArgs).isEmpty()
                 && (rayParamRangeDeg != null ||  rayParamRangeKm != null)
                 && getRayParamRange().length == 1) {
             throw new CommandLine.ParameterException(spec.commandLine(),
@@ -587,7 +587,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         distanceArgs.setDegreeList(degreesList);
     }
 
-    DistanceArgs distanceArgs = new DistanceArgs();
+    DistanceArgs distanceArgs = new DistanceArgs(modelArgs);
 }
 
 

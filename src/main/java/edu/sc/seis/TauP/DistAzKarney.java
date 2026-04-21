@@ -86,8 +86,16 @@ public class DistAzKarney {
         return geodesicData;
     }
 
-    public static double averageRadiusKm(Geodesic geodesic) {
+    public static double averageRadiusMeter(Geodesic geodesic) {
         // use mean radius, r = (2*er+pr)/3, mean of two equitorial radii and polar radius
-        return geodesic.EquatorialRadius()* (3- geodesic.Flattening()) / 3 / 1000; // m to km
+        return geodesic.EquatorialRadius()* (3- geodesic.Flattening()) / 3;
+    }
+
+    public static double averageRadiusKm(Geodesic geodesic) {
+        return averageRadiusMeter(geodesic)/1000; // m to km
+    }
+
+    public static double equitorialRadius(double avgRadius, double flattening) {
+        return (3*avgRadius)/(3-flattening);
     }
 }

@@ -1,8 +1,14 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.SphericalCoords.dtor;
+import static edu.sc.seis.TauP.SphericalCoords.rtod;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import net.sf.geographiclib.Geodesic;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 
 public class SphericalCoordsTest {
@@ -91,5 +97,56 @@ public class SphericalCoordsTest {
         assertEquals(20, SphericalCoords.distanceTrim180(340), 1e-6);
         assertEquals(179, SphericalCoords.distanceTrim180(181), 1e-6);
         assertEquals(1, SphericalCoords.distanceTrim180(359), 1e-6);
+    }
+
+    @Test
+    public void azimuthTest() {
+        assertEquals(0, SphericalCoords.azimuth(0,0, 90, 0), 1e-6);
+        assertEquals(90, SphericalCoords.azimuth(0,0, 0, 10), 1e-6);
+        assertEquals(-90, SphericalCoords.azimuth(0,0, 0, -10), 1e-6);
+        assertEquals(180, SphericalCoords.azimuth(0,0, -10, 0), 1e-6);
+        double latA = 35;
+        double lonA = -81;
+        double latB = -24;
+        double lonB = -154;
+        double wikipedia = rtod*Math.atan2(Math.cos(latB*dtor)*Math.sin((lonB-lonA)*dtor),
+                (Math.cos(latA*dtor)*Math.sin(latB*dtor)-Math.sin(latA*dtor)*Math.cos(latB*dtor)*Math.cos((lonB-lonA)*dtor)));
+        assertEquals(wikipedia, SphericalCoords.azimuth(latA, lonA, latB, lonB), 1e-6);
+    }
+
+
+    @Test
+    public void geocentricAzimuthTest() {
+        Geocentric geocentric = new Geocentric(Geodesic.WGS84);
+        assertEquals(0, geocentric.azimuth(0, 0, 1, 90, 0, -1), 1e-6);
+        assertEquals(90, geocentric.azimuth(0, 0, 1, 0, 10, -1), 1e-6);
+        assertEquals(-90, geocentric.azimuth(0, 0, 1, 0, -10, -1), 1e-6);
+        assertEquals(180, geocentric.azimuth(0, 0, 1, -10, 0, -1), 1e-6);
+    }
+
+    @Test
+    public void geocentricDistTest() {
+        double depthMeter = 1000*1000;
+        double lat = 45;
+        double lon = 0;
+        Geocentric geocentric = new Geocentric(Geodesic.WGS84);
+        List<Double> vAList = geocentric.IntForward(lat, lon, -1*depthMeter, false);
+        double[] sphvA = SphericalCoords.xyzFromLatLonRadius(lat, lon, DistAzKarney.averageRadiusMeter(Geodesic.WGS84)-depthMeter);
+        assertTrue(Math.abs(vAList.get(0)-sphvA[0]) > 1e-8, "x "+vAList.get(0)+" "+sphvA[0]);
+        // y zero for both as lon 0 is x-z plane
+        assertEquals(vAList.get(1), sphvA[1] , 1e-8, "y "+vAList.get(1)+" "+sphvA[1]);
+        assertTrue(Math.abs(vAList.get(2)-sphvA[2]) > 1e-8, "z "+vAList.get(2)+" "+sphvA[2]);
+    }
+
+    @Test
+    public void vsDistAz() {
+
+        double lat = 45;
+        double lon = 0;
+        double latB = -34;
+        double lonB = -81;
+        Geocentric geocentric = new Geocentric(Geodesic.WGS84);
+        DistAz distAz = new DistAz(lat, lon, latB, lonB, Geodesic.WGS84.Flattening());
+        assertEquals(distAz.getDelta(), geocentric.angleBetweenDeg(lat, lon, 0, latB, lonB, 0), 1e-3);
     }
 }

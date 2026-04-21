@@ -28,10 +28,7 @@ package edu.sc.seis.TauP.cmdline;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.OutputTypes;
-import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
-import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
-import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
@@ -416,7 +413,7 @@ public class TauP_Table extends TauP_Tool {
         List<RayCalculateable> rayCalcList = new ArrayList<>();
         double receiverDepth = modelArgs.getReceiverDepths().get(0);
         for (double distance : distances) {
-            rayCalcList.add(DistanceRay.ofDegrees(distance));
+            rayCalcList.add(DistanceRay.ofDegrees(distance, geoDistType, tMod.getVelocityModel().sphericalGeodesic()));
         }
         if(outputTypeArgs.isCSV()) {
             csvTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
@@ -664,7 +661,26 @@ public class TauP_Table extends TauP_Tool {
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgs phaseArgs = new PhaseArgs();
 
-    @CommandLine.Option(names = {"--derivative"}, description = "include derivative calculations")
+    @CommandLine.Option(names = {"--derivative"},
+            description = "include derivative calculations")
     protected boolean withDerivative = false;
+
+
+    // see GeodeticArgs for similar option (as list)
+    @CommandLine.Option(names = {"--geodist"},
+            description = "Type of distance calculation to use for lat,lon distance calculation, one of ${COMPLETION-CANDIDATES}",
+            defaultValue = "spherical"
+    )
+    public void setGeoDistTypes(GeoDistType geoDistType) {
+        this.geoDistType = geoDistType;
+    }
+    public GeoDistType getGeoDistType() {
+        if (this.geoDistType == null) {
+            this.geoDistType = GeoDistType.spherical;
+        }
+        return this.geoDistType;
+    }
+
+    protected GeoDistType geoDistType = GeoDistType.spherical;
 
 }

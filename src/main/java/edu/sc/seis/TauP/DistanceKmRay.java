@@ -1,30 +1,24 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 public class DistanceKmRay extends DistanceRay {
 
-    public DistanceKmRay(double km) {
+    // see DistanceRay.ofKilometers
+    DistanceKmRay(double km, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.kilometers = km;
     }
 
     @Override
     public double getDegrees() {
-        double radius;
-        if (isGeodetic()) {
-            radius = DistAzKarney.averageRadiusKm(getGeodesic());
-        } else {
-            radius = getRadiusOfEarth();
-        }
+        double radius = DistAzKarney.averageRadiusKm(getGeodesic());
         return kilometers/DistAz.kmPerDeg(radius);
     }
 
     @Override
     public double getRadians() {
-        double radius;
-        if (isGeodetic()) {
-            radius = DistAzKarney.averageRadiusKm(getGeodesic());
-        } else {
-            radius = getRadiusOfEarth();
-        }
+        double radius = DistAzKarney.averageRadiusKm(getGeodesic());
         return kilometers/radius;
     }
 
@@ -43,7 +37,7 @@ public class DistanceKmRay extends DistanceRay {
     }
 
     protected DistanceKmRay duplicate()  {
-        DistanceKmRay dr = DistanceKmRay.ofKilometers(kilometers);
+        DistanceKmRay dr = DistanceKmRay.ofKilometers(kilometers, geoDistType, geodesic);
         dr.copyFrom(this);
         return dr;
     }

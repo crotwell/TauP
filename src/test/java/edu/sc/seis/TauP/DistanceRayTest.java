@@ -1,8 +1,8 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 import net.sf.geographiclib.Geodesic;
-import net.sf.geographiclib.GeodesicData;
 import net.sf.geographiclib.GeodesicLine;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +58,7 @@ public class DistanceRayTest {
     public void testCalcAzBaz() {
         Location staLoc = new Location(10, 0);
         Location evtLoc = new Location(0, 0);
-        DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc);
+        DistanceRay dr = DistanceRay.ofSphericalEventStation(evtLoc, staLoc, Geodesic.WGS84);
         assertEquals(0, dr.getNormalizedAzimuth(), 0.01);
         assertEquals(180, dr.getNormalizedBackAzimuth(), 0.01);
 
@@ -68,7 +68,7 @@ public class DistanceRayTest {
 
 
         Location staLocE = new Location(10, 10);
-        DistanceRay drE = DistanceRay.ofEventStation(evtLoc, staLocE);
+        DistanceRay drE = DistanceRay.ofSphericalEventStation(evtLoc, staLocE, Geodesic.WGS84);
         assertEquals(45, drE.getNormalizedAzimuth(), 1);
         assertEquals(-135, drE.getNormalizedBackAzimuth(), 1);
         DistanceRay gdrE = DistanceRay.ofGeodeticEventStation(evtLoc, staLocE, Geodesic.WGS84);
@@ -76,7 +76,7 @@ public class DistanceRayTest {
         assertEquals(drE.getNormalizedBackAzimuth(), gdrE.getNormalizedBackAzimuth(), 0.5, "baz");
 
         Location evtLocW = new Location(0, -10);
-        DistanceRay drW = DistanceRay.ofEventStation(evtLocW, staLoc);
+        DistanceRay drW = DistanceRay.ofSphericalEventStation(evtLocW, staLoc, Geodesic.WGS84);
         assertEquals(45, drW.getNormalizedAzimuth(), 1);
         assertEquals(-135, drW.getNormalizedBackAzimuth(), 1);
         DistanceRay gdrW = DistanceRay.ofGeodeticEventStation(evtLocW, staLoc, Geodesic.WGS84);
@@ -94,4 +94,31 @@ public class DistanceRayTest {
         assertEquals(deg, arrList.get(0).getDistDeg());
     }
 
+    @Test
+    public void poleToPoleTest() {
+        LatLonSimple np = new LatLonSimple(90, 0);
+        LatLonSimple equator = new LatLonSimple(0, 0);
+        DistanceRay sphDR = DistanceRay.ofEventStation(np, equator, GeoDistType.spherical, Geodesic.WGS84);
+        DistanceRay gcDR = DistanceRay.ofEventStation(np, equator, GeoDistType.geocentric, Geodesic.WGS84);
+        DistanceRay gdDR = DistanceRay.ofEventStation(np, equator, GeoDistType.geodetic, Geodesic.WGS84);
+
+        Geocentric geocentric = new Geocentric(Geodesic.WGS84);
+        List<Double> vAList = geocentric.IntForward(np.asLocation().getLatitude(), np.asLocation().getLongitude(), 0, false);
+        assertEquals(0, vAList.get(0), 1000);
+        assertEquals(0, vAList.get(1), 1000);
+        assertEquals(6356*1000, vAList.get(2), 1000);
+        List<Double> vBList = geocentric.IntForward(equator.asLocation().getLatitude(), equator.asLocation().getLongitude(), 0, false);
+        assertEquals(6378*1000, vBList.get(0), 1000);
+        assertEquals(0, vBList.get(1), 1000);
+        assertEquals(0, vBList.get(2), 1000);
+
+        double geocDist = geocentric.angleBetweenDeg(np.asLocation().getLatitude(), np.asLocation().getLongitude(), -1*0,
+                equator.asLocation().getLatitude(), equator.asLocation().getLongitude(), -1* 0);
+        assertEquals(90.0, geocDist, 1.0);
+
+
+        assertEquals(90.0, sphDR.getDegrees(), 1.0);
+        assertEquals(90.0, gcDR.getDegrees(), 1.0);
+        assertEquals(90.0, gdDR.getDegrees(), 1.0);
+    }
 }

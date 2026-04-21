@@ -16,7 +16,7 @@ public class TimeRayTest {
         for (double deg = 35;deg <36; deg+=5) {
             List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(P_phase);
             for (Arrival a : aList) {
-                TimeRay timeRay = new TimeRay(a.getTime());
+                TimeRay timeRay = new TimeRay(a.getTime(), GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
                 List<Arrival> taList = timeRay.calculate(P_phase);
                 Arrival closest = null;
                 for (Arrival ta : taList) {

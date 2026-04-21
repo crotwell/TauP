@@ -16,6 +16,7 @@ import edu.sc.seis.seisFile.mseed3.*;
 import java.io.*;
 
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import javax.xml.stream.XMLStreamException;
@@ -135,17 +136,21 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
             evTime = eh.quakeTime();
         }
 
+        GeoDistType firstGeoDistType = geodeticArgs.getGeoDistTypes().get(0);
+        Geodesic geodesic = geodeticArgs.createGeodesic(firstGeoDistType,
+                modelArgs.getTauModel().getVelocityModel());
         if (staLoc != null && evLoc != null) {
             // geodetic vs spherical???
-            if (geodeticArgs.isGeodetic()) {
-                rayCalculateable = DistanceRay.ofGeodeticEventStation(evLoc, staLoc,
-                        geodeticArgs.getGeodesic()
-                );
-            } else {
-                rayCalculateable = DistanceRay.ofEventStation(evLoc, staLoc);
-            }
+            rayCalculateable = DistanceRay.ofEventStation(
+                    evLoc,
+                    staLoc,
+                    firstGeoDistType,
+                    geodesic
+            );
         } else if (eh.gcarc() != null) {
-            rayCalculateable = DistanceRay.ofDegrees(eh.gcarc());
+            rayCalculateable = DistanceRay.ofDegrees(eh.gcarc(),
+                    firstGeoDistType,
+                    geodesic);
         } else {
             throw new SetSacException("Unable to get distance from MS3 record, skipping. :"+dr3);
         }

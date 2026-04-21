@@ -119,7 +119,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
                               DistanceAxisType distanceAxisType, DepthAxisType depthAxisType) {
         String line = super.gmtTextLine(td, distDepthRange, xFormat, yFormat, withTime, withLatLon, distanceAxisType, depthAxisType);
         if (withLatLon && arrival.isLatLonable()) {
-            double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
+            double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg(), td.getDepth());
             line += "  " + Outputs.formatLatLon(latlon[0]) + "  "
                     + Outputs.formatLatLon(latlon[1]);
         }

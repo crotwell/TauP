@@ -1,12 +1,15 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
+import net.sf.geographiclib.Geodesic;
+
 /**
  * Represents a scatterer within a model. Acts as an intermediary receiver and then source in calculation of a
  * scattered seismic phase.
  */
 public class Scatterer {
-    public Scatterer(double depth, double dist) {
-        this(depth, DistanceRay.ofFixedHemisphereDegrees(dist));
+    public Scatterer(double depth, double dist, GeoDistType geoDistType, Geodesic geodesic) {
+        this(depth, DistanceRay.ofFixedHemisphereDegrees(dist, geoDistType, geodesic));
     }
 
     public Scatterer(double depth, FixedHemisphereDistanceRay dist) {

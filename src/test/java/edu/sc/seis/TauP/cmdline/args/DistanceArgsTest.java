@@ -4,10 +4,12 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.TauP_Time;
 
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import net.sf.geographiclib.Geodesic;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +36,8 @@ public class DistanceArgsTest {
         assertEquals(srcDepth, phaseList.get(0).getSourceDepth());
         assertEquals(2, phaseList.size());
         List<RayCalculateable> distList = new ArrayList<>();
-        distList.addAll(time.getDistanceArgs().getDistances());
+
+        distList.addAll(time.getDistanceArgs().getDistances(time.getDistanceArgs().createGeodesicMap()));
         assertEquals(5, distList.size());
         List<Arrival> arrivalList = time.calcAll(time.getSeismicPhases(), distList);
         // should get arrival for P at CO.JSC, IU.KBS, IU.TUC, not for IU.SNZO

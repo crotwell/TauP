@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,8 @@ import java.util.List;
  */
 public class RayParamIndexRay extends ShootableRay {
 
-    public RayParamIndexRay(int index) {
+    public RayParamIndexRay(int index, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.index = index;
     }
 

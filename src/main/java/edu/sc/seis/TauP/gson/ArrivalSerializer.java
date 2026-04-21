@@ -117,7 +117,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
                 tdItems.add((float)td.getDepth());
                 tdItems.add((float)td.getTime());
                 if (arr.isLatLonable()) {
-                    double[] latlon = arr.getLatLonable().calcLatLon(td.getDistDeg(), arr.getDistDeg());
+                    double[] latlon = arr.getLatLonable().calcLatLon(td.getDistDeg(), arr.getDistDeg(), td.getDepth());
                     tdItems.add((float)latlon[0]);
                     tdItems.add((float)latlon[1]);
                 }

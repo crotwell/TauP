@@ -185,7 +185,7 @@ public abstract class AbstractPathSegment {
             tdItems.add((float)td.getDepth());
             tdItems.add((float)td.getTime());
             if (arrival != null && arrival.isLatLonable()) {
-                double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
+                double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg(), td.getDepth());
                 tdItems.add((float)latlon[0]);
                 tdItems.add((float)latlon[1]);
             }

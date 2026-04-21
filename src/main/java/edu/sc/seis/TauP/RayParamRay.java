@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +11,20 @@ import java.util.List;
 public class RayParamRay extends ShootableRay {
 
     public RayParamRay(double rayParam) {
+        this(rayParam, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE );
+    }
+    public RayParamRay(double rayParam, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.rayParam = rayParam;
     }
 
-    public static RayParamRay ofRayParamSRadian(double d) {
-        RayParamRay rp = new RayParamRay(d);
+    public static RayParamRay ofRayParamSRadian(double d, GeoDistType geoDistType, Geodesic geodesic) {
+        RayParamRay rp = new RayParamRay(d, geoDistType, geodesic);
         rp.setDescription(d+" s/rad");
         return rp;
     }
-    public static RayParamRay ofRayParamSDegree(double d) {
-        RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor);
+    public static RayParamRay ofRayParamSDegree(double d, GeoDistType geoDistType, Geodesic geodesic) {
+        RayParamRay rp =  RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor, geoDistType,geodesic);
         rp.rayParamSDeg = d;
         rp.setDescription(d+" s/deg");
         return rp;

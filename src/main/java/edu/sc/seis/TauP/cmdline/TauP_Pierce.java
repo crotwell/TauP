@@ -165,7 +165,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs, getRadiusOfEarth());
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         if (getDistanceArgs().isAllIndexRays()) {
             List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
@@ -194,11 +194,11 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
         printPierceAsText(out, arrivalList);
     }
 
-    public void printPierceAsText(PrintWriter out, List<Arrival> arrivalList) {
+    public void printPierceAsText(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
         double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
             out.println("> " + arrival.getCommentLine());
@@ -230,7 +230,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
                     out.write(Outputs.formatTime(pierce[j].getTime()));
                     if (arrival.isLatLonable()) {
-                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
                         out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
                                 + Outputs.formatLatLon(latlon[1]));
                     }
@@ -297,7 +297,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
                     row.add(Outputs.formatDepth(pierce[j].getDepth()));
                     row.add(Outputs.formatTime(pierce[j].getTime()));
                     if (arrival.isLatLonable()) {
-                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
                         row.add( Outputs.formatLatLon(latlon[0]));
                         row.add(Outputs.formatLatLon(latlon[1]));
                     }

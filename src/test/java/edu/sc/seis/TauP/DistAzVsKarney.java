@@ -34,10 +34,8 @@ public class DistAzVsKarney {
         assertEquals(6371, avgRaduis, 1.0);
         double distKm = azGLine.Distance()/1000;
         double valDeg = distKm/DistAz.kmPerDeg(avgRaduis);
-        DistanceKmRay drKm = DistanceRay.ofKilometers(distKm);
-        drKm.setRadiusOfEarth(avgRaduis);
-        DistanceAngleRay drDeg = DistanceRay.ofDegrees(valDeg);
-        drDeg.setRadiusOfEarth(avgRaduis);
+        DistanceKmRay drKm = DistanceRay.ofKilometers(distKm, GeoDistType.geodetic, geodesic);
+        DistanceAngleRay drDeg = DistanceRay.ofDegrees(valDeg, GeoDistType.geodetic, geodesic);
         assertEquals(valDeg, drDeg.getDegrees(), 0.00001);
         assertEquals(distKm, drKm.getKilometers(), 0.00001);
         assertEquals(distKm, drDeg.getKilometers(), 0.00001);
@@ -47,6 +45,7 @@ public class DistAzVsKarney {
     @Test
     public void latlonableGeodetic() {
         Geodesic geod = Geodesic.WGS84;
+        GeoDistType geodetic = GeoDistType.geodetic;
         double avgRaduis = DistAzKarney.averageRadiusKm(geod);
         double eLat = 52.19;
         double eLon = -33.27;
@@ -65,19 +64,25 @@ public class DistAzVsKarney {
         double evtStaDegree = evtStaDR.getDegrees();
         assertEquals(distAz.getDelta(), evtStaDegree, 0.1, "spherical is close");
 
-        DistanceRay evtAzDR = DistanceRay.ofDegrees(evtStaDegree);
-        evtAzDR.withEventAzimuth(evt, azimuth, geod);
+        DistanceRay evtAzDR = DistanceRay.ofDegrees(evtStaDegree, GeoDistType.geodetic, geod);
+        evtAzDR.withEventAzimuth(evt, azimuth);
         assertTrue(evtAzDR.isLatLonable());
-        double[] evtAzToSta = evtAzDR.getLatLonable().calcLatLon(evtStaDegree, evtStaDegree);
+        double[] evtAzToSta = evtAzDR.getLatLonable().calcLatLon(evtStaDegree, evtStaDegree, 0);
         assertEquals(sLat, evtAzToSta[0], 0.0001);
         assertEquals(sLon, evtAzToSta[1], 0.0001);
 
-        DistanceRay staBazDR = DistanceRay.ofDegrees(evtStaDegree);
-        staBazDR.withStationBackAzimuth(sta, backazimuth, geod);
+        DistanceRay staBazDR = DistanceRay.ofDegrees(evtStaDegree, GeoDistType.geodetic, geod);
+        staBazDR.withStationBackAzimuth(sta, backazimuth);
         assertTrue(staBazDR.isLatLonable());
-        double[] staBazToEvt = staBazDR.getLatLonable().calcLatLon(0, evtStaDegree);
+        double[] staBazToEvt = staBazDR.getLatLonable().calcLatLon(0, evtStaDegree, 0);
         assertEquals(eLat, staBazToEvt[0], 0.0001);
         assertEquals(eLon, staBazToEvt[1], 0.0001);
+    }
+
+    @Test
+    public void avgRadiusTest() {
+        double radius = DistAzKarney.averageRadiusKm(Geodesic.WGS84);
+        assertEquals(6371.008771, radius, 1e-6);
     }
 
 

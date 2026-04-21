@@ -179,7 +179,9 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             }
         }
         for (Double radian : distFromArrival) {
-            DistanceRay dr = DistanceRay.ofRadians(radian);
+            DistanceRay dr = DistanceRay.ofRadians(radian,
+                    GeoDistType.spherical,
+                    modelArgs.getTauModel().getVelocityModel().sphericalGeodesic());
             if (!dr.hasAzimuth() && geodeticArgs.hasAzimuth()) {
                 dr.setAzimuth(geodeticArgs.getAzimuth());
             }
@@ -302,11 +304,6 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         if (dr.hasReceiver()) {
             sta.setLatitude((float) dr.getReceiver().asLocation().getLatitude());
             sta.setLongitude((float) dr.getReceiver().asLocation().getLongitude());
-        } else if (dr.hasAzimuth()  && !dr.isGeodetic()) {
-            sta.setLatitude((float) SphericalCoords.latFor(origin.asLocation(), dr.getDegrees(), dr.getAzimuth()));
-            sta.setLongitude((float) SphericalCoords.lonFor(origin.asLocation(), dr.getDegrees(), dr.getAzimuth()));
-        } else {
-            //System.err.println("cannot calc station loc: rec: "+dr.hasReceiver()+" az: "+dr.hasAzimuth()+" geod: "+dr.isGeodetic());
         }
         Channel chan = new Channel(sta, sourceId.getLocationCode(), sourceId.getChannelCode());
         chan.setSourceId(sourceId.toString());
@@ -317,17 +314,11 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
             chan.setDepth(0);
             chan.setElevation(0);
         }
-
-        if (sta.getLatitude() != null && sta.getLongitude()!= null) {
-            // only if sta has loc
-            if (origin != null && chan.asLocation() != null) {
-                if (az == null && !dr.isGeodetic()) {
-                    az = (float) SphericalCoords.azimuth(origin.asLocation(), chan.asLocation());
-                }
-                if (baz == null && !dr.isGeodetic()) {
-                    baz = (float) SphericalCoords.azimuth(chan.asLocation(), origin.asLocation());
-                }
-            }
+        if (az == null && dr.hasAzimuth()) {
+            az = dr.getAzimuth().floatValue();
+        }
+        if (baz == null && dr.hasBackAzimuth()) {
+            baz = dr.getBackAzimuth().floatValue();
         }
         Path path = new Path(deg, az, baz);
         eh.addToBag(path);
@@ -671,8 +662,8 @@ public class TauP_Spikes extends TauP_AbstractPhaseTool {
         return outputTypeArgs.getOutFileExtension();
     }
 
-    public List<RayCalculateable> getRayCalculatables() {
-        List<RayCalculateable> out = distanceArgs.getRayCalculatables(sourceArgs);
+    public List<RayCalculateable> getRayCalculatables() throws TauModelException {
+        List<RayCalculateable> out = distanceArgs.getRayCalculatables(sourceArgs, geodeticArgs, modelArgs);
         if (geodeticArgs.hasAzimuth()) {
             for (RayCalculateable rc : out) {
                 if (!rc.hasAzimuth()) {

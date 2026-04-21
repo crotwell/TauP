@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
+import net.sf.geographiclib.Geodesic;
 
 public class Daz {
     protected String description;
@@ -31,8 +32,12 @@ public class Daz {
         return ray.getBackAzimuth();
     }
 
-    public boolean isGeodetic() {
-        return ray.isGeodetic();
+    public GeoDistType getGeoDistType() {
+        return ray.getGeoDistType();
+    }
+
+    public Geodesic getGeodesic() {
+        return ray.getGeodesic();
     }
 
     public Double getInvFlattening() {

@@ -393,14 +393,6 @@ public class TauModel implements Serializable {
     }
 
     /**
-     * Create a spherical geodesic with radius of the model and zero flattenning.
-     * @return geodesic of correct radius.
-     */
-    public Geodesic createGeodesic() {
-        return new Geodesic(getRadiusOfEarth(), 0);
-    }
-
-    /**
      * @return an array, cloned, of the ray parameters used to construct the
      *          tau branches. This may only be a subset of the slownesses/ray
      *          parameters saved in the slowness model due to high slowness

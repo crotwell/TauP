@@ -14,8 +14,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 /**
@@ -58,12 +60,18 @@ public class TauP_DistAz extends TauP_Tool {
 
         List<DistanceRay> distList = new ArrayList<>();
 
-        Geodesic geodesic = null;
-        if (geodeticArgs.isGeodetic()) {
-            geodesic = geodeticArgs.getGeodesic();
+
+        DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs, qmlStaxmlArgs, getSourceDepths(), getReceiverDepths());
+
+        VelocityModel vMod;
+        if (radiusArgs.modelName != null) {
+            vMod = TauModelLoader.loadVelocityModel(radiusArgs.getModelName());
+        } else {
+            List<VelocityLayer> vLayers = List.of(new VelocityLayer(0, 0, radiusArgs.getRadiusOfEarth(), 1, 1, 1, 1));
+            vMod = new VelocityModel("radius", radiusArgs.getRadiusOfEarth(), 0, 0, 0, 0, radiusArgs.getRadiusOfEarth(), true, vLayers);
         }
-        DistanceArgs distanceArgs = distArgs.createDistanceArgs(geodeticArgs, qmlStaxmlArgs);
-        List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(radiusArgs.getRadiusOfEarth());
+        Map<GeoDistType, Geodesic> geodesicMap = geodeticArgs.createGeodesics(vMod);
+        List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(geodesicMap, new SeismicSourceArgs());
         for (RayCalculateable ray : rayList) {
             if (ray instanceof DistanceRay) {
                 distList.add((DistanceRay) ray);
@@ -74,19 +82,13 @@ public class TauP_DistAz extends TauP_Tool {
 
         distList.sort(Comparator.comparingDouble(DistanceRay::getDegrees));
         List<Daz> dazList = new ArrayList<>();
-        double radius;
-        if (geodeticArgs.isGeodetic()) {
-            radius = DistAzKarney.averageRadiusKm(geodeticArgs.getGeodesic());
-        } else {
-            radius = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
-        }
         for (DistanceRay ray : distList) {
             dazList.add(new Daz(ray));
         }
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
-            String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
-            out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+geoditic+")  ");
+
+            out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+getGeodeticStr()+")  ");
             out.println("---------------------------------------------------------------------------------------------");
             for (Daz dr : dazList) {
                 out.println(Outputs.formatDistance(dr.getDegrees())
@@ -99,8 +101,7 @@ public class TauP_DistAz extends TauP_Tool {
                 );
             }
         } else if (outputTypeArgs.isHTML()) {
-            String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
-            List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Source","Receiver","Description   ("+geoditic+")  ");
+            List<String> head = List.of("Degrees","Km","Azimuth","BackAzimuth","Source","Receiver","Description","DistType");
             List<List<String>> values = new ArrayList<>();
             for (Daz dr : dazList) {
                 List<String> row = List.of(Outputs.formatDistance(dr.getDegrees()),
@@ -109,7 +110,8 @@ public class TauP_DistAz extends TauP_Tool {
                         Outputs.formatDistance(dr.getNormalizedBackAzimuth()),
                         dr.getSource().getLocationDescription(),
                         dr.getReceiver().getLocationDescription(),
-                        (dr.hasDescription() ? dr.getDescription() : "")
+                        (dr.hasDescription() ? dr.getDescription() : ""),
+                        dr.getGeoDistType().toString()
                 );
                 values.add(row);
             }
@@ -119,11 +121,7 @@ public class TauP_DistAz extends TauP_Tool {
             out.println(HTMLUtil.createHtmlEnding());
         } else if (outputTypeArgs.isJSON()){
             Result result = new Result();
-            result.calctype = geodeticArgs.getCalcType();
-            if (geodeticArgs.isGeodetic()) {
-                result.invflattening = geodeticArgs.getInverseEllipFlattening();
-            }
-            result.radius = radius;
+            result.disttypes = geodesicMap;
             if (radiusArgs.modelName != null) {
                 result.model = radiusArgs.getModelName();
             }
@@ -139,6 +137,24 @@ public class TauP_DistAz extends TauP_Tool {
     @Override
     public void destroy() throws TauPException {
 
+    }
+
+    public String getGeodeticStr() {
+        String geoditic="";
+        for (GeoDistType gdt : geodeticArgs.getGeoDistTypes()) {
+            switch (gdt) {
+                case spherical:
+                    geoditic+=",Spherical";
+                    break;
+                case geocentric:
+                    geoditic+=",Geocentric "+ geodeticArgs.getInverseEllipFlattening() ;
+                    break;
+                case geodetic:
+                    geoditic += ",Geodetic " + geodeticArgs.getInverseEllipFlattening() ;
+            }
+        }
+        geoditic = geoditic.substring(1);
+        return geoditic;
     }
 
     @Override
@@ -177,13 +193,7 @@ public class TauP_DistAz extends TauP_Tool {
     }
 
     public Double kmToDeg() {
-        double r;
-        if (geodeticArgs.isGeodetic()) {
-            r = DistAzKarney.averageRadiusKm(geodeticArgs.getGeodesic());
-        } else {
-            r = radiusArgs.getRadiusOfEarth() != null ? radiusArgs.getRadiusOfEarth() : 6371.0;
-        }
-        return  180.0 / Math.PI / r; // default radius
+        return  RtoD / DistAzKarney.averageRadiusKm(geodeticArgs.getGeodesic());
     }
 
     public void setQuakemlText(String quakemlText) {
@@ -208,6 +218,37 @@ public class TauP_DistAz extends TauP_Tool {
     @CommandLine.ArgGroup()
     ModelOrRadius radiusArgs = new ModelOrRadius();
 
+
+    // see also TableModleArgs for similar cmd line arg
+    @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
+            defaultValue = "0.0",
+            paramLabel = "depth",
+            split=",",
+            description = "the receiver depth in km for stations not at the surface")
+    List<Double> receiverDepths = new ArrayList<>();
+
+    public List<Double> getReceiverDepths() {
+        if (receiverDepths.isEmpty()) {
+            receiverDepths.add(0.0);
+        }
+        return receiverDepths;
+    }
+
+
+    // see also ModelArgs for similar cmd line arg
+    @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
+            paramLabel = "depth",
+            defaultValue = "0.0",
+            split=",",
+            description = "source depth in km")
+    List<Double> sourceDepths = new ArrayList<>();
+
+    public List<Double> getSourceDepths() {
+        if (sourceDepths.isEmpty()) {
+            sourceDepths.add(0.0);
+        }
+        return sourceDepths;
+    }
 }
 
 class ModelOrRadius {
@@ -241,9 +282,10 @@ class ModelOrRadius {
 }
 
 class Result {
+    double equitorialradius;
     double radius;
     String model = null;
-    String calctype;
+    Map<GeoDistType, Geodesic> disttypes;
     Double invflattening = null;
     List<Location> sources;
     List<Location> receivers;

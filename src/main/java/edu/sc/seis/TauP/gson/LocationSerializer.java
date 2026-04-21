@@ -15,6 +15,8 @@ public class LocationSerializer implements JsonSerializer<LatLonLocatable> {
         out.add(JSONLabels.LON, new JsonPrimitive((float)loc.getLongitude()));
         if (loc.hasDepth()) {
             out.add(JSONLabels.DEPTH, new JsonPrimitive(loc.getDepthKm().floatValue()));
+        } else {
+            out.add(JSONLabels.DEPTH, new JsonPrimitive(0));
         }
         if (loc.hasDescription()) {
             out.add(JSONLabels.DESC, new JsonPrimitive(loc.getDescription()));

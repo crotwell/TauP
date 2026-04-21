@@ -1,17 +1,20 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class IncidentAngleRay extends ShootableRay {
 
-    public IncidentAngleRay(Double incidentAngle) {
+    public IncidentAngleRay(Double incidentAngle, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.incidentAngle = incidentAngle;
         setDescription("Incident: "+ incidentAngle);
     }
 
-    public static IncidentAngleRay ofIncidentAngle(Double d) {
-        return new IncidentAngleRay(d);
+    public static IncidentAngleRay ofIncidentAngle(Double d, GeoDistType geoDistType, Geodesic geodesic) {
+        return new IncidentAngleRay(d, geoDistType, geodesic);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class IncidentAngleRay extends ShootableRay {
         } catch (NoArrivalException e) {
             return null;
         }
-        return new RayParamRay(rayParam);
+        return new RayParamRay(rayParam, getGeoDistType(), getGeodesic());
     }
 
     public Double getIncidentAngle() {

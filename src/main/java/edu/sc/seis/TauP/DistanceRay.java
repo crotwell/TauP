@@ -16,18 +16,23 @@ import static edu.sc.seis.TauP.ScatteredSeismicPhase.calcScatterDistDeg;
  */
 public abstract class DistanceRay extends RayCalculateable implements Cloneable {
 
-    DistanceRay() {}
+    public DistanceRay(GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
+    }
 
     public static FixedHemisphereDistanceRay ofFixedHemisphereDegrees(double deg) {
-        return new FixedHemisphereDistanceRay(DistanceRay.ofExactDegrees(deg));
+        return ofFixedHemisphereDegrees(deg, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+    }
+    public static FixedHemisphereDistanceRay ofFixedHemisphereDegrees(double deg, GeoDistType geoDistType, Geodesic geodesic) {
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactDegrees(deg, geoDistType, geodesic));
     }
 
-    public static FixedHemisphereDistanceRay ofFixedHemisphereKilometers(double km) {
-        return new FixedHemisphereDistanceRay(DistanceRay.ofExactKilometers(km));
+    public static FixedHemisphereDistanceRay ofFixedHemisphereKilometers(double km, GeoDistType geoDistType, Geodesic geodesic) {
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactKilometers(km, geoDistType, geodesic));
     }
 
-    public static FixedHemisphereDistanceRay ofFixedHemisphereRadians(double rad) {
-        return new FixedHemisphereDistanceRay(DistanceRay.ofExactRadians(rad));
+    public static FixedHemisphereDistanceRay ofFixedHemisphereRadians(double rad, GeoDistType geoDistType, Geodesic geodesic) {
+        return new FixedHemisphereDistanceRay(DistanceRay.ofExactRadians(rad, geoDistType, geodesic));
     }
 
     void copyFrom(DistanceRay dr) {
@@ -35,44 +40,92 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         evtLatLon = dr.evtLatLon;
         azimuth = dr.azimuth;
         backAzimuth = dr.backAzimuth;
-        geodetic = dr.geodetic;
-        geodesic = dr.geodesic;
         invFlattening = dr.invFlattening;
         seismicSource = dr.seismicSource;
     }
 
-    public static DistanceAngleRay ofDegrees(double deg) {
-        DistanceAngleRay val = new DistanceAngleRay();
+    public static DistanceAngleRay ofDegrees(double deg, GeoDistType geoDistType, Geodesic geodesic) {
+        DistanceAngleRay val = new DistanceAngleRay(geoDistType, geodesic);
         val.degrees = deg;
         return val;
     }
-    public static DistanceKmRay ofKilometers(double km) {
-        return new DistanceKmRay(km);
+
+    public static DistanceAngleRay ofDegrees(double deg) {
+        return ofDegrees(deg, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
     }
-    public static DistanceAngleRay ofRadians(double rad) {
-        DistanceAngleRay val = new DistanceAngleRay();
+
+    public static DistanceKmRay ofKilometers(double km, GeoDistType geoDistType, Geodesic geodesic) {
+        return new DistanceKmRay(km, geoDistType, geodesic);
+    }
+
+    public static DistanceAngleRay ofRadians(double radian) {
+        return DistanceRay.ofRadians(radian, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+    }
+    public static DistanceAngleRay ofRadians(double rad, GeoDistType geoDistType, Geodesic geodesic) {
+        DistanceAngleRay val = new DistanceAngleRay(geoDistType, geodesic);
         val.radians = rad;
         return val;
     }
-
     public static ExactDistanceRay ofExactDegrees(double deg) {
-        return new ExactDistanceRay(DistanceRay.ofDegrees(deg));
+        return DistanceRay.ofExactDegrees(deg, GeoDistType.spherical, SphericalCoords.EARTH_SPHERE);
+    }
+    public static ExactDistanceRay ofExactDegrees(double deg, GeoDistType geoDistType, Geodesic geodesic) {
+        return new ExactDistanceRay(DistanceRay.ofDegrees(deg, geoDistType, geodesic));
     }
 
-    public static ExactDistanceRay ofExactKilometers(double km) {
-        return new ExactDistanceRay(DistanceRay.ofKilometers(km));
+    public static ExactDistanceRay ofExactKilometers(double km, GeoDistType geoDistType, Geodesic geodesic) {
+        return new ExactDistanceRay(DistanceRay.ofKilometers(km, geoDistType, geodesic));
     }
 
-    public static ExactDistanceRay ofExactRadians(double rad) {
-        return new ExactDistanceRay(DistanceRay.ofRadians(rad));
+    public static ExactDistanceRay ofExactRadians(double rad, GeoDistType geoDistType, Geodesic geodesic) {
+        return new ExactDistanceRay(DistanceRay.ofRadians(rad, geoDistType, geodesic));
     }
 
-    public static DistanceAngleRay ofEventStation(LatLonLocatable evt, LatLonLocatable sta) {
-        DistanceAngleRay val = ofDegrees(SphericalCoords.distance(evt.asLocation(), sta.asLocation()));
+    public static DistanceAngleRay ofEventStation(LatLonLocatable evt, LatLonLocatable sta, GeoDistType geoDistType, Geodesic geodesic) {
+        double distDeg;
+        switch (geoDistType) {
+            case geodetic:
+                return ofGeodeticEventStation(evt, sta, geodesic);
+            case geocentric:
+                return ofGeocentricEventStation(evt, sta, geodesic);
+            case spherical:
+            default:
+                return ofSphericalEventStation(evt, sta, geodesic);
+        }
+    }
+
+    public static DistanceAngleRay ofSphericalEventStation(LatLonLocatable evt, LatLonLocatable sta, Geodesic geod) {
+        DistanceAngleRay val = ofDegrees(SphericalCoords.distance(evt.asLocation(), sta.asLocation()), GeoDistType.spherical, geod);
+        val.geoDistType = GeoDistType.spherical;
+        val.geodesic = geod;
+
         val.evtLatLon = evt;
         val.staLatLon = sta;
         val.azimuth = SphericalCoords.azimuth(evt.asLocation(), sta.asLocation());
         val.backAzimuth = SphericalCoords.azimuth(sta.asLocation(), evt.asLocation());
+        val.insertSeismicSource(evt);
+        val.geoDistType = GeoDistType.spherical;
+        return val;
+    }
+
+    public static DistanceAngleRay ofGeocentricEventStation(LatLonLocatable evt, LatLonLocatable sta, Geodesic geod) {
+        Location eLoc = evt.asLocation();
+        Location sLoc = sta.asLocation();
+        Geocentric geocentric = new Geocentric(geod);
+        double evtDepthM = eLoc.getDepthMeter() != null ? eLoc.getDepthMeter() : 0;
+        double staDepthM = sLoc.getDepthMeter() != null ? sLoc.getDepthMeter() : 0;
+        DistanceAngleRay val = ofDegrees(
+                geocentric.angleBetweenDeg(eLoc.getLatitude(), eLoc.getLongitude(), -1*evtDepthM,
+                    sLoc.getLatitude(), sLoc.getLongitude(), -1* staDepthM),
+                GeoDistType.geocentric, geod);
+
+        val.evtLatLon = evt;
+        val.staLatLon = sta;
+        val.azimuth = geocentric.azimuth(eLoc.getLatitude(), eLoc.getLongitude(), -1*evtDepthM,
+                sLoc.getLatitude(), sLoc.getLongitude(), -1* staDepthM);
+        val.backAzimuth = geocentric.azimuth(sLoc.getLatitude(), sLoc.getLongitude(), -1* staDepthM,
+                eLoc.getLatitude(), eLoc.getLongitude(), -1*evtDepthM
+                );
         val.insertSeismicSource(evt);
         return val;
     }
@@ -95,14 +148,15 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                                                  eLoc.getLatitude(), eLoc.getLongitude());
         double avgRadius = DistAzKarney.averageRadiusKm(geod);
         double distKm = azGLine.Distance()/1000;
-        DistanceAngleRay val = ofDegrees(distKm/DistAz.kmPerDeg(avgRadius));
+        DistanceAngleRay val = ofDegrees(distKm/DistAz.kmPerDeg(avgRadius), GeoDistType.geodetic, geod);
+        val.geoDistType = GeoDistType.geodetic;
+        val.geodesic = geod;
         // maybe should just use km ray? But causes issue with TauP_DistAz
         val.staLatLon = sta;
         val.evtLatLon = evt;
         val.azimuth = azGLine.Azimuth();
         val.backAzimuth = bazGLine.Azimuth();
         val.geodesic = geod;
-        val.geodetic = true;
         val.insertSeismicSource(evt);
         return val;
     }
@@ -119,13 +173,21 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         if (super.hasAzimuth()) {outAz = super.getAzimuth();}
         if (outAz == null && this.staLatLon!=null && this.backAzimuth!=null) {
             // maybe can calculate since we know distance
-            if (isGeodetic()) {
+            if (getGeoDistType() == GeoDistType.geodetic) {
                 Location sta = staLatLon.asLocation();
 
                 double km = getKilometers();
                 GeodesicLine gLine = geodesic.DirectLine(sta.getLatitude(),
-                        sta.getLongitude(), this.backAzimuth.doubleValue(), km*1000);
+                        sta.getLongitude(), this.backAzimuth.doubleValue(), km * 1000);
                 outAz = gLine.Position(km).azi2;
+            } else if (getGeoDistType() == GeoDistType.geocentric) {
+                Geocentric geocentric = new Geocentric(getGeodesic());
+                Location sta = staLatLon.asLocation();
+                double[]  point = geocentric.latLonForAzimuth(sta.getLatitude(),
+                        sta.getLongitude(), sta.getDepthMeter(),
+                        getBackAzimuth(), getKilometers()*1000, 0.0);
+                outAz = geocentric.azimuth(point[0], point[1], 0,
+                        sta.getLatitude(), sta.getLongitude(), sta.getDepthMeter());
             } else {
                 double deg = getDegrees();
                 double elat = SphericalCoords.latFor(staLatLon.asLocation(), deg, this.backAzimuth);
@@ -144,25 +206,34 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     }
     @Override
     public Double getBackAzimuth() {
-        Double outAz = null;
-        if (super.hasBackAzimuth()) {outAz = super.getBackAzimuth();}
-        if (outAz == null && this.evtLatLon!=null && this.azimuth!=null) {
+        Double outBaz = null;
+        if (super.hasBackAzimuth()) {outBaz = super.getBackAzimuth();}
+        if (outBaz == null && this.evtLatLon!=null && this.azimuth!=null) {
             // maybe can calculate since we know distance
-            if (isGeodetic()) {
+            if (getGeoDistType() == GeoDistType.geodetic) {
                 Location evt = evtLatLon.asLocation();
 
                 double km = getKilometers();
                 GeodesicLine gLine = geodesic.DirectLine(evt.getLatitude(),
                         evt.getLongitude(), this.azimuth.doubleValue(), km*1000);
-                outAz = gLine.Position(km).azi2;
+                outBaz = gLine.Position(km).azi2;
+
+            } else if (getGeoDistType() == GeoDistType.geocentric) {
+                Geocentric geocentric = new Geocentric(getGeodesic());
+                Location evt = evtLatLon.asLocation();
+                double[]  point = geocentric.latLonForAzimuth(
+                        evt.getLatitude(), evt.getLongitude(), evt.getDepthMeter(),
+                        getAzimuth(), getKilometers()*1000, 0.0);
+                outBaz = geocentric.azimuth(point[0], point[1], 0,
+                        evt.getLatitude(), evt.getLongitude(), evt.getDepthMeter());
             } else {
                 double deg = getDegrees();
                 double slat = SphericalCoords.latFor(evtLatLon.asLocation(), deg, this.azimuth);
                 double slon = SphericalCoords.lonFor(evtLatLon.asLocation(), deg, this.azimuth);
-                return SphericalCoords.azimuth(new LatLonSimple(slat, slon), evtLatLon.asLocation());
+                outBaz = SphericalCoords.azimuth(new LatLonSimple(slat, slon), evtLatLon.asLocation());
             }
         }
-        return outAz;
+        return outBaz;
     }
 
     @Override
@@ -180,7 +251,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         LatLonLocatable evtLatLon = super.getSource();
         if (evtLatLon == null && (staLatLon!=null && this.backAzimuth!=null)) {
             // maybe can calculate since we know distance
-            if (isGeodetic()) {
+            if (getGeoDistType() == GeoDistType.geodetic) {
                 Location sta = staLatLon.asLocation();
 
                 double km = getKilometers();
@@ -188,6 +259,14 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                 GeodesicLine gLine = geodesic.DirectLine(sta.getLatitude(),
                         sta.getLongitude(), this.backAzimuth.doubleValue(), meters);
                 evtLatLon = new LatLonSimple(gLine.Position(meters).lat2, gLine.Position(meters).lon2);
+
+            } else if (getGeoDistType() == GeoDistType.geocentric) {
+                Location sta = staLatLon.asLocation();
+                Geocentric geocentric = new Geocentric(geodesic);
+                double[]  point = geocentric.latLonForAzimuth(
+                        sta.getLatitude(), sta.getLongitude(), sta.getDepthMeter(),
+                        getBackAzimuth(), getDegrees(), 0.0);
+                evtLatLon = new LatLonSimple(point[0], point[1]);
             } else {
                 double deg = getDegrees();
                 double elat = SphericalCoords.latFor(staLatLon.asLocation(), deg, this.backAzimuth);
@@ -203,7 +282,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
         LatLonLocatable staLatLon = super.getReceiver();
         if (staLatLon == null && (evtLatLon!=null && this.azimuth!=null)) {
             // maybe can calculate since we know distance
-            if (isGeodetic()) {
+            if (getGeoDistType() == GeoDistType.geodetic) {
                 Location evt = evtLatLon.asLocation();
 
                 double km = getKilometers();
@@ -211,6 +290,13 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
                 GeodesicLine gLine = geodesic.DirectLine(evt.getLatitude(),
                         evt.getLongitude(), this.azimuth.doubleValue(), meters);
                 staLatLon = new LatLonSimple(gLine.Position(meters).lat2, gLine.Position(meters).lon2);
+            } else if (getGeoDistType() == GeoDistType.geocentric) {
+                Location evt = evtLatLon.asLocation();
+                Geocentric geocentric = new Geocentric(geodesic);
+                double[]  point = geocentric.latLonForAzimuth(
+                        evt.getLatitude(), evt.getLongitude(), evt.getDepthMeter(),
+                        getAzimuth(), getDegrees(), 0.0);
+                staLatLon = new LatLonSimple(point[0], point[1]);
             } else {
                 double deg = getDegrees();
                 double slat = SphericalCoords.latFor(evtLatLon.asLocation(), deg, this.azimuth);
@@ -250,7 +336,7 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
-        ExactDistanceRay scatRay = ofExactDegrees(Math.abs(scatDistDeg));
+        ExactDistanceRay scatRay = ofExactDegrees(Math.abs(scatDistDeg), getGeoDistType(), getGeodesic());
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
         List<Double> arrivalDistList = scatRay.calcRadiansInRange(
@@ -312,11 +398,11 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
     @Override
     public LatLonable getLatLonable() {
         if (staLatLon != null && evtLatLon != null) {
-            return new EventStation(evtLatLon, staLatLon, geodesic);
+            return new EventStation(evtLatLon, staLatLon, geoDistType, geodesic);
         } else if (staLatLon != null && backAzimuth != null) {
-            return new StationBackAzimuth(staLatLon, backAzimuth, geodesic);
+            return new StationBackAzimuth(staLatLon, backAzimuth, geoDistType, geodesic);
         } else if (evtLatLon != null && azimuth != null) {
-            return new EventAzimuth(evtLatLon, azimuth, geodesic);
+            return new EventAzimuth(evtLatLon, azimuth, geoDistType, geodesic);
         }
         return null;
     }

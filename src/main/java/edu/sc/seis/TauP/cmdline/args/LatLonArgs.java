@@ -22,8 +22,8 @@ public class LatLonArgs {
         stationLatLonList = stationLatLon;
     }
 
-    public List<LatLonLocatable> getStationLocations() {
-        List<LatLonLocatable> out = new ArrayList<>();
+    public List<LatLonSimple> getStationLocations() {
+        List<LatLonSimple> out = new ArrayList<>();
         for (int i = 0; i < stationLatLonList.size(); i += 2) {
             LatLonSimple loc = new LatLonSimple(stationLatLonList.get(i), stationLatLonList.get(i + 1));
             out.add(loc);
@@ -46,8 +46,8 @@ public class LatLonArgs {
         eventLatLonList = eventLatLon;
     }
 
-    public List<LatLonLocatable> getEventLocations() {
-        List<LatLonLocatable> out = new ArrayList<>();
+    public List<LatLonSimple> getEventLocations() {
+        List<LatLonSimple> out = new ArrayList<>();
         for (int i = 0; i < eventLatLonList.size(); i += 2) {
             LatLonSimple loc = new LatLonSimple(eventLatLonList.get(i), eventLatLonList.get(i + 1));
             out.add(loc);

@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
-import net.sf.geographiclib.Geodesic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,7 @@ public class ExactDistanceRay extends DistanceRay {
     private final DistanceRay distanceRay;
 
     ExactDistanceRay(DistanceRay dr) {
+        super(dr.geoDistType, dr.geodesic);
         this.distanceRay = dr;
     }
 
@@ -37,7 +37,7 @@ public class ExactDistanceRay extends DistanceRay {
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         double deg = getDegrees();
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
-        FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg);
+        FixedHemisphereDistanceRay scatRay = DistanceRay.ofFixedHemisphereDegrees(scatDistDeg, getGeoDistType(), getGeodesic());
         scatRay.setSeismicSource(getSeismicSource());
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
@@ -73,13 +73,13 @@ public class ExactDistanceRay extends DistanceRay {
     }
 
     @Override
-    public void withEventAzimuth(LatLonLocatable evt, double azimuth, Geodesic geodesic) {
-        distanceRay.withEventAzimuth(evt, azimuth, geodesic);
+    public void withEventAzimuth(LatLonLocatable evt, double azimuth) {
+        distanceRay.withEventAzimuth(evt, azimuth);
     }
 
     @Override
-    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth, Geodesic geodesic) {
-        distanceRay.withStationBackAzimuth(sta, backazimuth, geodesic);
+    public void withStationBackAzimuth(LatLonLocatable sta, double backazimuth) {
+        distanceRay.withStationBackAzimuth(sta, backazimuth);
     }
 
     @Override

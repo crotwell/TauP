@@ -28,6 +28,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
+import net.sf.geographiclib.Geodesic;
 
 /**
  * Utility class for spherical coordinate (lat-lon) transformations. Given lat,
@@ -57,6 +58,8 @@ public class SphericalCoords {
     public static final double RtoD = rtod;
 
     public static final double TWOPI = 2*Math.PI;
+
+    public static final Geodesic EARTH_SPHERE = new Geodesic(6371008.8, 0);
 
     /** Calculates angular distance between two lat lon pairs. */
     public static double distance(double latA,
@@ -253,4 +256,32 @@ public class SphericalCoords {
         return lon;
     }
 
+    public static double[] latLonFromXYZ(double[] xyz) {
+        double r = Math.sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]+xyz[2]*xyz[2]);
+        if (r == 0.0) {
+            return new double[] { 0, 0};
+        }
+        double theta = rtod*Math.acos(xyz[2]/r);
+        double phi = rtod*Math.atan2(xyz[1], xyz[0]);
+        return new double[] {90-theta, phi};
+    }
+
+    public static double[] xyzFromLatLonRadius(double lat, double lon, double radius) {
+        double x = radius*Math.sin((90-lat)*dtor)*Math.cos(lon*dtor);
+        double y = radius*Math.sin((90-lat)*dtor)*Math.sin(lon*dtor);
+        double z = radius*Math.cos((90-lat)*dtor);
+        return new double[] {x, y, z};
+    }
+
+    public static double[] greatCircleRotationPole(double lat, double lon, double azimuth) {
+        double phi = lat*dtor;
+        double lambda = lon*dtor;
+        double theta = azimuth*dtor;
+
+        double x =  Math.sin(lambda) * Math.cos(theta) - Math.sin(phi) * Math.cos(lambda) * Math.sin(theta);
+        double y = -Math.cos(lambda) * Math.cos(theta) - Math.sin(phi) * Math.sin(lambda) * Math.sin(theta);
+        double z =  Math.cos(phi) * Math.sin(theta);
+
+        return new double[] {x, y, z};
+    }
 }

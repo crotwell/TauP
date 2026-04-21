@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
+import edu.sc.seis.seisFile.LatLonLocatable;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Set;
 public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
-    protected DistanceArgs distanceArgs = new DistanceArgs();
+    protected DistanceArgs distanceArgs = new DistanceArgs(super.modelArgs);
 
     public TauP_AbstractRayTool(AbstractOutputTypeArgs outputTypeArgs) {
         super(outputTypeArgs);
@@ -32,9 +33,9 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         List<Double> out = new ArrayList<>();
         Set<Double> knownDepths = new HashSet<>();
         knownDepths.addAll(simpleSourceDepths);
-        for (DistanceRay dr : getDistanceArgs().getDistances()) {
-            if (dr.hasSourceDepth()) {
-                knownDepths.add(dr.getSourceDepth());
+        for (LatLonLocatable evtLoc : getDistanceArgs().getEventLatLon()) {
+            if (evtLoc.asLocation().hasDepth()) {
+                knownDepths.add(evtLoc.asLocation().getDepthKm());
             }
         }
         out.addAll(knownDepths);
@@ -50,9 +51,9 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         List<Double> out = new ArrayList<>();
         Set<Double> knownDepths = new HashSet<>();
         knownDepths.addAll(simpleReceiverDepths);
-        for (DistanceRay dr : getDistanceArgs().getDistances()) {
-            if (dr.hasReceiverDepth()) {
-                knownDepths.add(dr.getReceiverDepth());
+        for (LatLonLocatable staLoc : getDistanceArgs().getStationLatLon()) {
+            if (staLoc.asLocation().hasDepth()) {
+                knownDepths.add(staLoc.asLocation().getDepthKm());
             }
         }
         out.addAll(knownDepths);

@@ -64,7 +64,7 @@ public interface JSONLabels {
     String BOT_DEPTH = "botdepth";
     String CURVES = "curves";
 
-    String CALCTYPE = "calctype";
+    String DISTTYPE = "disttype";
     String INVFLATTENING = "invflattening";
     String EQUITORIALRADIUS = "equitorialradius";
     String SOURCE_LIST = "sources";

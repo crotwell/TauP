@@ -68,7 +68,8 @@ public class ShootTest {
 
         assertEquals(p_phase.getMaxRayParam(), P_phase.getMaxRayParam());
 
-        TakeoffAngleRay toRay = new TakeoffAngleRay(90.0);
+        TakeoffAngleRay toRay = new TakeoffAngleRay(90.0,
+                GeoDistType.spherical, tMod.getVelocityModel().sphericalGeodesic());
         List<Arrival> p_arrList = toRay.calculate(p_phase);
         List<Arrival> P_arrList = toRay.calculate(P_phase);
         assertFalse(p_arrList.isEmpty());

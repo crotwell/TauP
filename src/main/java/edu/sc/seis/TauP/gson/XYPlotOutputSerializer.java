@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.AbstractPhaseResult;
-import edu.sc.seis.TauP.JSONLabels;
-import edu.sc.seis.TauP.XYPlotOutput;
-import edu.sc.seis.TauP.XYPlottingData;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 
 import java.lang.reflect.Type;
@@ -14,9 +11,13 @@ public class XYPlotOutputSerializer implements JsonSerializer<XYPlotOutput> {
         JsonObject out;
         ModelArgs modelArgs = xy.getModelArgs();
         if (modelArgs != null ) {
-            AbstractPhaseResult phaseResult = new AbstractPhaseResult( modelArgs.getModelName(), modelArgs.getSourceDepths(),
-                    modelArgs.getReceiverDepths(), xy.getPhaseNames(), modelArgs.getScatterer(), false, null);
-            out = (JsonObject) context.serialize(phaseResult);
+            try {
+                AbstractPhaseResult phaseResult = new AbstractPhaseResult(modelArgs.getModelName(), modelArgs.getSourceDepths(),
+                        modelArgs.getReceiverDepths(), xy.getPhaseNames(), modelArgs.getScatterer(), false, null);
+                out = (JsonObject) context.serialize(phaseResult);
+            } catch (TauModelException e) {
+                throw new RuntimeException("Unable to load model, should not happen: "+modelArgs.getModelName());
+            }
         } else {
             out = new JsonObject();
         }

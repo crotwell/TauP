@@ -23,6 +23,7 @@ import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -131,7 +132,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     calcDepth = arrivals.get(0).getSourceDepth();
                     calcRecDepth = arrivals.get(0).getReceiverDepth();
                 }
-                DistanceRay distRay = DistanceRay.ofRadians(arrival.getModuloDist());
+                DistanceRay distRay = DistanceRay.ofRadians(arrival.getModuloDist(),
+                        arrival.getRayCalculateable().getGeoDistType(),
+                        arrival.getRayCalculateable().getGeodesic());
                 List<Arrival> relativeArrivals = new ArrayList<>();
                 for (SeismicPhase relPhase : relPhaseList) {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
@@ -264,7 +267,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
         printArrivalsAsText(out, arrivalList,
                 modelArgs.getModelName(),
                 getScatterer(),
@@ -559,8 +562,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
         for (SeismicPhase phase : seismicPhases) {
             if (phase instanceof SimpleSeismicPhase) {
                 SimpleSeismicPhase simpPhase = (SimpleSeismicPhase) phase;
+                Geodesic geodesic = simpPhase.getTauModel().getVelocityModel().sphericalGeodesic();
                 for (int i = 0; i < simpPhase.getNumRays(); i++) {
-                    indexArrivalList.addAll(new RayParamIndexRay(i).calculate(simpPhase));
+                    indexArrivalList.addAll(new RayParamIndexRay(i, GeoDistType.spherical, geodesic)
+                            .calculate(simpPhase));
                 }
             }
         }
@@ -569,7 +574,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables( this.sourceArgs, getRadiusOfEarth());
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         if (getDistanceArgs().isAllIndexRays()) {
             List<Arrival> indexArrivalList = calcAllIndexRays(getSeismicPhases());
@@ -590,7 +595,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         super.validateArguments();
         sourceArgs.validateArguments();
         if (isWithAmplitude()) {
-            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs, getRadiusOfEarth()));
+            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs));
         }
     }
 

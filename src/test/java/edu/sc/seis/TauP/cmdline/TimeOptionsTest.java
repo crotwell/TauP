@@ -19,7 +19,8 @@ public class TimeOptionsTest {
         TauP_Time timeTool = new TauP_Time();
         timeTool.setPhaseNames(List.of( "P" ));
         timeTool.onlyFirst = true;
-        List<Arrival> arrivals = timeTool.calcAll(timeTool.calcSeismicPhases(sourceDepth), Collections.singletonList(DistanceRay.ofDegrees(20)));
+        List<Arrival> arrivals = timeTool.calcAll(timeTool.calcSeismicPhases(sourceDepth),
+                Collections.singletonList(DistanceRay.ofDegrees(20)));
 
         assertEquals(1, arrivals.size());
         assertEquals(274.09, arrivals.get(0).getTime(), 0.01);

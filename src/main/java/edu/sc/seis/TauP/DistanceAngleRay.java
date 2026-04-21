@@ -1,6 +1,13 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 public class DistanceAngleRay extends DistanceRay {
+
+    // see DistanceRay.ofDegrees() and DistanceRay.ofRadians()
+    DistanceAngleRay(GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
+    }
 
     public boolean isDegrees() {
         return this.degrees != null;
@@ -17,12 +24,7 @@ public class DistanceAngleRay extends DistanceRay {
     }
 
     public double getKilometers() {
-        double radius;
-        if (isGeodetic()) {
-            radius = DistAzKarney.averageRadiusKm(getGeodesic());
-        } else {
-            radius = getRadiusOfEarth();
-        }
+        double radius = DistAzKarney.averageRadiusKm(getGeodesic());
         return getRadians()*radius;
     }
 
@@ -52,9 +54,9 @@ public class DistanceAngleRay extends DistanceRay {
     protected DistanceAngleRay duplicate()  {
         DistanceAngleRay dr;
         if (degrees != null) {
-            dr = DistanceAngleRay.ofDegrees(degrees);
+            dr = DistanceAngleRay.ofDegrees(degrees, geoDistType, geodesic);
         } else {
-            dr = DistanceAngleRay.ofRadians(degrees);
+            dr = DistanceAngleRay.ofRadians(degrees, geoDistType, geodesic);
         }
         dr.copyFrom(this);
         return dr;

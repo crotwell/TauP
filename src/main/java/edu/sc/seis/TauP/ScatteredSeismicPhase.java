@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +67,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(DistanceRay.ofDegrees(degrees).calcScatteredPhase(this));
+        Geodesic geodesic = getTauModel().getVelocityModel().sphericalGeodesic();
+        return Arrival.getEarliestArrival(
+                DistanceRay.ofDegrees(degrees, GeoDistType.spherical, geodesic).calcScatteredPhase(this));
     }
 
     @Override
@@ -251,7 +255,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
         return new ScatteredArrival(
                 this,
-                DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg()),
+                DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg(),
+                        scatteredArrival.getRayCalculateable().getGeoDistType(),
+                        scatteredArrival.getRayCalculateable().getGeodesic()),
                 inboundArrival,
                 scatteredArrival,
                 isBackscatter());

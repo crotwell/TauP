@@ -33,6 +33,7 @@ public class TableModelArgs {
         return  TauModelLoader.load(getModelName());
     }
 
+    // see also stadepth in TauP_DistAz for similar cmd line arg
     @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
             defaultValue = "0.0",
             paramLabel = "depth",
@@ -75,9 +76,11 @@ public class TableModelArgs {
      *
      * @return the scatterer
      */
-    public Scatterer getScatterer() {
+    public Scatterer getScatterer() throws TauModelException {
         if (scattererDepth != null &&  scattererDist != null) {
-            return new Scatterer(scattererDepth, scattererDist);
+            return new Scatterer(scattererDepth, scattererDist,
+                    GeoDistType.spherical,
+                    getTauModel().getVelocityModel().sphericalGeodesic());
         }
         return null;
     }

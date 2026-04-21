@@ -1,17 +1,20 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TakeoffAngleRay extends ShootableRay {
 
-    public TakeoffAngleRay(Double takeoffAngle) {
+    public TakeoffAngleRay(Double takeoffAngle, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.takeoffAngle = takeoffAngle;
         setDescription("Takeoff: "+takeoffAngle);
     }
 
-    public static TakeoffAngleRay ofTakeoffAngle(Double d) {
-        return new TakeoffAngleRay(d);
+    public static TakeoffAngleRay ofTakeoffAngle(Double d, GeoDistType geoDistType, Geodesic geodesic) {
+        return new TakeoffAngleRay(d, geoDistType, geodesic);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class TakeoffAngleRay extends ShootableRay {
         } catch (NoArrivalException e) {
             return null;
         }
-        return new RayParamRay(rayParam);
+        return new RayParamRay(rayParam, getGeoDistType(), getGeodesic());
     }
 
     public Double getTakeoffAngle() {

@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import net.sf.geographiclib.Geodesic;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,8 @@ public class TimeRay extends RayCalculateable {
 
     private final double seconds;
 
-    public TimeRay(double seconds) {
+    public TimeRay(double seconds, GeoDistType geoDistType, Geodesic geodesic) {
+        super(geoDistType, geodesic);
         this.seconds = seconds;
     }
     
@@ -49,7 +52,7 @@ public class TimeRay extends RayCalculateable {
                         arrivalDist = (seconds-right.getTime())/arrivalRayParam+right.getDist();
                         dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - arrivalDist);
                     }
-                    Arrival a = new Arrival(phase, simp, seconds, arrivalDist, arrivalRayParam, rayNum, dRPdDist);
+                    Arrival a = new Arrival(phase, simp, seconds, arrivalDist, arrivalRayParam, rayNum, this, dRPdDist);
                     a.setSearchValue(this);
                     arrivals.add(a);
                 }
@@ -62,9 +65,9 @@ public class TimeRay extends RayCalculateable {
     public LatLonable getLatLonable() {
         if (isLatLonable()) {
             if (evtLatLon != null) {
-                return new EventAzimuth(evtLatLon, azimuth, geodesic);
+                return new EventAzimuth(evtLatLon, azimuth, geoDistType, geodesic);
             } else {
-                return new StationBackAzimuth(staLatLon, backAzimuth, geodesic);
+                return new StationBackAzimuth(staLatLon, backAzimuth, geoDistType, geodesic);
             }
         }
         return null;

@@ -512,8 +512,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return splitCurve;
     }
 
-    public Arrival arrivalAtIndex(int i, SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
-        RayParamIndexRay rc = new RayParamIndexRay(i);
+    public Arrival arrivalAtIndex(int i, SeismicPhase phase) throws SlownessModelException, TauModelException {
+        RayParamIndexRay rc = new RayParamIndexRay(i,
+                GeoDistType.spherical,
+                modelArgs.getTauModel().getVelocityModel().sphericalGeodesic());
         rc.setSeismicSource(sourceArgs.getSeismicSource());
         rc.setAzimuth(azimuth);
         rc.setDescription("Index "+i);

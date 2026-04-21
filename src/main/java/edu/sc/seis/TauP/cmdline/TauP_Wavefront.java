@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -260,13 +261,16 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         if (! phase.hasArrivals()) {
             return out;
         }
+        Geodesic geodesic = phase.getTauModel().getVelocityModel().sphericalGeodesic();
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep) +1;
         int waveSegIdx = 0;
         List<Arrival> allArrival = new ArrayList<>();
         int minArrivalsForPlot = 10;
         if ( phase.getNumRays() > minArrivalsForPlot) {
             for (int i = 0; i < phase.getNumRays(); i++) {
-                RayParamIndexRay rc = new RayParamIndexRay(i);
+                RayParamIndexRay rc = new RayParamIndexRay(i,
+                        GeoDistType.spherical,
+                        geodesic);
                 try {
                     allArrival.add(rc.calculate(phase).get(0));
                 } catch (SlownessModelException | NoSuchLayerException e) {
@@ -278,14 +282,18 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 // normal phase, maybe just have very few rays??? interp on ray param
                 double rpStep = (phase.getMaxRayParam() - phase.getMinRayParam()) / minArrivalsForPlot;
                 for (double rp = phase.getMinRayParam(); rp < phase.getMaxRayParam(); rp += rpStep) {
-                    RayParamRay rpRay = new RayParamRay(rp);
+                    RayParamRay rpRay = new RayParamRay(rp,
+                            GeoDistType.spherical,
+                            geodesic);
                     try {
                         allArrival.addAll(rpRay.calculate(phase));
                     } catch (TauPException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                RayParamRay rpRay = new RayParamRay(phase.getMaxRayParam());
+                RayParamRay rpRay = new RayParamRay(phase.getMaxRayParam(),
+                        GeoDistType.spherical,
+                        geodesic);
                 try {
                     allArrival.addAll(rpRay.calculate(phase));
                 } catch (TauPException e) {
@@ -295,10 +303,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 // head or diff wave, only one ray param, interp on distance
                 double distStep = (phase.getMaxDistance()-phase.getMinDistance())/minArrivalsForPlot;
                 for (double distRadian = phase.getMinDistance(); distRadian < phase.getMaxDistance() ; distRadian+=distStep) {
-                    DistanceRay dRay = DistanceRay.ofRadians(distRadian);
+                    DistanceRay dRay = DistanceRay.ofRadians(distRadian,
+                            GeoDistType.spherical,
+                            geodesic);
                     allArrival.addAll(dRay.calculate(phase));
                 }
-                DistanceRay dRay = DistanceRay.ofRadians(phase.getMaxDistance());
+                DistanceRay dRay = DistanceRay.ofRadians(phase.getMaxDistance(), GeoDistType.spherical, geodesic);
                 allArrival.addAll(dRay.calculate(phase));
             }
         }

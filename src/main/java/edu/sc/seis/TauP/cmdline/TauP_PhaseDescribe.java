@@ -2,10 +2,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
-import edu.sc.seis.TauP.cmdline.args.ColorType;
-import edu.sc.seis.TauP.cmdline.args.OutputTypes;
-import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
@@ -131,7 +128,9 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
             writer.println("<details open=\"true\">");
             writer.println("  <summary>"+phase.getName()+"</summary>");
             writer.println("<div>");
-            DistanceRay dr = DistanceRay.ofExactDegrees((phase.getMaxDistanceDeg()+phase.getMinDistanceDeg())/2);
+            DistanceRay dr = DistanceRay.ofExactDegrees((phase.getMaxDistanceDeg()+phase.getMinDistanceDeg())/2,
+                GeoDistType.spherical,
+                phase.getTauModel().getVelocityModel().sphericalGeodesic());
             List<Arrival> arrList = dr.calculate(phase);
             if (!arrList.isEmpty()) {
                 Arrival arr = arrList.get(0);
