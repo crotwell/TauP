@@ -137,5 +137,25 @@ public class DistanceRayArgs extends DistanceLengthArgs {
                 throw new ArgumentValidationException("Takeoff angle should be between 0 and 180 degrees: " + d);
             }
         }
+        for (Double d : timeList) {
+            if (d < 0) {
+                throw new ArgumentValidationException("Time seconds should be >=0: " + d);
+            }
+        }
+        for (Double d : shootKmRaypList) {
+            if (d < 0) {
+                throw new ArgumentValidationException("Ray param should be >=0: " + d);
+            }
+        }
+        for (Double d : shootRadianRaypList) {
+            if (d < 0) {
+                throw new ArgumentValidationException("Ray param should be >=0: " + d);
+            }
+        }
+        for (Double d : shootRaypList) {
+            if (d < 0) {
+                throw new ArgumentValidationException("Ray param should be >=0: " + d);
+            }
+        }
     }
 }
