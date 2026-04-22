@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.ArgumentValidationException;
 import picocli.CommandLine;
 
 /**
@@ -39,7 +40,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
         init();
         try {
             validateArguments();
-        } catch (TauPException | IllegalArgumentException e) {
+        } catch ( TauPException | IllegalArgumentException e) {
             if (spec != null ) {
                 throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage(), e);
             } else {

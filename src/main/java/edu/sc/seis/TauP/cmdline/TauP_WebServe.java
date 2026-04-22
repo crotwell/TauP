@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.ArgumentValidationException;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
@@ -182,10 +183,10 @@ public class TauP_WebServe extends TauP_Tool {
                                        String version,
                                        String toolname) throws Exception {
                 Alert.debug("Try to run as tool: " + toolname);
-                if ( ! ToolRun.isKnownWebToolName(toolname)) {
-                    return;
+                TauP_Tool tool = null;
+                if ( ToolRun.isKnownWebToolName(toolname)) {
+                    tool = createTool(toolname);
                 }
-                TauP_Tool tool = createTool(toolname);
                 if (tool == null) {
                     Alert.debug("Can't find tool for :"+toolname+" in "+exchange.getRequestPath());
                     new ResponseCodeHandler(404).handleRequest(exchange);
@@ -697,6 +698,30 @@ public class TauP_WebServe extends TauP_Tool {
 
             }
 
+        } catch (CommandLine.ParameterException e) {
+            // bad parameter of some type:
+
+            Alert.warning("\nBad Param in tool exec: "+TauP_Tool.toolNameFromClass(tool.getClass())+" "+e.getMessage()+"\n");
+            if(exchange.isResponseChannelAvailable()) {
+                exchange.setStatusCode(500);
+                exchange.setReasonPhrase(e.getMessage());
+                if (queryParams.containsKey("format")) {
+                    String content = "";
+                    if (queryParams.get("format").getFirst().equalsIgnoreCase("json")) {
+                        JSONObject errObj = new JSONObject();
+                        errObj.put("type", "error");
+                        errObj.put("message", e.getMessage());
+                        content = errObj.toString(2);
+                        exchange.getResponseSender().send(content);
+                    } else {
+                        // use default html content?
+                    }
+                }
+                exchange.endExchange();
+                return;
+            } else {
+                throw e;
+            }
         } catch (Exception e) {
             Alert.warning("\nException in tool exec: "+e.getMessage()+"\n");
             Alert.warning("  "+buffer);
