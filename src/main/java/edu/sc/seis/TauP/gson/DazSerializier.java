@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.Daz;
-import edu.sc.seis.TauP.DistanceCalcSpherical;
-import edu.sc.seis.TauP.GeoDistType;
-import edu.sc.seis.TauP.JSONLabels;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.Location;
 
 import java.lang.reflect.Type;
@@ -37,8 +34,8 @@ public class DazSerializier implements JsonSerializer<Daz> {
         out.add(JSONLabels.BAZ, new JsonPrimitive(src.getBackAzimuth().floatValue()));
         JsonObject distCalc = new JsonObject();
         out.add(JSONLabels.DISTTYPE, distCalc);
-        distCalc.add("type",  new JsonPrimitive(src.getDistCalc().getCalcType()));
-        distCalc.addProperty(JSONLabels.RADIUS, src.getDistCalc().getCalcType());
+        distCalc.add(JSONLabels.TYPE,  new JsonPrimitive(src.getDistCalc().getCalcType()));
+        distCalc.add(JSONLabels.RADIUS, new JsonPrimitive((float)DistAzKarney.averageRadiusKm(src.getGeodesic())));
         if ( ! (src.getDistCalc() instanceof DistanceCalcSpherical)) {
             distCalc.add(JSONLabels.INVFLATTENING, new JsonPrimitive(1.0/src.getDistCalc().getGeodesic().Flattening()));
             distCalc.add(JSONLabels.EQUITORIALRADIUS, new JsonPrimitive((float)(src.getEquitorialRadius()/1000.0)));

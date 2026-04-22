@@ -35,7 +35,7 @@
       "baz": -116.82423,
       "disttype": {
         "type": "spherical",
-        "radius": "spherical"
+        "radius": 6371.0
       },
       "source": {
         "lat": 22.0,
@@ -57,7 +57,7 @@
       "baz": -122.9928,
       "disttype": {
         "type": "spherical",
-        "radius": "spherical"
+        "radius": 6371.0
       },
       "source": {
         "lat": 22.0,
