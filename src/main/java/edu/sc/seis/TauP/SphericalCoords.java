@@ -88,13 +88,9 @@ public class SphericalCoords {
                                  double lonA,
                                  double latB,
                                  double lonB) {
-        double cosAzimuth = (Math.cos(latA * dtor) * Math.sin(latB * dtor) - Math.sin(latA
-                * dtor)
-                * Math.cos(latB * dtor) * Math.cos((lonB - lonA) * dtor))
-                / Math.sin(distance(latA, lonA, latB, lonB) * dtor);
-        double sinAzimuth = Math.cos(latB * dtor)
-                * Math.sin((lonB - lonA) * dtor)
-                / Math.sin(distance(latA, lonA, latB, lonB) * dtor);
+        double cosAzimuth = Math.cos(latA * dtor) * Math.sin(latB * dtor) - Math.sin(latA * dtor)
+                * Math.cos(latB * dtor) * Math.cos((lonB - lonA) * dtor);
+        double sinAzimuth = Math.cos(latB * dtor) * Math.sin((lonB - lonA) * dtor);
         return rtod * Math.atan2(sinAzimuth, cosAzimuth);
     }
     public static double azimuth(LatLonLocatable a, LatLonLocatable b) {
