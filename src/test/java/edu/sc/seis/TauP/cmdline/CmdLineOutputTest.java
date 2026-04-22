@@ -124,13 +124,13 @@ public class CmdLineOutputTest {
 
     String[] distazTestCmds = new String[] {
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --geodetic",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --geodist geodetic spherical geocentric",
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35 --geodetic",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35 --geodist geodetic spherical geocentric",
             "taup distaz -o stdout --evt 35 -82 --evt 33 -81 --az 135 --deg 35",
-            "taup distaz -o stdout --evt 35 -82 --evt 33 -81 --az 135 --deg 35 --geodetic",
+            "taup distaz -o stdout --evt 35 -82 --evt 33 -81 --az 135 --deg 35 --geodist geodetic spherical geocentric",
             "taup distaz -o stdout --evt -11 21 --az 35 --km 3000",
-            "taup distaz -o stdout --evt -11 21 --az 35 --km 3000 --geodetic"
+            "taup distaz -o stdout --evt -11 21 --az 35 --km 3000 --geodist geodetic spherical geocentric"
     };
 
 
