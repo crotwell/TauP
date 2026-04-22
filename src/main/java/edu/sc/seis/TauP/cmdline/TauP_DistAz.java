@@ -70,7 +70,6 @@ public class TauP_DistAz extends TauP_Tool {
             List<VelocityLayer> vLayers = List.of(new VelocityLayer(0, 0, radiusArgs.getRadiusOfEarth(), 1, 1, 1, 1));
             vMod = new VelocityModel("radius", radiusArgs.getRadiusOfEarth(), 0, 0, 0, 0, radiusArgs.getRadiusOfEarth(), true, vLayers);
         }
-        Map<GeoDistType, Geodesic> geodesicMap = geodeticArgs.createGeodesics(vMod);
         List<DistanceCalc> distanceCalcList = geodeticArgs.createDistanceCalcs(vMod);
         List<RayCalculateable> rayList  = distanceArgs.getRayCalculatables(distanceCalcList, new SeismicSourceArgs());
         for (RayCalculateable ray : rayList) {
@@ -130,7 +129,7 @@ public class TauP_DistAz extends TauP_Tool {
             out.println(HTMLUtil.createHtmlEnding());
         } else if (outputTypeArgs.isJSON()){
             Result result = new Result();
-            result.disttypes = geodesicMap;
+            result.disttypes = distanceCalcList;
             if (radiusArgs.modelName != null) {
                 result.model = radiusArgs.getModelName();
             }
@@ -291,11 +290,8 @@ class ModelOrRadius {
 }
 
 class Result {
-    double equitorialradius;
-    double radius;
     String model = null;
-    Map<GeoDistType, Geodesic> disttypes;
-    Double invflattening = null;
+    List<DistanceCalc> disttypes;
     List<Location> sources;
     List<Location> receivers;
     List<Daz> distances;

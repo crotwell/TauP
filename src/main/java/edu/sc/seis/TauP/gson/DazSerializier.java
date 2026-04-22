@@ -35,10 +35,13 @@ public class DazSerializier implements JsonSerializer<Daz> {
         out.add(JSONLabels.AZ, new JsonPrimitive(src.getAzimuth().floatValue()));
 
         out.add(JSONLabels.BAZ, new JsonPrimitive(src.getBackAzimuth().floatValue()));
-        out.add(JSONLabels.DISTTYPE, new JsonPrimitive(src.getDistCalc().getCalcType()));
+        JsonObject distCalc = new JsonObject();
+        out.add(JSONLabels.DISTTYPE, distCalc);
+        distCalc.add("type",  new JsonPrimitive(src.getDistCalc().getCalcType()));
+        distCalc.addProperty(JSONLabels.RADIUS, src.getDistCalc().getCalcType());
         if ( ! (src.getDistCalc() instanceof DistanceCalcSpherical)) {
-            out.add(JSONLabels.INVFLATTENING, new JsonPrimitive(1.0/src.getDistCalc().getGeodesic().Flattening()));
-            out.add(JSONLabels.EQUITORIALRADIUS, new JsonPrimitive((float)(src.getEquitorialRadius()/1000.0)));
+            distCalc.add(JSONLabels.INVFLATTENING, new JsonPrimitive(1.0/src.getDistCalc().getGeodesic().Flattening()));
+            distCalc.add(JSONLabels.EQUITORIALRADIUS, new JsonPrimitive((float)(src.getEquitorialRadius()/1000.0)));
         }
         if (src.hasSource()) {
             out.add(JSONLabels.SOURCE, locSerial.serialize(src.getSource(), Location.class, context));
