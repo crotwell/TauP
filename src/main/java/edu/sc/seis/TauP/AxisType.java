@@ -37,7 +37,7 @@ public enum AxisType {
     index,
     tstar,
     attenuation,
-    theta,
+    //theta,
     energygeospread,
     pathlength,
     radiation,
@@ -59,7 +59,7 @@ public enum AxisType {
             case rayparamrad:
             case rayparamdeg:
             case rayparamkm:
-            case theta:
+            //case theta:
             case tau:
             case tstar:
             case time:
@@ -114,7 +114,7 @@ public enum AxisType {
             case rayparamrad:
             case rayparamdeg:
             case rayparamkm:
-            case theta:
+            //case theta:
             case tau:
             case time:
             case turndepth:

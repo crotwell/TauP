@@ -72,30 +72,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     || xAxisType==AxisType.kilometer180 || yAxisType==AxisType.kilometer180
                     || xAxisType==AxisType.radian180 || yAxisType==AxisType.radian180);
             if(phase.hasArrivals()) {
-                if (yAxisType==AxisType.theta) {
-                    // temp for testing...
-                    double dist = 15;
-                    List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(phase);
-                    for (Arrival arrival : arrivals) {
-                        Theta theta = new Theta(arrival);
-                        List<double[]> xData = SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), phase.getRayParams());
-                        List<double[]> yData = SeismicPhase.splitForRepeatRayParam(theta.getRayParams(), theta.getThetaAtX());
-                        List<XYSegment> segmentList = new ArrayList<>();
-                        for (int i = 0; i < xData.size(); i++) {
-                            XYSegment seg = new XYSegment(xData.get(i), yData.get(i));
-                            segmentList.add(seg);
-                        }
-                        List<String> cssClasses = new ArrayList<>();
-                        cssClasses.add(p_or_s);
-                        cssClasses.add(SvgUtil.classForPhase(arrival.getName()));
-                        XYPlottingData xyp = new XYPlottingData(
-                                segmentList, xAxisType.name(), "rayparam",
-                                phase.getName(), phaseDesc, cssClasses
-                        );
-                        out.add(xyp);
-
-                    }
-                } else {
                     SeismicPhase interpolatedPhase = phase.interpolatePhase(
                             Double.parseDouble(toolProps.getProperty("taup.curve.maxPathInc", "2")));
                     List<double[]> xData = calculatePlotForType(interpolatedPhase, xAxisType, ensure180);
@@ -152,7 +128,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                                     phase.getName(), phaseDesc, cssClassesCopy));
                         }
                     }
-                }
+
             }
         }
         return out;

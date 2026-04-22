@@ -142,7 +142,7 @@ public class Outputs {
             case rayparamrad:
             case rayparamdeg:
             case rayparamkm:
-            case theta:
+            //case theta:
             case tau:
             case tstar:
                 outFormat = rayParamFormat;
