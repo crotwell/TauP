@@ -1,8 +1,8 @@
 {
   "disttypes": [
     {
-      "disttype": "spherical",
-      "equitorialradius": 6371.0
+      "type": "spherical",
+      "radius": 6371.0
     }
   ],
   "sources": [

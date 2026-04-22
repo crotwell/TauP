@@ -217,7 +217,6 @@ public class Geocentric {
     double len1 = Math.sqrt(v1[0]*v1[0]+v1[1]*v1[1]+v1[2]*v1[2]);
     double len2 = Math.sqrt(v2[0]*v2[0]+v2[1]*v2[1]+v2[2]*v2[2]);
     double dp = v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2];
-    System.err.println(dp+"  "+len1+"  "+len2);
     return Math.acos((dp)/(len1*len2));
   }
 

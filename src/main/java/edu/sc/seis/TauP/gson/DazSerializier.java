@@ -32,14 +32,7 @@ public class DazSerializier implements JsonSerializer<Daz> {
         out.add(JSONLabels.AZ, new JsonPrimitive(src.getAzimuth().floatValue()));
 
         out.add(JSONLabels.BAZ, new JsonPrimitive(src.getBackAzimuth().floatValue()));
-        JsonObject distCalc = new JsonObject();
-        out.add(JSONLabels.DISTTYPE, distCalc);
-        distCalc.add(JSONLabels.TYPE,  new JsonPrimitive(src.getDistCalc().getCalcType()));
-        distCalc.add(JSONLabels.RADIUS, new JsonPrimitive((float)DistAzKarney.averageRadiusKm(src.getGeodesic())));
-        if ( ! (src.getDistCalc() instanceof DistanceCalcSpherical)) {
-            distCalc.add(JSONLabels.INVFLATTENING, new JsonPrimitive(1.0/src.getDistCalc().getGeodesic().Flattening()));
-            distCalc.add(JSONLabels.EQUITORIALRADIUS, new JsonPrimitive((float)(src.getEquitorialRadius()/1000.0)));
-        }
+        out.add(JSONLabels.DISTTYPE, distCalcSerializer.serialize(src.getDistCalc(), DistanceCalc.class, context));
         if (src.hasSource()) {
             out.add(JSONLabels.SOURCE, locSerial.serialize(src.getSource(), Location.class, context));
         }
@@ -49,4 +42,5 @@ public class DazSerializier implements JsonSerializer<Daz> {
         return out;
     }
     LocationSerializer locSerial = new LocationSerializer();
+    DistCalcSerializer distCalcSerializer = new DistCalcSerializer();
 }

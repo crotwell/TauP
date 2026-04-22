@@ -44,8 +44,7 @@ public class GeodeticArgs extends LatLonArgs {
                     +"one of ${COMPLETION-CANDIDATES}. "
                     + "Default is spherical. Note this only affects calculation of distance from lat/lon pairs, "
                     + "all travel time calculations are done in a purely spherical model.",
-            arity = "1..*",
-            defaultValue = "spherical"
+            arity = "1..*"
     )
     public void setGeoDistTypes(List<GeoDistType> geoDistTypes) {
         this.geoDistTypeList = geoDistTypes;
