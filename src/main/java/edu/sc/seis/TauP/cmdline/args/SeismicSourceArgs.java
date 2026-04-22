@@ -66,7 +66,7 @@ public class SeismicSourceArgs {
             for (Float f : sdr) {
                 valStr+=" "+f;
             }
-            throw new IllegalArgumentException(
+            throw new ArgumentValidationException(
                     String.format("Invalid number of params '%d' for option '--strikediprake': " +
                             "must give 3 values: %s", sdr.size(), valStr));
         }
@@ -91,16 +91,16 @@ public class SeismicSourceArgs {
     public void validateArguments() {
         if (strikeDipRake != null) {
             if (strikeDipRake.size() != 3) {
-                throw new IllegalArgumentException("StrikeDipRake must have 3 values, but was: " + strikeDipRake.size());
+                throw new ArgumentValidationException("StrikeDipRake must have 3 values, but was: " + strikeDipRake.size());
             }
             if (strikeDipRake.get(0) < -180 || 360 < strikeDipRake.get(0) ) {
-                throw new IllegalArgumentException("Strike should be -180 to 360, but was "+strikeDipRake.get(0));
+                throw new ArgumentValidationException("Strike should be -180 to 360, but was "+strikeDipRake.get(0));
             }
             if (strikeDipRake.get(1) < -90 || 90 < strikeDipRake.get(1) ) {
-                throw new IllegalArgumentException("Dip should be -90 to 90, but was "+strikeDipRake.get(1));
+                throw new ArgumentValidationException("Dip should be -90 to 90, but was "+strikeDipRake.get(1));
             }
             if (strikeDipRake.get(2) < -180 || 180 < strikeDipRake.get(2) ) {
-                throw new IllegalArgumentException("Rake should be -180 to 180, but was "+strikeDipRake.get(2));
+                throw new ArgumentValidationException("Rake should be -180 to 180, but was "+strikeDipRake.get(2));
             }
         }
     }
@@ -116,7 +116,7 @@ public class SeismicSourceArgs {
         if (hasStrikeDipRake() ) {
             for (RayCalculateable rc : rayList) {
                 if (!rc.hasAzimuth()) {
-                    throw new IllegalArgumentException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);
+                    throw new ArgumentValidationException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);
                 }
             }
         }

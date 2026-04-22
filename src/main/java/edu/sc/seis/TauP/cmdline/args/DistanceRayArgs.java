@@ -123,4 +123,19 @@ public class DistanceRayArgs extends DistanceLengthArgs {
                 && incidentAngle.isEmpty()
                 && incidentRange.isEmpty();
     }
+
+    @Override
+    public void validateArguments() {
+        super.validateArguments();
+        for (Double d : takeoffAngle) {
+            if (d < 0 || d > 180) {
+                throw new ArgumentValidationException("Takeoff angle should be between 0 and 180 degrees: " + d);
+            }
+        }
+        for (Double d : incidentAngle) {
+            if (d < 0 || d > 180) {
+                throw new ArgumentValidationException("Takeoff angle should be between 0 and 180 degrees: " + d);
+            }
+        }
+    }
 }

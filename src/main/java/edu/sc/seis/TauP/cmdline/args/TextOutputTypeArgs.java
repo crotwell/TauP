@@ -40,7 +40,7 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
         } else if (oType.equalsIgnoreCase(OutputTypes.HTML)) {
             outputType._isHTML = true;
         } else {
-            throw new IllegalArgumentException("output type " + oType + " not recognized.");
+            throw new ArgumentValidationException("output type " + oType + " not recognized.");
         }
     }
 

@@ -46,7 +46,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         } else if (oType.equalsIgnoreCase(OutputTypes.LOCSAT)) {
             outputType._isLocsat = true;
         } else {
-            throw new IllegalArgumentException("output type "+oType+" not recognized.");
+            throw new ArgumentValidationException("output type "+oType+" not recognized.");
         }
     }
 

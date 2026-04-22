@@ -111,13 +111,16 @@ public class GeodeticArgs extends LatLonArgs {
     }
     protected DistAzPlanet planet = null;
 
+    @Override
     public void validateArguments() {
+        super.validateArguments();
         if (geodeticFlattening != null && getInverseEllipFlattening() <= 0) {
-            throw new IllegalArgumentException("Inverse Elliptical flattening must be positive: " + getInverseEllipFlattening());
+            throw new ArgumentValidationException("Inverse Elliptical flattening must be positive: " + getInverseEllipFlattening());
         }
         if (planet != null && (equitorialradius != null && geodeticFlattening != null)) {
-            throw new IllegalArgumentException("Cannot specify --planet and either of --equitorialradius or --geodeticflattening");
+            throw new ArgumentValidationException("Cannot specify --planet and either of --equitorialradius or --geodeticflattening");
         }
+
     }
 
     public List<DistanceCalc> createDistanceCalcs(VelocityModel vMod) {

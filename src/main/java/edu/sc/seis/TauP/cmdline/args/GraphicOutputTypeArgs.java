@@ -108,7 +108,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
                 mapwidth = 1000.0f;
             }
         } else {
-            throw new IllegalArgumentException("output type "+oType+" not recognized.");
+            throw new ArgumentValidationException("output type "+oType+" not recognized.");
         }
     }
 

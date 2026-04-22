@@ -325,7 +325,7 @@ public class DistanceArgs {
 
         for (Double d : takeoffInputList) {
             if (d < 0 || d > 180) {
-                throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: "+d);
+                throw new ArgumentValidationException("Takeoff angle should be between 0 and 180 degrees: "+d);
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
@@ -362,7 +362,7 @@ public class DistanceArgs {
 
         for (Double d : incidentAngleInputList) {
             if (d < 0 || d > 180) {
-                throw new IllegalArgumentException("Incident angle should be between 0 and 180 degrees: "+d);
+                throw new ArgumentValidationException("Incident angle should be between 0 and 180 degrees: "+d);
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 for (LatLonLocatable evt : getEventLatLon()) {
@@ -420,10 +420,10 @@ public class DistanceArgs {
             case 0:
                 break;
             default:
-                throw new IllegalArgumentException("range length should be 1-3 but was "+minMaxStep.size());
+                throw new ArgumentValidationException("range length should be 1-3 but was "+minMaxStep.size());
         }
         if (step == 0.0) {
-            throw new IllegalArgumentException("Step cannot be zero");
+            throw new ArgumentValidationException("Step cannot be zero");
         }
         if ((step<0 && (start<stop)) || (step>0 && (start>stop))){
             double tmp = start;
@@ -524,19 +524,15 @@ public class DistanceArgs {
         if (distArgs.allEmpty()
                 && ( (! hasEventLatLon()) || (!hasStationLatLon() ) )
         ) {
-            throw new IllegalArgumentException("Must specify at least one distance or station, event.");
+            throw new ArgumentValidationException("Must specify at least one distance or station, event.");
         }
-        for (Double d : distArgs.takeoffAngle) {
-            if (d < 0 || d > 180) {
-                throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: " + d);
-            }
-        }
+        distArgs.validateArguments();
         if (hasEventLatLon() && hasStationLatLon()
                 && (hasAzimuth() || hasBackAzimuth())) {
-            throw new IllegalArgumentException("Cannot specify azimuth or back azimuth when both station and event are given");
+            throw new ArgumentValidationException("Cannot specify azimuth or back azimuth when both station and event are given");
         }
         if ((hasAzimuth() && hasBackAzimuth())) {
-            throw new IllegalArgumentException("Cannot specify both azimuth and back azimuth");
+            throw new ArgumentValidationException("Cannot specify both azimuth and back azimuth");
         }
         geodeticArgs.validateArguments();
     }

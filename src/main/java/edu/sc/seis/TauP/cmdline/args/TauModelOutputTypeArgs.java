@@ -9,7 +9,7 @@ public class TauModelOutputTypeArgs extends  AbstractOutputTypeArgs {
     @Override
     public void setOutputFormat(String oType) {
         if (! oType.equalsIgnoreCase(OutputTypes.TAUP)) {
-            throw new IllegalArgumentException("Only 'taup' allowed for taup create");
+            throw new ArgumentValidationException("Only 'taup' allowed for taup create");
         }
     }
 

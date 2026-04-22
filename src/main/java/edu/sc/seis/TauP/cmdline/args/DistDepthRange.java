@@ -67,7 +67,7 @@ public class DistDepthRange {
         if (minMax.length == 2) {
             setDegreeMinMax(minMax[0], minMax[1]);
         } else {
-            throw new IllegalArgumentException("Min max must have 2 values, but given: "+minMax.length);
+            throw new ArgumentValidationException("Min max must have 2 values, but given: "+minMax.length);
         }
     }
 
@@ -75,7 +75,7 @@ public class DistDepthRange {
         if (min < max) {
             distAxisMinMax = new double[]{min, max};
         } else {
-            throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+            throw new ArgumentValidationException("min must be < max: "+min+" < "+max);
         }
     }
 
@@ -88,7 +88,7 @@ public class DistDepthRange {
         if (minMax.length == 2) {
             setDepthMinMax(minMax[0], minMax[1]);
         } else {
-            throw new IllegalArgumentException("Min max must have 2 values, but given: "+minMax.length);
+            throw new ArgumentValidationException("Min max must have 2 values, but given: "+minMax.length);
         }
     }
 
@@ -96,7 +96,7 @@ public class DistDepthRange {
         if (min < max) {
             depthAxisMinMax = new double[]{min, max};
         } else {
-            throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+            throw new ArgumentValidationException("min must be < max: "+min+" < "+max);
         }
     }
 }

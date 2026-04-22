@@ -37,7 +37,7 @@ public class SeismogramOutputTypeArgs extends AbstractOutputTypeArgs {
         } else if (oType.equalsIgnoreCase(SAC)) {
             outputType._isSAC = true;
         } else {
-            throw new IllegalArgumentException("output type " + oType + " not recognized.");
+            throw new ArgumentValidationException("output type " + oType + " not recognized.");
         }
     }
 

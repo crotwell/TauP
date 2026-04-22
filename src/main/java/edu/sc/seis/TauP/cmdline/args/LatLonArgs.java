@@ -63,7 +63,7 @@ public class LatLonArgs {
         for (LatLonLocatable loc : getEventLocations()) {
             if (loc.asLocation().getLatitude() < -90 || loc.asLocation().getLatitude() > 90) {
                 String desc = loc.getLocationDescription();
-                throw new IllegalArgumentException("Latitude must be -90 <= lat <= 90, but was "
+                throw new ArgumentValidationException("Latitude must be -90 <= lat <= 90, but was "
                         +loc.asLocation().getLatitude()+" for "+desc);
             }
         }
@@ -72,7 +72,7 @@ public class LatLonArgs {
             if (loc.getLatitude() < -90 || loc.getLatitude() > 90) {
                 String desc = loc.getDescription();
                 desc = (desc != null) ? desc : loc.getLatitude()+"/"+loc.getLongitude();
-                throw new IllegalArgumentException("Latitude must be -90 <= lat <= 90, but was "
+                throw new ArgumentValidationException("Latitude must be -90 <= lat <= 90, but was "
                         +loc.getLatitude()+" for "+desc);            }
         }
     }
