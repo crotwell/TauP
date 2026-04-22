@@ -7,7 +7,8 @@ Usage: taup setms3 [--amp] [--debug] [--geodetic] [--help] [--verbose] [--taupeh
                    [--qmltol=<quakeOTimeTol>] [--staxml=<stationxmlFilename>]
                    [--eid=evt[,evt...]]... [--sid=sta[,sta...]]... [--evt=lat
                    lon]... [--sta=lat lon]... [--strikediprake=strike dip
-                   rake]... [[--mod=<modelName>] [-h=depth[,depth...]]...
+                   rake]... [--geodist=<geoDistTypes>...]...
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
                    [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
                    [mseed3file...]
@@ -30,8 +31,8 @@ Options:
                                fdsn event web service. Creates a distance if
                                station is also given.
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -40,11 +41,19 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=<geoDistTypes>...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
       --help                 display this help message
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --mw=<mw>              scale amplitude by source moment magnitude,
                                default is 4.0
       --numattenuationfreq=<numFrequencies>

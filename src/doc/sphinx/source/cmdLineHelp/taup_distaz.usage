@@ -3,12 +3,13 @@ Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--invflattening=f] [-o=<outFile>] [--planet=<planet>]
                    [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                    [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
-                   lon]... [--html | --json | --text] [[--deg=d[,d...]]...
-                   [--km=km[,km...]]... [--degreerange=[step][min max][min max
-                   step]]... [--kilometerrange=[step][min max][min max
-                   step]]...]... [--mod=<modelName> |
-                   [--radius=<radiusOfEarth>]]
+                   [-h=depth[,depth...]]... [--sid=sta[,sta...]]...
+                   [--stadepth=depth[,depth...]]... [--evt=lat lon]...
+                   [--sta=lat lon]... [--geodist=<geoDistTypes>...]... [--html
+                   | --json | --text] [[--deg=d[,d...]]... [--km=km[,km...]]...
+                   [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...]...
+                   [--mod=<modelName> | [--radius=<radiusOfEarth>]]
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -20,8 +21,8 @@ Options:
                                fdsn event web service. Creates a distance if
                                station is also given.
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -30,11 +31,21 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=<geoDistTypes>...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                             source depth in km
       --help                 display this help message
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --mod, --model=<modelName>
                              use velocity model "modelName" for radius, used
                                when distance given in km.
@@ -56,6 +67,9 @@ Options:
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
+      --stadepth, --receiverdepth=depth[,depth...]
+                             the receiver depth in km for stations not at the
+                               surface
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from

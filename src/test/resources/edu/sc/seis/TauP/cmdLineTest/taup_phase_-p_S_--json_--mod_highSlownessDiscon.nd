@@ -43,11 +43,11 @@
             "incident": 86.78937,
             "puristdist": 6.4212656,
             "puristname": "S",
+            "desc": "rp index 1",
             "raytype": {
-              "type": "DistanceAngleRay",
+              "type": "RayParamIndexRay",
               "ray": {
-                "radian": 0.11207222997739995,
-                "unit": "rad"
+                "index": 1
               }
             }
           },
@@ -62,11 +62,11 @@
             "incident": 86.78937,
             "puristdist": 6.5993147,
             "puristname": "Sed15S",
+            "desc": "rp index 0",
             "raytype": {
-              "type": "DistanceAngleRay",
+              "type": "RayParamIndexRay",
               "ray": {
-                "radian": 0.11517977272062169,
-                "unit": "rad"
+                "index": 0
               }
             }
           }

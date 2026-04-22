@@ -55,7 +55,7 @@ Options:
                              phasedegpsv, phasedegsh, unwrapphasedeg,
                              unwrapphasedegpsv, unwrapphasedegsh, geospread,
                              refltran, refltranpsv, refltransh, index, tstar,
-                             attenuation, theta, energygeospread, pathlength,
+                             attenuation, energygeospread, pathlength,
                              radiation, radiationpsv, radiationsh, intcaustic
       --xabs               X axis is absolute value
       --xlog               X axis is log
@@ -69,7 +69,7 @@ Options:
                              phasedegpsv, phasedegsh, unwrapphasedeg,
                              unwrapphasedegpsv, unwrapphasedegsh, geospread,
                              refltran, refltranpsv, refltransh, index, tstar,
-                             attenuation, theta, energygeospread, pathlength,
+                             attenuation, energygeospread, pathlength,
                              radiation, radiationpsv, radiationsh, intcaustic
       --yabs               Y axis is absolute value
       --ylog               Y axis is log

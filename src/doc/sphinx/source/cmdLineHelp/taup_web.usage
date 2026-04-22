@@ -1,11 +1,15 @@
 Usage: taup web [--debug] [--nodefaultmodels] [--open] [--verbose]
-                [--host=<host>] [--namespace=<base_path>] [-p=<port>]
+                [--expire=<expireSeconds>] [--host=<host>]
+                [--namespace=<base_path>] [-p=<port>]
                 [--models=<extraModelNames>...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
       --debug             enable debugging output
+      --expire=<expireSeconds>
+                          quit if no requests received in n seconds, defaults
+                            to 3600
       --host=<host>       host to expose port on, defaults to localhost
       --models=<extraModelNames>...
                           List of additional models to use

@@ -1,10 +1,15 @@
 {
-  "radius": 6371.0,
-  "calctype": "spherical",
+  "disttypes": [
+    {
+      "disttype": "spherical",
+      "equitorialradius": 6371.0
+    }
+  ],
   "sources": [
     {
       "lat": 22.0,
       "lon": -101.0,
+      "depth": 0,
       "desc": "22.00/-101.00"
     }
   ],
@@ -12,11 +17,13 @@
     {
       "lat": 35.0,
       "lon": -82.0,
+      "depth": 0,
       "desc": "35.00/-82.00"
     },
     {
       "lat": 33.0,
       "lon": -81.0,
+      "depth": 0,
       "desc": "33.00/-81.00"
     }
   ],
@@ -26,16 +33,21 @@
       "km": 2314.5334,
       "az": 53.82354,
       "baz": -116.82423,
-      "calctype": "spherical",
+      "disttype": {
+        "type": "spherical",
+        "radius": "spherical"
+      },
       "source": {
         "lat": 22.0,
         "lon": -101.0,
-        "desc": "22.00/-101.00"
+        "depth": 0.0,
+        "desc": "22.00/-101.00 0.00 m"
       },
       "receiver": {
         "lat": 33.0,
         "lon": -81.0,
-        "desc": "33.00/-81.00"
+        "depth": 0.0,
+        "desc": "33.00/-81.00 0.00 m"
       }
     },
     {
@@ -43,16 +55,21 @@
       "km": 2345.5466,
       "az": 47.81773,
       "baz": -122.9928,
-      "calctype": "spherical",
+      "disttype": {
+        "type": "spherical",
+        "radius": "spherical"
+      },
       "source": {
         "lat": 22.0,
         "lon": -101.0,
-        "desc": "22.00/-101.00"
+        "depth": 0.0,
+        "desc": "22.00/-101.00 0.00 m"
       },
       "receiver": {
         "lat": 35.0,
         "lon": -82.0,
-        "desc": "35.00/-82.00"
+        "depth": 0.0,
+        "desc": "35.00/-82.00 0.00 m"
       }
     }
   ]
