@@ -391,13 +391,16 @@
 
       <fieldset class="tool_pierce">
           <legend>Pierce:</legend>
-          <label for="pierce">
+
+          <label for="pierce_add">
               <span>Add Depths (km): </span>
           </label>
-          <input type="text" id="pierce" name="piercedepth" value="" />
+          <input type="text" id="piercedepth" name="piercedepth" value="" />
 
           <input type="radio" name="pierce" id="pierce_all" value="all" checked />
           <label for="pierce_all">All</label>
+          <input type="radio" name="pierce" id="isadded" value="added"  />
+          <label for="isadded">Added</label>
           <input type="radio" name="pierce" id="isrev" value="rev"  />
           <label for="isrev">Rev</label>
           <input type="radio" name="pierce" id="isturn" value="turn" />

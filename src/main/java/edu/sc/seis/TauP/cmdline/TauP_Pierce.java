@@ -87,7 +87,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
         this.onlyUnderPoints = onlyUnderPoints;
     }
 
-    @CommandLine.Option(names = "--nodiscon", description = "only prints pierce points for the depths added with -pierce")
+    @CommandLine.Option(names = {"--added", "--nodiscon"}, description = "only prints pierce points for the depths added with --pierce")
     public void setOnlyAddPoints(boolean onlyAddPoints) {
         this.onlyAddPoints = onlyAddPoints;
     }

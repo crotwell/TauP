@@ -785,6 +785,8 @@ export function form_tool_url() {
       url += `&${piercelimit}=true`;
     } else if (piercelimit === "under") {
       url += `&${piercelimit}=true`;
+    } else if (piercelimit === "added") {
+      url += `&${piercelimit}=true`;
     } else if (piercelimit === "all") {
       // no op, default
     }
