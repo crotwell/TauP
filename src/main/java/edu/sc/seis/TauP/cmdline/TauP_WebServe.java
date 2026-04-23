@@ -144,24 +144,23 @@ public class TauP_WebServe extends TauP_Tool {
                             handleCmdLine(tool, exchange);
                         } else if (toolname.equals(PARAM_HELP)) {
                             handleParamHelp(exchange);
-                        } else if (ToolRun.isKnownWebToolName(toolname)) {
-                            handleTauPTool(exchange, namespace, service, version, toolname);
-                        } else {
-                            // fail if one of disabled web tools, like create or setsac
-                            new ResponseCodeHandler(404).handleRequest(exchange);
-                            exchange.getResponseSender().send(createVersionsPage("Tool "+toolname+" unknown"));
-                            return;
+                        } else if (ToolRun.isKnownToolName(toolname)) {
+                            if (ToolRun.isKnownWebToolName(toolname)) {
+                                handleTauPTool(exchange, namespace, service, version, toolname);
+                            } else {
+                                // fail if one of disabled web tools, like create or setsac
+                                new ResponseCodeHandler(404).handleRequest(exchange);
+                                exchange.getResponseSender().send(createVersionsPage("Tool "+toolname+" not available for web"));
+                                return;
+                            }
                         }
+                        // otherwise, let other handlers give it a try
                     } else {
                         Alert.info("Unknown version: "+version);
 
                         new ResponseCodeHandler(404).handleRequest(exchange);
                         exchange.getResponseSender().send(createVersionsPage("Tool Version "+version+" unknown"));
                     }
-                } else {
-                    new ResponseCodeHandler(404).handleRequest(exchange);
-                    exchange.getResponseSender().send(createVersionsPage("Namespace "+namespace+" or servicename "+service+" unknown"));
-
                 }
             }
 
