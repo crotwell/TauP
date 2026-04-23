@@ -1,5 +1,5 @@
-Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
-                   [--help] [--nodiscon] [--rev] [--turn] [--under] [--verbose]
+Usage: taup pierce [--added] [--amp] [--debug] [--first] [--geodetic]
+                   [--geodetic] [--help] [--rev] [--turn] [--under] [--verbose]
                    [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                    [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                    [--equitorialradius=m] [--equitorialradius=m]
@@ -32,6 +32,8 @@ Calculate pierce points for phases at discontinuities in the model.
 
 Options:
 
+      --added, --nodiscon    only prints pierce points for the depths added
+                               with --pierce
       --amp                  show amplitude factor for each phase
       --attenuationfreq=<attenuationFreq>
                              attenuation frequency for amplitude calculations,
@@ -45,8 +47,6 @@ Options:
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude,
                                default is 4.0
-      --nodiscon             only prints pierce points for the depths added
-                               with -pierce
       --numattenuationfreq=<numFrequencies>
                               number attenuation frequencies for amplitude
                                calculations, default is 64
