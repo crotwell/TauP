@@ -563,7 +563,7 @@ public class DistanceArgs {
         List<LatLonLocatable> staList = new ArrayList<>();
         for (LatLonSimple sta : geodeticArgs.getStationLocations()) {
             for (Double depth : modelArgs.getReceiverDepths()) {
-                LatLonSimple staDepth = new LatLonSimple(sta.asLocation().getLatitude(), sta.asLocation().getLongitude(), depth);
+                LatLonSimple staDepth = new LatLonSimple(sta.asLocation().getLatitude(), sta.asLocation().getLongitude(), depth*1000);
                 staList.add(staDepth);
             }
         }
@@ -576,7 +576,7 @@ public class DistanceArgs {
         List<LatLonLocatable> eventLocs = new ArrayList<>();
         for (LatLonSimple evt : geodeticArgs.getEventLocations()) {
             for (Double depth : modelArgs.getSourceDepths()) {
-                LatLonSimple evtDepth = new LatLonSimple(evt.asLocation().getLatitude(), evt.asLocation().getLongitude(), depth);
+                LatLonSimple evtDepth = new LatLonSimple(evt.asLocation().getLatitude(), evt.asLocation().getLongitude(), depth*1000);
                 eventLocs.add(evtDepth);
             }
         }
