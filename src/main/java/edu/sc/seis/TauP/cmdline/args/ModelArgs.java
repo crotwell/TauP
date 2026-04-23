@@ -78,6 +78,7 @@ public class ModelArgs {
      * @param modelSplitDepths list of additional depths
      */
     public void setModelSplitDepths(List<Double> modelSplitDepths) {
+        unsetDepthCorrected();
         this.modelSplitDepths = modelSplitDepths;
     }
 
@@ -94,10 +95,10 @@ public class ModelArgs {
             if (getScatterer() != null && !tModDepth.isBranchDepth(getScatterer().depth)) {
                 tModDepth = tModDepth.splitBranch(getScatterer().depth);
             }
-            for (Double d : modelSplitDepths) {
-                if (! tModDepth.isBranchDepth(d)) {
-                    tModDepth = tModDepth.splitBranch(d);
-                }
+        }
+        for (Double d : modelSplitDepths) {
+            if (! tModDepth.isBranchDepth(d)) {
+                tModDepth = tModDepth.splitBranch(d);
             }
         }
         return tModDepth;

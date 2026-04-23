@@ -97,8 +97,10 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
             description = "additional depth for calculating pierce points",
             split=",")
     public void setAddDepth(List<Double> addDepths) {
-        modelArgs.setModelSplitDepths(addDepths);
+        this.addDepths = addDepths;
     }
+
+    public List<Double> addDepths = new ArrayList<>();
 
     public void appendAddDepths(String depthString) {
         modelArgs.unsetDepthCorrected();
@@ -165,6 +167,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
+        modelArgs.setModelSplitDepths(addDepths);
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         if (getDistanceArgs().isAllIndexRays()) {
