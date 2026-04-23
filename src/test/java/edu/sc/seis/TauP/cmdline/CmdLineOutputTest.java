@@ -181,6 +181,7 @@ public class CmdLineOutputTest {
             "taup distaz --sta -11 21 --baz -135 --deg 30",
             "taup distaz --evt -11 21 --az 35 --km 3000",
             "taup distaz --sta 31 -80 --evt -11 21",
+            "taup distaz --sta 0 0 --evt 0 30 --evt 30 0  --geodist spherical geocentric geodetic",
             "taup discon --mod ak135fcont",
     };
 

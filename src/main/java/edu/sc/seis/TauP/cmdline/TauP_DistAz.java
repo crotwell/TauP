@@ -85,6 +85,7 @@ public class TauP_DistAz extends TauP_Tool {
         for (DistanceRay ray : distList) {
             dazList.add(new Daz(ray));
         }
+        dazList.sort(Comparator.comparingDouble(Daz::getDegrees));
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
 
@@ -105,13 +106,17 @@ public class TauP_DistAz extends TauP_Tool {
                         receiverDesc = receiverDesc.substring(0, receiverDesc.length() - 7);
                     }
                 }
+                String geodistDesc = "";
+                if (geodeticArgs.getGeoDistTypes().size()>1) {
+                    geodistDesc = " ("+dr.getDistCalc().getCalcType()+")";
+                }
                 out.println(Outputs.formatDistance(dr.getDegrees())
                         +" "+Outputs.formatKilometer (dr.getKilometers())
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
                         +" "+sourceDesc
                         +" "+receiverDesc
-                        +"      "+(dr.hasDescription() ? dr.getDescription() : "")
+                        +"      "+(dr.hasDescription() ? dr.getDescription() : "") + geodistDesc
                 );
             }
         } else if (outputTypeArgs.isHTML()) {

@@ -14,15 +14,18 @@ the earth.
 
 An additional source of error can be the calculation of distances
 from source and receiver latitude and longitude. The angular distance
-between two latitude and longitude points can be based on the surface distance
+between two latitude and longitude points can be calculated assuming the earth
+is a sphere, or can take the elliptical shape in to account. If using an
+ellipse, this can further be based on the surface distance
 or the angle from the center of the earth. In a sphere, these are equivalent,
-but on an ellipsoid they are not. It is generally more accurate to base the
-traveltime calculations based on the geocentric angle instead of the surface
-arc distance. This discrepancy arose from the difference in definition of
+but on an ellipsoid they are not.
+
+This discrepancy arises from the difference in definition of
 the
 `geodetic and geocentic latitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
 Geodetic is defined as the angle between the surface normal plane and the equatorial
-plane while geocentric is angle between the radius to the point and to the equator.
+plane while geocentric is angle between the radius to the point and the
+equatorial plane.
 For example, the spherical, geocentric angle between
 an earthquake on the equator, at latitude, longitude (0,30),
 to a station at (0/0) is 30 degrees,
@@ -30,13 +33,23 @@ which is slightly larger than the geodetic distance between
 an earthquake at due north (30,0) of the same station, 29.86 degrees
 and slightly smaller than the geodetic distance from
 an earthquake due east (30,0), 30.03 degrees, using the WGS84 ellipsoid.
+The geocentric distance is the same as spherical, 30 degrees, for the
+earthquake on the equator, but is even smaller, 29.83 degrees, for the
+earthquake to the north.
+
 The `best` method of calculating distance from latitude and longitude will
 depend on the phases of interest and the area of interest.
 Because TauP is
 spherical, the default is to not take the elliptical nature of the earth
-into account when calculating these distances. But this can be changed with
-the :code:`--geodetic` parameter, which implies that the given latitudes
-are geodetic instead of geocentric. Geodetic calculations use the
+into account when calculating these distances.
+For deep ray paths, it may be more accurate to base the
+traveltime calculations based on the geocentric angle instead of the
+geodetic surface distance, but for shallow paths geodetic may be better.
+
+This can be changed with
+the :code:`--geodist` parameter, which can take any combination of
+`spherical`, `geocentric` or `geodetic`.
+Geodetic calculations use the
 geographiclib package of :cite:t:`Karney2013` `Karney` where the geocentric
 angle is determined from the surface distance (km) and the average radius
 of the geodesic, (2*equatorial+polar)/3.
@@ -44,6 +57,17 @@ And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`
 parameter or the  :code:`--planet` for well know flattening values of the
 planets.
+
+The differences for a station at (0,0) and two earthquakes at (0,30) and (30,0)
+can be seen for all three distance calculations by:
+
+.. literalinclude:: examples/taup_distaz_--sta_0_0_--evt_0_30_--evt_30_0__--geodist_spherical_geocentric_geodetic.cmd
+  :language: text
+
+
+.. literalinclude:: examples/taup_distaz_--sta_0_0_--evt_0_30_--evt_30_0__--geodist_spherical_geocentric_geodetic
+  :language: text
+
 
 Oceans
 ------
@@ -194,7 +218,7 @@ Primary sources of time errors include:
   station, this will have more or less of an effect both via the source to
   station distance and on the actual travel time calculation. TauP can
   calculate distances using an elliptical flattening value,
-  via the :code:`--geodetic` parameter, but does not try to
+  via the :code:`--geodist` parameter, but does not try to
   correct for the second effect. There are external routines to
   calculate a correction to the travel time for this.
 
