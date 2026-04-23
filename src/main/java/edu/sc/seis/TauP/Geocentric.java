@@ -263,7 +263,7 @@ public class Geocentric {
     double radius = DistAzKarney.averageRadiusMeter(new Geodesic(_a, _f));
     double[] xyz = SphericalCoords.xyzFromLatLonRadius(sphLat, sphLon, radius-pointDepthM);
     List<Double> point = IntReverse(xyz[0], xyz[1], xyz[2], false);
-    return new double[] {point.get(0), point.get(1), point.get(2)};
+    return new double[] {point.get(0), point.get(1), pointDepthM};
   }
 
   public double length(double[] vec) {
