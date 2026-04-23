@@ -91,13 +91,19 @@ public class TauP_DistAz extends TauP_Tool {
             out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+getGeodeticStr()+")  ");
             out.println("---------------------------------------------------------------------------------------------");
             for (Daz dr : dazList) {
-                String sourceDesc = dr.getSource().getLocationDescription();
-                if (sourceDesc.endsWith(" 0.00 m")) {
-                    sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
+                String sourceDesc = "";
+                if (dr.getSource() != null) {
+                    sourceDesc = dr.getSource().getLocationDescription();
+                    if (sourceDesc.endsWith(" 0.00 m")) {
+                        sourceDesc = sourceDesc.substring(0, sourceDesc.length() - 7);
+                    }
                 }
-                String receiverDesc = dr.getReceiver().getLocationDescription();
-                if (receiverDesc.endsWith(" 0.00 m")) {
-                    receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
+                String receiverDesc = null;
+                if (dr.getReceiver() != null ) {
+                    receiverDesc = dr.getReceiver().getLocationDescription();
+                    if (receiverDesc.endsWith(" 0.00 m")) {
+                        receiverDesc = receiverDesc.substring(0, receiverDesc.length() - 7);
+                    }
                 }
                 out.println(Outputs.formatDistance(dr.getDegrees())
                         +" "+Outputs.formatKilometer (dr.getKilometers())
@@ -167,8 +173,23 @@ public class TauP_DistAz extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
+        if (!distArgs.allEmpty() &&
+                !(geodeticArgs.getEventLocations().isEmpty() && ! qmlStaxmlArgs.hasQml()) &&
+                !(geodeticArgs.getStationLocations().isEmpty() && ! qmlStaxmlArgs.hasStationXML())
+        ) {
+            throw new IllegalArgumentException("Cannot specify all three of Distance, Event, Station");
+        }
         if (!distArgs.allEmpty() && ! (geodeticArgs.hasAzimuth() || geodeticArgs.hasBackAzimuth())) {
-            throw new IllegalArgumentException("Distance only used with azimuth or backazimuth");
+            throw new IllegalArgumentException("Distance only used with event, azimuth or station, backazimuth");
+        }
+        if ((geodeticArgs.hasAzimuth() && geodeticArgs.hasBackAzimuth())) {
+            throw new IllegalArgumentException("Cannot specify both azimuth and backazimuth");
+        }
+        if ((geodeticArgs.getEventLocations().isEmpty() && ! qmlStaxmlArgs.hasQml()) && geodeticArgs.hasAzimuth()) {
+            throw new IllegalArgumentException("Azimuth requires event location or QuakeML");
+        }
+        if ((geodeticArgs.getStationLocations().isEmpty() && ! qmlStaxmlArgs.hasStationXML()) && geodeticArgs.hasBackAzimuth()) {
+            throw new IllegalArgumentException("Back Azimuth requires station location or StationXML");
         }
         if (distArgs.allEmpty() && (geodeticArgs.hasAzimuth() || geodeticArgs.hasBackAzimuth())) {
             throw new IllegalArgumentException("Azimuth and backazimuth require distance in deg or km");
