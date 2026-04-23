@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static edu.sc.seis.TauP.DescribeLatLon.describeLatLon;
+
 public class DistanceArgs {
 
     private ModelArgs modelArgs;
@@ -111,7 +113,7 @@ public class DistanceArgs {
                     for (LatLonLocatable evtLoc : quakes) {
                         DistanceRay evtDr = DistanceRay.duplicate(dr);
                         evtDr.withEventAzimuth(evtLoc, getAzimuth());
-                        String sourceDesc = evtLoc.getLocationDescription();
+                        String sourceDesc =  describeLatLon(evtLoc);
                         if (sourceDesc.endsWith(" 0.00 m")) {
                             sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
                         }
@@ -133,10 +135,7 @@ public class DistanceArgs {
                     for (LatLonLocatable staLoc : stationList) {
                         DistanceRay staDr = DistanceRay.duplicate(dr);
                         staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
-                        String receiverDesc = staLoc.getLocationDescription();
-                        if (receiverDesc.endsWith(" 0.00 m")) {
-                            receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
-                        }
+                        String receiverDesc = describeLatLon(staLoc);
                         staDr.setDescription("baz " + Outputs.formatDistance(getBackAzimuth()) + " from " + receiverDesc);
                         staOut.add(staDr);
                     }
@@ -151,14 +150,8 @@ public class DistanceArgs {
                 for (LatLonLocatable staLoc : stationList) {
                     for (DistanceCalc distCalc : distCalcList) {
                         DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalc);
-                        String sourceDesc = dr.getSource().getLocationDescription();
-                        if (sourceDesc.endsWith(" 0.00 m")) {
-                            sourceDesc = sourceDesc.substring(0, sourceDesc.length()-7);
-                        }
-                        String receiverDesc = dr.getReceiver().getLocationDescription();
-                        if (receiverDesc.endsWith(" 0.00 m")) {
-                            receiverDesc = receiverDesc.substring(0, receiverDesc.length()-7);
-                        }
+                        String sourceDesc = describeLatLon(dr.getSource());
+                        String receiverDesc = describeLatLon(dr.getReceiver());
                         dr.setDescription(sourceDesc+" to "+receiverDesc);
                         out.add(dr);
                     }

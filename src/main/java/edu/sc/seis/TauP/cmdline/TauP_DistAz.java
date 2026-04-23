@@ -6,7 +6,6 @@ import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.Location;
-import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -14,9 +13,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import static edu.sc.seis.TauP.DescribeLatLon.describeLatLon;
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -92,20 +91,6 @@ public class TauP_DistAz extends TauP_Tool {
             out.println("Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   ("+getGeodeticStr()+")  ");
             out.println("---------------------------------------------------------------------------------------------");
             for (Daz dr : dazList) {
-                String sourceDesc = "";
-                if (dr.getSource() != null) {
-                    sourceDesc = dr.getSource().getLocationDescription();
-                    if (sourceDesc.endsWith(" 0.00 m")) {
-                        sourceDesc = sourceDesc.substring(0, sourceDesc.length() - 7);
-                    }
-                }
-                String receiverDesc = null;
-                if (dr.getReceiver() != null ) {
-                    receiverDesc = dr.getReceiver().getLocationDescription();
-                    if (receiverDesc.endsWith(" 0.00 m")) {
-                        receiverDesc = receiverDesc.substring(0, receiverDesc.length() - 7);
-                    }
-                }
                 String geodistDesc = "";
                 if (geodeticArgs.getGeoDistTypes().size()>1) {
                     geodistDesc = " ("+dr.getDistCalc().getCalcType()+")";
@@ -114,8 +99,8 @@ public class TauP_DistAz extends TauP_Tool {
                         +" "+Outputs.formatKilometer (dr.getKilometers())
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
-                        +" "+sourceDesc
-                        +" "+receiverDesc
+                        +" "+describeLatLon(dr.getSource())
+                        +" "+describeLatLon(dr.getReceiver())
                         +"      "+(dr.hasDescription() ? dr.getDescription() : "") + geodistDesc
                 );
             }
@@ -127,8 +112,8 @@ public class TauP_DistAz extends TauP_Tool {
                         Outputs.formatKilometer (dr.getKilometers()),
                         Outputs.formatDistance(dr.getNormalizedAzimuth()),
                         Outputs.formatDistance(dr.getNormalizedBackAzimuth()),
-                        dr.getSource().getLocationDescription(),
-                        dr.getReceiver().getLocationDescription(),
+                        describeLatLon(dr.getSource()),
+                        describeLatLon(dr.getReceiver()),
                         (dr.hasDescription() ? dr.getDescription() : ""),
                         dr.getDistCalc().getCalcType()
                 );

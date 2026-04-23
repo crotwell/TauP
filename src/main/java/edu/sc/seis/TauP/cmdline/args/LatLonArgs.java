@@ -8,6 +8,8 @@ import picocli.CommandLine;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.DescribeLatLon.describeLatLon;
+
 public class LatLonArgs {
 
     @CommandLine.Option(names = {"--sta", "--station"},
@@ -62,7 +64,7 @@ public class LatLonArgs {
     public void validateArguments() {
         for (LatLonLocatable loc : getEventLocations()) {
             if (loc.asLocation().getLatitude() < -90 || loc.asLocation().getLatitude() > 90) {
-                String desc = loc.getLocationDescription();
+                String desc = describeLatLon(loc);
                 throw new ArgumentValidationException("Latitude must be -90 <= lat <= 90, but was "
                         +loc.asLocation().getLatitude()+" for "+desc);
             }

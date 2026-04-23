@@ -36,7 +36,7 @@ public class DistanceCalcGeocentric extends DistanceCalc {
     @Override
     public double[] latLonForAzimuth(double lat, double lon, double depthKm,
                                      double azimuth, double distdeg, double pointDepthKm) {
-        double[] lld = geocentric.latLonForAzimuth(lat, lon, depthKm*1000, azimuth, distdeg, pointDepthKm);
+        double[] lld = geocentric.latLonForAzimuth(lat, lon, depthKm*1000, azimuth, distdeg, pointDepthKm*1000);
         lld[2] /= 1000; // m to km
         return lld;
     }
