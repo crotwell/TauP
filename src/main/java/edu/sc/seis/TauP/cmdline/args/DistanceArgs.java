@@ -527,9 +527,11 @@ public class DistanceArgs {
             throw new ArgumentValidationException("Must specify at least one distance or station, event.");
         }
         distArgs.validateArguments();
-        if (hasEventLatLon() && hasStationLatLon()
-                && (hasAzimuth() || hasBackAzimuth())) {
-            throw new ArgumentValidationException("Cannot specify azimuth or back azimuth when both station and event are given");
+        if (hasEventLatLon() && hasBackAzimuth()) {
+            throw new ArgumentValidationException("Cannot specify back azimuth and event");
+        }
+        if (hasStationLatLon() && hasAzimuth() ) {
+            throw new ArgumentValidationException("Cannot specify azimuth and station");
         }
         if ((hasAzimuth() && hasBackAzimuth())) {
             throw new ArgumentValidationException("Cannot specify both azimuth and back azimuth");
