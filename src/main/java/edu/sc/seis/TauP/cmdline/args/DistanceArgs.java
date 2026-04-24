@@ -536,6 +536,10 @@ public class DistanceArgs {
         return distArgs.allIndexRays;
     }
 
+    public GeodeticArgs getGeodeticArgs() {
+        return geodeticArgs;
+    }
+
     @ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Distance is given by:%n")
     DistanceRayArgs distArgs = new DistanceRayArgs();
 

@@ -235,7 +235,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	public void printResultHtml(PrintWriter writer, List<Arrival> arrivalList) throws TauPException {
 		HTMLUtil.createHtmlStart(writer, "TauP Path", "", false);
 
-		String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
+		String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
+				getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
 		writer.println("<h5>"+modelLine+"</h5>");
 
 		printResultSVG(writer, arrivalList);

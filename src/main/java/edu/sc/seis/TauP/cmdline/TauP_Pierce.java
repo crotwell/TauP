@@ -251,7 +251,8 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
     public void printPierceAsHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         HTMLUtil.createHtmlStart(out, "TauP Pierce", HTMLUtil.createTableCSS(), true);
 
-        String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
+        String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
+                getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
         out.println("<h5>"+modelLine+"</h5>");
 
         List<String> headers = new ArrayList<>();

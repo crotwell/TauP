@@ -33,10 +33,14 @@ for kilometers with :code:`--exactkilometer`.
 
 If we know the event and station locations, we can use the :code:`--evt` and
 :code:`--sta` to give the latitude and longitudes and TauP can calculate the
-distance. The :code:`--geodetic` argument does the distance calculation using
-an ellipticity using the geographiclib package of :cite:t:`Karney2013`,
-the default is purely spherical. The internal time calculations
-are always spherical. We can also read station locations from a StationXML
+distance. The :code:`--geodist` argument changes the distance calculation
+to be spherical, geocentric or geodetic. Geocentric calculates the anglular
+distance from the center of the earth for an ellipsoid. Geodetic also uses
+ellipticity, but calculates distance along the surface of the ellipsoid
+using the geographiclib package of :cite:t:`Karney2013`.
+The default is distance calculation is purely spherical and the
+internal time calculations are always spherical.
+We can also read station locations from a StationXML
 file with :code:`--staxml` and event locations from a QuakeML file with
 :code:`--qml`. Even more fun is to give a station id,
 like :code:`--sid CO_HAW` or a
@@ -61,9 +65,9 @@ allows searching for arrivals at a known time.
 If we give event location via :code:`--evt` and azimuth via :code:`--az`, then
 the resulting station location will be calculated. The reverse, giving
 station location via :code:`--sta` and back azimuth via :code:`--baz` will
-calculate the event location. Both cases with use purely spherical calculations
-unless the :code:`--geodetic` argument is given, in which case these are
-calculated via geographiclib, :cite:t:`Karney2013`.
+calculate the event location. Both cases with use spherical, geocentric
+or goedetic calculations depending on which parameters of the :code:`--geodist`
+argument are given. Spherical is the default.
 
 For debugging purposes, the :code:`--allindex` and :code:`--rayparamidx`
 will show the calculation at the model sampling, for all or one ray by

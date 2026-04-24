@@ -193,14 +193,15 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                         modelArgs.getModelName(),
                         getScatterer(),
                         isWithAmplitude(), sourceArgs,
-                        relativePhaseName, "Find", false);
+                        relativePhaseName, "Find", false,
+                        getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
             } else {
                 TauP_Time.printArrivalsAsText(out, arrivalList,
                         modelArgs.getModelName(),
                         getScatterer(),
                         onlyPrintTime, onlyPrintRayP,
                         isWithAmplitude(), sourceArgs,
-                        relativePhaseName, false);
+                        relativePhaseName, false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
             }
         }
         out.flush();
@@ -585,6 +586,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             description="distance in degrees", split=",")
     protected void setDegree(List<Double> degreesList) {
         distanceArgs.setDegreeList(degreesList);
+    }
+
+    public DistanceArgs getDistanceArgs() {
+        return distanceArgs;
     }
 
     DistanceArgs distanceArgs = new DistanceArgs(modelArgs);

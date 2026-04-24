@@ -1,5 +1,5 @@
 
-Model: prem
+Model: prem  Dist: spherical
 Distance   Depth   Phase        Travel    Ray Param  Takeoff  Incident Station   Purist    Purist    
   (deg)     (km)   Name         Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name      
 -----------------------------------------------------------------------------------------------------

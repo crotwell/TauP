@@ -10,7 +10,6 @@ import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
-import net.sf.geographiclib.Geodesic;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -105,7 +104,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
                 }
 
-                String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
+                String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
+                        getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
                 writer.println("<h5>" + modelLine + " " + faultPlane + "</h5>");
 
                 Vector p = faultPlane.pAxis();
@@ -126,7 +126,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 if (! arrivalList.isEmpty()) {
                     TauP_Time.printArrivalsAsHtmlTable(writer, arrivalList, getTauModelName(), getScatterer(),
                             false, sourceArgs, new ArrayList<String>(), "beachball",
-                            false);
+                            false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
                 }
 
                 for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.amps, BeachballType.ampsv, BeachballType.ampsh)) {
@@ -488,7 +488,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     public void printResultHtml(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList) throws TauPException {
 
         HTMLUtil.createHtmlStart(writer, "TauP Beachball", "", false);
-        String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(), getScatterer()));
+        String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
+                getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
         writer.println("<h5>"+modelLine+"</h5>");
         for (BeachballType bb : List.of(BeachballType.ampp, BeachballType.ampsv, BeachballType.ampsh)) {
 

@@ -1,5 +1,5 @@
 
-Model: iasp91
+Model: iasp91  Dist: geodetic
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist  Description
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name               
 ---------------------------------------------------------------------------------------------------------
