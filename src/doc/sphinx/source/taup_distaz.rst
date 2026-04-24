@@ -33,7 +33,7 @@ gives you distances from these earthquakes to those stations.
 .. literalinclude:: examples/taup_distaz_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodist_geodetic
   :language: text
 
-It can also calculate from either event and azimuth,
+It can also calculate from event, distance and azimuth.
 
 .. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30_--geodist_geodetic.cmd
   :language: text
@@ -41,13 +41,13 @@ It can also calculate from either event and azimuth,
 .. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30_--geodist_geodetic
   :language: text
 
- or station and back azimuth.
+Or from station, distance and back azimuth.
 
- .. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic.cmd
-   :language: text
+.. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic.cmd
+  :language: text
 
- .. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic
-   :language: text
+.. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic
+  :language: text
 
 
 The usage is:

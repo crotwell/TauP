@@ -60,7 +60,7 @@ or radian. Or we can give a takeoff angle with :code:`--takeoff` and a range
 of takeoff angles with :code:`--takeoffrange` similar to the distance range
 arguments. And we can give an incident angle with :code:`--incident` and a range
 of incident angles with :code:`--incidentrange`. The :code:`--seconds` argument
-allows searching for arrivals at a known time.
+allows searching for arrivals from a phase at a known time but at unknown distance.
 
 If we give event location via :code:`--evt` and azimuth via :code:`--az`, then
 the resulting station location will be calculated. The reverse, giving

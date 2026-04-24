@@ -19,6 +19,21 @@ very useful.
 By default it runs on port 7409, which kind of looks like T-A-U-P if you squint
 just right.
 
+In addition to mapping the query parameters to regular command line arguments,
+it also accepts POST queries with the parameters in JSON format. So doing a
+GET on this url:
+
+:code:`http://localhost:7409/time?phase=P,S&degree=35&format=text`
+
+and a POST to :code:`http://localhost:7409/time` that sends the following:
+
+:code:`{"format": "text", "degree": [35], "phase": ["P", "S"]}`
+
+are both equivalent to the command line:
+
+:code:`taup time --degree 35 --text --phase P,S`
+
+
 To start, run
 
 :code:`taup web`
@@ -26,11 +41,15 @@ To start, run
 and then open your favorite web browser
 to `http://localhost:7409 <http://localhost:7409>`_.
 
+Or you can append the :code:`--open` argument and TauP will start the web
+server and try to open the page in your default web browser.
+
 Note that the web server only listens for connections from the same computer,
-as a security issue, and so the web interface is not available from other
+as a security precaution, and so the web interface is not available from other
 systems. If you wish to have an instance of TauP accessible from other
 machines, we recommend proxying via a regular web server. For example Apache2
-via mod_proxy.
+via mod_proxy, but this style is discouraged for the wider web as it may
+present a security issue.
 
 Also, the "Calculator" page uses fetch to process results and so
 if you have privacy web blockers enabled on your browser you may need to
