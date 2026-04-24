@@ -5,13 +5,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Calculations &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Calculations &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Phases" href="phaseNaming.html" />
@@ -37,7 +38,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -116,41 +117,79 @@ between the calculated times in a model and the actual travel times within
 the earth.</p>
 <p>An additional source of error can be the calculation of distances
 from source and receiver latitude and longitude. The angular distance
-between two latitude and longitude points can be based on the surface distance
+between two latitude and longitude points can be calculated assuming the earth
+is a sphere, or can take the elliptical shape in to account. If using an
+ellipse, this can further be based on the surface distance
 or the angle from the center of the earth. In a sphere, these are equivalent,
-but on an ellipsoid they are not. It is generally more accurate to base the
-traveltime calculations based on the geocentric angle instead of the surface
-arc distance. This discrepancy arrised from the difference in definition of
+but on an ellipsoid they are not.</p>
+<p>This discrepancy arises from the difference in definition of
 the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates">geodetic and geocentic latitude</a>.
 Geodetic is defined as the angle between the surface normal plane and the equatorial
-plane while geocentric is angle between the radius to the point and to the equator.
-For example, the geocentric angle between
+plane while geocentric is angle between the radius to the point and the
+equatorial plane.
+For example, the spherical, geocentric angle between
 an earthquake on the equator, at latitude, longitude (0,30),
-to a station at (0/0) is 30 degrees, which is slightly larger than that between
-an earthquake at due north (30,0) of the same station, 29.83 degrees. Because TauP is
+to a station at (0/0) is 30 degrees,
+which is slightly larger than the geodetic distance between
+an earthquake at due north (30,0) of the same station, 29.86 degrees
+and slightly smaller than the geodetic distance from
+an earthquake due east (30,0), 30.03 degrees, using the WGS84 ellipsoid.
+The geocentric distance is the same as spherical, 30 degrees, for the
+earthquake on the equator, but is even smaller, 29.83 degrees, for the
+earthquake to the north. Note that spherical and geocentric calculate
+distance as an anglular at the center of the earth while geodetic calculates
+distance as kilometers along the surface of the ellipsoid. We can convert
+central angle to and from kilometers on the surface using a reference
+sphere of the average radius, but this conversion is not exact.</p>
+<p>The <cite>best</cite> method of calculating distance from latitude and longitude will
+depend on the phases of interest and the area of interest.
+Because TauP is
 spherical, the default is to not take the elliptical nature of the earth
-into account when calculating these distances. But this can be changed with
-the <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code> parameter, which implies that the given latitudes
-are geodetic instead of geocentric. Geodetic calculations use the
-geographiclib package of <span id="id2">Karney [<a class="reference internal" href="bibliography.html#id17" title="Charles F. F. Karney. Algorithms for geodesics. Journal of Geodesy, 87(1):43–55, Jan 2013. URL: https://doi.org/10.1007/s00190-012-0578-z, doi:10.1007/s00190-012-0578-z.">Kar13</a>]</span> <cite>Karney</cite>.
+into account when calculating these distances.
+For deep ray paths, it may be more accurate to base the
+traveltime calculations based on the geocentric angle,
+but for shallow paths the geodetic surface distance may be better.</p>
+<p>This can be changed with
+the <code class="code docutils literal notranslate"><span class="pre">--geodist</span></code> parameter, which can take any combination of
+<cite>spherical</cite>, <cite>geocentric</cite> or <cite>geodetic</cite>.
+Geodetic calculations use the
+geographiclib package of <span id="id2">Karney [<a class="reference internal" href="bibliography.html#id17" title="Charles F. F. Karney. Algorithms for geodesics. Journal of Geodesy, 87(1):43–55, Jan 2013. URL: https://doi.org/10.1007/s00190-012-0578-z, doi:10.1007/s00190-012-0578-z.">Kar13</a>]</span> <cite>Karney</cite> where the geocentric
+angle is determined from the surface distance (km) and the average radius
+of the geodesic, (2*equatorial+polar)/3.
 And for use with models of other planets,
 the default flattening can be changed with the <code class="code docutils literal notranslate"><span class="pre">--geodeticflattening</span></code>
-parameter.</p>
+parameter or the  <code class="code docutils literal notranslate"><span class="pre">--planet</span></code> for well know flattening values of the
+planets.</p>
+<p>The differences for a station at (0,0) and two earthquakes at (0,30) and (30,0)
+can be seen for all three distance calculations by:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --sta 0 0 --evt 0 30 --evt 30 0  --geodist spherical geocentric geodetic
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   (Spherical,Geocentric 298.257223563,Geodetic 298.257223563)  
+---------------------------------------------------------------------------------------------
+   29.83   3317.3   180.00      0.00 30.00/0.00 0.00/0.00      30.00/0.00 to 0.00/0.00 (geocentric)
+   29.86   3320.1   180.00      0.00 30.00/0.00 0.00/0.00      30.00/0.00 to 0.00/0.00 (geodetic)
+   30.00   3335.8   -90.00     90.00 0.00/30.00 0.00/0.00      0.00/30.00 to 0.00/0.00 (spherical)
+   30.00   3335.8   -90.00     90.00 0.00/30.00 0.00/0.00      0.00/30.00 to 0.00/0.00 (geocentric)
+   30.00   3335.8   180.00      0.00 30.00/0.00 0.00/0.00      30.00/0.00 to 0.00/0.00 (spherical)
+   30.03   3339.6   -90.00     90.00 0.00/30.00 0.00/0.00      0.00/30.00 to 0.00/0.00 (geodetic)
+</pre></div>
+</div>
 </section>
 <section id="oceans">
 <h2>Oceans<a class="headerlink" href="#oceans" title="Link to this heading">¶</a></h2>
 <p>TauP is capable of handling models,
 like <a class="reference external" href="_static/StdModels/ak135favg.nd">ak135favg</a>, that have an ocean layer.
-However, care should be taken with S waves as they cannot propigate in a fliud
-layer. So the phase SS doesn’t exist in ak135favg, but the phase
+However, care should be taken with S waves as they cannot propagate in a fluid
+layer. So the phase SS doesn't exist in ak135favg, but the phase
 <cite>S^3S</cite> potentially does, if the source and receiver are below the ocean layer.
 Also, a phase like <cite>PP</cite> is generally thought of as a reflection off of the
 free surface of the solid earth, but in this model that phase
 is a reflection from the surface of the ocean. Probably reflecting off of
 the sea floor would be more accurate, using <cite>P^3P</cite>.
 Also, the default station
-depth is the model surface, but we generall don’t think of seismic stations
+depth is the model surface, but we general don't think of seismic stations
 floating on top of the ocean, so it may be more appropriate to locate the
 station at depth, on the bottom of the ocean layer. Or perhaps in this case,
 using <a class="reference external" href="_static/StdModels/ak135fcont.nd">ak135fcont</a>
@@ -165,7 +204,7 @@ results. They are provided in the hope that they are helpful and to
 allow feedback from the community, but testing of their correctness
 is ongoing.</p>
 </div>
-<p>TauP can calculate an amplitude factor estimate for some simple phases, as long
+<p>TauP can calculate an amplitude and complex phase factor estimate for some simple phases, as long
 as the phase path is simple turning or reflection, but not for head or diffracted
 phases. The amplitude factor, given for both the P-Sv and Sh systems is the
 product of multiple factors. For details, see <span id="id3">Ammon <em>et al.</em> [<a class="reference internal" href="bibliography.html#id24" title="Charles J. Ammon, Aaron A. Velasco, Thorne Lay, and Terry C. Wallace. Foundations of Modern Global Seismology. Academic Press, second edition edition, 2020. ISBN 978-0-12-815679-7. doi:10.1016/C2017-0-03756-4.">AVLW20</a>]</span>
@@ -189,6 +228,20 @@ though this calculation will be larger. These values may be more useful for
 comparing relative amplitude between phases at a distance,
 or for the same phase at multiple distances, rather than expecting the
 observed amplitude on a real seismogram to match to any accuracy.</p>
+<p>While most seismic arrivals have either no phase shift, or a simple inversion
+equivalent to a <span class="math notranslate nohighlight">\(\pi\)</span>, or 180 degree, phase shift, there are cases where the phase
+shift is different. In general these happen when the amplitude coefficient
+is not purely real, e.g. it has a non-zero imaginary component. This can occur due
+to &quot;internal caustics&quot;, such as the <span class="math notranslate nohighlight">\(\pi/2\)</span> shift for SS,
+or in cases where the ray parameter at a boundary has
+one or more of the reflected and transmitted P or S waves do not propagate,
+like for SKKS where the ray parameter cannot exist as a P wave in the
+mantle at the KK reflection. In
+this case an evanescent  wave results, with purely imaginary amplitude
+coefficient. The remaining reflections and transmissions that do exist as
+propagating rays, must collectively have an imaginary component as well in
+order to satisfy the boundary conditions and energy conservation at the
+interface. Both of these cases will result in a phase shift of the arrival.</p>
 </section>
 <section id="time-errors">
 <h2>Time Errors<a class="headerlink" href="#time-errors" title="Link to this heading">¶</a></h2>
@@ -201,7 +254,7 @@ wrong.</p>
 </ol>
 <blockquote>
 <div><p>This is largely unavoidable, but may end up being the most important. The
-Earth’s velocity structure is close to 1D, but does vary. A global model
+Earth's velocity structure is close to 1D, but does vary. A global model
 like iasp91 or prem, attempt to give a reasonable approximation to the
 global velocity structure, averaged in some sense, but arrivals from a
 particular earthquake at a particular station will feel an velocity structure
@@ -268,12 +321,12 @@ earth is elliptical. Depending on the relative location of the earthquake and
 station, this will have more or less of an effect both via the source to
 station distance and on the actual travel time calculation. TauP can
 calculate distances using an elliptical flattening value,
-via the <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code> parameter, but does not try to
+via the <code class="code docutils literal notranslate"><span class="pre">--geodist</span></code> parameter, but does not try to
 correct for the second effect. There are external routines to
 calculate a correction to the travel time for this.</p>
 </div></blockquote>
 <ol class="arabic simple" start="6">
-<li><p>Other “unknown unknown” errors</p></li>
+<li><p>Other &quot;unknown unknown&quot; errors</p></li>
 </ol>
 <blockquote>
 <div><p>While we have tried to test the code extensively, using many test cases, it

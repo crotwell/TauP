@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Phases &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Phases &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -105,7 +105,7 @@
 <p>A major feature of the TauP Toolkit is the implementation of a phase name parser
 that allows the user to define essentially arbitrary phases through the earth.
 Thus, the TauP Toolkit is extremely flexible in this respect since it is
-not limited to a pre-defined set of phases.
+not limited to a predefined set of phases.
 Phase names are not hard-coded into the software, rather the names are interpreted
 and the appropriate propagation path and resulting times are constructed at run time.
 Designing a phase-naming convention that is general enough to support arbitrary phases
@@ -222,7 +222,7 @@ the depth to an interface involved in an interaction.</p>
 <td><p>appended to a velocity to represent a horizontal phase velocity</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">_</span></code></p></td>
-<td><p>delimits a named discontinuty within a phase</p></td>
+<td><p>delimits a named discontinuity within a phase</p></td>
 </tr>
 </tbody>
 </table>
@@ -277,7 +277,7 @@ model. Use of a depth number greater than 10 km from any discontinuity
 will result in a failed phase name.</p>
 <p>In addition, models given in the <em>named discontinuities</em> format,
 the name for a discontinuity can be used instead of the depth within a phase.
-The name is pre and postpended by an underscore, <code class="code docutils literal notranslate"><span class="pre">_</span></code>, and can only
+The name is prepended and postpended by an underscore, <code class="code docutils literal notranslate"><span class="pre">_</span></code>, and can only
 contain letters, numbers and the dash symbol, <code class="code docutils literal notranslate"><span class="pre">-</span></code>.
 For example, if a model contained a discontinuity at 1000 km depth that
 was named <cite>mid-mantle</cite>, then the phase <code class="code docutils literal notranslate"><span class="pre">Pv1000p</span></code> and
@@ -374,8 +374,8 @@ In all other respects, the <code class="code docutils literal notranslate"><span
 for for all discontinuities in the model, including
 the crust, mantle and core.
 However, because
-“<code class="code docutils literal notranslate"><span class="pre">p</span></code> is to <code class="code docutils literal notranslate"><span class="pre">P</span></code>” is not the same as
-“<code class="code docutils literal notranslate"><span class="pre">i</span></code> is to <code class="code docutils literal notranslate"><span class="pre">I</span></code>”,
+&quot;<code class="code docutils literal notranslate"><span class="pre">p</span></code> is to <code class="code docutils literal notranslate"><span class="pre">P</span></code>&quot; is not the same as
+&quot;<code class="code docutils literal notranslate"><span class="pre">i</span></code> is to <code class="code docutils literal notranslate"><span class="pre">I</span></code>&quot;,
 a naming convention was created to use <code class="code docutils literal notranslate"><span class="pre">y</span></code> as an exclusively
 upgoing leg in the inner core. For example in a model with a discontinuity
 at 5500 km depth in the inner core, the phases

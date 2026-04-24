@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Default Parameters &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Default Parameters &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -133,7 +133,7 @@ for various
 parameters. The properties all have default values, which are overridden by
 values from a Properties file. The tools use a text file to load the properties. It reads  <code class="code docutils literal notranslate"><span class="pre">.taup</span></code> in the
 current directory, which overwrites values read in from
-<code class="code docutils literal notranslate"><span class="pre">.taup</span></code> in the user’s home directory. Properties may also be specified by
+<code class="code docutils literal notranslate"><span class="pre">.taup</span></code> in the user's home directory. Properties may also be specified by
 the <code class="code docutils literal notranslate"><span class="pre">--prop</span></code> command line argument.
 In addition, many of the properties can be overridden by command line arguments.</p>
 <p>The form of the properties file is very simple. Each property is set using
@@ -152,7 +152,7 @@ iasp91 by default.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.model.path</span></code>
 search path for models. There is no default,
 but the value
-in the .taup file will be concatinated with any value of taup.model.path
+in the .taup file will be concatenated with any value of taup.model.path
 from the system properties. For example, the environment variable TAUPPATH
 is put into the system property taup.model.path by the wrapper shell scripts.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.source.depth</span></code>
@@ -168,26 +168,26 @@ used if there is a taup.phase.file property.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.depth.precision</span></code>
 precision for depth output, the default is 1 decimal digit.
 Note that this is precision, not accuracy. Just
-because you get more digits doesn’t imply that they have any meaning.</p></li>
+because you get more digits doesn't imply that they have any meaning.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.distance.precision</span></code>
 precision for distance output,
 the default is 2 decimal digits.
 Note that this
 is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
+digits doesn't imply that they have any meaning.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.latlon.precision</span></code>
 precision for latitude and longitude output, the
 default is 2 decimal digits.
 Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
+digits doesn't imply that they have any meaning.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.time.precision</span></code>
 precision for time, the default is 2 decimal digits.
 Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
+digits doesn't imply that they have any meaning.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.rayparam.precision</span></code>
 precision for ray parameter, the default is 3 decimal digits.
 Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
+digits doesn't imply that they have any meaning.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.maxRefraction</span></code>
 The maximum degrees that a Pn or Sn can refract along the moho. Note this
 is not the total distance, only the segment along the moho. The default is 20 degrees.</p></li>
@@ -196,12 +196,14 @@ The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
 Note this is not the total distance, only the segment along the CMB. The default is 60 degrees.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.maxKmpsLaps</span></code>
 The maximum number of laps around the earth for
-kpms style phases.
+kmps style phases.
 Note this is the number of laps, not number of arrivals, so a value of 1
 would give 2 arrivals, one going the short path and one the long way around. This can be fractional, so 0.5 would exclude the long way around
 path. The default is 1.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.path.maxPathInc</span></code>
-maximum distance in degrees between points of a path. This does a simple linear interpolant between nearby values in order to make plots look better. There is noo improvement in the accuracy of the path.</p></li>
+maximum distance in degrees between points of a path. This does a simple
+linear interpolant between nearby values in order to make plots look better.
+There is no improvement in the accuracy of the path.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.table.locsat.maxdiff</span></code>
 maximum distance in degrees for which Pdiff
 or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will
@@ -209,11 +211,11 @@ not be added to the table, even though they may show up in the output of
 TauP Time. Instead, the next later arriving phase, if any, will be used
 instead. The default is 105 degrees.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.table.locsat.depth.precision</span></code>
-precison for depth for locsat output, defaults to 2 decimal digits.</p></li>
+precision for depth for locsat output, defaults to 2 decimal digits.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.table.locsat.distance.precision</span></code>
-precison for distance for locsat output, defaults to 2 decimal digits.</p></li>
+precision for distance for locsat output, defaults to 2 decimal digits.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.table.locsat.time.precision</span></code>
-precison for time for locsat output, defaults to 4 decimal digits.</p></li>
+precision for time for locsat output, defaults to 4 decimal digits.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.minDeltaP</span></code>
 Minimum difference in slowness between
 successive slowness samples. This is used to decide when to stop adding new
@@ -260,7 +262,7 @@ spaces, commas or newlines. In section <a class="reference internal" href="phase
 the phase naming convention are introduced.
 By and large, it is compatible with traditional
 seismological naming conventions, with a few additions and exceptions.
-Also, for compatiblity with <em>ttimes</em>, you may specify
+Also, for compatibility with <em>ttimes</em>, you may specify
 <code class="code docutils literal notranslate"><span class="pre">ttp</span></code>, <code class="code docutils literal notranslate"><span class="pre">ttp+</span></code>, <code class="code docutils literal notranslate"><span class="pre">tts</span></code>, <code class="code docutils literal notranslate"><span class="pre">tts+</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">ttbasic</span></code> or <code class="code docutils literal notranslate"><span class="pre">ttall</span></code> to get a phase list corresponding
 to the <em>ttimes</em> options.</p>

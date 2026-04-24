@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Pierce &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP Pierce &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -187,7 +187,7 @@ deep source at a distance of 57.4 degrees.</p>
 <p>Using <code class="code docutils literal notranslate"><span class="pre">-rev</span></code> would give you all points that the ray changes direction
 and <code class="code docutils literal notranslate"><span class="pre">-under</span></code> gives just the underside reflections.</p>
 <p>Using the <code class="code docutils literal notranslate"><span class="pre">-pierce</span></code> option</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodetic --pierce 2591 --nodiscon
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodist geodetic --pierce 2591 --nodiscon
 </pre></div>
 </div>
 <p>would give you just the points at which S crossed a depth of 2591 kilometers
@@ -197,18 +197,18 @@ Because we specified the latitudes and longitudes, we also get the
 latitudes and longitudes of
 the pierce points, useful for making
 a map view of where the rays encounter the chosen depth.
-Using the <code class="docutils literal notranslate"><span class="pre">--geodetic</span></code> is useful for the distance calculation with
-latitudes and longitudes.
+Using the <code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geodetic</span></code> or <code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geocentric</span></code>
+is useful for the distance calculation with latitudes and longitudes.
 Here is the output,
 distance, depth, latitude and longitude, respectively.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1424.23 seconds at    93.71 degrees for a    200.0 km deep source in the prem model with rayParam    8.717 s/deg, -28.00/122.00 to 12.00/34.20.
-   31.55  2591.0  552.54    -28.00    122.00
-   61.48  2591.0  822.16    -28.00    122.00
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1424.23 seconds at    93.71 degrees for a    200.0 km deep source in the prem model with rayParam    8.717 s/deg, -28.00/122.00 200.00 km to 12.00/34.20.
+   31.55  2591.0  552.54    -17.91     89.44
+   61.48  2591.0  822.16     -3.91     62.40
 </pre></div>
 </div>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
-                   [--help] [--nodiscon] [--rev] [--turn] [--under] [--verbose]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--added] [--amp] [--debug] [--first] [--geodetic]
+                   [--geodetic] [--help] [--rev] [--turn] [--under] [--verbose]
                    [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
                    [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                    [--equitorialradius=m] [--equitorialradius=m]
@@ -220,19 +220,20 @@ distance, depth, latitude and longitude, respectively.</p>
                    [--pierce=depth[,depth...]]... [--sid=sta[,sta...]]...
                    [--evt=lat lon]... [--evt=lat lon]... [--sta=lat lon]...
                    [--sta=lat lon]... [--strikediprake=strike dip rake]...
-                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
-                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
-                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                   [[--allindex] [--deg=d[,d...]]... [--exactdegree=d[,
-                   d...]]... [--exactkilometer=km[,km...]]... [--incident=deg[,
-                   deg...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
-                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
-                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
-                   [--seconds=s[,s...]]... [--takeoff=deg[,deg...]]...
-                   [--degreerange=[step][min max][min max step]]...
-                   [--exactdegreerange=[step][min max][min max step]]...
-                   [--exactkilometerrange=[step][min max][min max step]]...
-                   [--incidentrange=[step][min max][min max step]]...
+                   [--geodist=&lt;geoDistTypes&gt;...]...
+                   [--geodist=&lt;geoDistTypes&gt;...]... [[--mod=&lt;modelName&gt;]
+                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
+                   [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
+                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                   km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
+                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                   i...]]... [--rayparamkm=s/km[,s/km...]]...
+                   [--rayparamrad=s/rad[,s/rad...]]... [--seconds=s[,s...]]...
+                   [--takeoff=deg[,deg...]]... [--degreerange=[step][min max]
+                   [min max step]]... [--exactdegreerange=[step][min max][min
+                   max step]]... [--exactkilometerrange=[step][min max][min max
+                   step]]... [--incidentrange=[step][min max][min max step]]...
                    [--kilometerrange=[step][min max][min max step]]...
                    [--takeoffrange=[step][min max][min max step]]...]...
                    [--html | --json | --text]
@@ -240,6 +241,8 @@ Calculate pierce points for phases at discontinuities in the model.
 
 Options:
 
+      --added, --nodiscon    only prints pierce points for the depths added
+                               with --pierce
       --amp                  show amplitude factor for each phase
       --attenuationfreq=&lt;attenuationFreq&gt;
                              attenuation frequency for amplitude calculations,
@@ -253,8 +256,6 @@ Options:
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
                                default is 4.0
-      --nodiscon             only prints pierce points for the depths added
-                               with -pierce
       --numattenuationfreq=&lt;numFrequencies&gt;
                               number attenuation frequencies for amplitude
                                calculations, default is 64
@@ -353,8 +354,8 @@ Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -363,10 +364,18 @@ Lat,Lon influenced by:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=&lt;geoDistTypes&gt;...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,

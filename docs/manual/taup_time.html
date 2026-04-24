@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Time &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP Time &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -141,7 +141,7 @@ in a phase file with the <code class="docutils literal notranslate"><span class=
 </div>
 <p>gives you arrival times for S and P for a 200 kilometer
 deep source at a distance of 57.4 degrees.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: prem
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: prem  Dist: spherical
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist 
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name   
 ---------------------------------------------------------------------------------------------
@@ -151,14 +151,15 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
 </div>
 <p>If you have a QuakeML file for earthquakes or a StationXML file for stations
 and channels, you can use those to calculate the distances directly. It is
-often useful to use the <code class="docutils literal notranslate"><span class="pre">--geodetic</span></code> when using latitudes and longitudes
+often useful to use the <code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geodetic</span></code> or <code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geocentric</span></code>
+when using latitudes and longitudes
 so that the distance calculation is more accurate. For
 example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodist geodetic -p P,S
 </pre></div>
 </div>
 <p>gives you arrival times for S and P for these earthquakes at those stations.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91  Dist: geodetic
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist  Description
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name               
 ---------------------------------------------------------------------------------------------------------
@@ -176,17 +177,17 @@ USGS event id, like <code class="code docutils literal notranslate"><span class=
 <a class="reference external" href="https://service.iris.edu/irisws/fedcatalog/1/">IRIS FedCat</a> and
 <a class="reference external" href="https://earthquake.usgs.gov/fdsnws/event/1/">USGS FDSN Event</a>
 web services to get the station and event locations and depth. For example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --geodetic --sid CO_HAW --eid us7000pn9s -p SKS
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --geodist geodetic --sid CO_HAW --eid us7000pn9s -p SKS
 </pre></div>
 </div>
 <p>gives you arrival times for SKS for this earthquake at station CO_HAW.
 Note this should not be called repeatedly as it is slow and puts undo
 strain on these web services.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91  Dist: geodetic
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist  Description
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name               
 ---------------------------------------------------------------------------------------------------------
-  124.74    10.0   SKS     1562.57     3.168      5.50     5.49      0.0   124.74   * SKs     2025-03-28T06:20:52 7.7 Mww 22.01/95.94 10.00 km to CO_HAW 33.36/-81.61
+  124.74    10.0   SKS     1562.57     3.168      5.50     5.49      0.0   124.74   * SKs     2025-03-28T06:20:52 7.7 mww 22.01/95.94 10.00 km to CO_HAW 33.36/-81.61
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -203,18 +204,20 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
                  [--rel=phase[,phase...]]... [--sid=sta[,sta...]]... [--evt=lat
                  lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
                  lon]... [--strikediprake=strike dip rake]...
-                 [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]... [--stadepth=depth
-                 [,depth...]]... [--scat=depth deg]...] [[-p=phase[,
-                 phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex]
-                 [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                 [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
-                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
-                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--seconds=s[,s...]]...
-                 [--takeoff=deg[,deg...]]... [--degreerange=[step][min max][min
-                 max step]]... [--exactdegreerange=[step][min max][min max
-                 step]]... [--exactkilometerrange=[step][min max][min max
-                 step]]... [--incidentrange=[step][min max][min max step]]...
+                 [--geodist=&lt;geoDistTypes&gt;...]...
+                 [--geodist=&lt;geoDistTypes&gt;...]... [[--mod=&lt;modelName&gt;] [-h=depth
+                 [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
+                 deg]...] [[-p=phase[,phase...]]...
+                 [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                 km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
+                 [,s/rad...]]... [--seconds=s[,s...]]... [--takeoff=deg[,
+                 deg...]]... [--degreerange=[step][min max][min max step]]...
+                 [--exactdegreerange=[step][min max][min max step]]...
+                 [--exactkilometerrange=[step][min max][min max step]]...
+                 [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--csv |
                  --html | --json | --text]
@@ -331,8 +334,8 @@ Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -341,10 +344,18 @@ Lat,Lon influenced by:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=&lt;geoDistTypes&gt;...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,

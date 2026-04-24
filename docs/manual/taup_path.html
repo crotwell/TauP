@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -133,8 +133,8 @@ generates  the
 angular distances from the epicenter along the path at which the specified rays
 travel. The output can be JSON, an SVG image or
 in GMT <span id="id2">Wessel and Smith [<a class="reference internal" href="bibliography.html#id9" title="P. Wessel and W. H. F. Smith. New version of the Generic Mapping Tools released. Eos, 76:329, 1995.">WS95</a>]</span> <code class="code docutils literal notranslate"><span class="pre">psxy</span></code> format, and is
-placed into the file <cite>taup_path</cite> with approproate extension.
-If you specify the <cite>–gmt</cite> flag then this
+placed into the file <cite>taup_path</cite> with appropriate extension.
+If you specify the <cite>--gmt</cite> flag then this
 is a complete script with the appropriate <cite>psxy</cite> command prepended, so if you
 have GMT installed, you can just:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt
@@ -2303,18 +2303,20 @@ circle.discontinuity.iocb {
                  [--sid=sta[,sta...]]... [--degminmax=min max]...
                  [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
                  lon]... [--sta=lat lon]... [--sta=lat lon]...
-                 [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]... [--stadepth=depth
-                 [,depth...]]... [--scat=depth deg]...] [[-p=phase[,
-                 phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex]
-                 [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                 [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
-                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
-                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--seconds=s[,s...]]...
-                 [--takeoff=deg[,deg...]]... [--degreerange=[step][min max][min
-                 max step]]... [--exactdegreerange=[step][min max][min max
-                 step]]... [--exactkilometerrange=[step][min max][min max
-                 step]]... [--incidentrange=[step][min max][min max step]]...
+                 [--geodist=&lt;geoDistTypes&gt;...]...
+                 [--geodist=&lt;geoDistTypes&gt;...]... [[--mod=&lt;modelName&gt;] [-h=depth
+                 [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
+                 deg]...] [[-p=phase[,phase...]]...
+                 [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                 km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
+                 [,s/rad...]]... [--seconds=s[,s...]]... [--takeoff=deg[,
+                 deg...]]... [--degreerange=[step][min max][min max step]]...
+                 [--exactdegreerange=[step][min max][min max step]]...
+                 [--exactkilometerrange=[step][min max][min max step]]...
+                 [--incidentrange=[step][min max][min max step]]...
                  [--kilometerrange=[step][min max][min max step]]...
                  [--takeoffrange=[step][min max][min max step]]...]... [--gmt |
                  --html | --json | --svg | --text]
@@ -2435,8 +2437,8 @@ Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -2445,10 +2447,18 @@ Lat,Lon influenced by:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=&lt;geoDistTypes&gt;...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,

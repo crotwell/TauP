@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Web &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP Web &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -132,8 +132,8 @@
 to all of the other tools via a web interface. It takes the place of the old
 gui tool that existed in TauP version 2. It can respond to either simple
 queries where each of the query parameters matches the similar command line
-argument, or you can use the “Calculator” page with a web form to create the
-parameters. The “calculator” also displays the equivalent command line
+argument, or you can use the &quot;Calculator&quot; page with a web form to create the
+parameters. The &quot;calculator&quot; also displays the equivalent command line
 version, which can be useful.
 In addition, the TauP documentation is also available.
 Because of strong
@@ -141,29 +141,44 @@ support within the web browser, SVG output from the graphical tools is
 very useful.</p>
 <p>By default it runs on port 7409, which kind of looks like T-A-U-P if you squint
 just right.</p>
+<p>In addition to mapping the query parameters to regular command line arguments,
+it also accepts POST queries with the parameters in JSON format. So doing a
+GET on this url:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">http://localhost:7409/time?phase=P,S&amp;degree=35&amp;format=text</span></code></p>
+<p>and a POST to <code class="code docutils literal notranslate"><span class="pre">http://localhost:7409/time</span></code> that sends the following:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">{&quot;format&quot;:</span> <span class="pre">&quot;text&quot;,</span> <span class="pre">&quot;degree&quot;:</span> <span class="pre">[35],</span> <span class="pre">&quot;phase&quot;:</span> <span class="pre">[&quot;P&quot;,</span> <span class="pre">&quot;S&quot;]}</span></code></p>
+<p>are both equivalent to the command line:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--degree</span> <span class="pre">35</span> <span class="pre">--text</span> <span class="pre">--phase</span> <span class="pre">P,S</span></code></p>
 <p>To start, run</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">web</span></code></p>
 <p>and then open your favorite web browser
 to <a class="reference external" href="http://localhost:7409">http://localhost:7409</a>.</p>
+<p>Or you can append the <code class="code docutils literal notranslate"><span class="pre">--open</span></code> argument and TauP will start the web
+server and try to open the page in your default web browser.</p>
 <p>Note that the web server only listens for connections from the same computer,
-as a security issue, and so the web interface is not available from other
+as a security precaution, and so the web interface is not available from other
 systems. If you wish to have an instance of TauP accessible from other
 machines, we recommend proxying via a regular web server. For example Apache2
-via mod_proxy.</p>
-<p>Also, the “Calculator” page uses fetch to process results and so
+via mod_proxy, but this style is discouraged for the wider web as it may
+present a security issue.</p>
+<p>Also, the &quot;Calculator&quot; page uses fetch to process results and so
 if you have privacy web blockers enabled on your browser you may need to
 disable them for it to function. If you see a message like:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">Network</span> <span class="pre">problem</span> <span class="pre">connecting</span> <span class="pre">to</span> <span class="pre">TauP</span> <span class="pre">server...</span></code></p>
 <p>this could be why.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup web [--debug] [--nodefaultmodels] [--open] [--verbose]
-                [--host=&lt;host&gt;] [--namespace=&lt;base_path&gt;] [-p=&lt;port&gt;]
+                [--expire=&lt;expireSeconds&gt;] [--host=&lt;host&gt;]
+                [--namespace=&lt;base_path&gt;] [-p=&lt;port&gt;]
                 [--models=&lt;extraModelNames&gt;...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
       --debug             enable debugging output
+      --expire=&lt;expireSeconds&gt;
+                          quit if no requests received in n seconds, defaults
+                            to 3600
       --host=&lt;host&gt;       host to expose port on, defaults to localhost
       --models=&lt;extraModelNames&gt;...
                           List of additional models to use

@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Programmatic Access &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Programmatic Access &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -125,7 +125,7 @@ often easier to depend on the publication within the
 <a class="reference external" href="https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview">Maven Central</a>
 repository
 as this facilitates download and updates and provides for automatic dependency
-resolution when using a build tool like maven or gradle.</p>
+resolution when using a build tool like Maven or Gradle.</p>
 <p>Converting the initial model for a source depth is more costly than calculating
 arrivals at a distance, so it is usually more efficient to process all stations
 for each earthquake rather than all earthquakes for a station.</p>
@@ -182,10 +182,10 @@ is below. Each of the normal command line tools are available via this web
 interface, and almost all command line arguments can be sent
 via a corresponding URL query parameter by removing leading dashes.
 For example to calculate the at a distance in kilometers, where the command
-line tool uses ‘–km 100’, the URL would include ‘km=100’ like:</p>
+line tool uses '--km 100', the URL would include 'km=100' like:</p>
 <p><a class="reference external" href="http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json">http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json</a></p>
-<p>Boolean command line flags, like ‘–amp’, can be given a true value as in
-‘amp=true’. Many options have default values, just as in the command line
+<p>Boolean command line flags, like '--amp', can be given a true value as in
+'amp=true'. Many options have default values, just as in the command line
 tools. It may be helpful to experiment with the web gui at</p>
 <p><a class="reference external" href="http://localhost:7409/taup.html">http://localhost:7409/taup.html</a></p>
 <p>to see how the URL is encoded and what the results are. Note that the web form
@@ -291,7 +291,7 @@ access to all of the command line arguments available.</p>
 <section id="graalvm-and-graalpy">
 <h2>Graalvm and Graalpy<a class="headerlink" href="#graalvm-and-graalpy" title="Link to this heading">¶</a></h2>
 <p>It is also possible for python code to interact more directly with
-TauP’s Java code by using Graalvm and
+TauP's Java code by using Graalvm and
 Graalpy. We are considering how best to leverage these tools.</p>
 </section>
 </section>

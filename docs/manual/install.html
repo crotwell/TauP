@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Installation &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -145,8 +145,8 @@ for the shell when hitting the tab key for bash or zsh. You can enable it
 with running this command:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">&lt;(taup</span> <span class="pre">generate-completion)</span></code></p>
 <p>Adding this to your .bash_profile or .zshrc will enable it for future logins.</p>
-<p>Note, for bash 3.2, which the default verion on OSX, there is a bug that
-prevents this from working. The alterantive is to save it as a file like:</p>
+<p>Note, for bash 3.2, which the default version on OSX, there is a bug that
+prevents this from working. The alternative is to save it as a file like:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">generate-completion</span> <span class="pre">&gt;</span> <span class="pre">taup_completion</span></code></p>
 <p>and then source the file:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">taup_completion</span></code></p>
@@ -158,11 +158,12 @@ flags. Continuing to type</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--mod</span></code></p>
 <p>and then hitting the tab key will display the models available for the
 <code class="code docutils literal notranslate"><span class="pre">--mod</span></code> command line argument:</p>
-<p><code class="code docutils literal notranslate"><span class="pre">ak135</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">ak135favg</span>&#160;&#160;&#160; <span class="pre">ak135fcont</span>&#160;&#160; <span class="pre">ak135fsyngine</span>&#160; <span class="pre">iasp91</span>&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">prem</span></code></p>
+<p><code class="code docutils literal notranslate"><span class="pre">ak135</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">ak135fcont</span>&#160;&#160;&#160;&#160; <span class="pre">ek137</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">prem</span>
+<span class="pre">ak135favg</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">ak135fsyngine</span>&#160; <span class="pre">iasp91</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">rem1d</span></code></p>
 </section>
 <section id="what-and-where">
 <h2>What and Where<a class="headerlink" href="#what-and-where" title="Link to this heading">¶</a></h2>
-<p>The current distribution of the TauP package is 3.2.0-SNAPSHOT6, created Feb 10, 2026.</p>
+<p>The current distribution of the TauP package is 3.2.0-SNAPSHOT7, created Apr 24, 2026.</p>
 <p>The distribution directory obtained from either the gzipped tar file or
 the zip file contains:</p>
 <table class="docutils align-default">
@@ -184,12 +185,12 @@ the zip file contains:</p>
 </tr>
 <tr class="row-even"><td><p>bin</p></td>
 <td><p>directory containing the <em>wrapper script</em> to start the tools
-each will print a usage with a –help command line argument.</p></td>
+each will print a usage with a --help command line argument.</p></td>
 </tr>
 <tr class="row-odd"><td><p>lib</p></td>
 <td><p>all the Java classes included in the package, along with
 saved models for prem, iasp91, and ak135 in the TauP jar file.
-Also included are dependancy jars.</p></td>
+Also included are dependency jars.</p></td>
 </tr>
 <tr class="row-even"><td><p>docs</p></td>
 <td><p>a directory with the TauP paper published in SRL and this
@@ -243,7 +244,7 @@ approximation from reflection and transmission coefficients and spreading.</p></
 so users should not expect the exact command from version 2 to work identically
 in version 3. However, in most cases the differences are minor.</p>
 <p>The difference most likely to break is the number of dashes for arguments. In
-version 2, TauP would accept one or two dashes for most argmunents, so</p>
+version 2, TauP would accept one or two dashes for most arguments, so</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-ph</span> <span class="pre">P</span> <span class="pre">-deg</span> <span class="pre">35</span></code></p>
 <p>and</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--ph</span> <span class="pre">P</span> <span class="pre">--deg</span> <span class="pre">35</span></code></p>

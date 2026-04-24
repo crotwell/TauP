@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP VelocityPlot &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP VelocityPlot &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -130,7 +130,7 @@
 <span id="taup-velplot"></span><h1>TauP VelocityPlot<a class="headerlink" href="#taup-velocityplot" title="Link to this heading">¶</a></h1>
 <p>TauP VelocityPlot creates a plot the given velocity model. It can create
 traditional plots of velocity and density as a function of depth, but can
-also plot various derived quantities like Poisson’s Ratio and other material
+also plot various derived quantities like Poisson's Ratio and other material
 properties.</p>
 <p>For example, a plot of P and S velocity against depth on the
 y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
@@ -905,7 +905,7 @@ circle.discontinuity.iocb {
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
 </svg>
-<p>Or a plot of Poisson’s Ratio for the <cite>ak135fcont</cite> model:</p>
+<p>Or a plot of Poisson's Ratio for the <cite>ak135fcont</cite> model:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup velplot --mod ak135fcont -x poisson --svg
 </pre></div>
 </div>
@@ -1316,7 +1316,7 @@ the velocity model file for the standard models. For example:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup velplot --nameddiscon --mod iasp91
 </pre></div>
 </div>
-<p>will extract the iasp91 velocity model into a file named ‘iasp91.nd’
+<p>will extract the iasp91 velocity model into a file named 'iasp91.nd'
 in the current directory.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velplot [--debug] [--help] [--legend] [--verbose]

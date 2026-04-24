@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP SetSac &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP SetSac &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -131,7 +131,7 @@
 <p>TauP SetSac uses the depth and distance information in
 <em>SAC</em> <span id="id2">Tull [<a class="reference internal" href="bibliography.html#id23" title="Joseph E. Tull. SAC - Seismic Analysis Code: User's Manual. Lawrence Livermore National Laboratory, Livermore, CA, revision 2 edition, 1989.">Tul89</a>]</span>
 file headers to
-put theoretical arrival times into the <code class="code docutils literal notranslate"><span class="pre">t0</span></code>–<code class="code docutils literal notranslate"><span class="pre">t9</span></code>
+put theoretical arrival times into the <code class="code docutils literal notranslate"><span class="pre">t0</span></code>--<code class="code docutils literal notranslate"><span class="pre">t9</span></code>
 header variables. The header variable for a phase can be specified with by
 a dash followed by a number, for instance <code class="code docutils literal notranslate"><span class="pre">S-9</span></code> puts the S arrival time
 in <code class="code docutils literal notranslate"><span class="pre">t9</span></code>. If no header is specified then the time will be inserted in the
@@ -143,7 +143,7 @@ They will be overwritten. The ray parameter, in seconds per radian, is also
 inserted into the corresponding <code class="code docutils literal notranslate"><span class="pre">user0</span></code>-<code class="code docutils literal notranslate"><span class="pre">user9</span></code> header.</p>
 <p>Note that triplicated phases are a problem as there is only one
 spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
-one can be put into the choosen header. TauP SetSac assumes that the first arrival
+one can be put into the chosen header. TauP SetSac assumes that the first arrival
 is the most important, and uses it. Additional header variables may be appended for
 the times of the multiples. For example, S-458 would put the first S arrival into
 header <code class="code docutils literal notranslate"><span class="pre">t4</span></code> and the second into <code class="code docutils literal notranslate"><span class="pre">t5</span></code> and the third into <code class="code docutils literal notranslate"><span class="pre">t8</span></code>.
@@ -184,10 +184,11 @@ T0 and T1 headers:</p>
                    [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                    [--equitorialradius=m] [--invflattening=f]
                    [--planet=&lt;planet&gt;] [--prop=&lt;toolPropsFilename&gt;] [--evt=lat
-                   lon]... [--sta=lat lon]... [[--mod=&lt;modelName&gt;] [-h=depth[,
-                   depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
-                   deg]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [sacfile...]
+                   lon]... [--sta=lat lon]... [--geodist=&lt;geoDistTypes&gt;...]...
+                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
+                   [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
       [sacfile...]           SAC files to process
 
@@ -197,8 +198,8 @@ Options:
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --debug                enable debugging output
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evdpkm               sac depth header is in km, default is meters
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
@@ -208,11 +209,19 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=&lt;geoDistTypes&gt;...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
       --help                 display this help message
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --planet=&lt;planet&gt;      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,

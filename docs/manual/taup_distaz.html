@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Distaz &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>TauP Distaz &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -133,7 +133,7 @@
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --sta 31 -80 --evt -11 21
 </pre></div>
 </div>
-<p>gives you distance in degrees, azimuth and back azimuth between
+<p>gives you spherical distance in degrees, azimuth and back azimuth between
 latitude longitude points -11/21 and 31/-80.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   (Spherical)  
 ---------------------------------------------------------------------------------------------
@@ -142,10 +142,11 @@ latitude longitude points -11/21 and 31/-80.</p>
 </div>
 <p>If you have a QuakeML file for earthquakes or a StationXML file for stations
 and channels, you can use those to calculate the distances directly. It is
-often useful to use the <code class="docutils literal notranslate"><span class="pre">--geodetic</span></code> when using latitudes and longitudes
+often useful to use either <code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geodetic</span></code> or
+<code class="code docutils literal notranslate"><span class="pre">--geodist</span> <span class="pre">geocentric</span></code> when using latitudes and longitudes
 so that the distance calculation is more accurate. For
 example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodist geodetic
 </pre></div>
 </div>
 <p>gives you distances from these earthquakes to those stations.</p>
@@ -158,14 +159,22 @@ example:</p>
   157.98  17566.2   -69.92     49.45 2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km IU_SNZO_10_H_H_Z -41.31/174.70 0.00 m      2024-08-30T09:32:19 5.6 mww 52.61/-33.27 10.00 km to IU_SNZO_10_H_H_Z -41.31/174.70 0.00 m
 </pre></div>
 </div>
-<p>It can also calculate from either event and azimuth, or station and back azimuth,
-but this is limited to spherical, not geodetic.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --sta -11 21 --baz -135 --deg 30
+<p>It can also calculate from event, distance and azimuth.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --sta -11 21 --baz -135 --deg 30 --geodist geodetic
 </pre></div>
 </div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   (Spherical)  
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   (Geodetic 298.257223563)  
 ---------------------------------------------------------------------------------------------
-   30.00   3335.8    53.92   -135.00 -30.82/-3.31 -11.00/21.00      baz  -135.00 from -11.00/21.00
+   30.00   3335.8    53.93   -135.00 -30.90/-3.28 -11.00/21.00      baz  -135.00 from -11.00/21.00
+</pre></div>
+</div>
+<p>Or from station, distance and back azimuth.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup distaz --evt -11 21 --az 35 --km 3000 --geodist geodetic
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Degrees      Km     Azimuth  BackAz    Source    Receiver      Description   (Geodetic 298.257223563)  
+---------------------------------------------------------------------------------------------
+   26.98   3000.0    35.00   -144.95 -11.00/21.00 11.35/36.37      -11.00/21.00 to az 35.00
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -174,12 +183,13 @@ but this is limited to spherical, not geodetic.</p>
                    [--invflattening=f] [-o=&lt;outFile&gt;] [--planet=&lt;planet&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
-                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
-                   lon]... [--html | --json | --text] [[--deg=d[,d...]]...
-                   [--km=km[,km...]]... [--degreerange=[step][min max][min max
-                   step]]... [--kilometerrange=[step][min max][min max
-                   step]]...]... [--mod=&lt;modelName&gt; |
-                   [--radius=&lt;radiusOfEarth&gt;]]
+                   [-h=depth[,depth...]]... [--sid=sta[,sta...]]...
+                   [--stadepth=depth[,depth...]]... [--evt=lat lon]...
+                   [--sta=lat lon]... [--geodist=&lt;geoDistTypes&gt;...]... [--html
+                   | --json | --text] [[--deg=d[,d...]]... [--km=km[,km...]]...
+                   [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...]...
+                   [--mod=&lt;modelName&gt; | [--radius=&lt;radiusOfEarth&gt;]]
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -191,8 +201,8 @@ Options:
                                fdsn event web service. Creates a distance if
                                station is also given.
       --equitorialradius=m   Equitorial radius in meters for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 6378137 meters.
+                               calculations when geodetic or geocentric,
+                               defaults to WGS84 ~ 6378137 meters.
       --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -201,11 +211,21 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodist=&lt;geoDistTypes&gt;...
+                             Type of distance calculation to use for lat,lon
+                               distance calculation, one of spherical,
+                               geocentric, geodetic. Default is spherical. Note
+                               this only affects calculation of distance from
+                               lat/lon pairs, all travel time calculations are
+                               done in a purely spherical model.
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                             source depth in km
       --help                 display this help message
       --invflattening, --geodeticflattening=f
                              Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
+                               calculations when geocentric or geodetic,
+                               defaults to WGS84 ~ 298.257. The distance
+                               calculation uses 1/x.
       --mod, --model=&lt;modelName&gt;
                              use velocity model &quot;modelName&quot; for radius, used
                                when distance given in km.
@@ -227,6 +247,9 @@ Options:
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
+      --stadepth, --receiverdepth=depth[,depth...]
+                             the receiver depth in km for stations not at the
+                               surface
       --staxml=&lt;stationxmlFilename&gt;
                              StationXML file to extract station latitudes and
                                longitudes from

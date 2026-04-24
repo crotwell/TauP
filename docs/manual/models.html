@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Velocity Models &#8212; TauP 3.2.0-SNAPSHOT6 documentation</title>
+    <title>Velocity Models &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=04156637"></script>
+    <script src="_static/documentation_options.js?v=a06de22e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT6</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
 
 
 
@@ -158,7 +158,7 @@ more crustal boundaries and synonyms. User defined labels are also allowed but
 must start with a non-number character, include only letters, numbers and the
 dash symbol and care should be taken when using
 in phase names to avoid confusing the phase parser.
-The phase parser uses the underscore to deliniate custom names, so an underscore
+The phase parser uses the underscore to delineate custom names, so an underscore
 cannot be used within the custom names. These labels
 are placed on a line by themselves between the two lines representing the
 sample points above and below the depth of the
@@ -356,7 +356,7 @@ so in addition to <code class="docutils literal notranslate"><span class="pre">.
 the <code class="docutils literal notranslate"><span class="pre">.nd</span></code> and <code class="docutils literal notranslate"><span class="pre">.tvel</span></code> model files can be loaded directly
 if there is not a <code class="docutils literal notranslate"><span class="pre">.taup</span></code> file found.
 Note that there is extra work involved in processing the velocity file, and so
-frequently used models should still be converted using ‘taup create’ to avoid
+frequently used models should still be converted using 'taup create' to avoid
 reprocessing them each time the tool starts.</p></li>
 </ul>
 </section>
@@ -386,15 +386,15 @@ published model as before and after the depth increment is approximately
 This may have a small effect on outer core phases. The
 missing line does appear in the ak135f models, which are supposed to share
 the velocity structure, but to be consistent with the published paper we
-have not changed the file. We do recomment using ak135fcont instead,
-which is ak135 with Q and the “continental structure” above 120 km.</p>
+have not changed the file. We do recommend using ak135fcont instead,
+which is ak135 with Q and the &quot;continental structure&quot; above 120 km.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">4650.590</span>     <span class="mf">10.0439</span>      <span class="mf">0.0000</span>     <span class="mf">11.8437</span>
 <span class="mf">4700.920</span>     <span class="mf">10.0768</span>      <span class="mf">0.0000</span>     <span class="mf">11.8772</span>
 <span class="mf">4801.580</span>     <span class="mf">10.1415</span>      <span class="mf">0.0000</span>     <span class="mf">11.9414</span>
 <span class="mf">4851.910</span>     <span class="mf">10.1739</span>      <span class="mf">0.0000</span>     <span class="mf">11.9722</span>
 </pre></div>
 </div>
-<p>The source web page for ak135f lists attentuation parameters as Qkappa and Qmu,
+<p>The source web page for ak135f lists attenuation parameters as Qkappa and Qmu,
 but the reference paper, <span id="id12">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995. doi:10.1111/j.1365-246X.1996.tb06548.x.">MK95</a>]</span> says:</p>
 <dl class="field-list simple">
 <dt class="field-odd">quote<span class="colon">:</span></dt>
@@ -404,7 +404,7 @@ is very close to zero except in the core.</p>
 </dd>
 </dl>
 <p>and so it seems reasonable that this column is actually Qp (or equivalently
-Q_alpha) and is derived from the Qs =Q_mu paramter via equation 2.6 where</p>
+Q_alpha) and is derived from the Qs =Q_mu parameter via equation 2.6 where</p>
 <blockquote>
 <div><p>1/Q_alpha = (4/3)(beta/alpha)^2 (1/Q_beta)</p>
 </div></blockquote>
@@ -428,7 +428,7 @@ And TauP does not separate the ab and bc branches of the PKP and SKS phases
 and the df branch is PKIKP or SKIKS.</p>
 </li>
 <li><p>ak135fcont</p>
-<p>There is a small discrepancy in how to create a “continental structure”
+<p>There is a small discrepancy in how to create a &quot;continental structure&quot;
 variant of ak135f at 120 km depth. In the online version
 at <a class="reference external" href="https://rses.anu.edu.au/seismology/ak135/ak135f.html">https://rses.anu.edu.au/seismology/ak135/ak135f.html</a>
 there is a small discontinuity in P velocity if the continental model
@@ -437,17 +437,17 @@ model, where vp=8.0500 in the continent vs 8.0505 in the base,
 which would make the 120 km depth a very odd
 discontinuity as density and S velocity are continuous.
 We have constructed
-the “continental structure” model, ak135fcont, so that Vp is continuous
+the &quot;continental structure&quot; model, ak135fcont, so that Vp is continuous
 at this depth with Vp=8.0505.</p>
 <p>There is a difference between the text version of the model,
 <a class="reference external" href="https://rses.anu.edu.au/seismology/ak135/ak135f.txt">https://rses.anu.edu.au/seismology/ak135/ak135f.txt</a>
 and the html version here
 <a class="reference external" href="https://rses.anu.edu.au/seismology/ak135/ak135f.html">https://rses.anu.edu.au/seismology/ak135/ak135f.html</a>
 with the html version showing an additional depth sample in the
-“Spherical average structure” at 120 km
+&quot;Spherical average structure&quot; at 120 km
 that matches the 120 km sample in the base model. As both lines are the same,
-this doesn’t change the model, but seems to indicate that the 120 km depth
-sample in the “continental structure” model should not be viewed as
+this doesn't change the model, but seems to indicate that the 120 km depth
+sample in the &quot;continental structure&quot; model should not be viewed as
 creating a discontinuity.</p>
 <p>At 210 km depth, there is a non-discontinuity discontinuity in velocity,
 which is a discontinuity in the Q model.</p>
@@ -455,13 +455,13 @@ which is a discontinuity in the Q model.</p>
 <span class="mf">210.00</span>    <span class="mf">3.3243</span>    <span class="mf">8.3007</span>    <span class="mf">4.5184</span>    <span class="mf">338.47</span>    <span class="mf">133.72</span>     <span class="mf">0.000</span>
 </pre></div>
 </div>
-<p>The “continental structure” model does not list density, Qp or Qs for the
+<p>The &quot;continental structure&quot; model does not list density, Qp or Qs for the
 upper 120 km. Because these values are useful for amplitude calculations,
 we have inserted the density from ak135 for these depth samples and used values
 roughly compatible with the ak135f average model for Qp and Qs.</p>
 </li>
 <li><p>Syngine/Instaseis</p>
-<p>The very useful syngine web service hosted by IRIS,
+<p>The very useful Syngine web service hosted by IRIS,
 <a class="reference external" href="https://service.iris.edu/irisws/syngine/1/">https://service.iris.edu/irisws/syngine/1/</a>
 allows calculation of synthetic seismograms for several 1D earth models. The
 ak135f model used by Syngine appears to be a variant of the ak135favg model
@@ -470,10 +470,10 @@ velocities from the 10 km depth crustal layer, resulting in a 18 km thick
 crust with constant velocity. Note this is different from the ak135fcont
 model that includes a thicker, 35 km thick layer crust and a slightly different
 uppermost mantle structure, from 35 to 120 km. Travel times from TauP
-for ak135f will thus be similar, but not exactly match the output of syngine.
+for ak135f will thus be similar, but not exactly match the output of Syngine.
 We have included a ak135fsyngine model with these modifications for
 compatibility.</p>
-<p>The model used within syngine, embedded as FORTRAN and using cubic splines,
+<p>The model used within Syngine, embedded as FORTRAN and using cubic splines,
 is here, lines 184-305:
 <a class="reference external" href="https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90">https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90</a></p>
 </li>
