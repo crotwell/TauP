@@ -6,6 +6,9 @@ conda activate sphinx
 # then
 ./gradlew sphinx
 
+# for spelling in docs, may need
+brew install enchant
+
 # check for dep updates
 ./gradlew dependencyUpdates
 
@@ -15,7 +18,7 @@ conda activate sphinx
 # regen cmd line tests, check for any differences, use java11
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
 
-./gradlew cCLTF
+./gradlew cCLTF copyDocExampleFiles
 
 ./gradlew javadoc sphinx iD check
 
