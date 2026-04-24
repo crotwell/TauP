@@ -35,7 +35,11 @@ and slightly smaller than the geodetic distance from
 an earthquake due east (30,0), 30.03 degrees, using the WGS84 ellipsoid.
 The geocentric distance is the same as spherical, 30 degrees, for the
 earthquake on the equator, but is even smaller, 29.83 degrees, for the
-earthquake to the north.
+earthquake to the north. Note that spherical and geocentric calculate
+distance as an anglular at the center of the earth while geodetic calculates
+distance as kilometers along the surface of the ellipsoid. We can convert
+central angle to and from kilometers on the surface using a reference
+sphere of the average radius, but this conversion is not exact.
 
 The `best` method of calculating distance from latitude and longitude will
 depend on the phases of interest and the area of interest.
@@ -43,8 +47,8 @@ Because TauP is
 spherical, the default is to not take the elliptical nature of the earth
 into account when calculating these distances.
 For deep ray paths, it may be more accurate to base the
-traveltime calculations based on the geocentric angle instead of the
-geodetic surface distance, but for shallow paths geodetic may be better.
+traveltime calculations based on the geocentric angle,
+but for shallow paths the geodetic surface distance may be better.
 
 This can be changed with
 the :code:`--geodist` parameter, which can take any combination of
