@@ -28,16 +28,17 @@ deep source at a distance of 57.4 degrees.
 
 If you have a QuakeML file for earthquakes or a StationXML file for stations
 and channels, you can use those to calculate the distances directly. It is
-often useful to use the ``--geodetic`` when using latitudes and longitudes
+often useful to use the :code:`--geodist geodetic` or :code:`--geodist geocentric`
+when using latitudes and longitudes
 so that the distance calculation is more accurate. For
 example:
 
-.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic_-p_P_S.cmd
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodist_geodetic_-p_P_S.cmd
   :language: text
 
 gives you arrival times for S and P for these earthquakes at those stations.
 
-.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic_-p_P_S
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodist_geodetic_-p_P_S
   :language: text
 
 Even more fun is to give a station id,
@@ -48,14 +49,14 @@ USGS event id, like :code:`--eid us7000pn9s`, and TauP will use the
 web services to get the station and event locations and depth. For example:
 
 
-.. literalinclude:: examples/taup_time_--geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS.cmd
+.. literalinclude:: examples/taup_time_--geodist_geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS.cmd
   :language: text
 
 gives you arrival times for SKS for this earthquake at station CO_HAW.
 Note this should not be called repeatedly as it is slow and puts undo
 strain on these web services.
 
-.. literalinclude:: examples/taup_time_--geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS
+.. literalinclude:: examples/taup_time_--geodist_geodetic_--sid_CO_HAW_--eid_us7000pn9s_-p_SKS
   :language: text
 
 The usage is:

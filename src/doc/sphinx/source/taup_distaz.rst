@@ -11,7 +11,7 @@ For example:
 .. literalinclude:: examples/taup_distaz_--sta_31_-80_--evt_-11_21.cmd
   :language: text
 
-gives you distance in degrees, azimuth and back azimuth between
+gives you spherical distance in degrees, azimuth and back azimuth between
 latitude longitude points -11/21 and 31/-80.
 
 
@@ -20,26 +20,34 @@ latitude longitude points -11/21 and 31/-80.
 
 If you have a QuakeML file for earthquakes or a StationXML file for stations
 and channels, you can use those to calculate the distances directly. It is
-often useful to use the ``--geodetic`` when using latitudes and longitudes
+often useful to use either :code:`--geodist geodetic` or
+:code:`--geodist geocentric` when using latitudes and longitudes
 so that the distance calculation is more accurate. For
 example:
 
-.. literalinclude:: examples/taup_distaz_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic.cmd
+.. literalinclude:: examples/taup_distaz_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodist_geodetic.cmd
   :language: text
 
 gives you distances from these earthquakes to those stations.
 
-.. literalinclude:: examples/taup_distaz_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic
+.. literalinclude:: examples/taup_distaz_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodist_geodetic
   :language: text
 
-It can also calculate from either event and azimuth, or station and back azimuth,
-but this is limited to spherical, not geodetic.
+It can also calculate from either event and azimuth,
 
-.. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30.cmd
+.. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30_--geodist_geodetic.cmd
   :language: text
 
-.. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30
+.. literalinclude:: examples/taup_distaz_--sta_-11_21_--baz_-135_--deg_30_--geodist_geodetic
   :language: text
+
+ or station and back azimuth.
+
+ .. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic.cmd
+   :language: text
+
+ .. literalinclude:: examples/taup_distaz_--evt_-11_21_--az_35_--km_3000_--geodist_geodetic
+   :language: text
 
 
 The usage is:

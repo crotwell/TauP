@@ -72,7 +72,8 @@ flags. Continuing to type
 and then hitting the tab key will display the models available for the
 :code:`--mod` command line argument:
 
-:code:`ak135        ak135favg    ak135fcont   ak135fsyngine  iasp91       prem`
+:code:`ak135          ak135fcont     ek137          prem
+ak135favg      ak135fsyngine  iasp91         rem1d`
 
 
 What and Where

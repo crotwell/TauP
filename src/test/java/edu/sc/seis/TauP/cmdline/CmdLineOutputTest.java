@@ -159,12 +159,12 @@ public class CmdLineOutputTest {
 
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
-            "taup time --geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
+            "taup time --geodist geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
             "taup find --max 2 -h 100 --exclude 210",
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
-            "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodetic --pierce 2591 --nodiscon",
+            "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodist geodetic --pierce 2591 --nodiscon",
             "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt",
             "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --svg",
             "taup phase --mod prem -h 200 -p PKiKP",
@@ -178,8 +178,8 @@ public class CmdLineOutputTest {
             "taup velplot --nameddiscon --mod iasp91",
             "taup refltrans --mod ak135 --depth 35 --legend --svg",
             "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg",
-            "taup distaz --sta -11 21 --baz -135 --deg 30",
-            "taup distaz --evt -11 21 --az 35 --km 3000",
+            "taup distaz --sta -11 21 --baz -135 --deg 30 --geodist geodetic",
+            "taup distaz --evt -11 21 --az 35 --km 3000 --geodist geodetic",
             "taup distaz --sta 31 -80 --evt -11 21",
             "taup distaz --sta 0 0 --evt 0 30 --evt 30 0  --geodist spherical geocentric geodetic",
             "taup discon --mod ak135fcont",
@@ -189,8 +189,8 @@ public class CmdLineOutputTest {
 
             "taup setsac -p P,S my_earthquake.sac",
             "taup setms3 -p P,S my_earthquake.ms3",
-            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S",
-            "taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic"
+            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodist geodetic -p P,S",
+            "taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodist geodetic"
     };
 
     String[] testVelModels = new String[] { "highSlownessDiscon.nd" };

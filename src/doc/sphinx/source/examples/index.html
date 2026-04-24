@@ -15,12 +15,12 @@
 <h3>Command Line Doc Examples</h3>
   <select name="cmdlinetests" id="cmd-select">
   <option>taup time --mod prem -h 200 -p S,P --deg 57.4</option>
-  <option>taup time --geodetic --sid CO_HAW --eid us7000pn9s -p SKS</option>
+  <option>taup time --geodist geodetic --sid CO_HAW --eid us7000pn9s -p SKS</option>
   <option>taup find --max 2 -h 100 --exclude 210</option>
   <option>taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210</option>
   <option>taup pierce --mod prem -h 200 -p S,P --deg 57.4</option>
   <option>taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4</option>
-  <option>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodetic --pierce 2591 --nodiscon</option>
+  <option>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodist geodetic --pierce 2591 --nodiscon</option>
   <option>taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt</option>
   <option>taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --svg</option>
   <option>taup phase --mod prem -h 200 -p PKiKP</option>
@@ -34,8 +34,8 @@
   <option>taup velplot --nameddiscon --mod iasp91</option>
   <option>taup refltrans --mod ak135 --depth 35 --legend --svg</option>
   <option>taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg</option>
-  <option>taup distaz --sta -11 21 --baz -135 --deg 30</option>
-  <option>taup distaz --evt -11 21 --az 35 --km 3000</option>
+  <option>taup distaz --sta -11 21 --baz -135 --deg 30 --geodist geodetic</option>
+  <option>taup distaz --evt -11 21 --az 35 --km 3000 --geodist geodetic</option>
   <option>taup distaz --sta 31 -80 --evt -11 21</option>
   <option>taup distaz --sta 0 0 --evt 0 30 --evt 30 0  --geodist spherical geocentric geodetic</option>
   <option>taup discon --mod ak135fcont</option>
