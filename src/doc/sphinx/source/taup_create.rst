@@ -28,7 +28,7 @@ currently used by the latest ttimes package, :cite:t:`kennett:ak135`.
 The output will be a file named after the name of the
 velocity file, followed by :code:`.taup`. For example
 
-:code:`taup create -nd mymodel.nd`
+:code:`taup create --nd mymodel.nd`
 
 produces the file :code:`mymodel.taup` which can be used later like
 
