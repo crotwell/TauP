@@ -39,6 +39,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
     }
 
+    /**
+     * Starts a phase with no legs.
+     *
+     * @param phaseName name of phase
+     * @param tMod tau model, which includes the source depth
+     * @param receiverDepth depth of the receiver
+     * @return proto phase ready for adding legs
+     */
     public static ProtoSeismicPhase startEmpty(String phaseName, TauModel tMod, double receiverDepth) {
         ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<>(), receiverDepth, phaseName);
         proto.phaseName = phaseName;

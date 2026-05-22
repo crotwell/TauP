@@ -26,7 +26,7 @@ public class SeismicPhaseFactory {
     PhaseInteraction prevEndAction = START;
 
     public static final int CRUST_MANTLE_FACTORY = 0;
-    public static final int OUTER_CORE_FACTOR = 1;
+    public static final int OUTER_CORE_FACTORY = 1;
     public static final int INNER_CORE_FACTORY = 2;
 
     /**
@@ -482,7 +482,7 @@ public class SeismicPhaseFactory {
                     receiverDepth, getName()," First phase leg not recognized: "
                     +currLeg
                     + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents in crust/mantle, "
-                    + "or k, K, I, y, J, j for core sources.");
+                    + "or K, k, I, y, J, j for core sources.");
         }
         /*
          * Figure out which legs are P and S
@@ -533,7 +533,7 @@ public class SeismicPhaseFactory {
             if (isCrustMantleLeg(currLeg)) {
                 proto = layerFactories.get(CRUST_MANTLE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isOuterCoreLeg(currLeg)) {
-                proto = layerFactories.get(OUTER_CORE_FACTOR).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                proto = layerFactories.get(OUTER_CORE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isInnerCoreLeg(currLeg)) {
                 proto = layerFactories.get(INNER_CORE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isBoundary(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
