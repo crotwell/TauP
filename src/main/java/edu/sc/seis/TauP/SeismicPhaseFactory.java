@@ -264,8 +264,8 @@ public class SeismicPhaseFactory {
                         e.printStackTrace();
                     }
                 } catch (TauModelException e) {
-                    Alert.warning("Error with phase=" + tempPhaseName,
-                            e.getMessage() + "\nSkipping this phase");
+                    Alert.warning("Error with phase '" + tempPhaseName+"', skipping this phase" ,
+                            e.getMessage() );
                     if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
                         e.printStackTrace();
                     }
