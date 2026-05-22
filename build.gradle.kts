@@ -32,7 +32,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.2.0-SNAPSHOT7"
+version = "3.2.0-SNAPSHOT8"
 val ver_split = project.getVersion().toString().split(".")
 val short_version = ver_split[0]+"."+ver_split[1]
 val copyright = "2025"
@@ -103,7 +103,7 @@ jreleaser {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
     withJavadocJar()
     withSourcesJar()
@@ -236,7 +236,7 @@ dependencies {
     implementation("org.slf4j:slf4j-reload4j:2.0.6")
 
 
-    implementation("io.undertow:undertow-core:2.3.23.Final")
+    implementation("io.undertow:undertow-core:2.4.1.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
