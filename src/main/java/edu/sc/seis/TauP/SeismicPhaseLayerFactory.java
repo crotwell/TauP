@@ -182,10 +182,12 @@ public class SeismicPhaseLayerFactory {
                 case REFLECT_TOPSIDE_CRITICAL:
                 case REFLECT_UNDERSIDE:
                 case REFLECT_UNDERSIDE_CRITICAL:
+                    String reflectLeg = isReflectSymbol(nextLeg)?nextNextLeg:nextLeg;
+                    String reflectSymbol = isReflectSymbol(nextLeg)?nextLeg:"";
                     if (!(isLayerLeg(nextLeg) || isLayerLeg(nextNextLeg))) {
                         return baseFactory.failWithMessage(proto,
-                                "Leg "+nextNextLeg+" cannot exist after "+currLeg+" "+nextLeg+" after "+
-                                proto.endSegment().endAction+" as "+nextLeg+" does not exist in "+layerName);
+                                "Leg "+reflectLeg+" cannot exist after "+currLeg+" "+reflectSymbol+" after "+
+                                proto.endSegment().endAction+" as "+reflectLeg+" does not exist in "+layerName);
                     }
                     break;
             }
