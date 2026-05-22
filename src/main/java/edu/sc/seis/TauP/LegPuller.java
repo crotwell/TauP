@@ -71,7 +71,7 @@ public class LegPuller {
             while(offset < name.length()) {
                 if (offset + 2 < name.length() && name.startsWith(EX_DOWN_CODE, offset+1)
                         && ! isDowngoingSymbol(name, offset) ) {
-                    throw new PhaseParseException("Invalid phase name:\n"
+                    throw new PhaseParseException("Invalid phase name: "
                             + name.charAt(offset)
                             + " cannot be followed by "
                             + PhaseSymbols.EX_DOWN_CODE+ " in " + name+" at "+offset, name, offset);
@@ -95,7 +95,7 @@ public class LegPuller {
                     // note c and i are different from m as they must be reflection
                     // check m,c,i for critical refl with x
                     if (offset == name.length() - 1) {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.charAt(offset)
                                 + " cannot be last char in " + name+" at "+offset, name, offset);
                     }
@@ -135,7 +135,7 @@ public class LegPuller {
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if(name.charAt(offset) == P
@@ -153,7 +153,7 @@ public class LegPuller {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
                     } else if (isUpgoingSymbol(name, offset+1)) {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.charAt(offset)
                                 + " cannot be followed by upgoing phase"
                                 + name.charAt(offset + 1) + " in " + name+" at "+offset, name, offset);
@@ -184,7 +184,7 @@ public class LegPuller {
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if (name.charAt(offset) == K) {
@@ -216,7 +216,7 @@ public class LegPuller {
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
 
@@ -226,7 +226,7 @@ public class LegPuller {
                     offset++;
                 } else if(isReflectSymbol(name, offset)) {
                     if(offset == name.length()-1) {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.charAt(offset)
                                 + " reflection cannot be last char in " + name+" at "+offset, name, offset);
                     }
@@ -251,12 +251,12 @@ public class LegPuller {
                         legs.add(prefix+boundId);
                         offset += prefix.length()+boundId.length();
                         if(offset == name.length()) {
-                            throw new PhaseParseException("Invalid phase name:\n"
+                            throw new PhaseParseException("Invalid phase name: "
                                     + prefix+" followed by "+ boundId
                                     + " cannot be last in " + name+" at "+offset, name, offset);
                         }
                     } else {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if(PhaseSymbols.isBoundary(name, offset)) {
@@ -311,7 +311,7 @@ public class LegPuller {
 
     public static String extractBoundaryId(String name, int offset, boolean includeHeadDiff) throws PhaseParseException {
         if(offset == name.length()-1) {
-            throw new PhaseParseException("Invalid phase name:\n"
+            throw new PhaseParseException("Invalid phase name: "
                     + name.charAt(offset)
                     + " cannot be last char in " + name, name, offset);
         }
