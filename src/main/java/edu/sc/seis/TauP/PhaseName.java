@@ -72,10 +72,8 @@ public class PhaseName implements Serializable {
         }
     }
 
-    PhaseName(String name) throws PhaseParseException {
+    PhaseName(String name) {
         this.name = name;
-        // check name is valid
-        LegPuller.legPuller(name);
     }
 
     public PhaseName(String name, int sacTNum) throws PhaseParseException {
