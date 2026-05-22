@@ -131,8 +131,64 @@ public class SeismicPhaseLayerFactory {
             proto = currLegIs_Pg_Sg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else {
             String reason = "parse() failed, Unknown phase in "+layerName+": "+currLeg;
-            proto.failNext(reason);
-            return proto;
+            return baseFactory.failWithMessage(proto, reason);
+        }
+        if (proto.isSuccessful()) {
+            switch (proto.endSegment().endAction) {
+                case TRANSDOWN:
+                case HEAD:
+                    if (proto.endSegment().endBranch == botBranchNum) {
+                        SeismicPhaseLayerFactory below = belowLayerFactory;
+                        while (below instanceof SeismicPhaseLayerFactoryAllFail) {
+                            below = below.belowLayerFactory;
+                        }
+                        if (below == null || !below.isLayerLeg(nextLeg)) {
+                            proto.failNext("Leg " + nextLeg + " cannot exist after " + currLeg
+                                    + " as " + nextLeg + " does not exist after transmit down"
+                                    + (below == null ? " to center of earth" : (" into " + below.layerName)));
+                        }
+                    }
+                    break;
+                case TRANSUP:
+                case DIFFRACT:
+                case TRANSUPDIFFRACT:
+                    if (proto.endSegment().endBranch == topBranchNum) {
+                        SeismicPhaseLayerFactory above = aboveLayerFactory;
+                        while (above instanceof SeismicPhaseLayerFactoryAllFail) {
+                            above = above.aboveLayerFactory;
+                        }
+                        if (above == null || !above.isLayerLeg(nextLeg)) {
+                            return baseFactory.failWithMessage(proto,
+                                    "Leg " + nextLeg + " cannot exist after " + currLeg
+                                    + " as " + nextLeg + " does not exist after transmit up"
+                                    + (above == null ? " at surface." : (" into " + above.layerName + ".")));
+                        }
+                    }
+                    break;
+                case END:
+                case END_DOWN:
+                    if (is(nextLeg, END_CODE) && (proto.receiverDepth < topDepth || proto.receiverDepth > botDepth)) {
+                        String reason = "Receiver depth cannot be reached by ending phase leg of "+currLeg
+                                + " as it is not in the "+layerName;
+                        return baseFactory.failWithMessage(proto, reason);
+                    }
+                    if (proto.receiverDepth < topDepth || proto.receiverDepth > botDepth) {
+                        return baseFactory.failWithMessage(proto,
+                                "Phase cannot end in "+layerName+" after "+currLeg+" as receiver depth "
+                                        +proto.receiverDepth+" is not in "+layerName);
+                    }
+                    break;
+                case REFLECT_TOPSIDE:
+                case REFLECT_TOPSIDE_CRITICAL:
+                case REFLECT_UNDERSIDE:
+                case REFLECT_UNDERSIDE_CRITICAL:
+                    if (!(isLayerLeg(nextLeg) || isLayerLeg(nextNextLeg))) {
+                        return baseFactory.failWithMessage(proto,
+                                "Leg "+nextNextLeg+" cannot exist after "+currLeg+" "+nextLeg+" after "+
+                                proto.endSegment().endAction+" as "+nextLeg+" does not exist in "+layerName);
+                    }
+                    break;
+            }
         }
         return proto;
     }

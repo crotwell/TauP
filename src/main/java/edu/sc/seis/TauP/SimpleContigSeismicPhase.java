@@ -170,7 +170,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public boolean phasesExistsInModel() {
-        return getMaxRayParam() >= 0;
+        return (!proto.isFail) && getMaxRayParam() >= 0;
     }
 
     @Override

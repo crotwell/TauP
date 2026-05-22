@@ -87,7 +87,7 @@ class IllegalPhasesTest {
 			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
 			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf",
-			"P^mp"
+			"P^mp", "PKiy", "PKij", "PKiIK", "PKiP"
 
 	};
 
@@ -140,7 +140,8 @@ class IllegalPhasesTest {
 			// either throws or has no arrivals, maxRayParam == -1
 			try {
 				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
-				assertFalse(phase.phasesExistsInModel(), phaseName + " shouldn't pass validation, source: " + tModDepth.getSourceDepth());
+				assertFalse(phase.phasesExistsInModel(),
+						phaseName + " shouldn't pass validation, source: " + tModDepth.getSourceDepth());
 			} catch(TauModelException e) {
 				// ok
 			}
