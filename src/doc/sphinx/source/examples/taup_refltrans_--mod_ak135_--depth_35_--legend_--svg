@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup refltrans &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT7</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
@@ -1337,7 +1337,7 @@ circle.discontinuity.iocb {
 87.0  0.100535706
 88.0  0.06699953
 89.0  0.03351228
-89.99991  3.0594776E-6
+89.99991  3.0596548E-6
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1436,7 +1436,7 @@ circle.discontinuity.iocb {
 87.0  0.03122997
 88.0  0.020880604
 89.0  0.01046468
-89.99991  -8.1788716E-7
+89.99991  -8.179345E-7
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1535,7 +1535,7 @@ circle.discontinuity.iocb {
 87.0  0.028012352
 88.0  0.018732345
 89.0  0.00938897
-89.99991  -6.8538657E-7
+89.99991  -6.8542624E-7
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
