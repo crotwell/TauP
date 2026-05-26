@@ -186,3 +186,11 @@ contains a `sourcedepth` and `receiverdepth`.
 For users that cannot easily update their scripts, version 2 can still be used,
 via manual install or from homebrew (as taup2), but no further development
 will occur for it.
+
+
+Submitting Issues
+-----------------
+
+Submit bug reports via `GitHub Issues <https://github.com/crotwell/TauP/issues>`_::.
+Please make sure to include the current version and enough information so that
+I can reproduce the problem locally.
