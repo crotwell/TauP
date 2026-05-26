@@ -18,9 +18,9 @@ public class TimeExample {
         // A seismic phase for a phase name like 'P' can be created for that model
         double sourceDepth = 100;  // earthquake depth in kilometers
         double receiverDepth = 0;  // seismometer depth in kilometers if not at the surface
-        SeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tMod, sourceDepth);
+        SeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tMod, sourceDepth, receiverDepth);
 
-        //
+        // Arrivals are calculated by a ray-type for a phase, so for a distance in degrees, the arrival are:
         List<Arrival> arrivalList = DistanceRay.ofDegrees(45).calculate(P_phase);
         for (Arrival a : arrivalList) {
             System.out.println(a.getName()+" "+a.getDistDeg()+" "+a.getTime());
