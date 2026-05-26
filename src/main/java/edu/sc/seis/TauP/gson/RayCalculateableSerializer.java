@@ -33,8 +33,11 @@ public class RayCalculateableSerializer  implements JsonSerializer<RayCalculatea
             ray.addProperty(JSONLabels.RAYPARAM, r.getRayParamSKm());
             ray.addProperty(JSONLabels.UNIT, "s/km");
         } else if (src instanceof RayParamIndexRay) {
-            RayParamIndexRay r = (RayParamIndexRay)src;
+            RayParamIndexRay r = (RayParamIndexRay) src;
             ray.addProperty(JSONLabels.INDEX, r.getIndex());
+        } else if (src instanceof TimeRay) {
+            TimeRay timeRay = (TimeRay)src;
+            ray.addProperty(JSONLabels.SECONDS, timeRay.getSeconds());
         } else if (src instanceof DistanceRay) {
             DistanceRay r;
             if (src instanceof FixedHemisphereDistanceRay) {
@@ -64,6 +67,8 @@ public class RayCalculateableSerializer  implements JsonSerializer<RayCalculatea
             } else {
                 throw new RuntimeException("Unable to serialize ray: "+src);
             }
+        } else {
+            throw new RuntimeException("Unable to serialize ray: "+src);
         }
         out.add("ray", ray);
         return out;

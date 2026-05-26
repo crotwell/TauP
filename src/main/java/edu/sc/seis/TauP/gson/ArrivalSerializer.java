@@ -90,7 +90,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             relA.add(JSONLabels.ARRIVAL, context.serialize(relArrival));
         }
         RayCalculateableSerializer raycalcSerializer = new RayCalculateableSerializer();
-        a.add(JSONLabels.RAYCALC, raycalcSerializer.serialize(arr.getRayCalculateable(), RayCalculateable.class, context));
+        a.add(JSONLabels.RAYTYPE, raycalcSerializer.serialize(arr.getRayCalculateable(), RayCalculateable.class, context));
         if (withDerivative) {
             JsonObject deriv = new JsonObject();
             a.add(JSONLabels.DERIVATIVE, deriv);

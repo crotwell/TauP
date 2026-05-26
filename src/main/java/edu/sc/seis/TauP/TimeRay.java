@@ -77,4 +77,8 @@ public class TimeRay extends RayCalculateable {
     public boolean isLatLonable() {
         return (evtLatLon != null && azimuth != null) || (staLatLon != null && backAzimuth != null);
     }
+
+    public double getSeconds() {
+        return seconds;
+    }
 }

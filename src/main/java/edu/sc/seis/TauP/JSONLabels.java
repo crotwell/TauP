@@ -96,7 +96,7 @@ public interface JSONLabels {
     String ISOCHRON = "isochrons";
     String WAVEFRONT = "wavefronts";
     String MODEL_LIST = "models";
-    String RAYCALC = "raytype";
+    String RAYTYPE = "raytype";
     String SOURCE_LOC = "sourceloc";
     String RECEIVER_LOC = "receiverloc";
     String UNIT = "unit";
@@ -104,6 +104,7 @@ public interface JSONLabels {
     String DIST = "dist";
     String EXACT = "exact";
     String HEMISPHERE = "hemisphere";
+    String SECONDS = "seconds";
 
     String VP = "Vp";
     String VS = "Vs";
