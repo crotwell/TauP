@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Programmatic Access &#8212; TauP 3.2.0-SNAPSHOT7 documentation</title>
+    <title>Programmatic Access &#8212; TauP 3.2.0-SNAPSHOT8 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=a06de22e"></script>
+    <script src="_static/documentation_options.js?v=487741ec"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT7</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT8</p>
 
 
 
@@ -149,9 +149,9 @@ for each earthquake rather than all earthquakes for a station.</p>
 <span class="w">        </span><span class="c1">// A seismic phase for a phase name like &#39;P&#39; can be created for that model</span>
 <span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">sourceDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">  </span><span class="c1">// earthquake depth in kilometers</span>
 <span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">receiverDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// seismometer depth in kilometers if not at the surface</span>
-<span class="w">        </span><span class="n">SeismicPhase</span><span class="w"> </span><span class="n">P_phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SeismicPhaseFactory</span><span class="p">.</span><span class="na">createPhase</span><span class="p">(</span><span class="s">&quot;P&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tMod</span><span class="p">,</span><span class="w"> </span><span class="n">sourceDepth</span><span class="p">);</span>
+<span class="w">        </span><span class="n">SeismicPhase</span><span class="w"> </span><span class="n">P_phase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SeismicPhaseFactory</span><span class="p">.</span><span class="na">createPhase</span><span class="p">(</span><span class="s">&quot;P&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tMod</span><span class="p">,</span><span class="w"> </span><span class="n">sourceDepth</span><span class="p">,</span><span class="w"> </span><span class="n">receiverDepth</span><span class="p">);</span>
 
-<span class="w">        </span><span class="c1">//</span>
+<span class="w">        </span><span class="c1">// Arrivals are calculated by a ray-type for a phase, so for a distance in degrees, the arrival are:</span>
 <span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Arrival</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrivalList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistanceRay</span><span class="p">.</span><span class="na">ofDegrees</span><span class="p">(</span><span class="mi">45</span><span class="p">).</span><span class="na">calculate</span><span class="p">(</span><span class="n">P_phase</span><span class="p">);</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Arrival</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">arrivalList</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="na">getName</span><span class="p">()</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">a</span><span class="p">.</span><span class="na">getDistDeg</span><span class="p">()</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="n">a</span><span class="p">.</span><span class="na">getTime</span><span class="p">());</span>

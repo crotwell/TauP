@@ -13,10 +13,10 @@ brew install enchant
 ./gradlew dependencyUpdates
 
 # wrapper
-./gradlew wrapper --gradle-version 8.14 --distribution-type bin
+./gradlew wrapper --gradle-version 9.5 --distribution-type bin
 
-# regen cmd line tests, check for any differences, use java11
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
+# regen cmd line tests, check for any differences, use java17
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
 
 ./gradlew cCLTF copyDocExampleFiles
 

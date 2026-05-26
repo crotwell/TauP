@@ -12,7 +12,7 @@
                            The TauP Toolkit
 
             Flexible Seismic Travel-Time and Raypath Utilities
-                              Version 3.1
+                              Version 3.2
                       http://www.seis.sc.edu/taup/
 
 The TauP Toolkit is a seismic travel time calculator. In addition to travel
@@ -31,10 +31,10 @@ If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160,
 
 as well as the
-[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.16884103)
+[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.XXXXXX)
 for the version you are using.
 
-Crotwell, H. P. (2025). The TauP Toolkit (3.1.0). Zenodo. https://doi.org/10.5281/zenodo.16884103
+Crotwell, H. P. (2025). The TauP Toolkit (3.2.0). Zenodo. https://doi.org/10.5281/zenodo.XXXXXXXX
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
