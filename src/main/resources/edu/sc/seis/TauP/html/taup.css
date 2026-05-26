@@ -16,7 +16,7 @@ form div.tooloptions {
   max-height: 80vh;
   padding: 2px;
   border: 2px solid lightgrey;
-  border-block-color: grep;
+  border-block-color: grey;
 }
 #results svg {
   width: 75%;

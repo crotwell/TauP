@@ -15,6 +15,7 @@
 <h5>version <span id="version">3.0 Snapshot</span>, web enabled.
   <a href="doc/index.html" target="taupdocs">Documentation</a>
 <a href="http://www.seis.sc.edu/taup">http://www.seis.sc.edu/taup</a>
+</h5>
 </div>
 
 <details open="true">
@@ -47,10 +48,10 @@
         <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
         <label for="tool_wavefront">
           <a href="doc/taup_wavefront.html" target="taupdocs">Wavefront</a></label>
-        <input type="radio" name="tool" id="taup_distaz" value="distaz" />
+        <input type="radio" name="tool" id="tool_distaz" value="distaz" />
         <label for="tool_distaz">
           <a href="doc/taup_distaz.html" target="taupdocs">DistAz</a></label>
-        <input type="radio" name="tool" id="taup_find" value="find" />
+        <input type="radio" name="tool" id="tool_find" value="find" />
         <label for="tool_find">
           <a href="doc/taup_find.html" target="taupdocs">Find</a></label>
         <input type="radio" name="tool" id="tool_phase" value="phase" />
@@ -222,7 +223,7 @@
             <label for="israyparamdeg">
                 <span>(s/deg): </span>
             </label>
-            <input type="radio" id="rayparamkm" name="rayparamunit" value="israyparamkm" />
+            <input type="radio" id="israyparamkm" name="rayparamunit" value="israyparamkm" />
             <label for="israyparamkm">
                 <span>(s/km): </span>
             </label>
@@ -246,14 +247,14 @@
           </div>
           <div>
             <input type="checkbox" id="isstation" name="isstation" />
-            <label for="stalat">
+            <label for="stationlat">
                 <span> Station (lat/lon): </span>
             </label>
             <input type="number" id="stationlat" name="stationlat" value="35" />
             <input type="number" id="stationlon" name="stationlon" value="-81" />
             <label for="geodeticflattening"><span>1/Ellipticity</span></label>
             <input type="text" id="geodeticflattening" name="geodeticflattening" value="298.257223563" />
-            <label for="planetEllip">Planets</label>
+            <label for="knownPlanetEllip">Planets</label>
             <select id="knownPlanetEllip">
               <option value="">choose</option>
               <option value="298.257223563">Earth WGS84</option>
@@ -364,7 +365,7 @@
           <input type="number" id="maxaction" name="maxaction" value="2" />
         </div>
         <div>
-          <label for="discontinuities">
+          <label for="modeldiscon">
               <span>Discontinuites: </span>
           </label>
           <span id="modeldiscon"></span>
@@ -392,10 +393,10 @@
       <fieldset class="tool_pierce">
           <legend>Pierce:</legend>
 
-          <label for="pierce_add">
+          <label for="pierceadddepth">
               <span>Add Depths (km): </span>
           </label>
-          <input type="text" id="piercedepth" name="piercedepth" value="" />
+          <input type="text" id="pierceadddepth" name="pierceadddepth" value="" />
 
           <input type="radio" name="pierce" id="pierce_all" value="all" checked />
           <label for="pierce_all">All</label>
@@ -472,9 +473,6 @@
 
       <fieldset class="tool_refltrans">
         <legend>Reflection/Transmission:</legend>
-        <label for="refltran">
-            <span>Reflection and Transmission: </span>
-        </label>
 
         <label for="anglestep">
             <span>Step (deg): </span>

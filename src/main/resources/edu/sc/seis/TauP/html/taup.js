@@ -13,7 +13,7 @@ export function start() {
     // go ahead and process the form "as is" so user sees something
     process();
   }).catch(err => {
-    console.log(`setup error: ${err}`);
+    console.error(`setup error: ${err}`);
     throw err;
   });
 }
@@ -22,7 +22,6 @@ export function start() {
  */
 export function setup() {
   const pathSplit = location.pathname.substring(1).split('/');
-  console.log(`location path split: ${pathSplit.length} for ${location.pathname}`)
   if (pathSplit.length === 3 && pathSplit[1] === 'taup' && pathSplit[2] === '3') {
     localmode = false;
     base_path = pathSplit[0];
@@ -485,7 +484,7 @@ export function form_tool_url() {
   let scatdepth = document.querySelector('input[name="scatdepth"]').value;
   let scatdist = document.querySelector('input[name="scatdist"]').value;
   let isScatter = document.querySelector('input[name="isscatter"]').checked;
-  let piercedepth = document.querySelector('input[name="piercedepth"]').value;
+  let pierceadddepth = document.querySelector('input[name="pierceadddepth"]').value;
   let piercelimit = document.querySelector('input[name="pierce"]:checked').value;
 
   let timestep = document.querySelector('input[name="timestep"]').value;
@@ -615,7 +614,6 @@ export function form_tool_url() {
       } else if (rayparamunit === "israyparamkm") {
         distparam += `&rayparamkm=${rayparam}`;
       } else if (rayparamunit === "israyparamrad") {
-        distparam += `&rayparamkm=${rayparam}`;
         distparam += `&rayparamrad=${rayparam}`;
       } else {
         throw new Exception(`Unknown ray param unit: ${rayparamunit}`)
@@ -776,8 +774,8 @@ export function form_tool_url() {
     }
   }
   if (toolname === "pierce") {
-    if (piercedepth.length > 0) {
-      url += `&pierce=${piercedepth}`;
+    if (pierceadddepth.length > 0) {
+      url += `&pierce=${pierceadddepth}`;
     }
     if (piercelimit === "rev") {
       url += `&${piercelimit}=true`;
@@ -1044,8 +1042,7 @@ export function loadParamHelp(toolname) {
       return response.text().then( errMsg => {
         let message = `Parameter help response not ok: ${response.statusText} ${paramHelpUrl}`;
         displayErrorMessage(message, taup_url, new Error(errMsg));
-      });
-      return {};
+      }).then( () =>  {return {};});
     } else {
       return response.json();
     }
