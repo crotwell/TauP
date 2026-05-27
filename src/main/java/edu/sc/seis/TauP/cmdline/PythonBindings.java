@@ -31,6 +31,8 @@ public class PythonBindings {
         String dataclassType = null;
         if (timeResultTools.contains(toolname) ) {
             dataclassType = "TimeResult";
+        } else if (toolname.equals("beachball")) {
+            dataclassType = "BeachballResult";
         } else if (toolname.equals("phase")) {
             dataclassType = "PhaseResult";
         } else if (toolname.equals("discon")) {
@@ -303,6 +305,14 @@ public class PythonBindings {
             desc(bodyWriter, op, opname);
 
             bodyWriter.println("    self._" + varname + " = [depth, degree]");
+            bodyWriter.println("    return self");
+            bodyWriter.println();
+        } else if (varname.equals("strikediprake")) {
+
+            bodyWriter.println("  def " + opname + "(self, strike, dip, rake):");
+            desc(bodyWriter, op, opname);
+
+            bodyWriter.println("    self._" + varname + " = [strike, dip, rake]");
             bodyWriter.println("    return self");
             bodyWriter.println();
         } else if (varname.equals("station") || varname.equals("event")) {
