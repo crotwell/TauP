@@ -578,7 +578,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         return sourceArgs;
     }
 
-    @CommandLine.Option(names="--az", description="azimuth in degrees, for amp calculations")
+    @CommandLine.Option(names= {"--az", "--azimuth"},
+            description="azimuth in degrees, for amp calculations")
     protected Double azimuth = null;
 
     @CommandLine.Option(names={"--deg", "--degree"},

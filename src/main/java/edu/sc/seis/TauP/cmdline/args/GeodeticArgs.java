@@ -8,7 +8,8 @@ import java.util.*;
 
 public class GeodeticArgs extends LatLonArgs {
 
-    @CommandLine.Option(names = "--az", description = "azimuth in degrees, source to receiver")
+    @CommandLine.Option(names = {"--az", "--azimuth"},
+            description = "azimuth in degrees, source to receiver")
     protected Double azimuth = null;
 
     public boolean hasAzimuth() {
@@ -18,7 +19,8 @@ public class GeodeticArgs extends LatLonArgs {
         return azimuth;
     }
 
-    @CommandLine.Option(names = "--baz", description = "backazimuth in degrees, receiver to source")
+    @CommandLine.Option(names = {"--baz", "--backazimuth"},
+            description = "backazimuth in degrees, receiver to source")
     protected Double backAzimuth = null;
 
     public boolean hasBackAzimuth() {
@@ -41,7 +43,7 @@ public class GeodeticArgs extends LatLonArgs {
 
     @CommandLine.Option(names = {"--geodist"},
             description = "Type of distance calculation to use for lat,lon distance calculation, "
-                    +"one of ${COMPLETION-CANDIDATES}. "
+                    +"from ${COMPLETION-CANDIDATES}. "
                     + "Default is spherical. Note this only affects calculation of distance from lat/lon pairs, "
                     + "all travel time calculations are done in a purely spherical model.",
             arity = "1..*"
