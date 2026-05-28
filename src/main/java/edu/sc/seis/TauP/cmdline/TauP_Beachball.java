@@ -150,6 +150,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 }
                 List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
                 printResultJson(writer, faultPlane, arrivalList);
+                writer.close();
             }
         } else {
             throw new TauPException("Ooops, only --html works now");
@@ -206,7 +207,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         } else {
             // text/gmt
-            throw new TauPException("Text/GMT output not yet implemented");
+            throw new TauPException(getOutputFormat()+" output not yet implemented");
         }
     }
 
@@ -262,6 +263,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         drawArrivalsSVG(writer, scale, arrivalList);
 
         writer.println("</svg>");
+        writer.flush();
     }
 
     private static StringBuilder getBeachballExtraCSS() {
@@ -496,6 +498,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             printResultSVG(writer, faultPlane, arrivalList, bb);
         }
         writer.println(HTMLUtil.createHtmlEnding());
+        writer.flush();
     }
 
     public void printResultJson(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList) throws TauPException {
@@ -513,6 +516,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
         gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp, withDerivative));
         writer.println(gsonBuilder.create().toJson(bbResult));
+        writer.flush();
     }
 
     @CommandLine.Mixin
