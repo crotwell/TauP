@@ -71,6 +71,10 @@
         <label for="tool_spikes" >
           <a href="doc/taup_spikes.html" target="taupdocs">Spikes</a></label>
 
+        <input type="radio" name="tool" id="tool_beachball" value="beachball" />
+        <label for="tool_beachball" >
+          <a href="doc/taup_beachball.html" target="taupdocs">Beachball</a></label>
+
         <input type="radio" name="tool" id="tool_version" value="version" />
         <label for="tool_version">
           <a href="doc/taup_version.html" target="taupdocs">Version</a></label>
@@ -95,7 +99,7 @@
       <label>Paramters:</label>
     </div>
     <div class="tooloptions">
-      <fieldset class="model tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes tool_velplot tool_discon tool_refltrans" >
+      <fieldset class="model tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes tool_beachball tool_velplot tool_discon tool_refltrans" >
           <legend>
             <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
           </legend>
@@ -117,7 +121,7 @@
         </span>
       </fieldset>
 
-      <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes">
+      <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes tool_beachball">
           <legend>Phase, Source:</legend>
           <label for="phase">
               <span><a href="doc/phaseNaming.html" target="taupdocs">Phase:</a> </span>
@@ -134,7 +138,7 @@
           </label>
           <input id="stadepth" name="stadepth" value="0"  />
       </fieldset>
-      <fieldset class="tool_time tool_pierce tool_path tool_spikes tool_distaz">
+      <fieldset class="tool_time tool_pierce tool_path tool_spikes tool_beachball tool_distaz">
           <legend>Distance:</legend>
           <div class="degree">
             <input type="checkbox" id="islistdegdist" name="islistdegdist" checked />
@@ -310,7 +314,7 @@
           </label>
           <input type="text" id="scatdist" name="scatdist" value="0" />
       </fieldset>
-      <fieldset class="tool_time tool_curve tool_find tool_spikes">
+      <fieldset class="tool_time tool_curve tool_find tool_spikes tool_beachball">
         <legend>Amplitude:</legend>
         <div>
           <label for="amp">
@@ -352,12 +356,43 @@
           </label>
           <input type="number" id="rake" name="rake" value="0" />
 
+          <span class="for_tool tool_beachball">
+            <input type="checkbox" id="isusgsfaulteid" name="isusgsfaulteid" />
+            <label for="isusgsfaulteid">
+                <span>USGS Event Id: </span>
+            </label>
+            <input id="usgsfaulteid" name="usgsfaulteid" value="se609212" />
+          </span>
+
           <span class="for_tool tool_curve">
             <label for="curveazimuth">
                 <span>Azimuth: </span>
             </label>
             <input type="number" id="curveazimuth" name="curveazimuth" value="45" />
           </span>
+        </div>
+      </fieldset>
+      <fieldset class="tool_beachball">
+        <div>
+          <label>
+            <span>Wavetype: </span>
+        </label>
+          <input type="radio" id="isampp" value="ampp" name="bbwavetype" checked />
+          <label for="isampp">
+              <span>P: </span>
+          </label>
+          <input type="radio" id="isampsv" value="ampsv" name="bbwavetype"  />
+          <label for="isampsv">
+              <span>Sv: </span>
+          </label>
+          <input type="radio" id="isampsh" value="ampsh" name="bbwavetype"  />
+          <label for="isampsh">
+              <span>Sh: </span>
+          </label>
+          <input type="radio" id="isamps" value="amps" name="bbwavetype"  />
+          <label for="isamps">
+              <span>S: </span>
+          </label>
         </div>
       </fieldset>
       <fieldset class="tool_spikes">

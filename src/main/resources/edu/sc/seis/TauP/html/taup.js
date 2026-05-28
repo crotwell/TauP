@@ -716,7 +716,7 @@ export function form_tool_url() {
   }
   let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
   if ((isAmplitude && (toolname === "time" || toolname === "find")
-      || toolname === 'curve' || toolname === 'spikes')) {
+      || toolname === 'curve' || toolname === 'spikes' || toolname === 'beachball')) {
     if (toolname === "time" || toolname === "find") {
       url += `&amp=true`;
     }
@@ -749,6 +749,16 @@ export function form_tool_url() {
 
       }
     }
+
+    let withUsgsEid = document.querySelector('input[name="isusgsfaulteid"]').checked;
+    if (toolname === 'beachball' && withUsgsEid) {
+      let eid = document.querySelector('input[name="usgsfaulteid"]').value;
+      url += `&eid=${eid}`;
+    }
+  }
+  if (toolname === 'beachball') {
+    let wavetype = document.querySelector('input[name="bbwavetype"]:checked').value;
+    url += `&bbtype=${wavetype}`
   }
   if (toolname === "velplot") {
 

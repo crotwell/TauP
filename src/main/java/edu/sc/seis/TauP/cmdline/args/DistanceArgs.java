@@ -549,6 +549,10 @@ public class DistanceArgs {
     @CommandLine.Mixin
     QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();
 
+    public QmlStaxmlArgs getQmlStaxmlArgs() {
+        return qmlStaxmlArgs;
+    }
+
     public void setQuakemlText(String quakemlText) {
         qmlStaxmlArgs.setQuakemlText(quakemlText);
     }

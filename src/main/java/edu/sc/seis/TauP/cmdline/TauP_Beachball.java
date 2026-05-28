@@ -10,6 +10,7 @@ import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.FocalMechanism;
+import edu.sc.seis.seisFile.fdsnws.quakeml.NodalPlane;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -46,6 +47,34 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         // in case no arrivals, still use given source arg
         if (sourceArgs.hasStrikeDipRake()) {
             uniqFaultPlaneList.add(sourceArgs.getFaultPlane());
+        } else if (!getDistanceArgs().getQmlStaxmlArgs().getEventLocations().isEmpty()) {
+            for (LatLonLocatable ll : getDistanceArgs().getQmlStaxmlArgs().getEventLocations()) {
+                if (ll instanceof Event) {
+                    Event e = (Event) ll;
+                    if (e.getPreferredFocalMechanismID() != null) {
+                        for (FocalMechanism focalMech : e.getFocalMechanismList()) {
+                            if (focalMech.getNodalPlane().length>1) {
+                                NodalPlane np = focalMech.getNodalPlane()[0];
+                                uniqFaultPlaneList.add(new FaultPlane(np));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (!getDistanceArgs().getQmlStaxmlArgs().getEventIdList().isEmpty()) {
+            List<Event> eventList = getDistanceArgs().getQmlStaxmlArgs().loadEventsFromUSGS(getDistanceArgs().getQmlStaxmlArgs().getEventIdList());
+            for (Event e : eventList) {
+                if (e.getPreferredFocalMechanismID() != null) {
+                    for (FocalMechanism focalMech : e.getFocalMechanismList()) {
+                        if (focalMech.getNodalPlane().length>1) {
+                            NodalPlane np = focalMech.getNodalPlane()[0];
+                            uniqFaultPlaneList.add(new FaultPlane(np));
+                            break;
+                        }
+                    }
+                }
+            }
         } else {
             // no fault plane given on cmd line, so make sure all rays have
             for (RayCalculateable ray : distanceValues) {
@@ -93,16 +122,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             writer.println("</li>");
 
             for (FaultPlane faultPlane : uniqFaultPlaneList) {
-                List<RayCalculateable> distanceValuesPerSource = new ArrayList<>();
-                for (RayCalculateable ray : distanceValues) {
-                    if (ray.getFaultPlane().equals(faultPlane)) {
-                        distanceValuesPerSource.add(ray);
-                    }
-                }
-                List<Arrival> arrivalList = new ArrayList<>();
-                if ( ! phaseArgs.isEmpty()) {
-                    arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
-                }
+                List<Arrival> arrivalList = calcArrivalsForSource(faultPlane, distanceValues);
 
                 String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
                         getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
@@ -152,9 +172,30 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 printResultJson(writer, faultPlane, arrivalList);
                 writer.close();
             }
+        } else if (getOutputFormat().equals(OutputTypes.SVG)) {
+            if (uniqFaultPlaneList.isEmpty() || uniqFaultPlaneList.size()>1) {
+                throw new TauPException("Ooops, --svg only allows a single fault plane at a time: "+uniqFaultPlaneList.size());
+            }
+            FaultPlane faultPlane = uniqFaultPlaneList.iterator().next();
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            printResultSVG(writer, faultPlane, calcArrivalsForSource(faultPlane, distanceValues), getBeachballType());
         } else {
             throw new TauPException("Ooops, only --html works now");
         }
+    }
+
+    public List<Arrival> calcArrivalsForSource(FaultPlane faultPlane, List<RayCalculateable> distanceValues) throws TauPException {
+        List<Arrival> arrivalList = new ArrayList<>();
+        if ( ! phaseArgs.isEmpty()) {
+            List<RayCalculateable> distanceValuesPerSource = new ArrayList<>();
+            for (RayCalculateable ray : distanceValues) {
+                if (ray.getFaultPlane() == null || ray.getFaultPlane().equals(faultPlane)) {
+                    distanceValuesPerSource.add(ray);
+                }
+            }
+            arrivalList = calcAll(getSeismicPhases(), distanceValuesPerSource);
+        }
+        return arrivalList;
     }
 
     @Override
@@ -198,7 +239,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     public void printResult(PrintWriter out, List<Arrival> arrivalList, FaultPlane faultPlane) throws IOException, TauPException {
 
         if (getOutputFormat().equals(OutputTypes.JSON)) {
-            throw new TauPException("JSON output not yet implemented");
+            printResultJson(out, faultPlane, arrivalList);
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
             printResultSVG(out, faultPlane, arrivalList, beachballType);
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {
