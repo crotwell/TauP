@@ -464,7 +464,9 @@ export function form_tool_url() {
   let iskilometerrange = document.querySelector('input[name="iskilometerrange"]').checked;
   let isexactkilometer = document.querySelector('input[name="isexactkilometer"]').checked;
   let isevtdist = document.querySelector('input[name="isevent"]').checked;
+  let isusgseid = document.querySelector('input[name="isusgseid"]').checked;
   let isstadist = document.querySelector('input[name="isstation"]').checked;
+  let issid = document.querySelector('input[name="issid"]').checked;
   let isazimuth = document.querySelector('input[name="isaz"]').checked;
   let isbackazimuth = document.querySelector('input[name="isbaz"]').checked;
   let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
@@ -473,7 +475,7 @@ export function form_tool_url() {
   let isSomeDistance = islistdegdist
       || isdegreerange
       || islistkmdist || iskilometerrange
-      || (isevtdist && isstadist)
+      || ((isevtdist || isusgseid) && (isstadist || issid))
       || istakeoffdist || istakeoffrange
       || israyparamdist;
   if ( ! isSomeDistance ) {
@@ -635,10 +637,18 @@ export function form_tool_url() {
       let evlo = document.querySelector('input[name="eventlon"]').value;
       distparam += `&event=${evla},${evlo}`;
     }
+    if (isusgseid) {
+      const eid = document.querySelector('input[name="usgseid"]').value;
+      distparam += `&eid=${eid}`;
+    }
     if (isstadist || distazEnsureLatLon) {
       let stla = document.querySelector('input[name="stationlat"]').value;
       let stlo = document.querySelector('input[name="stationlon"]').value;
       distparam += `&station=${stla},${stlo}`;
+    }
+    if (issid) {
+      const sid = document.querySelector('input[name="stationsid"]').value;
+      distparam += `&sid=${sid}`;
     }
     if (isazimuth) {
       let az = document.querySelector('input[name="az"]').value;
@@ -648,7 +658,7 @@ export function form_tool_url() {
       let baz = document.querySelector('input[name="baz"]').value;
       distparam += `&baz=${baz}`;
     }
-    if (distazEnsureLatLon || isevtdist || isstadist || isazimuth || isbackazimuth) {
+    if (distazEnsureLatLon || isevtdist || isusgseid || isstadist || isazimuth || isbackazimuth) {
       let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
       if (isgeod) {
         distparam += `&geodetic=true`;
