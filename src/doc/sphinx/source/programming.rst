@@ -73,13 +73,35 @@ does not yet include all possible parameters that the web tools support.
 Python
 ------
 
-A slightly less efficient, but perhaps good enough for most uses is to execute
+The above technique has been incorporated into a
+`TauP python <https://pypi.org/project/taup/>`__ library for easier use.
+This implements the HTTP method above, but provides a more user friendly
+syntax and manages the start up and shutdown of the java server. The
+TauP python library is available on pypi.org, so as long as the main
+TauP Toolkit is installed, it is close to seemless, just requiring a
+
+.. code-block::
+
+  pip install taup
+
+and then
+
+.. literalinclude:: programming/example_very_simple.py
+  :language: python
+
+More documentation for the python library is available at
+`readthedocs <https://taup-python.readthedocs.io>`__.
+
+Subprocess
+----------
+
+A slightly less efficient, but perhaps good enough for some uses is to execute
 the command line tools within another script, and then parse output of the
 tool from json. This has the disadvantage that a new subprocess must start
-for each call to get times, and so can be slower, but has the advantage of
+for each call to get times, and so can be much slower, but has the advantage of
 access to all of the command line arguments available.
 
-An example that gets travel times via Python show how this could be done.
+An example that gets travel times via this library shows how this could be done.
 
 
 .. literalinclude:: programming/grab_taup_times.py
