@@ -3,7 +3,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;

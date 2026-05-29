@@ -45,16 +45,24 @@ public class RadiationAmplitude {
      * Sv amplitude.
      * @return amplitude
      */
-    public double getThetaAmplitude() {
-        return thetaAmplitude;
+    public double getPhiAmplitude() {
+        return phiAmplitude;
     }
 
     /**
      * Sh amplitude.
      * @return amplitude
      */
-    public double getPhiAmplitude() {
-        return phiAmplitude;
+    public double getThetaAmplitude() {
+        return thetaAmplitude;
+    }
+
+    /**
+     * Gets total S amplitude, sqrt of Sv*Sv+Sh*Sh
+     * @return total S amp
+     */
+    public double getSTotalAmplitude() {
+        return Math.sqrt(thetaAmplitude*thetaAmplitude+phiAmplitude*phiAmplitude);
     }
 
     public String toString() {

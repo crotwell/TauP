@@ -373,6 +373,7 @@
         </div>
       </fieldset>
       <fieldset class="tool_beachball">
+        <legend>Beachball:</legend>
         <div>
           <label>
             <span>Wavetype: </span>
@@ -393,6 +394,27 @@
           <label for="isamps">
               <span>S: </span>
           </label>
+        </div>
+        <div>
+
+          <input type="checkbox" id="colorphases" name="colorphases"  />
+          <label for="colorphases">
+              <span>Show Phases</span>
+          </label>
+
+          <input type="checkbox" id="witharrows" name="witharrows"  checked />
+          <label for="witharrows">
+              <span>Show Arrows</span>
+          </label>
+
+          <label for="bbnumpoints">
+              <span>Num Points: </span>
+          </label>
+          <input type="number" id="bbnumpoints" name="bbnumpoints" value="2000" />
+          <label for="bbgridstep">
+              <span>Grid step: </span>
+          </label>
+          <input type="number" id="bbgridstep" name="bbgridstep" value="0.5" />
         </div>
       </fieldset>
       <fieldset class="tool_spikes">

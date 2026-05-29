@@ -223,7 +223,7 @@ public abstract class AbstractPathSegment {
         if (isDegenerate) {
             TimeDist td = path.get(0);
             double[] xy = SvgEarth.xyForDistRadius( td.getDistDeg(), radiusOfEarth - td.getDepth());
-            pw.println("      <circle class=\"" + getCssClasses() + "\" cx=\""+xy[0] + "\" cy=\""+xy[1] + "\" r=\""+minPolylineSize+"\"/>");
+            pw.println("      <circle class=\"degeneratesegment " + getCssClasses() + "\" cx=\""+xy[0] + "\" cy=\""+xy[1] + "\" r=\""+minPolylineSize+"\"/>");
         } else {
             pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");
             String prevLine = "";

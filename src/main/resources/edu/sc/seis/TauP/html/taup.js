@@ -759,6 +759,15 @@ export function form_tool_url() {
   if (toolname === 'beachball') {
     let wavetype = document.querySelector('input[name="bbwavetype"]:checked').value;
     url += `&bbtype=${wavetype}`
+    let colorphases = document.querySelector('input[name="colorphases"]').checked;
+    if (colorphases) { url += `&colorphases=true`;}
+
+    let witharrows = document.querySelector('input[name="witharrows"]').checked;
+    if ( witharrows) { url += `&arrows=true`;}
+    let bbnumpoints = document.querySelector('input[name="bbnumpoints"]').value;
+    url += `&numpoints=${bbnumpoints}`;
+    let bbgridstep = document.querySelector('input[name="bbgridstep"]').value;
+    url += `&gridstep=${bbgridstep}`;
   }
   if (toolname === "velplot") {
 
