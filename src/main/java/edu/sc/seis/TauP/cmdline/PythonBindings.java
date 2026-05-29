@@ -467,12 +467,50 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
+
+            List<String> dataclasses = List.of(
+                    "Amplitude",
+                    "Arrival",
+                    "BeachballResult",
+                    "Curve",
+                    "CurveResult",
+                    "CurveSegment",
+                    "Daz",
+                    "DataClassJsonEncoder",
+                    "Derivative",
+                    "DerivativeSR",
+                    "DisconLayer",
+                    "Discontinuity",
+                    "ModelDiscon",
+                    "DisconResult",
+                    "DistazResult",
+                    "DistCalcType",
+                    "Fault",
+                    "FindResult",
+                    "Isochron",
+                    "LatLonDepth",
+                    "PathSegment",
+                    "PhaseBranch",
+                    "PhaseDescription",
+                    "PhaseRay",
+                    "PhaseResult",
+                    "PhaseSegment",
+                    "RelativeArrival",
+                    "Scatter",
+                    "Source",
+                    "TimeDist",
+                    "TimeResult",
+                    "Wavefront",
+                    "WavefrontPathSegment",
+                    "WavefrontResult"
+            );
+            dataclasses = new ArrayList<>(dataclasses);// modifyable for sort
+            Collections.sort(dataclasses);
+
             out.println("from .dataclass import (");
-            out.println("    DataClassJsonEncoder,");
-            out.println("    Amplitude, Arrival, Curve, CurveSegment, Daz,");
-            out.println("    DisconLayer, Discontinuity, ModelDiscon, DisconResult, Fault, Isochron,");
-            out.println("    PathSegment, RelativeArrival, Scatter, Source, TimeDist, TimeResult,");
-            out.println("    Wavefront, WavefrontResult");
+            for (String dc : dataclasses) {
+                out.println("    " + dc + ",");
+            }
             out.println(")");
 
             out.println();
@@ -483,26 +521,9 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("    \"" + capToolname + "Query\",");
             }
-            out.println("    \"DataClassJsonEncoder\",");
-            out.println("    \"Amplitude\",");
-            out.println("    \"Arrival\",");
-            out.println("    \"Curve\",");
-            out.println("    \"CurveSegment\",");
-            out.println("    \"Daz\",");
-            out.println("    \"DisconLayer\",");
-            out.println("    \"Discontinuity\",");
-            out.println("    \"ModelDiscon\",");
-            out.println("    \"DisconResult\",");
-            out.println("    \"Fault\",");
-            out.println("    \"Isochron\",");
-            out.println("    \"PathSegment\",");
-            out.println("    \"RelativeArrival\",");
-            out.println("    \"Scatter\",");
-            out.println("    \"Source\",");
-            out.println("    \"TimeDist\",");
-            out.println("    \"TimeResult\",");
-            out.println("    \"Wavefront\",");
-            out.println("    \"WavefrontResult\"");
+            for (String dc : dataclasses) {
+                out.println("    \"" + dc + "\",");
+            }
             out.println("]");
 
             out.close();
