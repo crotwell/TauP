@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 100 -p P,S,PKIKP &#45;&#45;timestep 100 </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -308,7 +308,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -536,21 +536,21 @@ circle.discontinuity.iocb {
         <desc>Phase:P at     0.00</desc>
     <g>
       <desc>seg 0/9 P of P at     0.00</desc>
-      <circle class="wavefront phase_P pwave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_P pwave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
     </g>
       </g>
       <g>
         <desc>Phase:S at     0.00</desc>
     <g>
       <desc>seg 0/15 S of S at     0.00</desc>
-      <circle class="wavefront phase_S swave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_S swave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
     </g>
       </g>
       <g>
         <desc>Phase:PKIKP at     0.00</desc>
     <g>
       <desc>seg 0/12 P of PKIKP at     0.00</desc>
-      <circle class="wavefront phase_PKIKP pwave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_PKIKP pwave time_0_00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
     </g>
       </g>
 </g>

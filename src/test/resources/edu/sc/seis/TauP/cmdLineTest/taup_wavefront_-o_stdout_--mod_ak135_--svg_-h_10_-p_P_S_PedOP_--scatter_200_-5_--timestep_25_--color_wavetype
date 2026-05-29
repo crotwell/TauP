@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 10 -p P,S,PedOP &#45;&#45;scatter 200 -5 &#45;&#45;timestep 25 &#45;&#45;color wavetype </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -101,7 +101,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -376,21 +376,21 @@ circle.discontinuity.iocb {
         <desc>Phase:P at     0.00</desc>
     <g>
       <desc>seg 0/33 P of P at     0.00</desc>
-      <circle class="wavefront phase_P pwave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
+      <circle class="degeneratesegment wavefront phase_P pwave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
     </g>
       </g>
       <g>
         <desc>Phase:S at     0.00</desc>
     <g>
       <desc>seg 0/61 S of S at     0.00</desc>
-      <circle class="wavefront phase_S swave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
+      <circle class="degeneratesegment wavefront phase_S swave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
     </g>
       </g>
       <g>
         <desc>Phase:PedOP at     0.00</desc>
     <g>
       <desc>seg 0/35 Ped of PedOP at     0.00</desc>
-      <circle class="wavefront phase_PedOP pwave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
+      <circle class="degeneratesegment wavefront phase_PedOP pwave time_0_00" cx="3.894989144688157E-13" cy="-6361.0" r="11.2"/>
     </g>
       </g>
 </g>
@@ -951,7 +951,7 @@ circle.discontinuity.iocb {
         <desc>Phase:PedOP at    25.00</desc>
     <g>
       <desc>seg 1/35 Ped of PedOP at    25.00</desc>
-      <circle class="wavefront phase_PedOP pwave time_25_00" cx="-169.20342063118812" cy="-6278.416230343112" r="11.2"/>
+      <circle class="degeneratesegment wavefront phase_PedOP pwave time_25_00" cx="-169.20342063118812" cy="-6278.416230343112" r="11.2"/>
     </g>
       </g>
 </g>
@@ -1490,7 +1490,7 @@ circle.discontinuity.iocb {
         <desc>Phase:PedOP at    50.00</desc>
     <g>
       <desc>seg 2/35 Ped of PedOP at    50.00</desc>
-      <circle class="wavefront phase_PedOP pwave time_50_00" cx="-357.6036944993483" cy="-6205.65284608786" r="11.2"/>
+      <circle class="degeneratesegment wavefront phase_PedOP pwave time_50_00" cx="-357.6036944993483" cy="-6205.65284608786" r="11.2"/>
     </g>
       </g>
 </g>

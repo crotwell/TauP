@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 10 -p P,S,PedOP &#45;&#45;scatter 200 -5 &#45;&#45;deg 40 </command>
-      <version>3.2.0-SNAPSHOT3</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -92,7 +92,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
