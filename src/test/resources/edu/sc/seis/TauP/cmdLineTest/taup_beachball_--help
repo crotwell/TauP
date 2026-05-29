@@ -1,13 +1,15 @@
-Usage: taup beachball [--colorphases] [--debug] [--geodetic] [--geodetic]
-                      [--help] [--verbose]
+Usage: taup beachball [--arrows] [--colorphases] [--debug] [--geodetic]
+                      [--geodetic] [--help] [--verbose]
                       [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                       [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--equitorialradius=m] [--equitorialradius=m]
-                      [--invflattening=f] [--invflattening=f]
-                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                      [--mw=<mw>] [--numattenuationfreq=<numFrequencies>]
-                      [-o=<outFile>] [--planet=<planet>] [--planet=<planet>]
+                      [--gridstep=<gridAngleStep>] [--invflattening=f]
+                      [--invflattening=f] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
+                      [--numattenuationfreq=<numFrequencies>]
+                      [--numpoints=<numPoints>] [-o=<outFile>]
+                      [--planet=<planet>] [--planet=<planet>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                       [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
                       [--sid=sta[,sta...]]... [--evt=lat lon]... [--evt=lat
@@ -35,6 +37,7 @@ Plot beachball for focal mechanism.
 
 Options:
 
+      --arrows               Arrows to show direction for svg.
       --attenuationfreq=<attenuationFreq>
                              attenuation frequency for amplitude calculations,
                                default is 1.0
@@ -47,6 +50,9 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
+      --gridstep=<gridAngleStep>
+                             Step in degrees for griding the background
+                               radiation pattern for svg image
       --help                 display this help message
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
@@ -56,6 +62,9 @@ Options:
       --numattenuationfreq=<numFrequencies>
                               number attenuation frequencies for amplitude
                                calculations, default is 64
+      --numpoints=<numPoints>
+                             Number of points for json, number of arrows to
+                               show direction for svg
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file
@@ -142,8 +151,10 @@ Distance is given by:
                                step; min,max or min,max,step. Default min is 0
                                and step is 10.
 Lat,Lon influenced by:
-      --az=<azimuth>         azimuth in degrees, source to receiver
-      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --az, --azimuth=<azimuth>
+                             azimuth in degrees, source to receiver
+      --baz, --backazimuth=<backAzimuth>
+                             backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
                                calculations when geodetic or geocentric,
                                defaults to WGS84 ~ 6378137 meters.
@@ -157,7 +168,7 @@ Lat,Lon influenced by:
                                model.
       --geodist=<geoDistTypes>...
                              Type of distance calculation to use for lat,lon
-                               distance calculation, one of spherical,
+                               distance calculation, from spherical,
                                geocentric, geodetic. Default is spherical. Note
                                this only affects calculation of distance from
                                lat/lon pairs, all travel time calculations are

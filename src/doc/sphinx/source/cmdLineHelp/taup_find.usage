@@ -19,7 +19,8 @@ Options:
       --attenuationfreq=<attenuationFreq>
                            attenuation frequency for amplitude calculations,
                              default is 1.0
-      --az=<azimuth>       azimuth in degrees, for amp calculations
+      --az, --azimuth=<azimuth>
+                           azimuth in degrees, for amp calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees

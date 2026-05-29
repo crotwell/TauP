@@ -12,8 +12,10 @@ Set headers to travel times of phases using depth and distance from SAC files.
 
 Options:
 
-      --az=<azimuth>         azimuth in degrees, source to receiver
-      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --az, --azimuth=<azimuth>
+                             azimuth in degrees, source to receiver
+      --baz, --backazimuth=<backAzimuth>
+                             backazimuth in degrees, receiver to source
       --debug                enable debugging output
       --equitorialradius=m   Equitorial radius in meters for distance
                                calculations when geodetic or geocentric,
@@ -29,7 +31,7 @@ Options:
                                model.
       --geodist=<geoDistTypes>...
                              Type of distance calculation to use for lat,lon
-                               distance calculation, one of spherical,
+                               distance calculation, from spherical,
                                geocentric, geodetic. Default is spherical. Note
                                this only affects calculation of distance from
                                lat/lon pairs, all travel time calculations are

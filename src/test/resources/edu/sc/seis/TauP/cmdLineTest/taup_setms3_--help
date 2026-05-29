@@ -24,8 +24,10 @@ Options:
       --attenuationfreq=<attenuationFreq>
                              attenuation frequency for amplitude calculations,
                                default is 1.0
-      --az=<azimuth>         azimuth in degrees, source to receiver
-      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --az, --azimuth=<azimuth>
+                             azimuth in degrees, source to receiver
+      --baz, --backazimuth=<backAzimuth>
+                             backazimuth in degrees, receiver to source
       --debug                enable debugging output
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
@@ -43,7 +45,7 @@ Options:
                                model.
       --geodist=<geoDistTypes>...
                              Type of distance calculation to use for lat,lon
-                               distance calculation, one of spherical,
+                               distance calculation, from spherical,
                                geocentric, geodetic. Default is spherical. Note
                                this only affects calculation of distance from
                                lat/lon pairs, all travel time calculations are

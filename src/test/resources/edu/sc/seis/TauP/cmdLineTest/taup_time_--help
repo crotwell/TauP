@@ -138,8 +138,10 @@ Distance is given by:
                                step; min,max or min,max,step. Default min is 0
                                and step is 10.
 Lat,Lon influenced by:
-      --az=<azimuth>         azimuth in degrees, source to receiver
-      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
+      --az, --azimuth=<azimuth>
+                             azimuth in degrees, source to receiver
+      --baz, --backazimuth=<backAzimuth>
+                             backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
                                calculations when geodetic or geocentric,
                                defaults to WGS84 ~ 6378137 meters.
@@ -153,7 +155,7 @@ Lat,Lon influenced by:
                                model.
       --geodist=<geoDistTypes>...
                              Type of distance calculation to use for lat,lon
-                               distance calculation, one of spherical,
+                               distance calculation, from spherical,
                                geocentric, geodetic. Default is spherical. Note
                                this only affects calculation of distance from
                                lat/lon pairs, all travel time calculations are
