@@ -299,53 +299,57 @@ public class PythonBindings {
 
     public static boolean specialSetter(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
         String varname =dashlessArgName( op.longestName());
-        if (varname.equals("scatter")) {
+        switch (varname) {
+            case "scatter" -> {
 
-            bodyWriter.println("  def " + opname + "(self, depth, degree):");
-            desc(bodyWriter, op, opname);
+                bodyWriter.println("  def " + opname + "(self, depth, degree):");
+                desc(bodyWriter, op, opname);
 
-            bodyWriter.println("    self._" + varname + " = [depth, degree]");
-            bodyWriter.println("    return self");
-            bodyWriter.println();
-        } else if (varname.equals("strikediprake")) {
-
-            bodyWriter.println("  def " + opname + "(self, strike, dip, rake):");
-            desc(bodyWriter, op, opname);
-
-            bodyWriter.println("    self._" + varname + " = [strike, dip, rake]");
-            bodyWriter.println("    return self");
-            bodyWriter.println();
-        } else if (varname.equals("station") || varname.equals("event")) {
-            bodyWriter.println("  def " + opname + "(self, lat, lon):");
-            desc(bodyWriter, op, opname);
-
-            bodyWriter.println("    self._" + varname + " = [lat, lon]");
-            bodyWriter.println("    return self");
-            bodyWriter.println();
-            bodyWriter.println("  def and" + capitalize(opname) + "(self, lat, lon):");
-            desc(bodyWriter, op, opname);
-
-            bodyWriter.println("    self._" + varname + " += [lat, lon]");
-            bodyWriter.println("    return self");
-            bodyWriter.println();
-        } else if (varname.equals("stationxmltext") || varname.equals("staxmltext")
-                || varname.equals("qmltext") || varname.equals("quakemltext")) {
-            String defValStr = "";
-            bodyWriter.println("  def " + opname + "(self, val):");
-            desc(bodyWriter, op, opname);
-            String paramName;
-            if (varname.equals("stationxmltext") || varname.equals("staxmltext")) {
-                paramName = "staxmltext";
-            } else {
-                //if (varname.equals("qml") || varname.equals("quakeml")) {
-                paramName = "quakemltext";
+                bodyWriter.println("    self._" + varname + " = [depth, degree]");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
             }
+            case "strikediprake" -> {
 
-            bodyWriter.println("    self._" + paramName + " = val");
-            bodyWriter.println("    return self");
-            bodyWriter.println();
-        } else {
-            return false;
+                bodyWriter.println("  def " + opname + "(self, strike, dip, rake):");
+                desc(bodyWriter, op, opname);
+
+                bodyWriter.println("    self._" + varname + " = [strike, dip, rake]");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
+            }
+            case "station", "event" -> {
+                bodyWriter.println("  def " + opname + "(self, lat, lon):");
+                desc(bodyWriter, op, opname);
+
+                bodyWriter.println("    self._" + varname + " = [lat, lon]");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
+                bodyWriter.println("  def and" + capitalize(opname) + "(self, lat, lon):");
+                desc(bodyWriter, op, opname);
+
+                bodyWriter.println("    self._" + varname + " += [lat, lon]");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
+            }
+            case "stationxmltext", "staxmltext", "qmltext", "quakemltext" -> {
+                bodyWriter.println("  def " + opname + "(self, val):");
+                desc(bodyWriter, op, opname);
+                String paramName;
+                if (varname.equals("stationxmltext") || varname.equals("staxmltext")) {
+                    paramName = "staxmltext";
+                } else {
+                    //if (varname.equals("qml") || varname.equals("quakeml")) {
+                    paramName = "quakemltext";
+                }
+
+                bodyWriter.println("    self._" + paramName + " = val");
+                bodyWriter.println("    return self");
+                bodyWriter.println();
+            }
+            default -> {
+                return false;
+            }
         }
         return true;
     }
@@ -386,24 +390,15 @@ public class PythonBindings {
         return typeFromJavaType(type);
     }
     public static String typeFromJavaType(String type) {
-        switch (type) {
-            case "java.lang.String":
-                return "String";
-            case "java.util.List":
-                return "List";
-            case "java.lang.Float":
-            case "float":
-                return "Float";
-            case "java.lang.Double":
-            case "double":
-                return "Double";
-            case "java.lang.Integer":
-            case "int":
-                return "Integer";
-            case "boolean":
-                return "Boolean";
-        }
-        return type;
+        return switch (type) {
+            case "java.lang.String" -> "String";
+            case "java.util.List" -> "List";
+            case "java.lang.Float", "float" -> "Float";
+            case "java.lang.Double", "double" -> "Double";
+            case "java.lang.Integer", "int" -> "Integer";
+            case "boolean" -> "Boolean";
+            default -> type;
+        };
     }
 
     public static String dashlessArgName(String argName) {
