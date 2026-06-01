@@ -33,6 +33,8 @@ public class PythonBindings {
             dataclassType = "TimeResult";
         } else if (toolname.equals("beachball")) {
             dataclassType = "BeachballResult";
+        } else if (toolname.equals("find")) {
+            dataclassType = "FindResult";
         } else if (toolname.equals("phase")) {
             dataclassType = "PhaseResult";
         } else if (toolname.equals("discon")) {
