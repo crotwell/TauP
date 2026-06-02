@@ -134,6 +134,15 @@ public class PythonBindings {
         }
 
         writer.println();
+        writer.println("  def asCommandLine(self, taupServer):");
+        writer.println("    \"\"\"");
+        writer.println("    Sends all params to the server, returns the equivalent command line.");
+        writer.println("    \"\"\"");
+        writer.println("    params = self.create_params()");
+        writer.println("    return taupServer.asCommandLine(params, self.toolname)");
+        writer.println();
+
+        writer.println();
         writer.println("  def calcJson(self, taupServer):");
         writer.println("    \"\"\"");
         writer.println("    Sends all params to the server, returns the result parsed from JSON.");

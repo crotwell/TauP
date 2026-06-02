@@ -597,7 +597,30 @@ public class TauP_WebServe extends TauP_Tool {
     public void handleCmdLine(TauP_Tool tool, HttpServerExchange exchange) throws TauPException {
         CommandLine cmd = new CommandLine(tool);
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
-        List<String> argList = queryParamsToCmdLineArgs(spec, exchange.getQueryParameters());
+        java.util.Map<java.lang.String,java.util.Deque<java.lang.String>> queryParams;
+        if (exchange.getRequestMethod().equals(Methods.GET)) {
+            queryParams = exchange.getQueryParameters();
+        } else if (exchange.getRequestMethod().equals(Methods.POST)) {
+            try {
+                BufferedInputStream bufin = new BufferedInputStream(exchange.getInputStream());
+                String contents = new String(bufin.readAllBytes()).trim();
+                JSONObject postParams = new JSONObject(contents);
+                // special values
+                if (postParams.has("quakemltext") || postParams.has("staxmltext") || postParams.has("velocitymodel")) {
+
+                    postParams.remove("quakemltext");
+                    postParams.remove("staxmltext");
+                    postParams.remove("velocitymodel");
+                }
+                queryParams = createQueryParamsFromPost(postParams, exchange);
+            } catch (IOException e) {
+                throw new TauPException("Unable to parse post params", e);
+            }
+        } else {
+            throw new TauPException("Unknown http method: "+exchange.getRequestMethod());
+        }
+
+        List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
         StringBuilder buffer = new StringBuilder();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
