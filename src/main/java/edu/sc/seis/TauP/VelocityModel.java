@@ -49,6 +49,7 @@ public class VelocityModel implements Cloneable, Serializable {
 
     public static final String ND = "nd";
     public static final String TVEL = "tvel";
+    public static final String JSON = "json";
 
     public VelocityModel(String modelName,
                          double radiusOfEarth,
@@ -69,6 +70,33 @@ public class VelocityModel implements Cloneable, Serializable {
         this.maxRadius = maxRadius;
         this.spherical = spherical;
         this.layer = layer;
+    }
+
+    public VelocityModel(String modelName,
+                         double radiusOfEarth,
+                         List<NamedVelocityDiscon> namedDiscons,
+                         double minRadius,
+                         double maxRadius,
+                         boolean spherical,
+                         List<VelocityLayer> layer) {
+        this.modelName = modelName;
+        this.radiusOfEarth = radiusOfEarth;
+        this.namedDiscon = namedDiscons;
+        this.minRadius = minRadius;
+        this.maxRadius = maxRadius;
+        this.spherical = spherical;
+        this.layer = layer;
+        for (NamedVelocityDiscon nDiscon : namedDiscons) {
+            if (nDiscon.isMoho()) {
+                this.mohoDepth = nDiscon.depth;
+            }
+            if (nDiscon.isCmb()) {
+                this.cmbDepth = nDiscon.depth;
+            }
+            if (nDiscon.isIocb()) {
+                this.iocbDepth = nDiscon.depth;
+            }
+        }
     }
 
     /** name of the velocity model. */

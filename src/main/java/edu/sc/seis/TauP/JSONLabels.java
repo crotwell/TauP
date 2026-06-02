@@ -124,4 +124,21 @@ public interface JSONLabels {
     String PREVENDACTION = "prevendaction";
     String LEGNAME = "legname";
     String UPDOWN = "updown";
+
+    String MODEL_NAME = "modelName";
+    String RADIUS_OF_EARTH = "radiusOfEarth";
+    String NAMED_DISCONS = "nameddisons";
+    String MODEL_MIN_RADIUS = "minRadius";
+    String MODEL_MAX_RADIUS = "maxRadius";
+    String MODEL_SPHERICAL = "spherical";
+    String MODEL_LAYERS = "layers";
+    String LAYER_VP = "vp";
+    String LAYER_VS = "vs";
+    String LAYER_RHO = "rho";
+    String LAYER_QP = "qp";
+    String LAYER_QS = "qs";
+
+
+    String TOP = "top";
+    String BOT = "bot";
 }

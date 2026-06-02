@@ -210,6 +210,11 @@ public class TauP_WebServe extends TauP_Tool {
                         setStationXML(tool, postParams.getString("staxmltext"));
                         postParams.remove("staxmltext");
                     }
+                    if (postParams.has("velocitymodeltext")) {
+                        VelocityModel vMod = GsonUtil.createGsonBuilder().create().fromJson(postParams.getString("velocitymodel"), VelocityModel.class);
+                        setNamedDisconModel(tool, vMod);
+                        postParams.remove("velocitymodeltext");
+                    }
                     queryParams = createQueryParamsFromPost(postParams, exchange);
                     webRunTool(tool, queryParams, exchange);
                 } else {
@@ -330,6 +335,17 @@ public class TauP_WebServe extends TauP_Tool {
             ((TauP_SetMSeed3)tool).setQuakemlText(quakemlText);
         } else {
             throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support quakeml");
+        }
+    }
+
+    public static void setNamedDisconModel(TauP_Tool tool, VelocityModel vMod) throws SlownessModelException, TauModelException, IOException {
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
+        if (tool instanceof TauP_AbstractRayTool) {
+            ((TauP_AbstractRayTool) tool).modelArgs.setTMod(tMod);
+        } else if (tool instanceof TauP_ReflTransPlot) {
+            ((TauP_ReflTransPlot) tool).modelArgs.setTMod(tMod);
+        } else {
+            throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support nameddiscon model");
         }
     }
 
@@ -598,6 +614,7 @@ public class TauP_WebServe extends TauP_Tool {
         CommandLine cmd = new CommandLine(tool);
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
         java.util.Map<java.lang.String,java.util.Deque<java.lang.String>> queryParams;
+        List<String> specialNonCmdLine = new ArrayList<>();
         if (exchange.getRequestMethod().equals(Methods.GET)) {
             queryParams = exchange.getQueryParameters();
         } else if (exchange.getRequestMethod().equals(Methods.POST)) {
@@ -606,11 +623,12 @@ public class TauP_WebServe extends TauP_Tool {
                 String contents = new String(bufin.readAllBytes()).trim();
                 JSONObject postParams = new JSONObject(contents);
                 // special values
-                if (postParams.has("quakemltext") || postParams.has("staxmltext") || postParams.has("velocitymodel")) {
-
-                    postParams.remove("quakemltext");
-                    postParams.remove("staxmltext");
-                    postParams.remove("velocitymodel");
+                List<String> disallowParams = List.of("quakemltext","staxmltext",  "velocitymodel");
+                for (String disallowedCmd : disallowParams) {
+                    if (postParams.has(disallowedCmd)) {
+                        specialNonCmdLine.add(disallowedCmd);
+                        postParams.remove(disallowedCmd);
+                    }
                 }
                 queryParams = createQueryParamsFromPost(postParams, exchange);
             } catch (IOException e) {
@@ -625,6 +643,13 @@ public class TauP_WebServe extends TauP_Tool {
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
             buffer.append(" " + s);
+        }
+        if ( !specialNonCmdLine.isEmpty()) {
+            buffer.append(" # ");
+            for (String c : specialNonCmdLine) {
+                buffer.append(c+" ");
+            }
+            buffer.append("not allowed on command line");
         }
         configContentType(OutputTypes.TEXT, exchange);
         exchange.getResponseSender().send(buffer.toString());

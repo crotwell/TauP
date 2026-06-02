@@ -73,8 +73,15 @@ public class PythonBindings {
         List<CommandLine.Model.OptionSpec> sortedOptions = new ArrayList<>(spec.options());
         CommandLine.Model.OptionSpec qmlText = null;
         CommandLine.Model.OptionSpec staxmlText = null;
+        CommandLine.Model.OptionSpec velmodelText = null;
         for (CommandLine.Model.OptionSpec op : sortedOptions) {
-            if (op.longestName().equals("--quakeml")) {
+            if (op.longestName().equals("--model")) {
+                velmodelText = CommandLine.Model.OptionSpec.builder("--velocitymodeltext")
+                    .paramLabel("txt")
+                    .type(String.class)
+                    .description("Velocity model as json to load for calculations, similar to --model but is text instead of a file or name").build();
+
+            } else if (op.longestName().equals("--quakeml")) {
                 qmlText = CommandLine.Model.OptionSpec.builder("--quakemltext")
                         .paramLabel("xml")
                         .type(String.class)
@@ -85,6 +92,9 @@ public class PythonBindings {
                         .type(String.class)
                         .description("Raw StationXML text to extract station latitudes and longitudes from, similar to --staxml but is text instead of a file").build();
             }
+        }
+        if (velmodelText != null) {
+            sortedOptions.add(velmodelText);
         }
         if (qmlText != null) {
             sortedOptions.add(qmlText);
@@ -343,11 +353,13 @@ public class PythonBindings {
                 bodyWriter.println("    return self");
                 bodyWriter.println();
             }
-            case "stationxmltext", "staxmltext", "qmltext", "quakemltext" -> {
+            case "stationxmltext", "staxmltext", "qmltext", "quakemltext", "velocitymodeltext" -> {
                 bodyWriter.println("  def " + opname + "(self, val):");
                 desc(bodyWriter, op, opname);
                 String paramName;
-                if (varname.equals("stationxmltext") || varname.equals("staxmltext")) {
+                if (varname.equals("velocitymodeltext")) {
+                    paramName = "velocitymodeltext";
+                } else if (varname.equals("stationxmltext") || varname.equals("staxmltext")) {
                     paramName = "staxmltext";
                 } else {
                     //if (varname.equals("qml") || varname.equals("quakeml")) {

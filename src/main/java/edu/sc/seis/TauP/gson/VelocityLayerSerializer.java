@@ -1,14 +1,16 @@
 package edu.sc.seis.TauP.gson;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
+import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.VelocityLayer;
 
 import java.lang.reflect.Type;
 
-public class VelocityLayerSerializer implements JsonSerializer<VelocityLayer> {
+import static edu.sc.seis.TauP.JSONLabels.*;
+import static edu.sc.seis.TauP.PhaseSymbols.j;
+
+public class VelocityLayerSerializer
+        implements JsonSerializer<VelocityLayer>, JsonDeserializer<VelocityLayer> {
 
     /**
      * Gson invokes this call-back method during serialization when it encounters a field of the
@@ -30,17 +32,57 @@ public class VelocityLayerSerializer implements JsonSerializer<VelocityLayer> {
         JsonObject json = new JsonObject();
         json.addProperty("num", src.getLayerNum());
         JsonObject top = new JsonObject();
-        top.addProperty("depth", src.getTopDepth());
-        top.addProperty("vp", src.getTopPVelocity());
-        top.addProperty("vs", src.getTopSVelocity());
-        top.addProperty("rho", src.getTopDensity());
-        json.add("top", top);
+        top.addProperty(DEPTH, src.getTopDepth());
+        top.addProperty(LAYER_VP, src.getTopPVelocity());
+        top.addProperty(LAYER_VS, src.getTopSVelocity());
+        top.addProperty(LAYER_RHO, src.getTopDensity());
+        json.add(TOP, top);
         JsonObject bot = new JsonObject();
-        bot.addProperty("depth", src.getBotDepth());
-        bot.addProperty("vp", src.getBotPVelocity());
-        bot.addProperty("vs", src.getBotSVelocity());
-        bot.addProperty("rho", src.getBotDensity());
-        json.add("bot", bot);
+        bot.addProperty(DEPTH, src.getBotDepth());
+        bot.addProperty(LAYER_VP, src.getBotPVelocity());
+        bot.addProperty(LAYER_VS, src.getBotSVelocity());
+        bot.addProperty(LAYER_RHO, src.getBotDensity());
+        json.add(BOT, bot);
+        if ( ! src.QIsDefault()) {
+            top.addProperty(LAYER_QP, src.getTopQp());
+            top.addProperty(LAYER_QS, src.getTopQs());
+            bot.addProperty(LAYER_QP, src.getBotQp());
+            bot.addProperty(LAYER_QS, src.getBotQs());
+        }
         return json;
+    }
+
+    @Override
+    public VelocityLayer deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        if (jsonElement instanceof JsonObject) {
+            JsonObject jObj = (JsonObject) jsonElement;
+            JsonObject top = jObj.getAsJsonObject(TOP);
+            JsonObject bot = jObj.getAsJsonObject(BOT);
+            VelocityLayer vLayer = new VelocityLayer(
+                    jObj.getAsJsonPrimitive("num").getAsInt(),
+                    top.getAsJsonPrimitive(DEPTH).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_RHO).getAsDouble(),
+                    bot.getAsJsonPrimitive(DEPTH).getAsDouble(),
+                    bot.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
+                    bot.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
+                    bot.getAsJsonPrimitive(LAYER_RHO).getAsDouble()
+            );
+            if (top.has(LAYER_QP)) {
+                vLayer.setTopQp(top.getAsJsonPrimitive(LAYER_QP).getAsDouble());
+            }
+            if (top.has(LAYER_QS)) {
+                vLayer.setTopQs(top.getAsJsonPrimitive(LAYER_QS).getAsDouble());
+            }
+            if (bot.has(LAYER_QP)) {
+                vLayer.setBotQp(bot.getAsJsonPrimitive(LAYER_QP).getAsDouble());
+            }
+            if (bot.has(LAYER_QS)) {
+                vLayer.setBotQs(bot.getAsJsonPrimitive(LAYER_QS).getAsDouble());
+            }
+            return vLayer;
+        }
+        throw new JsonParseException("Expected an Object for "+type);
     }
 }

@@ -1,15 +1,13 @@
 package edu.sc.seis.TauP.gson;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.NamedVelocityDiscon;
 
 import java.lang.reflect.Type;
 
-public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVelocityDiscon> {
+public class NamedVelocityDisconSerializer
+        implements JsonSerializer<NamedVelocityDiscon>, JsonDeserializer<NamedVelocityDiscon> {
 
     @Override
     public JsonElement serialize(NamedVelocityDiscon src, Type typeOfSrc, JsonSerializationContext context) {
@@ -59,5 +57,15 @@ public class NamedVelocityDisconSerializer implements JsonSerializer<NamedVeloci
             }
         }
         return json;
+    }
+
+    @Override
+    public NamedVelocityDiscon deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        if (jsonElement instanceof JsonObject) {
+            JsonObject jObj = (JsonObject)jsonElement;
+            return new NamedVelocityDiscon(jObj.getAsJsonPrimitive(JSONLabels.NAME).getAsString(),
+                    jObj.getAsJsonPrimitive(JSONLabels.DEPTH).getAsDouble());
+        }
+        throw new JsonParseException("Expected an Object for "+type);
     }
 }

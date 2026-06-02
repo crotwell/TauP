@@ -6,8 +6,13 @@ import edu.sc.seis.TauP.VelocityLayer;
 import edu.sc.seis.TauP.VelocityModel;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
-public class VelocityModelSerializer implements JsonSerializer<VelocityModel> {
+import static edu.sc.seis.TauP.JSONLabels.*;
+
+public class VelocityModelSerializer
+        implements JsonSerializer<VelocityModel>, JsonDeserializer<VelocityModel> {
 
     /**
      * Gson invokes this call-back method during serialization when it encounters a field of the
@@ -27,21 +32,51 @@ public class VelocityModelSerializer implements JsonSerializer<VelocityModel> {
     @Override
     public JsonElement serialize(VelocityModel vmod, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
-        json.addProperty("modelName", vmod.getModelName());
-        json.addProperty("radiusOfEarth", vmod.getRadiusOfEarth());
+        json.addProperty(MODEL_NAME, vmod.getModelName());
+        json.addProperty(RADIUS_OF_EARTH, vmod.getRadiusOfEarth());
         JsonArray ndArr = new JsonArray(vmod.getNamedDiscons().size());
-        json.add("nameddisons", ndArr);
+        json.add(NAMED_DISCONS, ndArr);
         for (NamedVelocityDiscon nd : vmod.getNamedDiscons()) {
             ndArr.add(nd.asJSON());
         }
-        json.addProperty("minRadius", vmod.getMinRadius());
-        json.addProperty("maxRadius", vmod.getMaxRadius());
-        json.addProperty("spherical", vmod.getSpherical());
+        json.addProperty(MODEL_MIN_RADIUS, vmod.getMinRadius());
+        json.addProperty(MODEL_MAX_RADIUS, vmod.getMaxRadius());
+        json.addProperty(MODEL_SPHERICAL, vmod.getSpherical());
         JsonArray layers = new JsonArray();
-        json.add("layers", layers);
+        json.add(MODEL_LAYERS, layers);
         for (VelocityLayer vl : vmod.getLayers()) {
             layers.add(context.serialize(vl));
         }
         return json;
+    }
+
+    @Override
+    public VelocityModel deserialize(JsonElement jsonElement,
+                                     Type type,
+                                     JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        if (jsonElement instanceof JsonObject) {
+            JsonObject jObj = (JsonObject)jsonElement;
+            List<NamedVelocityDiscon> namedDiscon = new ArrayList<>();
+            JsonArray ndArray = jObj.getAsJsonArray(NAMED_DISCONS);
+            for (JsonElement ndEl : ndArray) {
+                namedDiscon.add(jsonDeserializationContext.deserialize(ndEl, NamedVelocityDiscon.class));
+            }
+            List<VelocityLayer> vLayerList = new ArrayList<>();
+            JsonArray layerArray = jObj.getAsJsonArray(MODEL_LAYERS);
+            for (JsonElement ndEl : layerArray) {
+                vLayerList.add(jsonDeserializationContext.deserialize(ndEl, VelocityLayer.class));
+            }
+            VelocityModel vMod = new VelocityModel(
+                    jObj.getAsJsonPrimitive(MODEL_NAME).getAsString(),
+                    jObj.getAsJsonPrimitive(RADIUS_OF_EARTH).getAsDouble(),
+                    namedDiscon,
+                    jObj.getAsJsonPrimitive(MODEL_MIN_RADIUS).getAsDouble(),
+                    jObj.getAsJsonPrimitive(MODEL_MAX_RADIUS).getAsDouble(),
+                    jObj.getAsJsonPrimitive(MODEL_SPHERICAL).getAsBoolean(),
+                    vLayerList
+                    );
+            return vMod;
+        }
+        throw new JsonParseException("Expected an Object for VelocityModel");
     }
 }
