@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Objects;
 
+import static edu.sc.seis.TauP.VelocityModel.JSON;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.VelocityModel.ND;
 
@@ -90,9 +91,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
-        if (elevationMeters ==0.0f && (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().isEmpty())) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "elev and merge model cannot be empty, use one of --elev, --ndmerge or --tvelmerge");
-        }
+
     }
 
     @Override
@@ -109,6 +108,9 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
+        if (outAsJson) {
+            return OutputTypes.JSON;
+        }
         String type = inputFileArgs.getVelFileType();
         if (type == null) {
             type = OutputTypes.ND;
@@ -127,6 +129,14 @@ public class TauP_VelocityMerge extends TauP_Tool {
         return this.outfile;
     }
     String outfile = "stdout";
+
+    @CommandLine.Option(names = "--asjson",
+            description = "output as a \".json\" velocity file"
+    )
+    public void setJsonModelFilename(boolean outAsJson) {
+        this.outAsJson = outAsJson;
+    }
+    boolean outAsJson = false;
 
     @CommandLine.ArgGroup(multiplicity = "0..1", heading = "Merge Velocity Model %n")
     OverlayVelocityModelArgs overlayModelArgs = new OverlayVelocityModelArgs();

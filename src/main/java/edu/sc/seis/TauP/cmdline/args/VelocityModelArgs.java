@@ -3,8 +3,7 @@ package edu.sc.seis.TauP.cmdline.args;
 import edu.sc.seis.TauP.StdModelGenerator;
 import picocli.CommandLine;
 
-import static edu.sc.seis.TauP.VelocityModel.ND;
-import static edu.sc.seis.TauP.VelocityModel.TVEL;
+import static edu.sc.seis.TauP.VelocityModel.*;
 
 public class VelocityModelArgs extends InputVelocityModelArgs {
 
