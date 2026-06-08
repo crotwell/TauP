@@ -126,9 +126,8 @@ public class ModelArgs {
         // see also TauP_DistAz for similar cmd line arg
         @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
                 paramLabel = "depth",
-                defaultValue = "0.0",
                 split=",",
-                description = "source depth in km")
+                description = "source depth in km, default is 0.0")
         List<Double> sourceDepth = new ArrayList<>();
 
     }

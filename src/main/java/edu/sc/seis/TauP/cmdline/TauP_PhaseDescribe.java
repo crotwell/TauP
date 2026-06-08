@@ -71,7 +71,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
                 phaseDesc.add(new PhaseDescription(sp));
             }
             PhaseDescribeResult result = new PhaseDescribeResult(modelArgs.getModelName(),
-                    modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
+                    getSourceDepths(), getReceiverDepths(),
                     getPhaseArgs().parsePhaseNameList(),
                     getScatterer(), phaseDesc);
             GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
