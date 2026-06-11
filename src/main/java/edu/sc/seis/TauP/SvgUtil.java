@@ -360,8 +360,27 @@ public class SvgUtil {
         return out;
     }
 
+    /**
+     * CSS class name for a phase.
+     * @param phase the phase
+     * @return input phase prefixed with phase_
+     */
     public static String classForPhase(String phase) {
         return "phase_"+phase;
+    }
+
+    /**
+     * CSS class name for a cssClassname, with special character escaping.
+     * See <a href="http://mathiasbynens.be/notes/css-escapes">CSS character escape sequences</a>
+     * for details.
+     *
+     * Note this should be used in the CSS, not in the class attribute, where escaping is not used.
+     * @param cssClassname the cssClassname
+     * @return input cssClassname prefixed with phase_ and escaped
+     */
+    public static String escapeclassForCSS(String cssClassname) {
+        cssClassname = cssClassname.replaceAll("([ !\"#$%&'()*+,./;<=>?@\\[\\\\\\]^`{|}~])", "\\\\$1");
+        return cssClassname;
     }
 
 
@@ -370,7 +389,7 @@ public class SvgUtil {
         for (int i = 0; i < phaseNames.size(); i++) {
             String color = coloringArgs.colorForIndex(i);
             PhaseName phaseName = phaseNames.get(i);
-            String phaseClass = classForPhase(phaseName.getName());
+            String phaseClass = escapeclassForCSS(classForPhase(phaseName.getName()));
             out.append("        ."+phaseClass+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
@@ -427,13 +446,13 @@ public class SvgUtil {
     }
 
     public static String formatTimeForCss(double timeVal) {
-        return "time_"+Outputs.formatTimeNoPad(timeVal).trim().replaceAll("\\.", "_");
+        return "time_"+Outputs.formatTimeNoPad(timeVal).trim();
     }
 
     public static StringBuffer createTimeStepColorCSS(float timestep, float maxTime, ColoringArgs coloringArgs) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i*timestep <= maxTime; i++) {
-            String timeLabel = formatTimeForCss( i*timestep);
+            String timeLabel = escapeclassForCSS(formatTimeForCss( i*timestep));
             String color = coloringArgs.colorForIndex(i);
             out.append("        ."+timeLabel+" {\n");
             out.append("          stroke: "+color+";\n");
