@@ -111,7 +111,7 @@ public class TauModelLoader {
                     return createTauModel(vmod);
                 }
             } catch(Exception e) {
-                throw new TauModelException("Can't find any saved models for "
+                throw new TauModelNotFoundException("Can't find any saved models for "
                         + modelName+" and creation from velocity model failed.", e);
             }
         }
@@ -204,11 +204,11 @@ public class TauModelLoader {
                 return createTauModel(vmod);
             }
         } catch(Exception e) {
-            throw new TauModelException("Can't find any saved models for "
+            throw new TauModelNotFoundException("Can't find any saved models for "
                                             + modelName+" and creation from velocity model failed.", e);
         }
             
-        throw new TauModelException("Can't find any saved models for "
+        throw new TauModelNotFoundException("Can't find any saved models for "
                                         + modelName);
 
         } catch(ClassNotFoundException | IOException e) {

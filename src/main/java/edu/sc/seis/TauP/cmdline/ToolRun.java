@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.Alert;
+import edu.sc.seis.TauP.TauModelNotFoundException;
 import edu.sc.seis.TauP.TauPConfig;
 import edu.sc.seis.TauP.cmdline.args.VersionProvider;
 import picocli.AutoComplete;
@@ -220,10 +221,28 @@ public class ToolRun {
 				}
 			});
 		}
+		CommandLine.IExecutionExceptionHandler errorHandler = new CommandLine.IExecutionExceptionHandler() {
+			public int handleExecutionException(Exception ex,
+												CommandLine commandLine,
+												CommandLine.ParseResult parseResult) {
+				if (ex instanceof TauModelNotFoundException) {
+					commandLine.getErr().println("\n"+ex.getMessage());
+				} else {
+					if (TauPConfig.DEBUG) {
+						ex.printStackTrace(); // no stack trace
+					}
+					commandLine.getErr().println(ex.getMessage());
+					//commandLine.usage(commandLine.getErr());
+				}
+				return commandLine.getCommandSpec().exitCodeOnExecutionException();
+			}
+		};
+		commandLine.setExecutionExceptionHandler(errorHandler);
+
 		int result = commandLine.execute(args);
 
 		if (result != 0) {
-			Alert.warning("Error code: " + result);
+			commandLine.getErr().println(commandLine.getColorScheme().errorText("Error code: " + result));
 		}
 		return result;
 	}
