@@ -184,12 +184,12 @@ places in order until it finds a model that matches the name.
 * The last place TauP looks is for a tau model file specified
   on the command line.
   So, if you generate newModel.taup and want to get some times, you can just say:
-  ``taup time -mod newModel.taup``
+  ``taup time --mod newModel.taup``
   or even just
-  ``taup time -mod newModel``
+  ``taup time --mod newModel``
   as TauP can add the taup suffix if necessary. A relative or absolute pathname
   may precede the model, e.g.
-  ``taup time -mod ../OtherDir/newModel.taup``.
+  ``taup time --mod ../OtherDir/newModel.taup``.
 
 * New in version 2.0 is the ability of the tools to load a velocity model directly
   and handle the tau model create functionality internally,
