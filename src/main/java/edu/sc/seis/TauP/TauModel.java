@@ -192,7 +192,7 @@ public class TauModel implements Serializable {
     }
 
     /**
-     * True if a boundary can generate a head wave, must be a discontinuity and an increase in velocity with depth.
+     * True if a boundary can generate a head wave, must be a discontinuity, not surface and an increase in velocity with depth.
      *
      * @param branchNum branch layer number
      * @param isPWave true for P, false for S
@@ -200,6 +200,9 @@ public class TauModel implements Serializable {
      * @throws NoSuchLayerException
      */
     public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+        if (branchNum == 0) {
+            return false;
+        }
         if (getTauBranch(branchNum, isPWave).isHighSlowness()) {
             return false;
         }
@@ -216,14 +219,14 @@ public class TauModel implements Serializable {
     }
 
     /**
-     * True if a boundary can generate a diffracted wave, currently just ensure a discontinuity.
+     * True if a boundary can generate a diffracted wave, currently just ensure a discontinuity and not surface.
      *
      * @param branchNum branch layer number
      * @param isPWave true for P, false for S
      * @return diffracted wave possible
      */
     public boolean isDiffractionBranch(int branchNum, boolean isPWave) {
-        return isDiscontinuityBranch(branchNum, isPWave);
+        return branchNum>0 && isDiscontinuityBranch(branchNum, isPWave);
     }
 
     /**
