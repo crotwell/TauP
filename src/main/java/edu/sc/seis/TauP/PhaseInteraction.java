@@ -126,6 +126,7 @@ public enum PhaseInteraction {
             case TRANSUP:
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
+            case TRANSUPDIFFRACT:
             case END:
                 isDowngoing = false;
                 break;
@@ -133,6 +134,8 @@ public enum PhaseInteraction {
             case TRANSDOWN:
             case REFLECT_TOPSIDE:
             case REFLECT_TOPSIDE_CRITICAL:
+            case DIFFRACT:
+            case HEAD:
             case END_DOWN:
                 isDowngoing = true;
                 break;
