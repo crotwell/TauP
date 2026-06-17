@@ -77,7 +77,7 @@ public enum PhaseInteraction {
 
     /**
      * indicates end of the inbound phase to a scatterer. The ray continues on after scattering in the
-     * backward sense, so if inbound clockwise, it reverses and propigates counterclockwise.
+     * backward sense, so if inbound clockwise, it reverses and propagates counterclockwise.
      *
      */
     BACKSCATTER,
@@ -85,7 +85,7 @@ public enum PhaseInteraction {
     /**
      * indicates end of the inbound phase to a scatterer, where last segment is downgoing.
      * The ray continues on after scattering in the
-     * backward sense, so if inbound clockwise, it reverses and propigates counterclockwise.
+     * backward sense, so if inbound clockwise, it reverses and propagates counterclockwise.
      *
      */
     BACKSCATTER_DOWN,
