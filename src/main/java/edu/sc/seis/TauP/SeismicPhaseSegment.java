@@ -15,21 +15,20 @@ public class SeismicPhaseSegment {
     boolean isPWave;
     PhaseInteraction endAction;
     PhaseInteraction prevEndAction = null;
-    boolean isDownGoing;
-    boolean isFlat = false;
+	LayerPropogationType layerPropogationType;
     double flatFractionOfPath = 1.0;
     String legName;
 
 	double minRayParam;
 	double maxRayParam;
-    
+
 	public SeismicPhaseSegment(TauModel tMod,
-			                   int startBranch,
-                               int endBranch,
-                               boolean isPWave,
-                               PhaseInteraction endAction,
-                               boolean isDownGoing,
-                               String legName,
+							   int startBranch,
+							   int endBranch,
+							   boolean isPWave,
+							   PhaseInteraction endAction,
+							   LayerPropogationType layerPropogationType,
+							   String legName,
 							   double minRayParam,
 							   double maxRayParam) {
 
@@ -38,7 +37,7 @@ public class SeismicPhaseSegment {
 		this.endBranch = endBranch;
 		this.isPWave = isPWave;
 		this.endAction = endAction;
-		this.isDownGoing = isDownGoing;
+		this.layerPropogationType = layerPropogationType;
 		this.legName = legName;
 		this.minRayParam = minRayParam;
 		this.maxRayParam = maxRayParam;
@@ -46,17 +45,17 @@ public class SeismicPhaseSegment {
 
 	public static SeismicPhaseSegment failSegment(TauModel tMod) {
 		return new SeismicPhaseSegment(tMod, -1, -1, true,
-				FAIL, true, "", -1, -1 );
+				FAIL, LayerPropogationType.DOWN, "", -1, -1 );
 	}
 
 	public static SeismicPhaseSegment failSegment(TauModel tMod,
 												  int startBranch,
 												  int endBranch,
 												  boolean isPWave,
-												  boolean isDownGoing,
+												  LayerPropogationType layerPropogationType,
 												  String legName) {
 		return new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave,
-				FAIL, isDownGoing, legName, -1, -1 );
+				FAIL, layerPropogationType, legName, -1, -1 );
 	}
 
 	/**
@@ -66,7 +65,7 @@ public class SeismicPhaseSegment {
 	 * @return number of the tau branch where the ray turns, if possible
 	 */
 	public int turnBranch(double rp) {
-		if (endAction != TURN || ( ! isDownGoing)) {
+		if (endAction != TURN || ( layerPropogationType!=LayerPropogationType.DOWN)) {
 			return -1;
 		}
 		for (int b = startBranch;  b <= endBranch; b++) {
@@ -81,35 +80,23 @@ public class SeismicPhaseSegment {
 	}
 
 	public boolean endsAtTop() throws TauModelException {
-		switch(endAction) {
-			case END:
-			case HEAD:
-			case TRANSUP:
-			case REFLECT_UNDERSIDE:
-			case REFLECT_UNDERSIDE_CRITICAL:
-				return true;
-			case TURN:
-			case DIFFRACTTURN:
-			case DIFFRACT:
-			case TRANSUPDIFFRACT:
-			case END_DOWN:
-			case TRANSDOWN:
-			case REFLECT_TOPSIDE:
-			case REFLECT_TOPSIDE_CRITICAL:
-				return false;
-			case START:
-				return ! isDownGoing;
-			case FAIL:
-			default:
-				throw new TauModelException("endAction should never be FAIL or default in SeismicPhaseSegment");
-		}
+		return switch (layerPropogationType) {
+			case UP, HEAD, SURFACE -> true;
+			case DOWN, DIFF -> false;
+		};
 	}
 	
 	public static String endActionToString(PhaseInteraction endAction) {
 		String action;
 		switch (endAction) {
-			case START:
-				action = "start";
+			case START_DOWN:
+				action = "start down";
+				break;
+			case START_UP:
+				action = "start up";
+				break;
+			case START_FLAT:
+				action = "start flat";
 				break;
 			case TURN:
 				action = "turn";
@@ -202,7 +189,7 @@ public class SeismicPhaseSegment {
 	
 	public String toString() {
 		String desc = "";
-    	String upDown = isFlat ? "flat" : (isDownGoing ? "down" : "up  ");
+    	String upDown = layerPropogationType.toString();
 
     	String action = endActionToString(endAction);
     	String isPString = isPWave ? "P" : "S";
@@ -229,7 +216,7 @@ public class SeismicPhaseSegment {
 	}
 
 	public boolean getIsPWave() { return isPWave;}
-	public boolean getIsFlat() {return isFlat;}
+	public boolean getIsFlat() {return LayerPropogationType.isFlat(layerPropogationType);}
 	public String getLegName() {return legName;}
 
 	public TauModel getTauModel() {
@@ -248,22 +235,17 @@ public class SeismicPhaseSegment {
 		String depthRange;
 		if (startBranch == -1 && endBranch == -1) {
 			depthRange = "";
-		} else if (isFlat) {
-			if (prevEndAction == null) {
-				depthRange = " PrevAction is NULL ";
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == DIFFRACTTURN || prevEndAction == TRANSUPDIFFRACT) {
-				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
-			} else if (prevEndAction == PhaseInteraction.HEAD) {
-				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
-			} else if (prevEndAction == KMPS) {
-				depthRange = " at surface (KMPS)";
-			} else {
-				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction)+"prev: "+prevEndAction+" end:"+endAction);
-			}
-		} else if (isDownGoing) {
-			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
 		} else {
-			depthRange = tMod.getTauBranch(startBranch, isPWave).getBotDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+			depthRange = switch (layerPropogationType) {
+				case HEAD -> " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
+				case DIFF -> " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
+				case SURFACE -> " at surface (KMPS)";
+				case DOWN -> tMod.getTauBranch(startBranch, isPWave).getTopDepth() +
+						" to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+				case UP -> tMod.getTauBranch(startBranch, isPWave).getBotDepth() +
+						" to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+
+			};
 		}
 		return depthRange;
 	}
@@ -272,70 +254,55 @@ public class SeismicPhaseSegment {
 		String depthRange;
 		if (startBranch == -1 || endBranch == -1) {
 			depthRange = "[]";
-		} else if (isFlat) {
-			if (prevEndAction == null) {
-				depthRange = "\" PrevAction is NULL \"";
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
-				depthRange = "["+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
-			} else if (prevEndAction == PhaseInteraction.HEAD) {
-				depthRange = "[" + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
-			} else if (prevEndAction == PhaseInteraction.KMPS) {
-				depthRange = "[0]";
-			} else {
-				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
-			}
-		} else if (isDownGoing) {
-			depthRange = "["+tMod.getTauBranch(startBranch, isPWave).getTopDepth() + ", " + tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
 		} else {
-			depthRange = "["+tMod.getTauBranch(startBranch, isPWave).getBotDepth() + ", " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
+			depthRange = switch (layerPropogationType) {
+				case HEAD -> "[" + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
+				case DIFF -> "["+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
+				case SURFACE -> "[0]";
+				case DOWN -> "["+tMod.getTauBranch(startBranch, isPWave).getTopDepth() + ", "
+						+ tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
+				case UP -> "["+tMod.getTauBranch(startBranch, isPWave).getBotDepth() + ", "
+						+ tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
+
+			};
 		}
 		return depthRange;
 	}
 
 	public double getTopDepth() {
-		if (isFlat) {
-			return getDepthRange()[0];
-		} else {
-			if (isDownGoing) {
-				return tMod.getTauBranch(startBranch, isPWave).getTopDepth();
-			} else {
-				return tMod.getTauBranch(endBranch, isPWave).getTopDepth();
-			}
-		}
+		return switch (layerPropogationType) {
+			case SURFACE -> 0;
+			case HEAD -> tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+			case DIFF -> tMod.getTauBranch(startBranch, isPWave).getBotDepth();
+			case UP -> tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+			case DOWN -> tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+		};
 	}
 
 	public double getBotDepth() {
-		if (isFlat) {
-			return getDepthRange()[0];
-		} else {
-			if (isDownGoing) {
-				return tMod.getTauBranch(endBranch, isPWave).getBotDepth();
-			} else {
-				return tMod.getTauBranch(startBranch, isPWave).getBotDepth();
-			}
-		}
+		return switch (layerPropogationType) {
+			case SURFACE -> 0;
+			case HEAD -> tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+			case DIFF -> tMod.getTauBranch(startBranch, isPWave).getBotDepth();
+			case UP -> tMod.getTauBranch(startBranch, isPWave).getBotDepth();
+			case DOWN -> tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+		};
 	}
 
 	public double[] getDepthRange() {
 		double[] depthRange;
 		if (startBranch == -1 || endBranch == -1) {
 			depthRange = new double[0];
-		} else if (isFlat) {
-			if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
-				depthRange = new double[] {tMod.getTauBranch(endBranch, isPWave).getBotDepth()};
-			} else if (prevEndAction == PhaseInteraction.HEAD) {
-				depthRange = new double[] { tMod.getTauBranch(endBranch, isPWave).getTopDepth()};
-			} else if (prevEndAction == PhaseInteraction.KMPS) {
-				depthRange = new double[] {0};
-			} else {
-				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
-			}
-		} else if (isDownGoing) {
-			depthRange = new double[] { tMod.getTauBranch(startBranch, isPWave).getTopDepth(),
-					tMod.getTauBranch(endBranch, isPWave).getBotDepth() };
 		} else {
-			depthRange = new double[] { tMod.getTauBranch(startBranch, isPWave).getBotDepth(),
-					tMod.getTauBranch(endBranch, isPWave).getTopDepth() };
+			return switch (layerPropogationType) {
+				case SURFACE -> new double[] {0};
+				case HEAD -> new double[] {tMod.getTauBranch(startBranch, isPWave).getTopDepth()};
+				case DIFF -> new double[] {tMod.getTauBranch(startBranch, isPWave).getBotDepth()};
+				case UP -> new double[] { tMod.getTauBranch(startBranch, isPWave).getBotDepth(),
+						tMod.getTauBranch(endBranch, isPWave).getTopDepth() };
+				case DOWN -> new double[] { tMod.getTauBranch(startBranch, isPWave).getTopDepth(),
+						tMod.getTauBranch(endBranch, isPWave).getBotDepth() };
+			};
 		}
 		return depthRange;
 	}
@@ -352,28 +319,12 @@ public class SeismicPhaseSegment {
 		return prevEndAction;
 	}
 
-	public String getUpDownJSON() {
-		String upDown;
-		if (isFlat) {
-			if (prevEndAction != null) {
-				upDown = endActionToString(prevEndAction);
-			} else {
-				upDown = JSONLabels.FLAT;
-			}
-		} else if (isDownGoing) {
-			upDown = JSONLabels.DOWN;
-		} else {
-			upDown = JSONLabels.UP;
-		}
-		return upDown;
-	}
-
 	public BranchDescription describe() {
 		BranchDescription b = new BranchDescription();
 		b.name = getLegName();
 		b.branch_desc = describeBranchRange();
 		b.type = getIsPWave() ? JSONLabels.PWAVE : JSONLabels.SWAVE;
-		b.updown = getUpDownJSON();
+		b.updown = layerPropogationType.toString();
 		b.then = endActionToString(endAction);
 		if (startBranch != endBranch) {
 			b.branches = new int[] {startBranch, endBranch};
@@ -390,7 +341,7 @@ public class SeismicPhaseSegment {
 	public String toJSONString() {
 		String desc = "";
 		if ( ! legName.contentEquals("END")) {
-			String upDown = getUpDownJSON();
+			String upDown = layerPropogationType.toString();
 
 			String action = endActionToString(endAction);
 			String isPString = isPWave ? "P" : "S";
@@ -422,7 +373,8 @@ public class SeismicPhaseSegment {
 	public List<TimeDist> calcTimeDist(Arrival currArrival, TimeDist prevEnd, boolean doPath, SeismicPhaseSegment prevSeg) throws SlownessModelException {
 		List<TimeDist> pierceList = new ArrayList<>();
 		double rp = currArrival.getRayParam();
-		if ( ! isFlat) {
+		if ( !LayerPropogationType.isFlat(layerPropogationType)) {
+			boolean isDownGoing = layerPropogationType==LayerPropogationType.DOWN;
 			int bStep = isDownGoing ? 1 : -1;
 			int sb = startBranch;
 			if (prevEndAction == TURN) {
@@ -496,9 +448,9 @@ public class SeismicPhaseSegment {
 			double refractTime = refractDist * currArrival.getRayParam();
 			TauBranch branch = tMod.getTauBranch(startBranch, isPWave);
 			double depth;
-			if (prevEndAction.equals(DIFFRACT) || prevEndAction.equals(TRANSUPDIFFRACT)) {
+			if (layerPropogationType==LayerPropogationType.DIFF) {
 				depth = branch.getBotDepth();
-			} else if (prevEndAction.equals(HEAD) || prevEndAction.equals(KMPS)) {
+			} else if (layerPropogationType==LayerPropogationType.HEAD || layerPropogationType==LayerPropogationType.SURFACE) {
 				depth = branch.getTopDepth();
 			} else {
 				throw new RuntimeException("Segment prevEndAction Should be one of KMPS, DIFFRACT or HEAD: " + prevEndAction);
@@ -550,7 +502,8 @@ public class SeismicPhaseSegment {
 			return new SeismicPhaseReflTransHolder(new Complex(0,0), 0);
 		}
 		VelocityModel vMod = getTauModel().getVelocityModel();
-		if ( ! isFlat) {
+		if ( ! LayerPropogationType.isFlat(layerPropogationType)) {
+			boolean isDownGoing = layerPropogationType==LayerPropogationType.DOWN;
 			int bStep = isDownGoing ? 1 : -1;
 			for (int branchNum = startBranch; (isDownGoing && branchNum < endBranch) || (!isDownGoing && branchNum > endBranch); branchNum += bStep) {
 				if (TauPConfig.DEBUG) {
@@ -735,12 +688,11 @@ public class SeismicPhaseSegment {
 				endBranch,
 				isPWave,
 				endAction,
-				isDownGoing,
+				layerPropogationType,
 				legName,
 				minRayParam,
 				maxRayParam);
 		seg.prevEndAction = prevEndAction;
-		seg.isFlat = isFlat;
 		seg.flatFractionOfPath = flatFractionOfPath;
 		return seg;
 	}

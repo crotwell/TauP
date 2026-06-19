@@ -497,10 +497,10 @@ public class SeismicPhaseLayerFactory {
         if(nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg
                 || is(nextLeg, END_CODE)) {
             boolean isDowngoing = true;
-            if (prevEndAction != START) {
+            if (prevEndAction != START_DOWN) {
                 isDowngoing = isDowngoingActionAfter(prevEndAction);
             }
-            if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
+            if(prevEndAction == START_DOWN || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                 // was downgoing, so must first turn in layers
                 endAction = TURN;
                 proto.addToBranch(
@@ -636,7 +636,7 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
         } else if(getAboveFactory()!= null &&   getAboveFactory().isLayerLeg(nextLeg)) {
-            if ((proto.getEndAction()== START && PhaseSymbols.isDowngoingSymbol(currLeg) ) || isDowngoingActionAfter(proto.getEndAction())) {
+            if ((proto.getEndAction()== START_DOWN && PhaseSymbols.isDowngoingSymbol(currLeg) ) || isDowngoingActionAfter(proto.getEndAction())) {
                 endAction = TURN;
                 proto.addToBranch(
                         botBranchNum,
@@ -776,7 +776,7 @@ public class SeismicPhaseLayerFactory {
                     return proto;
                 }
 
-                if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
+                if(prevEndAction == START_DOWN || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                     // was downgoing, so must first turn in layer
                     endAction = TURN;
                     proto.addToBranch(

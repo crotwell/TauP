@@ -38,14 +38,14 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
                             prev.getMinRayParam()+" "+subphase.getMaxRayParam());
                 }
                 if (
-                    prev.getInitialPhaseSegment().isDownGoing != subphase.getInitialPhaseSegment().isDownGoing ||
+                    prev.getInitialPhaseSegment().layerPropogationType != subphase.getInitialPhaseSegment().layerPropogationType ||
                     prev.getInitialPhaseSegment().isPWave != subphase.getInitialPhaseSegment().isPWave ||
                     prev.getInitialPhaseSegment().startBranch != subphase.getInitialPhaseSegment().startBranch
                 ) {
                     throw new IllegalArgumentException("Initial phase segments not the same "+prev+" "+subphase);
                 }
                 if (
-                    prev.getFinalPhaseSegment().isDownGoing != subphase.getFinalPhaseSegment().isDownGoing ||
+                    prev.getFinalPhaseSegment().layerPropogationType != subphase.getFinalPhaseSegment().layerPropogationType ||
                     prev.getFinalPhaseSegment().isPWave != subphase.getFinalPhaseSegment().isPWave ||
                     prev.getFinalPhaseSegment().endBranch != subphase.getFinalPhaseSegment().endBranch
                 ) {

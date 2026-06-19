@@ -171,8 +171,7 @@ public abstract class AbstractPathSegment {
         if (this instanceof ArrivalPathSegment) {
             // we are a ArrivalPathSegment, add extra items
             ArrivalPathSegment arrSeg = (ArrivalPathSegment) this;
-            String updown = arrSeg.getPhaseSegment().isFlat ? FLAT : (arrSeg.getPhaseSegment().isDownGoing ? DOWN : UP);
-            a.addProperty(JSONLabels.UPDOWN, updown);
+            a.addProperty(JSONLabels.UPDOWN, arrSeg.getPhaseSegment().layerPropogationType.toString());
             a.addProperty(JSONLabels.ENDACTION, arrSeg.getPhaseSegment().getEndAction().name());
             a.addProperty(JSONLabels.PREVENDACTION, arrSeg.getPhaseSegment().getPrevEndAction().name());
         }

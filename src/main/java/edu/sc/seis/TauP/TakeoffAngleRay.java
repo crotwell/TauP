@@ -33,9 +33,9 @@ public class TakeoffAngleRay extends ShootableRay {
     public RayParamRay forPhase(SeismicPhase phase) {
         double rayParam;
         try {
-            if (takeoffAngle > 90 && phase.getInitialPhaseSegment().isDownGoing) {
+            if (takeoffAngle > 90 && phase.getInitialPhaseSegment().layerPropogationType!=LayerPropogationType.UP) {
                 return null;
-            } else if (takeoffAngle < 90 && ! phase.getInitialPhaseSegment().isDownGoing) {
+            } else if (takeoffAngle < 90 && phase.getInitialPhaseSegment().layerPropogationType!=LayerPropogationType.DOWN) {
                 return null;
             } else {
                 rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);

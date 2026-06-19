@@ -185,7 +185,7 @@ public class MoonLowVelocityTest {
         List<Arrival> aList = DistanceRay.ofDegrees(deg).calculate(P_phase);
         assertTrue(!aList.isEmpty());
 
-        ProtoSeismicPhase proto = ProtoSeismicPhase.startNewPhase(tmod, true, PhaseInteraction.TRANSDOWN, true, 0);
+        ProtoSeismicPhase proto = ProtoSeismicPhase.startNewPhase(tmod, true, PhaseInteraction.TRANSDOWN, LayerPropogationType.DOWN, 0);
         proto.addToBranch(4, true, true, PhaseInteraction.TURN, "P");
         proto.addToBranch(0, true, true, PhaseInteraction.END, "P");
 

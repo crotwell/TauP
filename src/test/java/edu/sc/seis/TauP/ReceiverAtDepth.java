@@ -71,7 +71,7 @@ public class ReceiverAtDepth {
             // where we end up, depending on if we end going down or up
             int upgoingRecBranch = tMod.findBranch(receiverDepth);
             int downgoingRecBranch = upgoingRecBranch - 1; // one branch shallower
-            if (phase.getFinalPhaseSegment().isDownGoing ) {
+            if (phase.getFinalPhaseSegment().layerPropogationType==LayerPropogationType.DOWN ) {
                 // downgoing at receiver
                 assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(downgoingRecBranch,
                                         phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam(),

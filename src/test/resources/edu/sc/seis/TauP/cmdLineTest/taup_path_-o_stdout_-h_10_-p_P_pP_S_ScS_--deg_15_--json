@@ -38,7 +38,7 @@
           "wavetype": "pwave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -403,7 +403,7 @@
           "wavetype": "pwave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -658,7 +658,7 @@
           "wavetype": "pwave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -963,7 +963,7 @@
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "REFLECT_UNDERSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_UP",
           "segment": [
             [
               0.0,
@@ -1282,7 +1282,7 @@
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "REFLECT_UNDERSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_UP",
           "segment": [
             [
               0.0,
@@ -1711,7 +1711,7 @@
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "REFLECT_UNDERSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_UP",
           "segment": [
             [
               0.0,
@@ -2090,7 +2090,7 @@
           "wavetype": "pwave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -2745,7 +2745,7 @@
           "wavetype": "pwave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -3390,7 +3390,7 @@
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "REFLECT_UNDERSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_UP",
           "segment": [
             [
               0.0,
@@ -4109,7 +4109,7 @@
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "REFLECT_UNDERSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_UP",
           "segment": [
             [
               0.0,
@@ -4818,7 +4818,7 @@
           "wavetype": "swave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -5058,7 +5058,7 @@
           "wavetype": "swave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -5558,7 +5558,7 @@
           "wavetype": "swave",
           "updown": "down",
           "endaction": "TURN",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,
@@ -6048,7 +6048,7 @@
           "wavetype": "swave",
           "updown": "down",
           "endaction": "REFLECT_TOPSIDE",
-          "prevendaction": "START",
+          "prevendaction": "START_DOWN",
           "segment": [
             [
               0.0,

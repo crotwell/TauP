@@ -23,7 +23,6 @@ public class SeismicPhaseFactory {
     // temp vars used in calculation of phase
     int upgoingRecBranch;
     int downgoingRecBranch;
-    PhaseInteraction prevEndAction = START;
 
     public static final int CRUST_MANTLE_FACTORY = 0;
     public static final int OUTER_CORE_FACTORY = 1;
@@ -370,7 +369,7 @@ public class SeismicPhaseFactory {
             try {
                 Double.parseDouble(currLeg.substring(0, name.length() - 4));
             } catch (NumberFormatException e) {
-                return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+                return ProtoSeismicPhase.failNewPhase(tMod, false, LayerPropogationType.SURFACE,
                         receiverDepth, getName()," Illegal surface wave velocity "+name.substring(0, name.length() - 4));
             }
             // KMPS fake with a head wave
@@ -381,7 +380,7 @@ public class SeismicPhaseFactory {
         /* Make a check for J legs if the model doesn not allow J */
         if((name.indexOf(J) != -1 || name.indexOf(j) != -1)
                 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
-            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+            return ProtoSeismicPhase.failNewPhase(tMod, false, LayerPropogationType.DOWN,
                     receiverDepth, getName()," 'J' phases were not created for this model: "
                     + tMod.getModelName());
         }
@@ -390,12 +389,14 @@ public class SeismicPhaseFactory {
             if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg)
                     || (leg.length()==1 && leg.charAt(0) == c))) {
                 String reason = "Cannot have K leg in model with no outer core";
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)), receiverDepth, name, reason);
+                LayerPropogationType lpt = isDowngoingSymbol(leg) ? LayerPropogationType.DOWN : LayerPropogationType.UP;
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), lpt, receiverDepth, name, reason);
             }
             if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg) ||
                     (leg.length()==1 && leg.charAt(0) == i))) {
                 String reason = "Cannot have I,J,y,j,i leg in model with no inner core";
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                LayerPropogationType lpt = isDowngoingSymbol(leg) ? LayerPropogationType.DOWN : LayerPropogationType.UP;
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), lpt,
                         receiverDepth, name, reason);
             }
         }
@@ -407,7 +408,8 @@ public class SeismicPhaseFactory {
             isPWave = SeismicPhase.SWAVE;
             prevIsPWave = isPWave;
         } else {
-            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+            LayerPropogationType lpt = isDowngoingSymbol(currLeg) ? LayerPropogationType.DOWN : LayerPropogationType.UP;
+            return ProtoSeismicPhase.failNewPhase(tMod, false, lpt,
                     receiverDepth, getName(), getName()+" Unknown starting phase: "+currLeg);
         }
         /*
@@ -421,7 +423,8 @@ public class SeismicPhaseFactory {
             double sdep = tMod.getSourceDepth();
             if(tMod.getSlownessModel().depthInFluid(sdep, new DepthRange())) {
                 String reason = "Cannot have S wave with starting depth in fluid layer " + currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                LayerPropogationType lpt = isDowngoingSymbol(currLeg) ? LayerPropogationType.DOWN : LayerPropogationType.UP;
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), lpt,
                         receiverDepth, name, reason);
             }
         }
@@ -434,17 +437,17 @@ public class SeismicPhaseFactory {
             if ((startsWith(currLeg, P) || startsWith(currLeg, S)) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible
                 String reason = "Source must be in crust/mantle for "+ currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             } else if ((startsWith(currLeg, K)) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
                 // not possible
                 String reason = "Source must be in outer core for "+ currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             } else if ((startsWith(currLeg, I) || startsWith(currLeg, J)) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
                 // not possible
                 String reason = "Source must be in inner core for "+currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             }
         } else if(isUpgoingSymbol(currLeg)) {
@@ -452,19 +455,19 @@ public class SeismicPhaseFactory {
             if (isCrustMantleLeg(currLeg) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible as in core
                 String reason = "Source must be in crust/mantle for "+ currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             } else if (isOuterCoreLeg(currLeg)
                     && (tMod.getSourceDepth() < tMod.getCmbDepth()
                         || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
                 // not possible source not in outer core
                 String reason = "Source must be in outer core for "+ currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             } else if ((isInnerCoreLeg(currLeg)) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
                 // not possible
                 String reason = "Source must be in inner core for " + currLeg;
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.DOWN,
                         receiverDepth, name, reason);
             }
 
@@ -474,11 +477,11 @@ public class SeismicPhaseFactory {
                  * then can be called P or S.
                  */
                 String reason = " Upgoing initial leg but already at surface, so no ray parameters satisfy path."+tMod.getSourceBranch();
-                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
+                return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), LayerPropogationType.UP,
                         receiverDepth, name, reason);
             }
         } else {
-            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+            return ProtoSeismicPhase.failNewPhase(tMod, false, LayerPropogationType.DOWN,
                     receiverDepth, getName()," First phase leg not recognized: "
                     +currLeg
                     + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents in crust/mantle, "
@@ -510,7 +513,7 @@ public class SeismicPhaseFactory {
             }
             if (currLeg.contentEquals(END_CODE)) {
                 if (!proto.segmentList.isEmpty()) {
-                    if (proto.endSegment().isDownGoing && ! proto.endSegment().isFlat) {
+                    if (proto.endSegment(). layerPropogationType==LayerPropogationType.DOWN) {
                         proto.endSegment().endAction = END_DOWN;
                     } else {
                         proto.endSegment().endAction = END;
@@ -545,13 +548,15 @@ public class SeismicPhaseFactory {
             if (proto.isFail ) {
                 // phase has no arrivals, so stop looping over legs
                 break;
-            } else {
-                prevEndAction = proto.endSegment().endAction;
             }
         }
         if (proto.isSuccessful() ) {
-            if ((proto.endSegment().isDownGoing && proto.endSegment().endBranch != downgoingRecBranch)
-                || (!proto.endSegment().isDownGoing && proto.endSegment().endBranch != upgoingRecBranch)) {
+            if (((proto.endSegment().layerPropogationType==LayerPropogationType.DOWN
+                    ||proto.endSegment().layerPropogationType==LayerPropogationType.DIFF)
+                    && proto.endSegment().endBranch != downgoingRecBranch)
+                || ((proto.endSegment().layerPropogationType==LayerPropogationType.UP
+                    || proto.endSegment().layerPropogationType==LayerPropogationType.HEAD)
+                    && proto.endSegment().endBranch != upgoingRecBranch)) {
                 return failWithMessage(proto," Phase does not end at the receiver branch, last: "+proto.endSegment());
             }
 
@@ -565,7 +570,7 @@ public class SeismicPhaseFactory {
         // of the entire path
         double fractionOfPath = 1.0 / proto.countFlatLegs();
         for (SeismicPhaseSegment seg : proto.segmentList) {
-            if (seg.isFlat) {
+            if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
                 seg.flatFractionOfPath = fractionOfPath;
             }
         }
@@ -765,7 +770,8 @@ public class SeismicPhaseFactory {
             dist[1] = dist[0] + horizontalDistDeg * Math.PI / 180.0;
             time[1] = time[0] + horizontalDistDeg * Math.PI / 180.0 * minRayParam;
         } else if(rayParams.length == 2 && maxRayParamIndex == minRayParamIndex) {
-            if (!proto.sourceSegment().isDownGoing && tMod.getSourceDepth() == tMod.getRadiusOfEarth()) {
+            if (proto.sourceSegment().layerPropogationType==LayerPropogationType.UP
+                    && tMod.getSourceDepth() == tMod.getRadiusOfEarth()) {
                 // special case for source at center of earth, weird but sometimes useful for testing
                 dist[0] = 0;
                 dist[1] = 2*Math.PI;
@@ -804,7 +810,7 @@ public class SeismicPhaseFactory {
         List<TauBranch> branchList = new ArrayList<>();
         SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : proto.segmentList) {
-            if (seg.isFlat) {
+            if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
                 // flat segments handled external to branch seq
                 continue;
             }
@@ -817,17 +823,21 @@ public class SeismicPhaseFactory {
     // move to seismicPhaseSegment?
     public static List<TauBranch> calcBranchSeqForRayparam(ProtoSeismicPhase proto, double rp, SeismicPhaseSegment seg, SeismicPhaseSegment prevSeg) throws TauModelException {
         List<TauBranch> branchList = new ArrayList<>();
-        int add = seg.isDownGoing ? 1 : -1;
+        if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
+            // flat segments handled external to branch seq
+            return branchList;
+        }
+        int add = seg.layerPropogationType==LayerPropogationType.DOWN ? 1 : -1;
         int sb = seg.startBranch;
-        if ( ( !seg.isDownGoing) && seg.prevEndAction == TURN) {
+        if ( ( seg.layerPropogationType==LayerPropogationType.UP) && seg.prevEndAction == TURN) {
             // prev was TURN, so start a turn branch and go up to end branch
             sb = prevSeg.turnBranch(rp);
         }
-        for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+        for (int b = sb; (seg.layerPropogationType==LayerPropogationType.DOWN && b <= seg.endBranch) || (seg.layerPropogationType==LayerPropogationType.UP && b >= seg.endBranch); b+=add) {
             TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
             if (rp <= tauBranch.getMaxRayParam()) {
                 branchList.add(tauBranch);
-                if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
+                if (seg.layerPropogationType==LayerPropogationType.DOWN && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
                     // ray turns in this branch
                     break;
                 }
@@ -852,22 +862,22 @@ public class SeismicPhaseFactory {
 
         List<TimeDist> pierce = new ArrayList<>();
         for (SeismicPhaseSegment seg : proto.segmentList) {
-            if (seg.isFlat) {continue;}
-            int add = seg.isDownGoing ? 1 : -1;
+            if (LayerPropogationType.isFlat(seg.layerPropogationType)) {continue;}
+            int add = seg.layerPropogationType==LayerPropogationType.DOWN ? 1 : -1;
             int sb = seg.startBranch;
-            if ( ! seg.isDownGoing && seg.prevEndAction == TURN) {
+            if ( seg.layerPropogationType==LayerPropogationType.UP && seg.prevEndAction == TURN) {
                 // prev was TURN, so start a turn branch and go up to end branch
                 sb = turnBranch;
             }
-            for (int b = sb; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+            for (int b = sb; (seg.layerPropogationType==LayerPropogationType.DOWN && b <= seg.endBranch) || (seg.layerPropogationType==LayerPropogationType.UP && b >= seg.endBranch); b+=add) {
                 TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
                 if (rp <= tauBranch.getMaxRayParam()) {
                     dist += tauBranch.getDist(idx + maxRayParamIndex);
                     time += tauBranch.getTime(idx + maxRayParamIndex);
-                    double depth = seg.isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
+                    double depth = seg.layerPropogationType==LayerPropogationType.DOWN ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
                     pierce.add(new TimeDist(rp, time, dist, depth));
                 }
-                if (seg.isDownGoing && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
+                if (seg.layerPropogationType==LayerPropogationType.DOWN && seg.endAction == TURN && rp >= tauBranch.getMinRayParam()) {
                     // ray turns in this branch
                     turnBranch = b;
                     break;
@@ -894,8 +904,12 @@ public class SeismicPhaseFactory {
     }
 
     public static String endActionString(PhaseInteraction endAction) {
-        if(endAction == START) {
-            return "START";
+        if(endAction == START_FLAT ) {
+            return "START_FLAT";
+        } else if(endAction == START_DOWN ) {
+            return "START_DOWN";
+        } else if(endAction == START_UP ) {
+            return "START_UP";
         } else if(endAction == TURN) {
             return "TURN";
         } else if(endAction == DIFFRACTTURN) {

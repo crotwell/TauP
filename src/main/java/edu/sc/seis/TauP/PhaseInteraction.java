@@ -1,7 +1,9 @@
 package edu.sc.seis.TauP;
 
 public enum PhaseInteraction {
-    START,
+    START_UP,
+    START_DOWN,
+    START_FLAT,
 
     /**
      * Used by addToBranch when the path turns within a segment. We assume that
@@ -140,7 +142,9 @@ public enum PhaseInteraction {
                 isDowngoing = true;
                 break;
             case FAIL:
-            case START:
+            case START_DOWN:
+            case START_UP:
+            case START_FLAT:
                 throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
@@ -152,6 +156,19 @@ public enum PhaseInteraction {
         return ! isDowngoingActionAfter(endAction);
     }
 
+    public static LayerPropogationType layerPropogationTypeAfter(PhaseInteraction endAction) {
+        return switch (endAction) {
+            case START_DOWN, TRANSDOWN, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END_DOWN,
+                 SCATTER_DOWN, BACKSCATTER_DOWN -> LayerPropogationType.DOWN;
+            case START_UP, TRANSUP, REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL, TURN, DIFFRACTTURN, END,
+                 SCATTER, BACKSCATTER -> LayerPropogationType.UP;
+            case START_FLAT, DIFFRACT, TRANSUPDIFFRACT -> LayerPropogationType.DIFF;
+            case HEAD -> LayerPropogationType.HEAD;
+            case KMPS -> LayerPropogationType.SURFACE;
+            case FAIL -> LayerPropogationType.DOWN; // doesn't matter
+        };
+    }
+
     public static boolean isDowngoingActionAfter(PhaseInteraction endAction) {
         boolean isDowngoing;
         switch (endAction) {
@@ -160,6 +177,7 @@ public enum PhaseInteraction {
             case REFLECT_TOPSIDE_CRITICAL:
             case TURN:
             case DIFFRACTTURN:
+            case START_UP:
             case END:
                 isDowngoing = false;
                 break;
@@ -167,11 +185,12 @@ public enum PhaseInteraction {
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
             case END_DOWN:
+            case START_DOWN:
                 isDowngoing = true;
                 break;
             case FAIL:
-            case START:
-                throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
+            case START_FLAT:
+                throw new IllegalArgumentException("End action cannot be FAIL or START_FLAT: "+endAction);
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }

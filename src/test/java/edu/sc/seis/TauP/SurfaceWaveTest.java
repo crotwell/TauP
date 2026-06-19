@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.sc.seis.TauP.cmdline.TauP_Time;
+import edu.sc.seis.TauP.cmdline.TauP_Tool;
+import edu.sc.seis.TauP.cmdline.ToolRun;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +22,12 @@ public class SurfaceWaveTest {
 
     TauP_Time taup;
 
+    @Test
+    public void createSurfaceWavePhase() throws TauModelException {
+        TauPConfig.DEBUG = true;
+        SeismicPhase surfaceWave = SeismicPhaseFactory.createPhase("3.0kmps", TauModelLoader.load("ak135"));
+        assertTrue(surfaceWave.phasesExistsInModel());
+    }
 
     @Test
     public void testSurfaceWave() throws TauPException {

@@ -53,7 +53,10 @@ public class SeismicPhaseWalk {
 
     public List<ProtoSeismicPhase> findEndingPaths(int maxAction) throws TauModelException {
         List<ProtoSeismicPhase> segmentTree = walkPhases(maxAction);
+        return onlySuccessfulEndingPhases(segmentTree);
+    }
 
+    public List<ProtoSeismicPhase> onlySuccessfulEndingPhases(List<ProtoSeismicPhase> segmentTree) throws TauModelException {
         List<ProtoSeismicPhase> endingSegments = new ArrayList<>();
         for (ProtoSeismicPhase proto : segmentTree) {
             SeismicPhaseSegment endSeg = proto.endSegment();
@@ -97,31 +100,31 @@ public class SeismicPhaseWalk {
     public List<ProtoSeismicPhase> createSourceSegments(TauModel tMod, boolean isPWave, double receiverDepth) {
         List<ProtoSeismicPhase> segmentTree =  new ArrayList<>();
         if (tMod.getSourceBranch() > 0) {
-            int aboveStartBranch =  ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch()-1, isPWave,
-                    false);
+            int aboveDisconBranch =  ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch()-1, isPWave,
+                    LayerPropogationType.UP);
             TauBranch aboveSourceBranchP = tMod.getTauBranch(tMod.getSourceBranch()-1, isPWave);
             if (receiverBranch == tMod.sourceBranch-1) {
                 // one branch away from receiver, so can just go direct and END
                 ProtoSeismicPhase upProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
-                        aboveStartBranch, aboveStartBranch,
-                        isPWave, END, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
+                        tMod.sourceBranch-1, receiverBranch,
+                        isPWave, END, LayerPropogationType.UP,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.UP),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(upProto);
             }
-            if ( ! excludeBranch.contains(aboveStartBranch) ) {
+            if ( ! excludeBranch.contains(aboveDisconBranch) ) {
                 ProtoSeismicPhase reflProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
-                        aboveStartBranch, aboveStartBranch,
-                        isPWave, REFLECT_UNDERSIDE, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
+                        tMod.sourceBranch-1, aboveDisconBranch,
+                        isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.UP),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(reflProto);
             }
             if (tMod.getSourceBranch() > 1) {
                 ProtoSeismicPhase upProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
-                        aboveStartBranch, aboveStartBranch,
-                        isPWave, TRANSUP, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
+                        tMod.sourceBranch-1, aboveDisconBranch,
+                        isPWave, TRANSUP, LayerPropogationType.UP,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.UP),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(upProto);
             }
@@ -130,41 +133,49 @@ public class SeismicPhaseWalk {
         int startBranch = tMod.getSourceBranch();
 
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
+        TauBranch aboveSourceBranchP = null;
+        if (tMod.getSourceBranch()!=0) {
+            aboveSourceBranchP = tMod.getTauBranch(tMod.getSourceBranch()-1, isPWave);
+        }
         int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch(), isPWave,
-                true);
+                LayerPropogationType.DOWN);
 
 
-        // downgoing options are END, TURN, REFLECT_TOPSIDE or TRANSDOWN
+        // downgoing options are END, TURN, HEAD, REFLECT_TOPSIDE or TRANSDOWN
         ProtoSeismicPhase turnProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                 startBranch, endBranchNum,
-                isPWave, TURN, true,
-                legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
+                isPWave, TURN, LayerPropogationType.DOWN,
+                legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
                 sourceBranchP.getMinRayParam(),
                 sourceBranchP.getMaxRayParam()), receiverDepth);
         segmentTree.add(turnProto);
         if (receiverBranch == endBranchNum+1) {
             ProtoSeismicPhase endProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                     startBranch, startBranch,
-                    isPWave, END, true,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
+                    isPWave, END, LayerPropogationType.DOWN,
+                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
                     sourceBranchP.getMinRayParam(),
                     sourceBranchP.getMaxRayParam()), receiverDepth);
             segmentTree.add(endProto);
         }
         if (tMod.getSourceBranch() < tMod.getNumBranches() - 1) {
+            double maxRP = sourceBranchP.getTopRayParam();
+            for (int bnum = startBranch; bnum < endBranchNum; bnum++) {
+                maxRP = Math.min(maxRP, tMod.getTauBranch(bnum, isPWave).getMinTurnRayParam());
+            }
             if ( ! excludeBranch.contains(endBranchNum+1) ) {
                 ProtoSeismicPhase reflProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
                         startBranch, endBranchNum,
-                        isPWave, REFLECT_TOPSIDE, true,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
-                        0, sourceBranchP.getMinTurnRayParam()), receiverDepth);
+                        isPWave, REFLECT_TOPSIDE, LayerPropogationType.DOWN,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
+                        0, maxRP), receiverDepth);
                 segmentTree.add(reflProto);
             }
             ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                     startBranch, endBranchNum,
-                    isPWave, TRANSDOWN, true,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
-                    0, sourceBranchP.getMinRayParam()), receiverDepth);
+                    isPWave, TRANSDOWN, LayerPropogationType.DOWN,
+                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
+                    0, maxRP), receiverDepth);
             segmentTree.add(transDProto);
         }
         return segmentTree;
@@ -211,7 +222,7 @@ public class SeismicPhaseWalk {
                 SeismicPhaseSegment cS = curr.get(s);
                 SeismicPhaseSegment oS = other.get(s+1);
                 if (cS.isPWave != oS.isPWave
-                        || cS.isDownGoing != oS.isDownGoing
+                        || cS.layerPropogationType != oS.layerPropogationType
                         || cS.endAction != oS.endAction
                         || !Objects.equals(cS.legName.substring(0,1), oS.legName)) {
                     return false;
@@ -226,12 +237,12 @@ public class SeismicPhaseWalk {
             SeismicPhaseSegment cS = curr.get(s);
             SeismicPhaseSegment oS = other.get(s);
             if (cS.isPWave != oS.isPWave
-                    || cS.isDownGoing != oS.isDownGoing
+                    || cS.layerPropogationType != oS.layerPropogationType
                     || cS.endAction != oS.endAction
                     || !Objects.equals(cS.legName, oS.legName)) {
                 return false;
             }
-            if (cS.isDownGoing) {
+            if (cS.layerPropogationType==LayerPropogationType.DOWN) {
                 if (cS.startBranch != oS.startBranch) {
                     return false;
                 } else if (cS.endAction != TURN &&  cS.endBranch != oS.endBranch) {
@@ -261,22 +272,22 @@ public class SeismicPhaseWalk {
                 if (cS.endBranch == oS.endBranch) {
                     out.add(cS);
                 } else if (cS.endBranch < oS.endBranch) {
-                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.layerPropogationType, cS.legName, oS.minRayParam, cS.maxRayParam);
                     out.add(m);
                 } else  {
                     //if (cS.endBranch > oS.endBranch)
-                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.layerPropogationType, cS.legName, cS.minRayParam, oS.maxRayParam);
                     out.add(m);
                 }
             } else if (prevS != null && (prevS.endAction == TURN || prevS.endAction == DIFFRACTTURN)) {
                 if (cS.startBranch == oS.startBranch) {
                     out.add(cS);
                 } else if (cS.startBranch < oS.startBranch) {
-                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.layerPropogationType, cS.legName, oS.minRayParam, cS.maxRayParam);
                     out.add(m);
                 } else {
                     //if (cS.startBranch > oS.startBranch) {
-                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.layerPropogationType, cS.legName, cS.minRayParam, oS.maxRayParam);
                     out.add(m);
                 }
             } else {
@@ -287,16 +298,16 @@ public class SeismicPhaseWalk {
         return new ProtoSeismicPhase(out, 0);
     }
 
-    public List<ProtoSeismicPhase> walkPhases(TauModel tMod, List<ProtoSeismicPhase> segmentTree, int maxLegs) throws TauModelException {
+    public List<ProtoSeismicPhase> walkPhases(TauModel tMod, List<ProtoSeismicPhase> segmentTree, int maxInteractions) throws TauModelException {
         List<ProtoSeismicPhase> nextSegmentTree = new ArrayList<>();
         boolean walkedAStep = false;
         for (ProtoSeismicPhase segList : segmentTree) {
-            SeismicPhaseSegment endSeg = segList.get(segList.size() - 1);
+            SeismicPhaseSegment endSeg = segList.endSegment();
             if (endSeg.endAction == END || endSeg.endAction == END_DOWN) {
                 nextSegmentTree.add(segList);
             } else {
                 int interactionNum = segList.calcInteractionNumber();
-                if (interactionNum <= maxLegs) {
+                if (interactionNum <= maxInteractions) {
                     segList.validateSegList();
                     List<ProtoSeismicPhase> calcedNext = new ArrayList<>();
                     if (allowPWave) {
@@ -307,7 +318,7 @@ public class SeismicPhaseWalk {
                     }
                     for (ProtoSeismicPhase calcSegList : calcedNext) {
                         SeismicPhaseSegment calcendSeg = calcSegList.get(calcSegList.size()-1);
-                        if (calcSegList.calcInteractionNumber() <= maxLegs
+                        if (calcSegList.calcInteractionNumber() <= maxInteractions
                                 && calcendSeg.minRayParam < calcendSeg.maxRayParam
                         ) {
                             ProtoSeismicPhase conProto = consolidateSegment(calcSegList);
@@ -316,8 +327,8 @@ public class SeismicPhaseWalk {
                         } else {
                             if (TauPConfig.DEBUG) {
                                 ProtoSeismicPhase conProto = consolidateSegment(calcSegList);
-                                System.out.println("skip " + conProto.phaseNameForSegments()
-                                        + " " + (calcSegList.calcInteractionNumber() <= maxLegs)
+                                System.err.println("skip " + conProto.phaseNameForSegments()
+                                        + " " + (calcSegList.calcInteractionNumber() <= maxInteractions)
                                         + " " + (calcendSeg.minRayParam < calcendSeg.maxRayParam)
                                 );
                             }
@@ -328,7 +339,7 @@ public class SeismicPhaseWalk {
         }
         nextSegmentTree = overlapsRayParam(nextSegmentTree, minRayParam, maxRayParam);
         if (walkedAStep ) {
-            nextSegmentTree = walkPhases(tMod, nextSegmentTree, maxLegs);
+            nextSegmentTree = walkPhases(tMod, nextSegmentTree, maxInteractions);
         }
         return nextSegmentTree;
     }
@@ -346,6 +357,55 @@ public class SeismicPhaseWalk {
         return out;
     }
 
+    public ProtoSeismicPhase walkToSurface(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave, PhaseInteraction action) throws TauModelException {
+        ProtoSeismicPhase out;
+        ProtoSeismicPhase prev;
+        if (proto.endSegment().layerPropogationType == LayerPropogationType.DIFF) {
+            out = nextLegWithAction(tMod, proto, isPWave, DIFFRACTTURN);
+        } else {
+            out = proto;
+        }
+        while ( out != null && PhaseInteraction.isDowngoingActionAfter(out.getEndAction())) {
+            prev = out;
+            out = nextLegWithAction(tMod, out, isPWave, TURN);
+            if (out == null) {
+                out = nextLegWithAction(tMod, prev, isPWave, TRANSDOWN);
+            }
+        }
+        prev = out;
+        while (out != null && out.endSegment().endBranch > 0) {
+            prev = out;
+            out = nextLegWithAction(tMod, out, isPWave, TRANSUP);
+            if (out == null) {
+                out = nextLegWithAction(tMod, prev, isPWave, action);
+            }
+        }
+        if (out != null && out.endSegment().endAction != action) {
+            // back up one step and go to surface with end = action
+            out = nextLegWithAction(tMod, prev, isPWave, action);
+        }
+        return out;
+    }
+
+    /**
+     * Calculates all next legs, then returns the first (only?) protophase with the given action at the end. Used to
+     * walk a path one step at a time.
+     * @param tMod the model
+     * @param proto starting proto phase
+     * @param isPWave true for P, false for S
+     * @param action desired end action
+     * @return protophase one step further, null if not possible
+     * @throws TauModelException
+     */
+    public ProtoSeismicPhase nextLegWithAction(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave, PhaseInteraction action) throws TauModelException {
+        List<ProtoSeismicPhase> nextLegs = nextLegs(tMod, proto, isPWave);
+        for (ProtoSeismicPhase p : nextLegs) {
+            if (p.endSegment().endAction == action) {
+                return p;
+            }
+        }
+        return null;
+    }
 
     public List<ProtoSeismicPhase> nextLegs(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave) throws TauModelException {
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
@@ -354,16 +414,18 @@ public class SeismicPhaseWalk {
 
         if (isPWave != prevEndSeg.isPWave) {
             // don't do phase change at excluded boundary
-            if (prevEndSeg.isDownGoing && excludeBranch.contains(prevEndSeg.endBranch + 1)) {
+            if (prevEndSeg.layerPropogationType==LayerPropogationType.DOWN && excludeBranch.contains(prevEndSeg.endBranch + 1)) {
                 return outTree;
             }
-            if ( ! prevEndSeg.isDownGoing && excludeBranch.contains(prevEndSeg.endBranch)) {
+            if ( prevEndSeg.layerPropogationType==LayerPropogationType.UP && excludeBranch.contains(prevEndSeg.endBranch)) {
                 return outTree;
             }
         }
 
         switch (prevEndSeg.endAction) {
             case TRANSUP:
+            case HEAD:
+            case DIFFRACTTURN:
                 if (prevEndSeg.endBranch == 0) {
                     throw new TauModelException(proto.getName()+" TransUp when prev end is zero, prev: "
                             +prevEndSeg.endBranch+" "+prevEndSeg.endAction);
@@ -383,23 +445,25 @@ public class SeismicPhaseWalk {
         }
 
         int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave,
-                isDowngoingActionAfter(prevEndSeg.endAction));
+                layerPropogationTypeAfter(prevEndSeg.endAction));
         // check if endBranchNum is past receiver, in which case ending is possible
         switch (prevEndSeg.endAction) {
+            case HEAD:
             case TRANSUP:
                 if (receiverBranch < prevEndSeg.endBranch && receiverBranch >= endBranchNum) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, END));
+                }
+                break;
+            case DIFFRACTTURN:
+                if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum && isPWave == prevEndSeg.isPWave) {
+                    // diff cannot phase convert
+                    outTreeAdd(outTree, proto.nextSegment( prevEndSeg.isPWave, END));
                 }
                 break;
             case TURN:
                 if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum && isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
                     outTreeAdd(outTree, proto.nextSegment( prevEndSeg.isPWave, END));
-                }
-                break;
-            case DIFFRACTTURN:
-                if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum) {
-                    outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, END));
                 }
                 break;
             case REFLECT_TOPSIDE:
@@ -417,6 +481,8 @@ public class SeismicPhaseWalk {
                     outTreeAdd(outTree, proto.nextSegment( isPWave, END));
                 }
                 break;
+            default:
+                throw new TauModelException("Unknown endAction: "+prevEndSeg.endAction);
         }
         switch (prevEndSeg.endAction) {
             case END:
@@ -429,10 +495,23 @@ public class SeismicPhaseWalk {
                 outTreeAdd(outTree, turnPhase);
                 if (prevEndSeg.endBranch < tMod.getNumBranches()-2) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, TRANSDOWN));
-                    if ( ! excludeBranch.contains(1+ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, true)) ) {
+                    int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.DOWN);
+                    if (!excludeBranch.contains(1 + endDiscon)) {
                         outTreeAdd(outTree, proto.nextSegment(isPWave, REFLECT_TOPSIDE));
                     }
                 }
+
+                if (prevEndSeg.endBranch < tMod.getNumBranches()-1) {
+
+                }
+                break;
+            case HEAD:
+                if (startBranchNum > 0) {
+                    if (isPWave || ! tMod.isFluidBranch(startBranchNum)) {
+                        outTreeAdd(outTree, proto.nextSegment(isPWave, TRANSUP));
+                    }
+                }
+                break;
                 break;
             case REFLECT_TOPSIDE:
             case TRANSUP:
@@ -441,12 +520,13 @@ public class SeismicPhaseWalk {
                         outTreeAdd(outTree, proto.nextSegment(isPWave, TRANSUP));
                     }
                 }
-                if ( ! excludeBranch.contains(ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false))) {
+                int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.UP);
+                if ( ! excludeBranch.contains(endDiscon)) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, REFLECT_UNDERSIDE));
-
                 }
                 break;
             case TURN:
+            case DIFFRACTTURN:
                 if (isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
                     if (prevEndSeg.endBranch > 0) {
@@ -456,12 +536,14 @@ public class SeismicPhaseWalk {
                         }
 
                     }
-                    int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false);
-                    if ( ! excludeBranch.contains(endDiscon) ) {
+                    int endDisconAfterTurn = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.UP);
+                    if ( ! excludeBranch.contains(endDisconAfterTurn) ) {
                         outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, REFLECT_UNDERSIDE));
                     }
                 }
                 break;
+            default:
+                throw new TauModelException("Unknown endAction: "+prevEndSeg.endAction);
         }
         return outTree;
     }
@@ -470,7 +552,7 @@ public class SeismicPhaseWalk {
         if (proto != null) {
             boolean hasDiffOrHead = false;
             for (SeismicPhaseSegment seg : proto.segmentList) {
-                if (seg.isFlat) {
+                if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
                     hasDiffOrHead = true;
                     break;
                 }
@@ -483,37 +565,40 @@ public class SeismicPhaseWalk {
         }
     }
 
-    public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing, boolean isFlat) {
+    public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, LayerPropogationType layerPropogationType) {
         if (branchNum < 0 || branchNum >= tMod.getNumBranches()) {
             return "unknown";
         }
         TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
         if (branchNum >= tMod.getIocbBranch()) {
             if (tauBranch.isPWave) {
-                if (isFlat) {
+                if (layerPropogationType == LayerPropogationType.HEAD || layerPropogationType == LayerPropogationType.DIFF) {
                     return "I";
-                } else if (isDowngoing) {
+                } else if (layerPropogationType == LayerPropogationType.DOWN) {
                     return "Ied";
                 } else {
+                    // UP
                     return "y";
                 }
             } else {
-                if (isFlat) {
+                if (layerPropogationType == LayerPropogationType.HEAD || layerPropogationType == LayerPropogationType.DIFF) {
                     return "J";
-                } else if (isDowngoing) {
+                } else if (layerPropogationType == LayerPropogationType.DOWN) {
                     return "Jed";
                 } else {
+                    // UP
                     return "j";
                 }
             }
         }
         if (branchNum >= tMod.getCmbBranch()) {
             if (tauBranch.isPWave) {
-                if (isFlat) {
+                if (layerPropogationType == LayerPropogationType.HEAD || layerPropogationType == LayerPropogationType.DIFF) {
                     return "K";
-                } else if (isDowngoing) {
+                } else if (layerPropogationType == LayerPropogationType.DOWN) {
                     return "Ked";
                 } else {
+                    // UP
                     return "k";
                 }
             } else {
@@ -521,19 +606,21 @@ public class SeismicPhaseWalk {
             }
         }
         if (tauBranch.isPWave) {
-            if (isFlat) {
+            if (layerPropogationType == LayerPropogationType.HEAD || layerPropogationType == LayerPropogationType.DIFF) {
                 return "P";
-            } else if (isDowngoing) {
+            } else if (layerPropogationType == LayerPropogationType.DOWN) {
                 return "Ped";
             } else {
+                // UP
                 return "p";
             }
         } else {
-            if (isFlat) {
+            if (layerPropogationType == LayerPropogationType.HEAD || layerPropogationType == LayerPropogationType.DIFF) {
                 return "S";
-            } else if (isDowngoing) {
+            } else if (layerPropogationType == LayerPropogationType.DOWN) {
                 return "Sed";
             } else {
+                // UP
                 return "s";
             }
         }
@@ -552,12 +639,12 @@ public class SeismicPhaseWalk {
         List<SeismicPhaseSegment> out = new ArrayList<>();
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : proto.segmentList) {
-            if (prev != null
+            if (prev != null && !prev.legName.isEmpty() && !seg.legName.isEmpty()
                     && (prev.endAction == TRANSDOWN || prev.endAction == TRANSUP)
                     && prev.isPWave == seg.isPWave
                     && Objects.equals(prev.legName.charAt(0), seg.legName.charAt(0))) {
                 SeismicPhaseSegment conSeg = new SeismicPhaseSegment(prev.tMod,
-                        prev.startBranch, seg.endBranch, prev.isPWave, seg.endAction, prev.isDownGoing,
+                        prev.startBranch, seg.endBranch, prev.isPWave, seg.endAction, prev.layerPropogationType,
                         prev.legName,
                         Math.max(prev.minRayParam, seg.minRayParam),
                         Math.min(prev.maxRayParam, seg.maxRayParam));

@@ -24,7 +24,7 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
     }
 
     public static FailedSeismicPhase failForReason(String phaseName, TauModel tMod, double receiverDepth, String failReason) {
-        ProtoSeismicPhase proto = ProtoSeismicPhase.failNewPhase(tMod, true, true,
+        ProtoSeismicPhase proto = ProtoSeismicPhase.failNewPhase(tMod, true, LayerPropogationType.DOWN,
                 receiverDepth, phaseName, failReason);
         FailedSeismicPhase fail = new FailedSeismicPhase(proto);
         return fail;

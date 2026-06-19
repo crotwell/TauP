@@ -55,7 +55,7 @@ public class CriticalReflection {
             SeismicPhaseSegment critSeg = critPhase.getPhaseSegments().get(i);
             assertEquals(reflSeg.startBranch, critSeg.startBranch);
             assertEquals(reflSeg.endBranch, critSeg.endBranch);
-            assertEquals(reflSeg.isDownGoing, critSeg.isDownGoing);
+            assertEquals(reflSeg.layerPropogationType, critSeg.layerPropogationType);
             assertEquals(reflSeg.isPWave, critSeg.isPWave);
         }
 

@@ -33,9 +33,9 @@ public class IncidentAngleRay extends ShootableRay {
     public RayParamRay forPhase(SeismicPhase phase) {
         double rayParam;
         try {
-            if (incidentAngle < 90 && phase.getFinalPhaseSegment().isDownGoing) {
+            if (incidentAngle < 90 && phase.getFinalPhaseSegment().layerPropogationType!=LayerPropogationType.UP) {
                 return null;
-            } else if (incidentAngle > 90 && ! phase.getFinalPhaseSegment().isDownGoing) {
+            } else if (incidentAngle > 90 && phase.getFinalPhaseSegment().layerPropogationType!=LayerPropogationType.DOWN) {
                 return null;
             } else {
                 rayParam = phase.calcRayParamForIncidentAngle(incidentAngle);

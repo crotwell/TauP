@@ -201,6 +201,7 @@ public class TauModel implements Serializable {
      */
     public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
         if (branchNum == 0) {
+            // no head wave at surface
             return false;
         }
         if (getTauBranch(branchNum, isPWave).isHighSlowness()) {
@@ -226,7 +227,7 @@ public class TauModel implements Serializable {
      * @return diffracted wave possible
      */
     public boolean isDiffractionBranch(int branchNum, boolean isPWave) {
-        return branchNum>0 && isDiscontinuityBranch(branchNum, isPWave);
+        return isDiscontinuityBranch(branchNum, isPWave);
     }
 
     /**

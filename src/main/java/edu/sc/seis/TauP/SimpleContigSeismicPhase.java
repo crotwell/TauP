@@ -659,7 +659,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         double rayParam;
         try {
             rayParam = calcRayParamForTakeoffAngleInModel(takeoffDegree, firstIsPWave, tMod,
-                    getInitialPhaseSegment().isDownGoing);
+                    getInitialPhaseSegment().layerPropogationType);
         } catch (NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -669,26 +669,27 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     public static double calcRayParamForTakeoffAngleInModel(double takeoffDegree,
                                                             boolean isPWave,
                                                             TauModel tMod,
-                                                            boolean isDownGoing)
+                                                            LayerPropogationType layerPropogationType)
             throws NoSuchLayerException, SlownessModelException {
-        if ((isDownGoing && (takeoffDegree > 90))
-                || (!isDownGoing && (takeoffDegree < 90))
-        ) {
-            throw new SlownessModelException("Phase downgoing and takeoff different up/down " + isDownGoing + " " + takeoffDegree);
+        if (LayerPropogationType.isFlat(layerPropogationType) && takeoffDegree != 90.0) {
+            throw new SlownessModelException("Phase flat and takeoff no 90: " +  takeoffDegree);
         }
-        SlownessLayer sLayer;
-        if (isDownGoing) {
-            int layerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getSourceDepth(), isPWave);
-            sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
-        } else {
-            int layerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWave);
-            sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
-        }
-        double rayParam = sLayer.evaluateAt_bullen(tMod.getSourceDepth(), tMod.radiusOfEarth)
-                * Math.sin(takeoffDegree * SphericalCoords.DtoR);
-        return rayParam;
+        return switch (layerPropogationType) {
+            case SURFACE -> throw new SlownessModelException(layerPropogationType+" not allowed");
+            case DOWN, HEAD -> {
+                int layerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getSourceDepth(), isPWave);
+                SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+                yield sLayer.evaluateAt_bullen(tMod.getSourceDepth(), tMod.radiusOfEarth)
+                        * Math.sin(takeoffDegree * SphericalCoords.DtoR);
+            }
+            case UP, DIFF -> {
+                int layerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWave);
+                SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+                yield sLayer.evaluateAt_bullen(tMod.getSourceDepth(), tMod.radiusOfEarth)
+                        * Math.sin(takeoffDegree * SphericalCoords.DtoR);
+            }
+        };
     }
-
 
     @Override
     public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
@@ -703,7 +704,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         double rayParam;
         try {
             rayParam = calcRayParamForIncidentAngleInModel(incidentDegree, firstIsPWave, getProto(),
-                    getFinalPhaseSegment().isDownGoing);
+                    getFinalPhaseSegment().layerPropogationType);
         } catch (NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -713,30 +714,32 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     public static double calcRayParamForIncidentAngleInModel(double incidentDegree,
                                                              boolean isPWave,
                                                              ProtoSeismicPhase proto,
-                                                             boolean isDownGoing)
+                                                             LayerPropogationType layerPropogationType)
             throws NoSuchLayerException, SlownessModelException {
-        if ((isDownGoing && (incidentDegree < 90))
-                || (!isDownGoing && (incidentDegree > 90))
-        ) {
-            throw new SlownessModelException("Phase ends downgoing and incident different up/down " + isDownGoing + " " + incidentDegree);
+        if (LayerPropogationType.isFlat(layerPropogationType) && incidentDegree != 90.0) {
+            throw new SlownessModelException("Phase flat and incidentDegree not 90: " +  incidentDegree);
         }
-        SlownessLayer sLayer;
-        if (!isDownGoing) {
-            int layerNum = proto.tMod.getSlownessModel().layerNumberBelow(proto.receiverDepth, isPWave);
-            sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
-        } else {
-            int layerNum = proto.tMod.getSlownessModel().layerNumberAbove(proto.receiverDepth, isPWave);
-            sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
-        }
-        double rayParam = sLayer.evaluateAt_bullen(proto.receiverDepth, proto.tMod.radiusOfEarth)
-                * Math.sin(incidentDegree * SphericalCoords.DtoR);
-        return rayParam;
+        return switch (layerPropogationType) {
+            case SURFACE -> throw new SlownessModelException(layerPropogationType+" not allowed");
+            case UP, HEAD -> {
+                int layerNum = proto.tMod.getSlownessModel().layerNumberBelow(proto.receiverDepth, isPWave);
+                SlownessLayer sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+                yield sLayer.evaluateAt_bullen(proto.receiverDepth, proto.tMod.radiusOfEarth)
+                        * Math.sin(incidentDegree * SphericalCoords.DtoR);
+            }
+            case DOWN, DIFF -> {
+                int layerNum = proto.tMod.getSlownessModel().layerNumberAbove(proto.receiverDepth, isPWave);
+                SlownessLayer sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+                yield sLayer.evaluateAt_bullen(proto.receiverDepth, proto.tMod.radiusOfEarth)
+                        * Math.sin(incidentDegree * SphericalCoords.DtoR);
+            }
+        };
+
     }
 
     @Override
     public double velocityAtSource() {
         try {
-            double takeoffVelocity;
             VelocityModelMaterial firstLeg;
             VelocityModel vMod = getTauModel().getVelocityModel();
             if (getInitialPhaseSegment().isPWave) {
@@ -744,12 +747,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             } else {
                 firstLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getInitialPhaseSegment().isDownGoing) {
-                takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
-            } else {
-                takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
-            }
-            return takeoffVelocity;
+            return switch (getInitialPhaseSegment().layerPropogationType) {
+                case HEAD,DOWN, SURFACE -> vMod.evaluateBelow(sourceDepth, firstLeg);
+                case DIFF, UP -> vMod.evaluateAbove(sourceDepth, firstLeg);
+            };
         } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -758,7 +759,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double velocityAtReceiver() {
         try {
-            double incidentVelocity;
             VelocityModel vMod = getTauModel().getVelocityModel();
             VelocityModelMaterial lastLeg;
             if (getPhaseSegments().get(getPhaseSegments().size() - 1).isPWave) {
@@ -766,12 +766,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             } else {
                 lastLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getPhaseSegments().get(getPhaseSegments().size() - 1).isDownGoing) {
-                incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
-            } else {
-                incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
-            }
-            return incidentVelocity;
+
+            return switch (getFinalPhaseSegment().layerPropogationType) {
+                case HEAD,UP, SURFACE -> vMod.evaluateBelow(receiverDepth, lastLeg);
+                case DIFF, DOWN -> vMod.evaluateAbove(receiverDepth, lastLeg);
+            };
         } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -780,14 +779,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double densityAtSource() {
         try {
-            double rho;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            if (getInitialPhaseSegment().isDownGoing) {
-                rho = vMod.evaluateAbove(sourceDepth, VelocityModelMaterial.DENSITY);
-            } else {
-                rho = vMod.evaluateBelow(sourceDepth, VelocityModelMaterial.DENSITY);
-            }
-            return rho;
+
+            return switch (getInitialPhaseSegment().layerPropogationType) {
+                case HEAD,DOWN, SURFACE -> vMod.evaluateBelow(sourceDepth, VelocityModelMaterial.DENSITY);
+                case DIFF, UP -> vMod.evaluateAbove(sourceDepth, VelocityModelMaterial.DENSITY);
+            };
         } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -796,14 +793,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public double densityAtReceiver() {
         try {
-            double rho;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            if (getFinalPhaseSegment().isDownGoing) {
-                rho = vMod.evaluateAbove(receiverDepth, VelocityModelMaterial.DENSITY);
-            } else {
-                rho = vMod.evaluateBelow(receiverDepth, VelocityModelMaterial.DENSITY);
-            }
-            return rho;
+            return switch (getInitialPhaseSegment().layerPropogationType) {
+                case HEAD,UP, SURFACE -> vMod.evaluateBelow(receiverDepth, VelocityModelMaterial.DENSITY);
+                case DIFF, DOWN -> vMod.evaluateAbove(receiverDepth, VelocityModelMaterial.DENSITY);
+            };
         } catch (NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         }
@@ -826,7 +820,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             // just set takeoffAngle to 90 in this case
             takeoffAngle = Math.PI / 2;
         }
-        if (!getInitialPhaseSegment().isDownGoing) {
+        if (getInitialPhaseSegment().layerPropogationType==LayerPropogationType.UP) {
             // upgoing, so angle is in 90-180 range
             takeoffAngle = Math.PI - takeoffAngle;
         }
@@ -850,7 +844,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             // just set incidentAngle to 90 in this case
             incidentAngle = Math.PI / 2;
         }
-        if (getFinalPhaseSegment().isDownGoing) {
+        if (getFinalPhaseSegment().layerPropogationType==LayerPropogationType.DOWN) {
             incidentAngle = Math.PI - incidentAngle;
         }
         return incidentAngle;
@@ -939,9 +933,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         SeismicPhaseSegment prevSeg = null;
         for (SeismicPhaseSegment seg : getPhaseSegments()) {
             boolean isPWave = seg.isPWave;
-            int indexIncr = seg.isDownGoing ? 1 : -1;
-            int finish = seg.endBranch + indexIncr;
-            if (seg.isFlat) {
+            if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
                 double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
                 double refractTime = refractDist * currArrival.getRayParam();
                 pierce.add(new TimeDist(distRayParam,
@@ -955,7 +947,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             } else {
                 List<TauBranch> branchList = SeismicPhaseFactory.calcBranchSeqForRayparam(proto, distRayParam, seg, prevSeg);
                 for (TauBranch tauBranch : branchList) {
-                    if (seg.isFlat) {
+                    if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
                         double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
                         double refractTime = refractDist * currArrival.getRayParam();
                         pierce.add(new TimeDist(distRayParam,
@@ -1016,11 +1008,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                         prevBranchTime = branchTime;
                         branchTime += distRatio * (timeB - timeA) + timeA;
                         double branchDepth;
-                        if (seg.isDownGoing) {
+                        if (seg.layerPropogationType==LayerPropogationType.DOWN) {
                             branchDepth = Math.min(tauBranch
                                             .getBotDepth(),
                                     turnDepth);
                         } else {
+                            // upgoing
                             branchDepth = Math.min(tauBranch
                                             .getTopDepth(),
                                     turnDepth);
@@ -1068,7 +1061,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 for (TimeDist td : pseg.getPath()) {
                     double timeInc = td.getTime()-prev.getTime();
                     double Q;
-                    if (pseg.getPhaseSegment().isFlat) {
+                    if (LayerPropogationType.isFlat(pseg.getPhaseSegment().layerPropogationType)) {
                         // does tstar make sense for flat ray???
                         if (pseg.getPhaseSegment().prevEndAction == PhaseInteraction.DIFFRACT
                                 || pseg.getPhaseSegment().prevEndAction == TRANSUPDIFFRACT) {
