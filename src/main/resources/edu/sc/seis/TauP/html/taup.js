@@ -944,7 +944,7 @@ export function setupListeners() {
     }
   }
   // setup animate button listeners
-  setupAnimation();
+  setupAnimation(timestep);
   // ellipticity choice
   document.querySelector("#knownPlanetEllip").addEventListener("change", (event) => {
     document.querySelector("#geodeticflattening").value = event.target.value;
