@@ -542,9 +542,6 @@ public class Arrival {
         out *= getPhase().velocityAtSource()/
                 ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
         double takeoffRadian = getTakeoffAngleRadian();
-        if ( ! getPhase().getInitialPhaseSegment().isDownGoing) {
-            takeoffRadian = Math.PI-takeoffRadian;
-        }
         out *= Math.tan(takeoffRadian)/Math.cos(getIncidentAngleRadian());
         out *= 1/Math.sin(getModuloDist());
         double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta
