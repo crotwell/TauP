@@ -43,6 +43,7 @@ If you find TauP useful and would like to cite it, please use the following:
 
   Crotwell, H. P. |release_year|. The TauP Toolkit (|release|). Zenodo. |zenodo_doi|
 
+**A Personal Note:**
 
 I really enjoy writing software that others find useful. And while the journey
 is its own reward, it is nice to hear from people that use and like TauP. If you
