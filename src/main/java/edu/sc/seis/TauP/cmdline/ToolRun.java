@@ -231,7 +231,10 @@ public class ToolRun {
 					if (TauPConfig.DEBUG) {
 						ex.printStackTrace(); // no stack trace
 					}
-					commandLine.getErr().println(ex.getMessage());
+					commandLine.getErr().println(ex.getClass().getName()+" "+ex.getMessage()
+							+"\nUse --debug to get stack trace,"
+							+"\nOr --help to get usage."
+					);
 					//commandLine.usage(commandLine.getErr());
 				}
 				return commandLine.getCommandSpec().exitCodeOnExecutionException();
