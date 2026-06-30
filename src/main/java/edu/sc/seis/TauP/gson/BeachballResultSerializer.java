@@ -19,8 +19,8 @@ public class BeachballResultSerializer  implements JsonSerializer<BeachballResul
         JsonArray radArr = new JsonArray();
         for (RadiationAmplitude radAmp : src.getRadiationPattern()) {
             JsonArray radPoint = new JsonArray();
-            radPoint.add(radAmp.getCoord().getPhi());
-            radPoint.add(radAmp.getCoord().getTheta());
+            radPoint.add(radAmp.getCoord().getTakeoffAngleDegree());
+            radPoint.add(radAmp.getCoord().getAzimuthDegree());
             radPoint.add(radAmp.getRadialAmplitude());
             radPoint.add(radAmp.getPhiAmplitude());
             radPoint.add(radAmp.getThetaAmplitude());

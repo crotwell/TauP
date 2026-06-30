@@ -6,6 +6,7 @@ import edu.sc.seis.TauP.Vector;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.HemisphereType;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
@@ -28,7 +29,7 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 public class TauP_Beachball extends TauP_AbstractRayTool {
 
     public TauP_Beachball() {
-        super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_beachball"));
+        super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_beachball"));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
     }
 
@@ -657,7 +658,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         boolean withPath = false;
         boolean withAmp = true;
         boolean withDerivative = false;
-        List<RadiationAmplitude> radPattern = calcRadiationPattern(faultPlane, numPoints, true);
+        List<RadiationAmplitude> radPattern = new ArrayList<>();
+        if (hemisphereType == HemisphereType.LOWER || hemisphereType == HemisphereType.BOTH) {
+            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
+        }
+        if (hemisphereType == HemisphereType.UPPER || hemisphereType == HemisphereType.BOTH) {
+            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, false));
+        }
         SeismicSource seismicSource = new SeismicSource(ArrivalAmplitude.DEFAULT_MW, faultPlane);
         BeachballResult bbResult = new BeachballResult(modelArgs.getModelName(),
                 modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
@@ -693,6 +700,15 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     }
 
     BeachballType beachballType = BeachballType.ampp;
+
+    @CommandLine.Option(names = {"--hemi"},
+            paramLabel = "type",
+            description = "Beachball hemisphere type, default is ${DEFAULT-VALUE}, one of ${COMPLETION-CANDIDATES}",
+            defaultValue = "lower")
+    public void setHemisphereType(HemisphereType hemisphereType) {
+        this.hemisphereType = hemisphereType;
+    }
+    HemisphereType hemisphereType = HemisphereType.LOWER;
 
     @CommandLine.Option(names="--numpoints",
             description = "Number of points for json, number of arrows to show direction for svg",
