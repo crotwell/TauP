@@ -406,6 +406,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 String minmaxclass = "max";
                 System.err.println("phase label: "+takeoffList.size());
                 for (double takeoff : takeoffList) {
+                    if (takeoff < 0.1) {
+                        // don't draw inner circle if takeoff is zero
+                        continue;
+                    }
                     SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(phaseLabelAzimuth, takeoff);
 
                     double sterR = coord.stereoR();
