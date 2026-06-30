@@ -95,13 +95,13 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             for (Double timeVal : sortedKeys) {
                 idx++;
                 String lineColor;
-                if (coloring.getColoring() == ColorType.auto) {
+                if (coloring.getColoring() == ColorType.phase) {
                     lineColor = "-W,"+ColoringArgs.gmtColor(coloring.colorForIndex(idx));
                     out.write("gmt plot "+lineColor+" -A  <<END\n");
                 }
                 for (PhaseIsochron phaseIsochron : timeSegmentMap.get(timeVal)) {
                     for (WavefrontPathSegment segment : phaseIsochron.getWavefront()) {
-                        if (coloring.getColoring() == ColorType.wavetype) {
+                        if (coloring.getColoring() == ColorType.wavetype || coloring.getColoring() == ColorType.auto) {
                             lineColor = "-W" + (segment.isPWave() ? ColoringArgs.PWAVE_COLOR : ColoringArgs.SWAVE_COLOR) + " ";
                             out.write("gmt plot " + lineColor + " -A  <<END\n");
                         } else if (coloring.getColoring() == ColorType.phase) {
@@ -170,12 +170,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             case phase:
                 cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
                 break;
+            case auto:
             case wavetype:
                 cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
                 break;
             case none:
                 cssExtra += SvgUtil.createNoneColorCSS(coloring);
-            case auto:
             default:
                 for (SeismicPhase phase : getSeismicPhases()) {
                     if (phase.hasArrivals() && phase.getMaxTime() > maxTime) {
