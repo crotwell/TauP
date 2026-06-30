@@ -546,7 +546,14 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     }
 
     public void drawRadiationPatternSVGArrows(PrintWriter writer, FaultPlane faultPlane, float scale, BeachballType bbType) {
-        List<RadiationAmplitude> radPattern = calcRadiationPattern(faultPlane, numPoints, true);
+
+        List<RadiationAmplitude> radPattern = new ArrayList<>();
+        if (hemisphereType == HemisphereType.upper || hemisphereType == HemisphereType.both) {
+            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, false));
+        }
+        if (hemisphereType == HemisphereType.lower || hemisphereType == HemisphereType.both) {
+            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
+        }
 
         writer.println("<g class=\"radpattern arrows\">");
         float ampScale = 0.1f;
@@ -659,11 +666,11 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         boolean withAmp = true;
         boolean withDerivative = false;
         List<RadiationAmplitude> radPattern = new ArrayList<>();
-        if (hemisphereType == HemisphereType.LOWER || hemisphereType == HemisphereType.BOTH) {
-            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
-        }
-        if (hemisphereType == HemisphereType.UPPER || hemisphereType == HemisphereType.BOTH) {
+        if (hemisphereType == HemisphereType.upper || hemisphereType == HemisphereType.both) {
             radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, false));
+        }
+        if (hemisphereType == HemisphereType.lower || hemisphereType == HemisphereType.both) {
+            radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
         }
         SeismicSource seismicSource = new SeismicSource(ArrivalAmplitude.DEFAULT_MW, faultPlane);
         BeachballResult bbResult = new BeachballResult(modelArgs.getModelName(),
@@ -708,7 +715,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     public void setHemisphereType(HemisphereType hemisphereType) {
         this.hemisphereType = hemisphereType;
     }
-    HemisphereType hemisphereType = HemisphereType.LOWER;
+    HemisphereType hemisphereType = HemisphereType.lower;
 
     @CommandLine.Option(names="--numpoints",
             description = "Number of points for json, number of arrows to show direction for svg",
