@@ -169,7 +169,7 @@ public class Outputs {
             case attenuation:
                 outFormat = ampFactorFormat;
                 break;
-            case turndepth:
+            case maxdepth:
                 outFormat = distanceFormatNoPad;
                 break;
             case dpddelta:

@@ -240,7 +240,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getIncidentAngleDegree();
             }
-        } else if (axisType==AxisType.turndepth) {
+        } else if (axisType==AxisType.maxdepth) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
@@ -506,7 +506,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         xyOut.setyAxisMinMax(yAxisMinMax);
         xyOut.setXLabel((isxAxisLog()?"Log ":"")+axisLabel(xAxisType));
         xyOut.setYLabel((isyAxisLog()?"Log ":"")+axisLabel(yAxisType));
-        if (yAxisType == AxisType.turndepth) {
+        if (yAxisType == AxisType.maxdepth) {
             xyOut.setyAxisInvert(true);
         }
         if (outputTypeArgs.isJSON()) {
@@ -725,8 +725,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Takeoff Angle (deg)";
             case incidentangle:
                 return "Incident Angle (deg)";
-            case turndepth:
-                return "Turn Depth (km)";
+            case maxdepth:
+                return "Max Depth (km)";
             case dpddelta:
                 return "dp/ddelta (rad)";
             case dpddeg:
