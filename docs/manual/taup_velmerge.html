@@ -176,8 +176,8 @@ depth in the merge to cover the named in both models. The merge
 model does not have to start at the surface, it can be just a
 range of depths.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
-                     [--elev=&lt;elevationMeters&gt;] [-o=&lt;outFile&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velmerge [--asjson] [--debug] [--help] [--smoothbot] [--smoothtop]
+                     [--verbose] [--elev=&lt;elevationMeters&gt;] [-o=&lt;outFile&gt;]
                      [--prop=&lt;toolPropsFilename&gt;] (--mod=&lt;modelName&gt; |
                      --nd=&lt;nDModelFilename&gt; | --tvel=&lt;tvelModelFilename&gt;)
                      [--modmerge=&lt;modelName&gt; | --ndmerge=&lt;nDModelFilename&gt; |
@@ -186,6 +186,7 @@ Merge part of one model into another.
 
 Options:
 
+      --asjson             output as a &quot;.json&quot; velocity file
       --debug              enable debugging output
       --elev=&lt;elevationMeters&gt;
                            modify topmost layers for an elevation (meters), may

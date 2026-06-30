@@ -78,7 +78,7 @@ The above technique has been incorporated into a
 This implements the HTTP method above, but provides a more user friendly
 syntax and manages the start up and shutdown of the java server. The
 TauP python library is available on pypi.org, so as long as the main
-TauP Toolkit is installed, it is close to seemless, just requiring a
+TauP Toolkit is installed, it is close to seamless, just requiring a
 
 .. code-block::
 

@@ -1043,7 +1043,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -3244,7 +3244,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -4597,7 +4597,7 @@ Output Type:
       --text               outputs as Text
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
-                           source depth in km
+                           source depth in km, default is 0.0
       --mod, --model=&lt;modelName&gt;
                            use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include

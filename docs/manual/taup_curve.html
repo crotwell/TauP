@@ -153,7 +153,7 @@ The output is put in taup_curve.gmt by default, so to view the results:</p>
   <metadata>
     <taup>
       <command>taup curve &#45;&#45;mod prem -h 500 -p s,S,ScS,Sdiff &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="160.87334025390402" ymin="108.95337178722247" ymax="1929.835529979536" />
     </taup>
@@ -166,7 +166,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -1342,7 +1342,7 @@ and <cite>-y</cite> options. For example tau vs ray parameter with:</p>
   <metadata>
     <taup>
       <command>taup curve -x rayparamdeg -y tau &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.1.0</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="33.09372816802343" ymin="0.0" ymax="1636.3816586476075" />
     </taup>
@@ -1355,7 +1355,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -1530,7 +1530,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">iasp91 (h=0.0 km)</text>
+<text class="title" x="208.0" y="0">iasp91 (h= km)</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Tau</text>
@@ -3374,7 +3374,7 @@ Options:
       --yminmax=y y        min and max y axis for plotting
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
-                           source depth in km
+                           source depth in km, default is 0.0
       --mod, --model=&lt;modelName&gt;
                            use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include

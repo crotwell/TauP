@@ -74,6 +74,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#java">Java</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#http-access">HTTP Access</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subprocess">Subprocess</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graalvm-and-graalpy">Graalvm and Graalpy</a></li>
 </ul>
 </li>
@@ -211,12 +212,50 @@ does not yet include all possible parameters that the web tools support.</p>
 </section>
 <section id="python">
 <h2>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h2>
-<p>A slightly less efficient, but perhaps good enough for most uses is to execute
+<p>The above technique has been incorporated into a
+<a class="reference external" href="https://pypi.org/project/taup/">TauP python</a> library for easier use.
+This implements the HTTP method above, but provides a more user friendly
+syntax and manages the start up and shutdown of the java server. The
+TauP python library is available on pypi.org, so as long as the main
+TauP Toolkit is installed, it is close to seamless, just requiring a</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">taup</span>
+</pre></div>
+</div>
+<p>and then</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">taup</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;mymodel.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">invmod</span><span class="p">:</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">invmod</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+
+<span class="k">with</span> <span class="n">taup</span><span class="o">.</span><span class="n">TauPServer</span><span class="p">()</span> <span class="k">as</span> <span class="n">taupserver</span><span class="p">:</span>
+    <span class="n">taupserver</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">taup</span><span class="o">.</span><span class="n">TimeQuery</span><span class="p">()</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">velocitymodeltext</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">phase</span><span class="p">([</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">])</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
+    <span class="n">timeResult</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">taupserver</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeResult</span><span class="o">.</span><span class="n">arrivals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No arrivals...&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase  Depth   Dist   Time&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">timeResult</span><span class="o">.</span><span class="n">arrivals</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s2">      </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">sourcedepth</span><span class="si">}</span><span class="s2">     </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">distdeg</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More documentation for the python library is available at
+<a class="reference external" href="https://taup-python.readthedocs.io">readthedocs</a>.</p>
+</section>
+<section id="subprocess">
+<h2>Subprocess<a class="headerlink" href="#subprocess" title="Link to this heading">¶</a></h2>
+<p>A slightly less efficient, but perhaps good enough for some uses is to execute
 the command line tools within another script, and then parse output of the
 tool from json. This has the disadvantage that a new subprocess must start
-for each call to get times, and so can be slower, but has the advantage of
+for each call to get times, and so can be much slower, but has the advantage of
 access to all of the command line arguments available.</p>
-<p>An example that gets travel times via Python show how this could be done.</p>
+<p>An example that gets travel times via this library shows how this could be done.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>

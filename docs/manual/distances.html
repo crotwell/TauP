@@ -129,7 +129,7 @@ for kilometers with <code class="code docutils literal notranslate"><span class=
 <p>If we know the event and station locations, we can use the <code class="code docutils literal notranslate"><span class="pre">--evt</span></code> and
 <code class="code docutils literal notranslate"><span class="pre">--sta</span></code> to give the latitude and longitudes and TauP can calculate the
 distance. The <code class="code docutils literal notranslate"><span class="pre">--geodist</span></code> argument changes the distance calculation
-to be spherical, geocentric or geodetic. Geocentric calculates the anglular
+to be spherical, geocentric or geodetic. Geocentric calculates the angular
 distance from the center of the earth for an ellipsoid. Geodetic also uses
 ellipticity, but calculates distance along the surface of the ellipsoid
 using the geographiclib package of <span id="id1">Karney [<a class="reference internal" href="bibliography.html#id17" title="Charles F. F. Karney. Algorithms for geodesics. Journal of Geodesy, 87(1):43–55, Jan 2013. URL: https://doi.org/10.1007/s00190-012-0578-z, doi:10.1007/s00190-012-0578-z.">Kar13</a>]</span>.
@@ -159,7 +159,7 @@ allows searching for arrivals from a phase at a known time but at unknown distan
 the resulting station location will be calculated. The reverse, giving
 station location via <code class="code docutils literal notranslate"><span class="pre">--sta</span></code> and back azimuth via <code class="code docutils literal notranslate"><span class="pre">--baz</span></code> will
 calculate the event location. Both cases with use spherical, geocentric
-or goedetic calculations depending on which parameters of the <code class="code docutils literal notranslate"><span class="pre">--geodist</span></code>
+or geodetic calculations depending on which parameters of the <code class="code docutils literal notranslate"><span class="pre">--geodist</span></code>
 argument are given. Spherical is the default.</p>
 <p>For debugging purposes, the <code class="code docutils literal notranslate"><span class="pre">--allindex</span></code> and <code class="code docutils literal notranslate"><span class="pre">--rayparamidx</span></code>
 will show the calculation at the model sampling, for all or one ray by

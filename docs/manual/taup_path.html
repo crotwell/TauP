@@ -154,7 +154,7 @@ phases like <code class="code docutils literal notranslate"><span class="pre">Sd
   <metadata>
     <taup>
       <command>taup path &#45;&#45;mod iasp91 -h 550 &#45;&#45;deg 74 -p S,ScS,sS,sScS &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT6</version>
+      <version>3.2.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -265,7 +265,7 @@ text.title {
     dominant-baseline: auto;
     font-size: 20px;
 }
-circle {
+circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
     fill: transparent;
@@ -2366,7 +2366,7 @@ Options:
                              No effect for SVG output.
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
-                             source depth in km
+                             source depth in km, default is 0.0
       --mod, --model=&lt;modelName&gt;
                              use velocity model &quot;modelName&quot; for calculations.
                              Default is iasp91. Other builtin models include
@@ -2434,8 +2434,10 @@ Distance is given by:
                                step; min,max or min,max,step. Default min is 0
                                and step is 10.
 Lat,Lon influenced by:
-      --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
-      --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
+      --az, --azimuth=&lt;azimuth&gt;
+                             azimuth in degrees, source to receiver
+      --baz, --backazimuth=&lt;backAzimuth&gt;
+                             backazimuth in degrees, receiver to source
       --equitorialradius=m   Equitorial radius in meters for distance
                                calculations when geodetic or geocentric,
                                defaults to WGS84 ~ 6378137 meters.
@@ -2449,7 +2451,7 @@ Lat,Lon influenced by:
                                model.
       --geodist=&lt;geoDistTypes&gt;...
                              Type of distance calculation to use for lat,lon
-                               distance calculation, one of spherical,
+                               distance calculation, from spherical,
                                geocentric, geodetic. Default is spherical. Note
                                this only affects calculation of distance from
                                lat/lon pairs, all travel time calculations are

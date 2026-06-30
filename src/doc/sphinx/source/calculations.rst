@@ -36,7 +36,7 @@ an earthquake due east (30,0), 30.03 degrees, using the WGS84 ellipsoid.
 The geocentric distance is the same as spherical, 30 degrees, for the
 earthquake on the equator, but is even smaller, 29.83 degrees, for the
 earthquake to the north. Note that spherical and geocentric calculate
-distance as an anglular at the center of the earth while geodetic calculates
+distance as an angular at the center of the earth while geodetic calculates
 distance as kilometers along the surface of the ellipsoid. We can convert
 central angle to and from kilometers on the surface using a reference
 sphere of the average radius, but this conversion is not exact.

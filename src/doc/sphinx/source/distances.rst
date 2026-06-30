@@ -34,7 +34,7 @@ for kilometers with :code:`--exactkilometer`.
 If we know the event and station locations, we can use the :code:`--evt` and
 :code:`--sta` to give the latitude and longitudes and TauP can calculate the
 distance. The :code:`--geodist` argument changes the distance calculation
-to be spherical, geocentric or geodetic. Geocentric calculates the anglular
+to be spherical, geocentric or geodetic. Geocentric calculates the angular
 distance from the center of the earth for an ellipsoid. Geodetic also uses
 ellipticity, but calculates distance along the surface of the ellipsoid
 using the geographiclib package of :cite:t:`Karney2013`.
@@ -66,7 +66,7 @@ If we give event location via :code:`--evt` and azimuth via :code:`--az`, then
 the resulting station location will be calculated. The reverse, giving
 station location via :code:`--sta` and back azimuth via :code:`--baz` will
 calculate the event location. Both cases with use spherical, geocentric
-or goedetic calculations depending on which parameters of the :code:`--geodist`
+or geodetic calculations depending on which parameters of the :code:`--geodist`
 argument are given. Spherical is the default.
 
 For debugging purposes, the :code:`--allindex` and :code:`--rayparamidx`
