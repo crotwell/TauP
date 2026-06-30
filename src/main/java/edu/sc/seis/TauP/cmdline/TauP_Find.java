@@ -76,7 +76,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         List<Arrival> arrivalList = new ArrayList<>();
         List<ProtoSeismicPhase> allwalk = new ArrayList<>();
-        for (Double sourceDepth : modelArgs.getSourceDepths()) {
+        for (Double sourceDepth : getSourceDepths()) {
             TauModel tMod = modelArgs.depthCorrected(sourceDepth);
             for (Double recDepth : modelArgs.getReceiverDepths()) {
                 TauModel tModRecDepth = tMod.splitBranch(recDepth);
@@ -539,7 +539,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         return excludeDepth;
     }
-
 
     @CommandLine.Option(names = "--onlynameddiscon", description = "only interact with named discontinuities like moho, cmb, iocb")
     boolean onlyNamedDiscon = false;
