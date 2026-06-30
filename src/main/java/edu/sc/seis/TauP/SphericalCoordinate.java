@@ -71,6 +71,10 @@ public class SphericalCoordinate {
         return phiToTakeoffToDegree(phi);
     }
 
+    /**
+     * Radius for stereographic projects.
+     * @return projected radius
+     */
     public double stereoR() {
         return Math.sin(phi)/(1-Math.cos(phi));
     }
