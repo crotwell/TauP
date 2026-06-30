@@ -128,11 +128,17 @@ public class SeismicPhaseSegment {
 			case DIFFRACTTURN:
 				action = "turn after diffract";
 				break;
+			case DIFFRACTDOWN:
+				action = "turn down after diffract";
+				break;
 			case TRANSUPDIFFRACT:
 				action = "transmit up diffract";
 				break;
 			case HEAD:
 				action = "head wave";
+				break;
+			case HEADTURN:
+				action = "turn after head wave";
 				break;
 			case SCATTER:
 				action = "scatter";
@@ -287,6 +293,9 @@ public class SeismicPhaseSegment {
 			case UP -> tMod.getTauBranch(startBranch, isPWave).getBotDepth();
 			case DOWN -> tMod.getTauBranch(endBranch, isPWave).getBotDepth();
 		};
+	}
+	public double getEndDepth() {
+		return getDepthRange()[getDepthRange().length-1];
 	}
 
 	public double[] getDepthRange() {

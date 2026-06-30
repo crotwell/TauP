@@ -46,8 +46,10 @@ public class SeismicPhaseFactoryTest {
         String Pn_name = "Pn";
         phaseList =
                 SeismicPhaseFactory.createSeismicPhases(Pn_name, tMod, tMod.getSourceDepth(), receiverDepth, null, debug);
-        assertTrue(phaseList.size()>0);
+        assertTrue(phaseList.size()==1);
         SeismicPhase Pn_Phase = phaseList.get(0);
+        System.err.println(Pn_Phase.describe());
+        assertEquals(35, Pn_Phase.getInitialPhaseSegment().getEndDepth());
         assertEquals("Pn", Pn_Phase.getPuristName());
         String PnPn_name = "PnPn";
         phaseList =

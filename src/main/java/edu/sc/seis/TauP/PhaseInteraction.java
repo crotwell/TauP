@@ -53,9 +53,19 @@ public enum PhaseInteraction {
     DIFFRACTTURN,
 
     /**
+     * A downward turn after a flat diffracted segment, such as the K leg of PdiffdnKS
+     */
+    DIFFRACTDOWN,
+
+    /**
      * Used by addToBranch when the path is head wave along a boundary.
      */
     HEAD,
+    /**
+     * An upward turn after a flat head segment, such as the upward leg of Pn. Similar to TRANSUP, as
+     * must ray start at top of lower layer.
+     */
+    HEADTURN,
 
     /**
      * Used by addToBranch when the path is surface wave, so just a velocity.
@@ -141,6 +151,11 @@ public enum PhaseInteraction {
             case END_DOWN:
                 isDowngoing = true;
                 break;
+            case DIFFRACTTURN:
+            case DIFFRACTDOWN:
+            case HEADTURN:
+            case KMPS:
+                throw new IllegalArgumentException("End action is flat before, not up or down: "+endAction);
             case FAIL:
             case START_DOWN:
             case START_UP:
@@ -158,9 +173,10 @@ public enum PhaseInteraction {
 
     public static LayerPropogationType layerPropogationTypeAfter(PhaseInteraction endAction) {
         return switch (endAction) {
-            case START_DOWN, TRANSDOWN, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END_DOWN,
+            case START_DOWN, TRANSDOWN, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END_DOWN, DIFFRACTDOWN,
                  SCATTER_DOWN, BACKSCATTER_DOWN -> LayerPropogationType.DOWN;
-            case START_UP, TRANSUP, REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL, TURN, DIFFRACTTURN, END,
+            case START_UP, TRANSUP, REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL,
+                 TURN, DIFFRACTTURN, HEADTURN, END,
                  SCATTER, BACKSCATTER -> LayerPropogationType.UP;
             case START_FLAT, DIFFRACT, TRANSUPDIFFRACT -> LayerPropogationType.DIFF;
             case HEAD -> LayerPropogationType.HEAD;
@@ -177,6 +193,7 @@ public enum PhaseInteraction {
             case REFLECT_TOPSIDE_CRITICAL:
             case TURN:
             case DIFFRACTTURN:
+            case HEADTURN:
             case START_UP:
             case END:
                 isDowngoing = false;
@@ -184,6 +201,7 @@ public enum PhaseInteraction {
             case TRANSDOWN:
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
+            case DIFFRACTDOWN:
             case END_DOWN:
             case START_DOWN:
                 isDowngoing = true;
@@ -200,9 +218,11 @@ public enum PhaseInteraction {
     public static int endOffset(PhaseInteraction endAction) {
         switch (endAction) {
             case TRANSUP:
+            case HEADTURN:
             case TRANSUPDIFFRACT:
                 return -1;
             case TRANSDOWN:
+            case DIFFRACTDOWN:
             case HEAD:
                 return 1;
             default:

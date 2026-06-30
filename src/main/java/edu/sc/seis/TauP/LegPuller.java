@@ -607,6 +607,7 @@ public class LegPuller {
             if ((startsWith(prevToken, P+EX_DOWN_CODE) || startsWith(prevToken, S+EX_DOWN_CODE))
                     && ! ( is(currToken, PhaseSymbols.END_CODE)
                     || is(currToken, P+DIFF) || is(currToken, S+DIFF)
+                    || is(currToken, P+DIFFDOWN) || is(currToken, S+DIFFDOWN)
                     || is(currToken, P) || is(currToken, S)
                     || is(currToken, K) || is(currToken, K+EX_DOWN_CODE)
                     || (startsWith(currToken, K) &&
@@ -617,7 +618,7 @@ public class LegPuller {
                     || is(currToken, PhaseSymbols.BACKSCATTER_CODE)
                     || isBoundary(currToken)
             )) {
-                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or token immediately before END:  "+prevToken+" "+currToken;
+                return "'Ped' or 'Sed' can only be before Pdiff,Pdiffdn,P,S,Sdiff,Sdiffdn,K,c,v,V,m or token immediately before END:  "+prevToken+" "+currToken;
             }
 
             // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB

@@ -129,6 +129,14 @@ public class HeadDiffWaveTest {
   public void test_SedPdiffKP() throws TauModelException {
     double deg = 150;
     DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+
+    SeismicPhase SedPdiffdn_Phase = SeismicPhaseFactory.createPhase("SedPdiffdnKs", tMod);
+    List<Arrival> SedPdiffdn_arrivals = distanceRay.calculate(SedPdiffdn_Phase);
+    assertEquals(1, SedPdiffdn_arrivals.size());
+    Arrival SedPdiffdn_Arr = SedPdiffdn_arrivals.get(0);
+    assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiffdn_Arr.getRayParam());
+
+    // SedPdiffKs should be same as SedPdiffdnKs
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiffKs", tMod);
     List<Arrival> SedPdiff_arrivals = distanceRay.calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());

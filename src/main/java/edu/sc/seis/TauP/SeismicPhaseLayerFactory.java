@@ -210,7 +210,9 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto, reason);
             }
 
-        } else if(PhaseSymbols.isDiffracted(nextLeg) && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg)) {
+
+        } else if((PhaseSymbols.isDiffracted(nextLeg) || PhaseSymbols.isDiffractedDown(nextLeg)) && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg)) {
+            // diff but not diffdn
             endAction = DIFFRACT;
             proto.addToBranch(
                     botBranchNum,
@@ -218,14 +220,14 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
+        } else if (PhaseSymbols.isHead(nextLeg) && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg)) {
             String numString = extractBoundaryId(nextLeg, 0, false);
             double headDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
             if (!validateDisconWithinLayers(proto, disconBranch-1, nextLeg)) {
                 return proto;
             }
-            if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
+            if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                         + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
             }
@@ -629,6 +631,9 @@ public class SeismicPhaseLayerFactory {
             );
         } else if(getBelowFactory()!= null && getBelowFactory().isLayerLeg(nextLeg)) {
             endAction = TRANSDOWN;
+            if (isHead(nextLeg)) {
+                endAction = HEAD;
+            }
             proto.addToBranch(
                     botBranchNum,
                     isPWave,
@@ -749,7 +754,7 @@ public class SeismicPhaseLayerFactory {
                 if (!validateDisconWithinLayers(proto, disconBranch-1, nextLeg)) {
                     return proto;
                 }
-                if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
+                if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                     return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                             + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
                 }
@@ -758,6 +763,12 @@ public class SeismicPhaseLayerFactory {
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
+                        endAction,
+                        currLeg);
+                endAction = HEADTURN;
+                proto.addFlatBranch(
+                        isPWave,
+                        prevEndAction,
                         endAction,
                         currLeg);
             } catch (NumberFormatException e) {
@@ -861,8 +872,8 @@ public class SeismicPhaseLayerFactory {
                 || (currBranch == botBranchNum
                 && (nextLeg.charAt(0) == getBelowPLegSymbol()|| nextLeg.charAt(0) == getBelowSLegSymbol() ))) {
             // down after diffract
-            proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
-            endAction = TRANSDOWN;
+            proto.addFlatBranch(isPWave, endAction, DIFFRACTDOWN, currLeg);
+            endAction = DIFFRACTDOWN;
             currBranch++;
             // next must be some kind of downgoing leg, so let next step handle
         } else {
@@ -1015,26 +1026,28 @@ public class SeismicPhaseLayerFactory {
                 numString = extractBoundaryId(currLeg, depthIdx, false);
                 disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
             }
-            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+            if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
                 return proto;
             }
-            if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
+            if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                         + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
             }
-            endAction = HEAD;
-            proto.addToBranch(
-                    disconBranch-1,
-                    isPWave,
-                    nextIsPWave,
-                    endAction,
-                    currLeg);
+            // head must be downgoing, so start at source branch if phase beginning
+            int startBranch = proto.isEmpty() ? tMod.sourceBranch : proto.nextStartBranch();
+            if (startBranch<disconBranch) {
+                proto.addToBranch(disconBranch-1, isPWave, nextIsPWave, HEAD, currLeg);
+            } else if (startBranch > disconBranch) {
+                return baseFactory.failWithMessage(proto,
+                        "Unable to head wave, "+currLeg+", start branch "+startBranch+" > "+disconBranch+" discon");
+            }
             if (startsWith(nextLeg, getBelowPLegSymbol()) || startsWith(nextLeg, getBelowSLegSymbol()) ) {
                 // down into  below layers, like core
-                proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
+                // should this be allowed???
+                proto.addFlatBranch(isPWave, proto.getEndAction(), TRANSDOWN, currLeg);
             } else {
                 // normal case
-                proto.addFlatBranch(isPWave, endAction, TRANSUP, currLeg);
+                proto.addFlatBranch(isPWave, proto.getEndAction(), HEADTURN, currLeg);
             }
             currBranch=disconBranch;
             if(is(nextLeg, END_CODE)) {
@@ -1067,13 +1080,7 @@ public class SeismicPhaseLayerFactory {
                         currLeg);
             } else if (nextLeg.charAt(0) == getAbovePLegSymbol() || nextLeg.charAt(0) == getAboveSLegSymbol()
                     || nextLeg.charAt(0) == getAboveUpPLegSymbol() || nextLeg.charAt(0) == getAboveUpSLegSymbol()) {
-                endAction = TRANSUP;
-                proto.addToBranch(
-                        topBranchNum,
-                        isPWave,
-                        nextIsPWave,
-                        endAction,
-                        currLeg);
+                // no need as already at top and did HEADTURN
             } else if (topBranchNum==0 && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0)==s_leg)) {
                 // crust mantle surface reflect
                 endAction = REFLECT_UNDERSIDE;
@@ -1192,7 +1199,10 @@ public class SeismicPhaseLayerFactory {
             return true;
         }
         baseFactory.failWithMessage(proto, "Illegal phase, cannot reach discontinuity "+disconNum
-                +" at depth "+tMod.getTauBranch(disconNum,true).getTopDepth()+" for phase symbol "+currLeg+", "+layerName);
+                +" at depth "+tMod.getTauBranch(disconNum,true).getTopDepth()
+                +" for phase symbol "+currLeg+", "+layerName
+                +"  "+proto.branchNumSeqStrWithSegBreaks()+"  "+topBranchNum +"<= "+disconNum+" && "+disconNum+" <= "+botBranchNum
+        );
         return false;
     }
 

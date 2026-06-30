@@ -4,7 +4,7 @@ Pv410p:
   travel times from   100.85 to   292.39 sec.
 
   P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then reflect topside
-  p going up   as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+  p going up as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
 
 --------
 PV410p:
@@ -13,6 +13,6 @@ PV410p:
   travel times from   208.70 to   292.39 sec.
 
   P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then critical reflect topside
-  p going up   as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+  p going up as a P in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
 
 --------

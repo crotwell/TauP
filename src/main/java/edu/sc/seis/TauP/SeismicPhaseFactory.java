@@ -914,6 +914,8 @@ public class SeismicPhaseFactory {
             return "TURN";
         } else if(endAction == DIFFRACTTURN) {
             return "DIFFRACT_TURN";
+        } else if(endAction == DIFFRACTDOWN) {
+            return "DIFFRACT_DOWN";
         } else if(endAction == REFLECT_UNDERSIDE) {
             return "REFLECT_UNDERSIDE";
         } else if(endAction == REFLECT_UNDERSIDE_CRITICAL) {
@@ -944,6 +946,8 @@ public class SeismicPhaseFactory {
             return "TRANS UP DIFFRACT";
         } else if(endAction == HEAD) {
             return "HEAD WAVE";
+        } else if(endAction == HEADTURN) {
+            return "HEAD_TURN";
         } else if(endAction == FAIL) {
             return "FAIL";
         } else {

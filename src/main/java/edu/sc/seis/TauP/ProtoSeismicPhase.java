@@ -95,7 +95,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         SlownessModel sMod = tMod.getSlownessModel();
         switch (layerPropogationType) {
             case HEAD -> {
-                if (tMod.isHeadWaveBranch(startBranchNum, isPWave)) {
+                if (tMod.isHeadWaveBranch(startBranchNum, isPWave, isPWave)) {
                     SlownessLayer slownessLayer = sMod.getSlownessLayer(sMod.layerNumberBelow(tMod.getSourceDepth(), isPWave), isPWave);
                     maxRayParam = slownessLayer.getTopP();
                     minRayParam = maxRayParam;
@@ -171,19 +171,21 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public ProtoSeismicPhase nextSegment(boolean isPWave,
                                          PhaseInteraction endAction) throws TauModelException {
-        List<SeismicPhaseSegment> out = new ArrayList<>(segmentList);
         SeismicPhaseSegment endSeg = segmentList.isEmpty() ? null : segmentList.get(segmentList.size()-1);
         TauModel tMod = endSeg != null ? endSeg.getTauModel() : null;
         int priorEndBranchNum = endSeg != null ? endSeg.endBranch : -1;
-        LayerPropogationType layerPropogationType;
+        LayerPropogationType propTypeBeforeEndAction;
         switch (endAction) {
-            case HEAD, DIFFRACT, TRANSDOWN, TURN, REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL, END_DOWN -> layerPropogationType=LayerPropogationType.DOWN;
+            case HEAD, DIFFRACT, TRANSDOWN, TURN,
+                 REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL, END_DOWN -> propTypeBeforeEndAction=LayerPropogationType.DOWN;
 
-            case TRANSUP, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END, TRANSUPDIFFRACT -> layerPropogationType=LayerPropogationType.UP;
-            case DIFFRACTTURN -> layerPropogationType=LayerPropogationType.DIFF;
+            case TRANSUP, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END, TRANSUPDIFFRACT -> propTypeBeforeEndAction=LayerPropogationType.UP;
+            case DIFFRACTTURN, DIFFRACTDOWN -> propTypeBeforeEndAction=LayerPropogationType.DIFF;
+            case HEADTURN -> propTypeBeforeEndAction=LayerPropogationType.HEAD;
             case FAIL -> {
                 SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
                         isPWave, LayerPropogationType.DOWN, "");
+                List<SeismicPhaseSegment> out = new ArrayList<>(segmentList);
                 out.add(nextSeg);
                 if (endSeg != null) {
                     nextSeg.prevEndAction = endSeg.endAction;
@@ -193,43 +195,127 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 return failProto;
             }
             case START_UP, START_DOWN, START_FLAT ->
+                    throw new IllegalArgumentException("End action cannot be START: "+endAction);
+            default ->
+                    throw new IllegalArgumentException("End action case not yet impl: "+endAction);
+        }
+        int startBranchNum = nextStartBranch();
+        // usually same as start unless cross source depth that is not a discon
+        int endDisconBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, propTypeBeforeEndAction);
+        return nextSegment(isPWave, endDisconBranchNum, endAction);
+    }
+
+    public int nextStartBranch() throws TauModelException {
+        if (segmentList.isEmpty()) {
+            throw new TauModelException("Unable to calc next start for empty proto phase");
+        }
+        if (segmentList.isEmpty()) {
+            throw new TauModelException("Unable to calc next start for empty proto phase");
+        }
+        SeismicPhaseSegment endSeg = segmentList.get(segmentList.size()-1);
+        if (endSeg.endAction == FAIL) {
+            throw new TauModelException("Unable to calc next start for FAIL proto phase");
+        }
+
+        return switch (getEndAction()) {
+            case TRANSUP, HEADTURN, TRANSUPDIFFRACT -> {
+                if (endSeg.endBranch == 0) {
+                    throw new TauModelException(getName()+" TransUp when prev end is zero, prev: "
+                            +endSeg.endBranch+" "+endSeg.endAction);
+                }
+                yield endSeg.endBranch-1;
+            }
+            case TRANSDOWN, HEAD, DIFFRACTDOWN -> endSeg.endBranch+1;
+            default -> endSeg.endBranch;
+        };
+    }
+
+
+    /**
+     * Propogates a ray to the discontinuity given.
+     * @param isPWave true for P, false for S
+     * @param endDisconBranchNum branch number for the layer below the discontinuity
+     * @param endAction end action when hitting the discontinuity
+     * @return phase with one additional segment
+     * @throws TauModelException
+     */
+    public ProtoSeismicPhase nextSegment(boolean isPWave,
+                                         int endDisconBranchNum,
+                                         PhaseInteraction endAction) throws TauModelException {
+        if (segmentList.isEmpty()) {
+            throw new IllegalArgumentException("Can't add segment to empty proto phase");
+        }
+        List<SeismicPhaseSegment> out = new ArrayList<>(segmentList);
+        SeismicPhaseSegment endSeg = segmentList.isEmpty() ? null : segmentList.get(segmentList.size()-1);
+        TauModel tMod = endSeg != null ? endSeg.getTauModel() : null;
+        int priorEndBranchNum = endSeg != null ? endSeg.endBranch : -1;
+        if (endAction == FAIL) {
+            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
+                    isPWave, LayerPropogationType.DOWN, "");
+            out.add(nextSeg);
+            if (endSeg != null) {
+                nextSeg.prevEndAction = endSeg.endAction;
+            }
+            ProtoSeismicPhase failProto = new ProtoSeismicPhase(out, receiverDepth);
+            failProto.isFail = true;
+            failProto.failReason = "no reason, end action was FAIL?";
+            return failProto;
+        }
+        LayerPropogationType propTypeBeforeEndAction = switch (endAction) {
+            case HEAD, DIFFRACT, TRANSDOWN, TURN,
+                 REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL, END_DOWN -> LayerPropogationType.DOWN;
+
+            case TRANSUP, REFLECT_UNDERSIDE, REFLECT_UNDERSIDE_CRITICAL, END, TRANSUPDIFFRACT -> LayerPropogationType.UP;
+            case DIFFRACTTURN, DIFFRACTDOWN -> LayerPropogationType.DIFF;
+            case HEADTURN -> LayerPropogationType.HEAD;
+            case START_UP, START_DOWN, START_FLAT ->
                 throw new IllegalArgumentException("End action cannot be START: "+endAction);
             default ->
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
-        }
-        if (layerPropogationType== LayerPropogationType.UP && endSeg != null && (endSeg.endBranch == 0 && endSeg.endAction != TURN)) {
+        };
+        if (propTypeBeforeEndAction== LayerPropogationType.UP && endSeg != null && (endSeg.endBranch == 0 && (endSeg.endAction != TURN))) {
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
-                    isPWave, layerPropogationType, "");
-            isFail = true;
-            failReason = "phase upgoing at surface";
+                    isPWave, propTypeBeforeEndAction, "");
             out.add(nextSeg);
             nextSeg.prevEndAction = endSeg.endAction;
-            return new ProtoSeismicPhase(out, receiverDepth);
+            ProtoSeismicPhase outProto =  new ProtoSeismicPhase(out, receiverDepth);
+            outProto.isFail = true;
+            outProto.failReason = "phase upgoing at surface";
+            return outProto;
         }
-        int startBranchNum;
-        switch (endSeg.endAction) {
-            case TRANSUP:
-                startBranchNum = priorEndBranchNum-1;
-                break;
-            case TRANSDOWN:
-                startBranchNum = priorEndBranchNum+1;
-                break;
-            default:
-                // some reversal of direction
-                startBranchNum = priorEndBranchNum;
-        }
-        // usually same as start unless cross source depth that is not a discon
-        int endBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, layerPropogationType);
-        if (endBranchNum == 0 && endAction == TRANSUP) {
-            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum,
-                    isPWave, layerPropogationType, "");
-            isFail = true;
-            failReason = "phase transup at surface";
+        int startBranchNum = nextStartBranch();
+        if (endDisconBranchNum == 0 && (endAction == TRANSUP || endAction == HEADTURN)) {
+            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endDisconBranchNum,
+                    isPWave, propTypeBeforeEndAction, "");
             out.add(nextSeg);
             nextSeg.prevEndAction = endSeg.endAction;
-            return new ProtoSeismicPhase(out, receiverDepth);
+            ProtoSeismicPhase outProto = new ProtoSeismicPhase(out, receiverDepth);
+            outProto.isFail = true;
+            outProto.failReason = "phase transup at surface";
+            return outProto;
         }
-        String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, layerPropogationType);
+        if ((propTypeBeforeEndAction==LayerPropogationType.DOWN&& endDisconBranchNum<startBranchNum)
+            || propTypeBeforeEndAction==LayerPropogationType.UP&& endDisconBranchNum>startBranchNum) {
+            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endDisconBranchNum,
+                    isPWave, propTypeBeforeEndAction, "");
+            out.add(nextSeg);
+            nextSeg.prevEndAction = endSeg.endAction;
+            ProtoSeismicPhase outProto = new ProtoSeismicPhase(out, receiverDepth);
+            outProto.isFail = true;
+            outProto.failReason = "end not compatible with direction: "+startBranchNum+" to "+endDisconBranchNum+" "+propTypeBeforeEndAction;
+            return outProto;
+        }
+
+        if (endDisconBranchNum==0 && propTypeBeforeEndAction == LayerPropogationType.DOWN) {
+            throw new RuntimeException("End discon cannot be 0 with prop is "+propTypeBeforeEndAction+" endDisconBranchNum="+endDisconBranchNum);
+        }
+        int endBranchNum = switch (propTypeBeforeEndAction) {
+            case DOWN, DIFF -> endDisconBranchNum-1;
+            default -> endDisconBranchNum;
+
+        };
+
+        String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, propTypeBeforeEndAction);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         TauBranch endBranch = tMod.getTauBranch(endBranchNum, isPWave);
 
@@ -244,30 +330,34 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
             case TRANSDOWN:
+            case HEAD:
                 maxRayParam = Math.min(maxRayParam, startBranch.getTopRayParam());
                 break;
             case REFLECT_TOPSIDE:
             case REFLECT_TOPSIDE_CRITICAL:
             case TRANSUP:
+            case HEADTURN:
+            case DIFFRACTTURN:
+            case DIFFRACTDOWN:
                 maxRayParam = Math.min(maxRayParam, startBranch.getBotRayParam());
             default:
         }
+
         switch (endAction) {
             case REFLECT_TOPSIDE_CRITICAL:
                 minRayParam = Math.max(minRayParam, endBranch.getMinRayParam());
             case TRANSDOWN:
+            case DIFFRACT:
             case REFLECT_TOPSIDE:
+            case HEAD:
             case END_DOWN:
                 maxRayParam = Math.min(maxRayParam, endBranch.getMinTurnRayParam());
                 maxRayParam = Math.min(maxRayParam, endBranch.getBotRayParam());
                 break;
-            case DIFFRACT:
+            case DIFFRACTTURN:
+            case DIFFRACTDOWN:
                 minRayParam = Math.max(minRayParam, endBranch.getBotRayParam());
                 maxRayParam = Math.min(maxRayParam, endBranch.getBotRayParam());
-                break;
-            case HEAD:
-                minRayParam = Math.max(minRayParam, endBranch.getTopRayParam());
-                maxRayParam = Math.min(maxRayParam, endBranch.getTopRayParam());
                 break;
 
             case TURN:
@@ -276,6 +366,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 break;
             case TRANSUP:
                 maxRayParam = Math.min(maxRayParam, endBranch.getTopRayParam());
+                break;
+            case HEADTURN:
+                minRayParam = Math.max(minRayParam, endBranch.getTopRayParam());
+                maxRayParam = Math.min(maxRayParam, endBranch.getTopRayParam());
+                break;
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
             case END:
@@ -285,21 +380,39 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
 
         SeismicPhaseSegment nextSeg;
-        if (maxRayParam < minRayParam) {
-            nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, layerPropogationType, nextLegName);
-        } else {
-            nextSeg = new SeismicPhaseSegment(tMod,
-                    startBranchNum, endBranchNum, isPWave, endAction, layerPropogationType, nextLegName,
-                    minRayParam, maxRayParam);
+        if (maxRayParam < minRayParam || (maxRayParam==minRayParam && countFlatLegs()==0 && !LayerPropogationType.isFlat(propTypeBeforeEndAction))) {
+            // either ray param range is not single value, or there must be a flat (head, diff) leg somewhere in the path
+            nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, propTypeBeforeEndAction, nextLegName);
+            out.add(nextSeg);
+            nextSeg.prevEndAction = endSeg.endAction;
+            ProtoSeismicPhase outProto = new ProtoSeismicPhase(out, receiverDepth);
+            outProto.isFail = true;
+            outProto.failReason = "no ray param compatible with boundary: maxRayParam < minRayParam: "+startBranchNum+" to "+endDisconBranchNum+" "+propTypeBeforeEndAction;
+            return outProto;
         }
+        nextSeg = new SeismicPhaseSegment(tMod,
+                startBranchNum, endBranchNum, isPWave, endAction, propTypeBeforeEndAction, nextLegName,
+                minRayParam, maxRayParam);
         nextSeg.prevEndAction = endSeg.endAction;
-        validateSegList();
         out.add(nextSeg);
         ProtoSeismicPhase proto = new ProtoSeismicPhase(out, receiverDepth);
-        proto.validateSegList();
+        try {
+            proto.validateSegList();
+        } catch (Exception e) {
+            proto.isFail= true;
+            proto.failReason = "validation failed: "+e.getMessage();
+        }
         return proto;
     }
 
+    /**
+     * Finds discontinuity branch in direction given. Branch number is below the discontinuity.
+     * @param tMod the model
+     * @param startBranchNum starting branch
+     * @param isPWave true for P
+     * @param layerPropogationType up or down
+     * @return branch number below the discontinuity
+     */
     public static int findEndDiscon(TauModel tMod, int startBranchNum, boolean isPWave, LayerPropogationType layerPropogationType) {
         int endBranchNum = startBranchNum;
         if (layerPropogationType == LayerPropogationType.DOWN) {
@@ -307,6 +420,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getBotDepth())) {
                 endBranchNum += 1;
             }
+            endBranchNum+=1; // discon is labeled by branch below discon depth
         } if (layerPropogationType == LayerPropogationType.UP) {
             // upgoing
             while (endBranchNum > 0 && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getTopDepth())) {
@@ -347,6 +461,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 }
                 if (prev.endAction == TURN &&
                         ( seg.endAction == TURN || seg.endAction == TRANSDOWN || seg.endAction == DIFFRACTTURN
+                                || seg.endAction == HEADTURN || seg.endAction == DIFFRACTDOWN
                                 || seg.endAction == END_DOWN || seg.endAction == REFLECT_TOPSIDE)) {
                     throw new TauModelException("prev is TURN, but seg is "+phaseNameForSegments()+" "+seg.endAction);
                 }
@@ -369,7 +484,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                     + ": Flat Segment is ends at top, but start is not current branch: " + currLeg);
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch - 1) {
                             throw new TauModelException(getName()
-                                    + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg);
+                                    + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg+"\n"+prev.describe()+"\n"+seg.describe());
                         }
                     } else {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch +1) {
@@ -417,9 +532,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         throw new TauModelException(getName()
                                 +": Segment is upgoing, but previous action was  to trans down: "+currLeg);
                     }
+                    if (prev.endAction == DIFFRACTDOWN) {
+                        throw new TauModelException(getName()
+                                +": Segment is upgoing, but previous action was  to diffract down: "+currLeg);
+                    }
                     if (prev.endBranch == seg.startBranch && prev.layerPropogationType==LayerPropogationType.DOWN
                             && ! ( prev.endAction == TURN || prev.endAction == DIFFRACTTURN
-                            || prev.endAction == DIFFRACT || prev.endAction == HEAD
+                            || prev.endAction == DIFFRACT || prev.endAction == HEAD || prev.endAction == HEADTURN
                             || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
                         throw new TauModelException(getName()
                                 +": Segment is upgoing, but previous action was not to reflect topside: "
@@ -435,7 +554,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             if (endSeg.endAction == END && endSeg.endBranch != receiverBranch) {
                 throw new TauModelException(getName()
                         + " End is upgoing, but last branch num is not receiver branch: "
-                        + endSeg.endBranch + " != " + receiverBranch + " rec depth: " + receiverDepth);
+                        + endSeg.endBranch + " != " + receiverBranch + " rec depth: " + receiverDepth+" "+branchNumSeqStrWithSegBreaks());
             } else if (endSeg.endAction == END_DOWN && endSeg.endBranch != receiverBranch - 1) {
                 throw new TauModelException(getName()
                         + " End is downgoing, but last branch num is not receiver branch-1: "
@@ -873,6 +992,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return segmentList.isEmpty();
     }
 
+    public SeismicPhaseSegment getFlatSegment() {
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (LayerPropogationType.isFlat(seg.layerPropogationType)) {
+                return seg;
+            }
+        }
+        return null;
+    }
+
     public final PhaseInteraction getEndAction() {
         if (isEmpty()) {
             return START_DOWN;
@@ -1013,7 +1141,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         int endOffset;
         PhaseInteraction prevEndAction = isEmpty() ? PhaseInteraction.START_DOWN : endSegment().endAction;
         if (isEmpty()) {
-            if (endAction == DIFFRACT || endAction == HEAD || endAction == TRANSUPDIFFRACT || endAction == DIFFRACTTURN) {
+            if (endAction == HEADTURN || endAction == DIFFRACTTURN || endAction == DIFFRACTDOWN) {
                 prevEndAction = START_FLAT;
             } else if (PhaseInteraction.isUpgoingActionBefore(endAction)) {
                 prevEndAction = START_UP;
@@ -1160,16 +1288,16 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 minRayParam = Math.max(minRayParam,
                         tMod.getTauBranch(endBranch+1, isPWave).getTopRayParam());
             }
-        } else if(endAction == TRANSUP) {
+        } else if(endAction == TRANSUP || endAction == HEADTURN) {
             endOffset = -1;
             layerPropogationType = LayerPropogationType.UP;
             maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getTopRayParam());
             maxRayParam = Math.min(maxRayParam,
                     tMod.getTauBranch(endBranch-1, nextIsPWave).getBotRayParam());
-        } else if(endAction == TRANSDOWN) {
+        } else if(endAction == TRANSDOWN || endAction == DIFFRACTDOWN) {
             endOffset = 1;
-            layerPropogationType = LayerPropogationType.DOWN;
+            layerPropogationType= (endAction==DIFFRACTDOWN) ? LayerPropogationType.DIFF : LayerPropogationType.DOWN;
             // ray must reach discon
             maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
             // and cross into lower
@@ -1258,10 +1386,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     }
                 }
             }
-        } else {
+        } else if(layerPropogationType == LayerPropogationType.UP) {
             if (startBranch < endBranch) {
                 // can't be upgoing as we are already above
-                return failNext("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
+                return failNext("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName()+" "+layerPropogationType);
             } else {
                 if(TauPConfig.DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {
@@ -1271,6 +1399,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                 + endActionString(endAction));
                     }
                 }
+            }
+        } else {
+            if (startBranch != endBranch) {
+                return failNext("can't be flat as start != end: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName()+" "+layerPropogationType);
             }
         }
         if(TauPConfig.DEBUG) {
@@ -1305,8 +1437,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             case END_DOWN:
             case FAIL:
             case DIFFRACTTURN:
-            case TRANSDOWN:
-            case TRANSUP:
+            case DIFFRACTDOWN:
+            case HEADTURN:
                 break;
             default:
                 throw new TauModelException("End action for flat branch not allowed: "+endAction);
@@ -1322,7 +1454,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             case FAIL:
                 throw new TauModelException("Phase already finished: "+prevEndAction);
             default:
-                throw new TauModelException("End action before flat branch not allowed: "+prevEndAction+" in "+getName());
+                throw new TauModelException("End action "+prevEndAction+" before flat branch not allowed: endAction: "+endAction+" in "+getName()+" "+branchNumSeqStrWithSegBreaks());
         }
         int branch = calcStartBranch(currLeg);
         double minRayParam;
@@ -1394,7 +1526,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     public int calcInteractionNumber() {
         int count = 0;
         SeismicPhaseSegment prev = null;
-        if (segmentList.size()>30) { return 9999999;}
+        boolean hasFlatLegs = countFlatLegs()>0;
+        boolean isFlatLegPWave = false;
+
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.getIsFlat()) {
+                isFlatLegPWave = seg.isPWave;
+            }
+        }
         for (SeismicPhaseSegment seg : segmentList) {
             switch (seg.endAction) {
                 case SCATTER:
@@ -1405,7 +1544,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 case REFLECT_UNDERSIDE:
                 case REFLECT_UNDERSIDE_CRITICAL:
                 case REFLECT_TOPSIDE_CRITICAL:
+                case DIFFRACT:
+                case HEAD:
                     count++;
+                    break;
+                case TURN:
+                    if (hasFlatLegs && seg.isPWave == isFlatLegPWave) {
+                        // a turn for a degenerate phase is a diff or head if wavetype is same, ie PPdiff
+                        count++;
+                    }
                     break;
             }
             if (prev != null && prev.isPWave != seg.isPWave) {
@@ -1416,6 +1563,25 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return count;
     }
 
+    public String zapEDIfPossible(SeismicPhaseSegment seg, SeismicPhaseSegment next, String legName) {
+        String nextLegName = next.getLegName();
+        if ((seg.endAction == DIFFRACT || seg.endAction == HEAD) && seg.isPWave == next.isPWave) {
+            legName = legName.substring(0, 1);
+        } else if ((seg.endAction == TRANSDOWN)
+                && (legName.startsWith("P") || legName.startsWith("S")) && !(nextLegName.startsWith("P") || nextLegName.startsWith("S"))
+                && (legName.startsWith("K")) && !(nextLegName.startsWith("K"))
+                && (legName.startsWith("I") || legName.startsWith("J")) && !(nextLegName.startsWith("I") || nextLegName.startsWith("J"))
+            //&& seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
+            //&& !legName.startsWith(nextLegName.substring(0, 1))
+        ) {
+            legName = legName.substring(0, 1);
+        } else if ((seg.endAction == REFLECT_TOPSIDE || seg.endAction == REFLECT_TOPSIDE_CRITICAL ||
+                (seg.endAction == TRANSDOWN && (seg.getEndDepth() == tMod.cmbDepth || seg.getEndDepth() == tMod.iocbDepth)))) {
+            // ed not needed as legname changes
+            legName = legName.substring(0, 1);
+        }
+        return legName;
+    }
 
     public String phaseNameForSegments() {
         return phaseNameForSegments(true);
@@ -1432,6 +1598,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         SeismicPhaseSegment prev;
         SeismicPhaseSegment seg = null;
         SeismicPhaseSegment next = segmentList.get(0);
+
+        SeismicPhaseSegment flatSeg = getFlatSegment();
+
+        boolean prevAddedDepthToName = false;
         while (idx < segmentList.size()) {
             prev = seg;
             seg = next;
@@ -1444,96 +1614,128 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             }
             double botDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getBotDepth();
             double topDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getTopDepth();
-            //name += " "+seg.startBranch+","+seg.endBranch+" ";
-            if ( prev == null || prev.endAction != TURN
+            //name += " "+seg.startBranch+","+seg.endBranch+" "
+            String legName = legNameForSegment(tMod, seg);;
+            legName = zapED ? zapEDIfPossible(seg, next, legName) : legName;
+
+            if (prev == null
+                    || prevAddedDepthToName
                     || prev.isPWave != seg.isPWave
-                    || (! prev.legName.equalsIgnoreCase(seg.legName) && (prev.legName.equals("I") && seg.legName.equals("y")))) {
-                String legName = legNameForSegment(tMod, seg);
-                String nextLegName = legNameForSegment(tMod, next);
-                if (zapED && legName.endsWith("ed")) {
-                    if ((seg.endAction == DIFFRACT || seg.endAction == HEAD) && seg.isPWave == next.isPWave) {
-                        legName = legName.substring(0, 1);
-                    } else if ((seg.endAction == TRANSDOWN)
-                            && (legName.startsWith("P") || legName.startsWith("S")) && !(nextLegName.startsWith("P") || nextLegName.startsWith("S"))
-                            && (legName.startsWith("K")) && !(nextLegName.startsWith("K"))
-                            && (legName.startsWith("I") || legName.startsWith("J")) && !(nextLegName.startsWith("I") || nextLegName.startsWith("J"))
-                        //&& seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
-                        //&& !legName.startsWith(nextLegName.substring(0, 1))
-                    ) {
-                        legName = legName.substring(0, 1);
-                    } else if ((seg.endAction == REFLECT_TOPSIDE || seg.endAction == REFLECT_TOPSIDE_CRITICAL ||
-                            (seg.endAction == TRANSDOWN && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)))) {
-                        // ed not needed as legname changes
-                        legName = legName.substring(0, 1);
-                    }
-                }
-                if ((seg.endAction == END
-                        || (seg.endAction == REFLECT_UNDERSIDE )
-                        || ((seg.endAction == TURN || seg.endAction == DIFFRACTTURN
-                            || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
-                            && next.endBranch == 0))
-                        && (prev != null
-                            && (prev.endAction == DIFFRACT || prev.endAction == DIFFRACTTURN
-                                || prev.endAction == HEAD || prev.endAction ==TRANSUP)
-                            && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
-                ) {
-                    legName = "";
-                } else if (prev != null && prev.endAction == TURN && (prev.isPWave == seg.isPWave) && seg.layerPropogationType==LayerPropogationType.UP){
-                    legName="";
-                }
-                if (LayerPropogationType.isFlat(seg.layerPropogationType) && (prev==null || prev.isPWave == seg.isPWave)) {
-                    // no phase change and flat leg, so no leg symbol needed
-                    legName = "";
-                }
-                name += legName;
+            ) {
+                // add legname for inital leg, or on phase change, or on legname change
+            } else if ((prev.endAction==REFLECT_TOPSIDE|| prev.endAction==REFLECT_TOPSIDE_CRITICAL)
+                    && name.endsWith("diff") && flatSeg!= null
+                    && prev.isPWave==flatSeg.isPWave&&prev.getEndDepth()==flatSeg.getEndDepth()
+                    && !LayerPropogationType.isFlat(prev.layerPropogationType)
+            ) {
+                // like PcpPdiff changed to PdiffPdiff, so no legname
+                // previous leg converted reflection to diff
+                legName = "";
+            } else if (prev.legName.substring(0,1).equals("I") && seg.legName.substring(0,1).equals("y") && prev.getEndAction()==TURN) {
+                // special case, I TURN y should be just I
+                legName = "";
+            } else if (!seg.legName.substring(0,1).equalsIgnoreCase(prev.legName.substring(0,1))) {
+                // leg change name, so keep
+            } else if (seg.endAction == END
+                    && (prev.endAction == DIFFRACTTURN || prev.endAction == HEADTURN)
+                    && (seg.isPWave == prev.isPWave)
+            ) {
+                // no leg if up leg after head like Pn or diff like Sdiff
+                legName = "";
+            } else if (prev.endAction == TURN || prev.endAction == DIFFRACTTURN) {
+                // no leg addition to name after TURN, as no interaction and no phase change allowed
+                legName = "";
+            } else if (prev.endAction == HEADTURN && prev.isPWave == seg.isPWave
+                    && seg.legName.substring(0,1).equalsIgnoreCase(prev.legName.substring(0,1))) {
+                // no legname change after head wave, as long as no leg name change like PK2889np
+                legName = "";
+            } else if (prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL) {
+            } else if (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL) {
+                // keep legname after reflection
+            } else if (prev.endAction == DIFFRACTDOWN) {
+                // keep after diffdn
             } else {
-                //name += "("+seg.legName+")";
+                // other cases, I don't think we need to keep the legname
+                legName = "";
             }
+            if (!legName.isEmpty() && seg.layerPropogationType == LayerPropogationType.UP) {
+                // upgoing change P to p, S to s, etc
+                if (legName.substring(0,1).equals("I")) {
+                    legName = "y"+legName.substring(1);
+                } else {
+                    legName = legName.substring(0,1).toLowerCase()+legName.substring(1);
+                }
+            }
+
+            String prevDepthToName = "";
+            prevAddedDepthToName = false;
             switch (seg.endAction) {
                 case REFLECT_TOPSIDE:
-                    if (botDepth == tMod.cmbDepth) {
-                        name += "c";
+                    if (flatSeg!= null && flatSeg!=seg && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
+                        // looks like PcpPdiff, so purist is PdiffPdiff
+                        prevDepthToName += diffStringForSeg(seg, prev, botDepth);
+                    } else if (botDepth == tMod.cmbDepth) {
+                        prevDepthToName += "c";
                     } else if (botDepth == tMod.iocbDepth) {
-                        name += "i";
+                        prevDepthToName += "i";
                     } else if (botDepth == tMod.mohoDepth) {
-                        name += "vm";
+                        prevDepthToName += "vm";
                     } else {
-                        name += "v" + (int) (botDepth);
+                        prevDepthToName += "v" + (int) (Math.round(botDepth));
                     }
                     break;
                 case REFLECT_TOPSIDE_CRITICAL:
-                    name += "V";
-                    if (botDepth == tMod.cmbDepth) {
-                        name += "c";
-                    } else if (botDepth == tMod.iocbDepth) {
-                        name += "i";
-                    } else if (botDepth == tMod.mohoDepth) {
-                        name += m;
+                    if (flatSeg!= null && flatSeg!=seg && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
+                        // looks like PVcpPdiff, so purist is PdiffPdiff
+                        prevDepthToName += diffStringForSeg(seg, prev, botDepth);
                     } else {
-                        name += (int) (botDepth);
+                        prevDepthToName += "V";
+                        if (botDepth == tMod.cmbDepth) {
+                            prevDepthToName += "c";
+                        } else if (botDepth == tMod.iocbDepth) {
+                            prevDepthToName += "i";
+                        } else if (botDepth == tMod.mohoDepth) {
+                            prevDepthToName += m;
+                        } else {
+                            prevDepthToName += (int) (botDepth);
+                        }
                     }
                     break;
                 case REFLECT_UNDERSIDE:
                     if (topDepth == 0 || topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
                         // no char as PP or KK or II
                     } else if (topDepth == tMod.mohoDepth) {
-                        name += "^m";
+                        prevDepthToName += "^m";
                     } else {
-                        name += "^" + (int) (topDepth);
+                        prevDepthToName += "^" + (int) (Math.round(topDepth));
                     }
                     break;
                 case TURN:
+                    if (flatSeg!= null && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
+                        // looks like PPdiff, so purist is PdiffPdiff
+                        prevDepthToName += diffStringForSeg(seg, prev, botDepth);
+                    }
+                    break;
                 case DIFFRACTTURN:
+                case DIFFRACTDOWN:
+                    prevDepthToName += diffStringForSeg(seg, prev, botDepth);
+                    break;
+                case HEADTURN:
                     //name += "U";
+                    if (topDepth == tMod.mohoDepth) {
+                        prevDepthToName += "n";
+                    } else {
+                        prevDepthToName += (int) (Math.round(topDepth)) +"n";
+                    }
                     break;
                 case TRANSDOWN:
                     if (LayerPropogationType.isFlat(seg.layerPropogationType) || botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
                         // flat no char as already at depth
                         // no char as P,S -> K -> I,J
                     } else if (botDepth == tMod.mohoDepth) {
-                        name += m;
+                        prevDepthToName += m;
                     } else {
-                        name += (int)(botDepth);
+                        prevDepthToName += (int)(Math.round(botDepth));
                     }
                     break;
                 case TRANSUP:
@@ -1545,43 +1747,68 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     ) {
                         // no char finish at surface
                     } else if (topDepth == tMod.mohoDepth ) {
-                        name += m;
+                        prevDepthToName += m;
                     } else {
-                        name += (int) (topDepth);
+                        prevDepthToName += (int) (Math.round(topDepth));
                     }
                     break;
                 case HEAD:
-                    name += "n";
                     break;
                 case DIFFRACT:
                 case TRANSUPDIFFRACT:
-                    String diff = "diff";
-                    if (next != null && next.endAction == TRANSDOWN) {
-                        diff = "diffdn";
-                    }
-                    if (seg.endAction==DIFFRACT) {
-                        if ( botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
-                            name += diff;
-                        } else {
-                            name += (int) (botDepth)+diff;
-                        }
-                    } else if( seg.endAction==TRANSUPDIFFRACT) {
-                        if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
-                            name += diff;
-                        } else {
-                            name += (int) (topDepth) + diff;
-                        }
-                    }
+
                     break;
                 case END:
                 case END_DOWN:
                     break;
                 default:
-                    name += seg.endAction.name();
+                    prevDepthToName += seg.endAction.name();
             }
+            switch (seg.endAction) {
+                case HEADTURN -> {
+                    if (topDepth == tMod.mohoDepth) {
+                        prevAddedDepthToName = false;
+                    }
+                }
+                case DIFFRACTTURN, DIFFRACTDOWN -> {
+                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                        prevAddedDepthToName = false;
+                    }
+                }
+                case REFLECT_TOPSIDE, REFLECT_TOPSIDE_CRITICAL -> {
+                    if (flatSeg != null && flatSeg != seg && seg.isPWave == flatSeg.isPWave && seg.getEndDepth() == flatSeg.getEndDepth()) {
+                        // looks like PVcpPdiff, so purist is PdiffPdiff
+                        prevAddedDepthToName = false;
+                    }
+                }
+                case TURN -> {
+                    if (flatSeg != null && seg.isPWave == flatSeg.isPWave && seg.getEndDepth() == flatSeg.getEndDepth()) {
+                        // looks like PPdiff, so purist is PdiffPdiff
+                        prevAddedDepthToName = false;
+                    }
+                }
+                default -> {
+                    prevAddedDepthToName = !prevDepthToName.isEmpty();
+                }
+            }
+            name += legName + prevDepthToName;
             idx++;
         }
         return name;
+    }
+
+    private String diffStringForSeg(SeismicPhaseSegment seg, SeismicPhaseSegment prev, double botDepth) {
+        String diff = "diff";
+        if (seg.endAction == DIFFRACTDOWN) {
+            diff = "diffdn";
+        }
+        String out = "";
+        if ( botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+            out = diff;
+        } else {
+            out = (int) (Math.round(botDepth))+diff;
+        }
+        return out;
     }
 
     public static String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
@@ -1628,6 +1855,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         for (SeismicPhaseSegment seg : segmentList) {
             out.append(seg.legName);
             if (seg.endAction == FAIL) {
+                out.append(" FAIL");
                 break;
             }
             int indexIncr = seg.layerPropogationType==LayerPropogationType.DOWN ? 1 : -1;

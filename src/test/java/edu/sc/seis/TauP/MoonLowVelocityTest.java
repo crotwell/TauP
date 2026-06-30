@@ -166,10 +166,10 @@ public class MoonLowVelocityTest {
         assertEquals(deg, aList.get(0).getDistDeg(), 0.0001);
         assertEquals(deg, pierce.get(pierce.size()-1).getDistDeg(), 0.002);
 
-        SeismicPhase Pcp1554diffp = SeismicPhaseFactory.createPhase("Pcp1554diffp", tmod);
+        SeismicPhase Pcp1554diffp = SeismicPhaseFactory.createPhase("Pcp1554diff", tmod);
         assertTrue(Pcp1554diffp.phasesExistsInModel());
         assertEquals("0 1 2 3 4 4 3 3 2 1 0", ((SimpleContigSeismicPhase)Pcp1554diffp).proto.branchNumSeqStr());
-        assertEquals("Pcp1554diffp", Pcp1554diffp.getPuristName());
+        assertEquals("Pcp1554diff", Pcp1554diffp.getPuristName());
         SeismicPhase Pcp1554diffs = SeismicPhaseFactory.createPhase("Pcp1554diffs", tmod);
         assertTrue(Pcp1554diffs.phasesExistsInModel());
     }

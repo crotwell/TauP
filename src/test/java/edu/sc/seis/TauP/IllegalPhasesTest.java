@@ -155,6 +155,29 @@ class IllegalPhasesTest {
 	}
 
 	@Test
+	public void noReflectionFromDiffractionDepth() throws TauModelException {
+		boolean DEBUG = true;
+		float receiverDepth = 0;
+		String modelName = "iasp91";
+		TauModel tMod = TauModelLoader.load(modelName);
+		TauModel tModDepth = tMod.depthCorrect(10);
+		SeismicPhase phase;
+		phase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+		assertEquals("PdiffPdiff", phase.getPuristName());
+
+		phase = SeismicPhaseFactory.createPhase("PcpPdiff", tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+		assertEquals("PdiffPdiff", phase.getPuristName());
+		phase = SeismicPhaseFactory.createPhase("PPdiff", tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+		assertEquals("PdiffPdiff", phase.getPuristName());
+
+		phase = SeismicPhaseFactory.createPhase("PdiffPcp", tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+		assertEquals("PdiffPdiff", phase.getPuristName());
+		phase = SeismicPhaseFactory.createPhase("PdiffP", tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+		assertEquals("PdiffPdiff", phase.getPuristName());
+
+	}
+
+	@Test
 	void checkLegalPhasesTest() throws TauModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 

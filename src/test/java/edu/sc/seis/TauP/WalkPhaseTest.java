@@ -14,18 +14,50 @@ public class WalkPhaseTest {
 
     @Test
     public void findEndDisconTest() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        double sourceDepth = 5.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         tMod = tMod.splitBranch(6);
         int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, 2, true, LayerPropogationType.UP);
         assertEquals(0, endBranchNum);
     }
 
     @Test
+    public void startingLegs() throws TauModelException {
+        double sourceDepth = 100.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        List<ProtoSeismicPhase> outTree = walker.createSourceSegments(tMod, SlownessModel.PWAVE, receiverDepth);
+        for (ProtoSeismicPhase p : outTree) {
+            assertNotEquals(sourceDepth, p.endSegment().getEndDepth(), p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks());
+        }
+        List<ProtoSeismicPhase> nextTree = new ArrayList<>();
+        for (ProtoSeismicPhase p : outTree) {
+            List<ProtoSeismicPhase> protoTree = walker.nextLegs(tMod, p, SlownessModel.PWAVE);
+            for (ProtoSeismicPhase pp : protoTree) {
+                assertNotEquals(sourceDepth, pp.endSegment().getEndDepth(), pp.getPuristName()+" "+pp.branchNumSeqStrWithSegBreaks());
+            }
+            nextTree.addAll(protoTree);
+        }
+        outTree = nextTree;
+        nextTree = new ArrayList<>();
+        for (ProtoSeismicPhase p : outTree) {
+            List<ProtoSeismicPhase> protoTree = walker.nextLegs(tMod, p, SlownessModel.PWAVE);
+            for (ProtoSeismicPhase pp : protoTree) {
+                assertNotEquals(sourceDepth, pp.endSegment().getEndDepth(), pp.getPuristName()+" "+pp.branchNumSeqStrWithSegBreaks());
+            }
+            nextTree.addAll(protoTree);
+        }
+    }
+
+    @Test
     public void phasePturn() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        double sourceDepth = 5.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
-        double receiverDepth = 0.0;
         boolean isPWave = true;
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
@@ -51,11 +83,12 @@ public class WalkPhaseTest {
     }
     @Test
     public void phasePdiff() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        double sourceDepth = 5.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         walker.excludeBoundaries(List.of(20.0, 35.0, 410.0, 660.0));
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
-        double receiverDepth = 0.0;
         boolean isPWave = true;
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
@@ -69,8 +102,9 @@ public class WalkPhaseTest {
         assertEquals(tMod.getCmbBranch()-1, transDProto.endSegment().endBranch);
         assertEquals(DIFFRACT, transDProto.endSegment().endAction);
         outTree = walker.nextLegs(tMod, transDProto, true);
-        assertEquals(1, outTree.size());
         ProtoSeismicPhase Pdiff = null;
+        assertEquals(2, outTree.size());
+        Pdiff = null;
         for (ProtoSeismicPhase p : outTree) {
             // only keep diffractturn after diff
             if (p.endSegment().endAction == DIFFRACTTURN) {
@@ -88,26 +122,92 @@ public class WalkPhaseTest {
         for (ProtoSeismicPhase p : outTree) {
 
             p = walker.consolidateSegment(p);
-            System.err.println(p.getPuristName()+"  ");
-            System.err.println("  "+p.branchNumSeqStr());
-            for (SeismicPhaseSegment seg : p.segmentList) {
-                System.err.println("  "+seg.describe());
-            }
-            System.err.println();
         }
         assertEquals(1, outTree.size());
-        assertEquals("Pdiffp", outTree.get(0).getPuristName());
+        assertEquals("Pdiff", outTree.get(0).getPuristName());
+    }
+
+
+    @Test
+    public void phaseP35diff() throws TauModelException {
+        double sourceDepth = 0.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        walker.excludeBoundaries(Arrays.asList(20.0, 210.0, 410.0, 660.0, 2889.0, 5153.9)); // moho 35, iocb 5153.9
+        assertEquals(2, tMod.getMohoBranch());
+        List<ProtoSeismicPhase> outTree = new ArrayList<>();
+        boolean isPWave = true;
+        int startBranch = tMod.getSourceBranch();
+        assertEquals(0, startBranch);
+        TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
+        ProtoSeismicPhase proto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
+                startBranch, startBranch,
+                isPWave, TRANSDOWN, LayerPropogationType.DOWN,
+                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
+                0, sourceBranchP.getTopRayParam()), receiverDepth);
+        assertEquals(20.0, proto.endSegment().getEndDepth());
+        ProtoSeismicPhase P35diff = proto;
+
+        outTree = walker.nextLegs(tMod, P35diff, isPWave);
+        P35diff = null;
+        for (ProtoSeismicPhase p : outTree) {
+            // only keep diff
+            if (p.endSegment().endAction == DIFFRACT) {
+                P35diff = p;
+            }
+        }
+        assertNotNull(P35diff, "no DIFFRACT phase after "+proto.branchNumSeqStrWithSegBreaks());
+        outTree = List.of(P35diff);
+        outTree = walker.nextLegs(tMod, P35diff, isPWave);
+        String legs = "";
+        for (ProtoSeismicPhase p : outTree) {
+            legs+= "\n"+p.branchNumSeqStrWithSegBreaks();
+        }
+        assertEquals(2, outTree.size(), legs);
+        for (ProtoSeismicPhase p : outTree) {
+            // only keep diff
+            if (p.endSegment().endAction == DIFFRACTTURN) {
+                P35diff = p;
+            }
+        }
+        assertEquals(DIFFRACTTURN, P35diff.getEndAction());
+        outTree = walker.nextLegs(tMod, P35diff, isPWave);
+        P35diff = null;
+        for (ProtoSeismicPhase p : outTree) {
+            // only keep transup
+            if (p.endSegment().endAction == TRANSUP) {
+                P35diff = p;
+            }
+        }
+        assertNotNull(P35diff);
+        outTree = walker.nextLegs(tMod, P35diff, isPWave);
+
+        P35diff = null;
+        for (ProtoSeismicPhase p : outTree) {
+            // only keep end
+            if (p.endSegment().endAction == END) {
+                P35diff = p;
+            }
+        }
+        assertNotNull(P35diff);
+
+
+
+
+
     }
 
     @Test
     public void phasePkpPKp() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        double sourceDepth = 5.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         walker.excludeBoundaries(List.of(20.0, 35.0, 410.0, 660.0));
         walker.setAllowPWave(true);
         walker.setAllowSWave(false);
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
-        double receiverDepth = 0.0;
         boolean isPWave = true;
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
@@ -123,10 +223,10 @@ public class WalkPhaseTest {
         assertEquals(TRANSDOWN, manualWalk.endSegment().endAction);
         manualWalk = walker.nextLegWithAction(tMod, manualWalk, true, TURN);
         assertNotNull(manualWalk);
-        System.err.println("First walk to surface after K turn");
+        //"First walk to surface after K turn");
         manualWalk = walker.walkToSurface(tMod, manualWalk, true, REFLECT_UNDERSIDE);
         assertNotNull(manualWalk);
-        System.err.println("Second walk to surface after PKpP turn");
+        //"Second walk to surface after PKpP turn");
         manualWalk = walker.walkToSurface(tMod, manualWalk, true, END);
         assertNotNull(manualWalk);
 
@@ -135,29 +235,77 @@ public class WalkPhaseTest {
         outTree = walker.walkPhases(tMod, List.of(PKpPKp), 1);
         assertFalse(outTree.isEmpty());
         for (ProtoSeismicPhase p : outTree) {
-            System.err.println(p.getPuristName());
             if (p.getPuristName().equals("PKpPKp")) {PKpPKp=p;}
         }
         assertNotNull(PKpPKp);
         PKpPKp = walker.consolidateTrans(PKpPKp);
 
-        System.err.println(PKpPKp.getPuristName()+"  ");
-        System.err.println("  "+PKpPKp.branchNumSeqStr());
-        for (SeismicPhaseSegment seg : PKpPKp.segmentList) {
-            System.err.println("  "+seg.describe());
-        }
-        System.err.println();
-
         assertEquals(END, PKpPKp.getEndAction());
     }
 
     @Test
+    public void phasePKIkp() throws TauModelException {
+        double sourceDepth = 5.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        walker.excludeBoundaries(List.of(20.0, 35.0, 410.0, 660.0));
+        walker.setAllowPWave(true);
+        walker.setAllowSWave(false);
+        List<ProtoSeismicPhase> outTree = new ArrayList<>();
+        boolean isPWave = true;
+        int startBranch = tMod.getSourceBranch();
+        assertEquals(1, startBranch);
+        TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
+        ProtoSeismicPhase manualWalk = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+                startBranch, tMod.getCmbBranch()-1,
+                isPWave, TRANSDOWN, LayerPropogationType.DOWN,
+                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
+                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+
+        ProtoSeismicPhase autoWalk = manualWalk;
+        assertEquals(tMod.getCmbBranch()-1, manualWalk.endSegment().endBranch);
+        assertEquals(TRANSDOWN, manualWalk.endSegment().endAction);
+        manualWalk = walker.nextLegWithAction(tMod, manualWalk, true, TRANSDOWN);
+        assertEquals(TRANSDOWN, manualWalk.endSegment().endAction);
+        assertEquals(tMod.getIocbBranch()-1, manualWalk.endSegment().endBranch);
+        manualWalk = walker.nextLegWithAction(tMod, manualWalk, true, TURN);
+        assertNotNull(manualWalk);
+        //("First walk to surface after K turn");
+        manualWalk = walker.walkToSurface(tMod, manualWalk, true, END);
+        assertNotNull(manualWalk);
+        assertEquals(END, manualWalk.getEndAction());
+
+
+        ProtoSeismicPhase PKIkp = autoWalk;
+        outTree = walker.walkPhases(tMod, List.of(PKIkp), 2);
+        assertFalse(outTree.isEmpty());
+        outTree = walker.onlySuccessfulEndingPhases(outTree);
+        assertFalse(outTree.isEmpty());
+        PKIkp = null;
+        ProtoSeismicPhase byBranchSeqProto = null;
+        for (ProtoSeismicPhase p : outTree) {
+            if (p.getEndAction()==END && p.getPuristName().equals("PKIkp")) {PKIkp=p;}
+            if (p.getEndAction()==END && p.branchNumSeqStr().equals("1 2 3 4 5 6 7 8 8 7 6 5 4 3 2 1 0")) {
+                byBranchSeqProto = p;
+            }
+        }
+        assertNotNull(PKIkp);
+        assertEquals(byBranchSeqProto, PKIkp);
+        PKIkp = walker.consolidateTrans(PKIkp);
+
+        assertEquals(END, PKIkp.getEndAction());
+    }
+
+    @Test
     public void phasePedvmp() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91");
+        double sourceDepth = 0.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
-        int startBranch = 0;
-        double receiverDepth = 0.0;
+        int startBranch = tMod.getSourceBranch();
+        assertEquals(0, startBranch);
         boolean isPWave = true;
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
         ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
@@ -198,11 +346,12 @@ public class WalkPhaseTest {
 
     @Test
     public void phaseS20Pcrust() throws TauModelException {
-        TauModel tMod = TauModelLoader.load("iasp91");
+        double sourceDepth = 0.0;
+        double receiverDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(sourceDepth);
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
         int startBranch = 0;
-        double receiverDepth = 0.0;
         boolean isPWave = true;
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
         ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
@@ -446,11 +595,14 @@ public class WalkPhaseTest {
             assertNotNull(segList.getPuristName());
             String phaseName = segList.getPuristName();
             assertNotNull(segList.getName());
+            assertTrue(segList.isSuccessful());
             assertFalse(phaseName.contains("20"), phaseName);
             assertFalse(phaseName.contains("35"), phaseName);
             assertFalse(phaseName.contains("210"), phaseName);
             assertFalse(phaseName.contains("410"), phaseName);
             assertFalse(phaseName.contains("660"), phaseName);
+            SeismicPhase sp = SeismicPhaseFactory.createPhase(segList.getPuristName(), tMod);
+            assertTrue(sp.phasesExistsInModel());
         }
     }
 
@@ -505,4 +657,5 @@ public class WalkPhaseTest {
         assertEquals(tMod.getAboveIocbTauBranch(true).getBotRayParam(), SKp.endSegment().minRayParam);
         assertEquals(tMod.getAboveCmbTauBranch(true).getBotRayParam(), SKp.endSegment().maxRayParam);
     }
+
 }

@@ -195,11 +195,12 @@ public class TauModel implements Serializable {
      * True if a boundary can generate a head wave, must be a discontinuity, not surface and an increase in velocity with depth.
      *
      * @param branchNum branch layer number
-     * @param isPWave true for P, false for S
+     * @param incidentIsPWave pwave incident above boundary, true for P, false for S
+     * @param isPWave in the  below layer, true for P, false for S
      * @return head wave possible
      * @throws NoSuchLayerException
      */
-    public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+    public boolean isHeadWaveBranch(int branchNum, boolean incidentIsPWave, boolean isPWave) throws NoSuchLayerException {
         if (branchNum == 0) {
             // no head wave at surface
             return false;
@@ -207,26 +208,40 @@ public class TauModel implements Serializable {
         if (getTauBranch(branchNum, isPWave).isHighSlowness()) {
             return false;
         }
+        if (!isDiscontinuityBranch(branchNum, incidentIsPWave)) {
+            return false;
+        }
         double topDepth = getTauBranch(branchNum, false).getTopDepth();
         int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
         int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
         VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
-        if (isPWave) {
-            return above.getBotPVelocity() < below.getTopPVelocity();
-        } else {
-            return above.getBotSVelocity() < below.getTopSVelocity();
+        if ((!incidentIsPWave) && above.isFluid()) {
+            return false;
         }
+        if ((!isPWave) && below.isFluid()) {
+            return false;
+        }
+        double incidentVelocity = incidentIsPWave ? above.getBotPVelocity() : above.getBotSVelocity();
+        double headVelocity = isPWave ? below.getTopPVelocity() : below.getTopSVelocity();
+        return incidentVelocity < headVelocity;
     }
 
     /**
      * True if a boundary can generate a diffracted wave, currently just ensure a discontinuity and not surface.
      *
-     * @param branchNum branch layer number
+     * @param branchNum branch layer number below the discontinuity
      * @param isPWave true for P, false for S
      * @return diffracted wave possible
      */
     public boolean isDiffractionBranch(int branchNum, boolean isPWave) {
+        if (branchNum==0) {
+            // no diff wave at surface
+            return false;
+        }
+        if (!isPWave && isFluidBranch(branchNum-1)) {
+            return false;
+        }
         return isDiscontinuityBranch(branchNum, isPWave);
     }
 
@@ -244,21 +259,28 @@ public class TauModel implements Serializable {
             // free surface is always a discon
             return true;
         }
+        if (branchNum > getNumBranches()) {
+            // center of earth is never a discon
+            return false;
+        }
         double topDepth = getTauBranch(branchNum, isPWave).getTopDepth();
+
+        if (isNoDisconDepth(topDepth)) {
+            // not real discon
+            return false;
+        }
         int aboveIdx;
         try {
             aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
         } catch (NoSuchLayerException e) {
-            // no above means free surface, so is discon
-            return true;
+            throw new RuntimeException("Should never happen", e);
         }
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
         int belowIdx;
         try {
             belowIdx = getVelocityModel().layerNumberBelow(topDepth);
         } catch (NoSuchLayerException e) {
-            // no layer below means center of earth, so not discon
-            return false;
+            throw new RuntimeException("Should never happen", e);
         }
         VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
         if (isPWave) {
