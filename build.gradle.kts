@@ -14,8 +14,8 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.53.0"
-  id("org.jreleaser") version "1.23.0"
+  id("com.github.ben-manes.versions") version "0.54.0"
+  id("org.jreleaser") version "1.25.0"
 }
 
 application {
@@ -222,7 +222,7 @@ java {
 
 dependencies {
     implementation("net.sf.geographiclib:GeographicLib-Java:2.1")
-    implementation("org.json:json:20251224")
+    implementation("org.json:json:20260522")
     implementation("com.google.code.gson:gson:2.14.0")
     implementation("edu.sc.seis:seisFile:2.3.4")
     //implementation("edu.sc.seis:seisFile:2.3.1-SNAPSHOT")
@@ -236,7 +236,7 @@ dependencies {
     implementation("org.slf4j:slf4j-reload4j:2.0.6")
 
 
-    implementation("io.undertow:undertow-core:2.4.1.Final")
+    implementation("io.undertow:undertow-core:2.4.2.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
