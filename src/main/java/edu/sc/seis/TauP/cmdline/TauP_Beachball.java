@@ -447,7 +447,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     public void drawFaultsSVG(PrintWriter writer, FaultPlane faultPlane, float scale) {
 
         writer.println("<g class=\"fault\">");
-        writer.print("<polyline class=\"fault\", points=\"");
+        writer.print("<polyline class=\"fault\" points=\"");
         for (int i = 180; i <= 360; i++) {
             Vector fvec = faultPlane.faultVector(i);
             SphericalCoordinate co = fvec.toSpherical();
@@ -460,7 +460,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             writer.print(x+","+y+" ");
         }
         writer.println("\" />");
-        writer.print("<polyline class=\"fault aux\", points=\"");
+        writer.print("<polyline class=\"fault aux\" points=\"");
         FaultPlane auxPlane = faultPlane.auxPlane();
         for (int i = 180; i <= 360; i++) {
             Vector fvec = auxPlane.faultVector(i);
