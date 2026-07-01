@@ -257,6 +257,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			sourceDepths.add(a.getSourceDepth());
 		}
 		SvgEarth.drawSourceSymbols(out, R, pixelWidth, sourceDepths.stream().toList(), scaleTrans);
+		if (getScatterer() != null) {
+			SvgEarth.drawScatterSymbols(out, getScatterer(), R, pixelWidth, scaleTrans);
+		}
 		List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(new SeismicSourceArgs());
 		Set<Double> stationRadianList = new HashSet<>();
 		for (RayCalculateable ray : distanceValues) {

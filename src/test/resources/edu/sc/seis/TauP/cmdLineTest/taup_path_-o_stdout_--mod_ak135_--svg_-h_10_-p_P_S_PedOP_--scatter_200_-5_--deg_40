@@ -11,10 +11,20 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font-size: 162px;
+            font-size: 135px;
         }
         g.phasename text {
-            font-size: 162px;
+            font-size: 135px;
+        }
+        g.phase text {
+            font-size: 135px;
+        }
+        g.eigen text {
+            font-size: 135px;
+            font-weight: bold;
+        }
+        g.arrival text {
+            font-size: 135px;
         }
 
         .phase_P {
@@ -129,6 +139,10 @@ circle.tick {
 .source {
     vector-effect: non-scaling-stroke;
     fill: red;
+}
+.scatterer {
+    vector-effect: non-scaling-stroke;
+    fill: grey;
 }
 .receiver {
     vector-effect: non-scaling-stroke;
@@ -280,6 +294,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<!-- end SvgEarth.printScriptBeginningSvg -->
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
 <g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
@@ -521,11 +536,14 @@ circle.discontinuity.iocb {
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <g class="sources">
-  <circle class="source" cx="3.894989144688157E-13" cy="-6361.0" r="235.1657" />
+  <circle class="source" cx="3.8949893E-13" cy="-6361.0" r="33.86442" />
+</g>
+<g class="sources">
+  <circle class="scatterer" cx="-537.8381" cy="-6147.5176" r="33.86442" />
 </g>
 <g class="sources">
   <g transform="rotate(220.0, 4095.2, -4880.469)">
-  <polygon class="receiver" points="4095.2,-4880.469 4330.3657,-4473.1504 3860.0342,-4473.1504 " />
+  <polygon class="receiver" points="4095.2,-4880.469 4151.6406,-4782.711 4038.7593,-4782.711 " />
   </g>
 </g>
   <g class="autocolor" >

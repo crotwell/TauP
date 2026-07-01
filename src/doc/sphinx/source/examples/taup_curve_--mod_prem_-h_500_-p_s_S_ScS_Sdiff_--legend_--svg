@@ -55,6 +55,10 @@ circle.tick {
     vector-effect: non-scaling-stroke;
     fill: red;
 }
+.scatterer {
+    vector-effect: non-scaling-stroke;
+    fill: grey;
+}
 .receiver {
     vector-effect: non-scaling-stroke;
     fill: blue;

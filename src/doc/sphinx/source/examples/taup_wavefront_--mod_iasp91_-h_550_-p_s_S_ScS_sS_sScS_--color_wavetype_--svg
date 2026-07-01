@@ -11,10 +11,20 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font-size: 228px;
+            font-size: 190px;
         }
         g.phasename text {
-            font-size: 228px;
+            font-size: 190px;
+        }
+        g.phase text {
+            font-size: 190px;
+        }
+        g.eigen text {
+            font-size: 190px;
+            font-weight: bold;
+        }
+        g.arrival text {
+            font-size: 190px;
         }
 
         g.swave polyline {
@@ -138,6 +148,10 @@ circle.tick {
 .source {
     vector-effect: non-scaling-stroke;
     fill: red;
+}
+.scatterer {
+    vector-effect: non-scaling-stroke;
+    fill: grey;
 }
 .receiver {
     vector-effect: non-scaling-stroke;
@@ -289,6 +303,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<!-- end SvgEarth.printScriptBeginningSvg -->
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
 <g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
@@ -530,7 +545,7 @@ circle.discontinuity.iocb {
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <g class="sources">
-  <circle class="source" cx="3.5643345089183717E-13" cy="-5821.0" r="167.23247" />
+  <circle class="source" cx="3.5643344E-13" cy="-5821.0" r="47.62084" />
 </g>
     <g>
       <desc>Time    0.00</desc>
@@ -538,35 +553,35 @@ circle.discontinuity.iocb {
         <desc>Phase:s at     0.00</desc>
     <g>
       <desc>seg 0/3 s of s at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_s swave time_0.00" cx="3.5643345089183717E-13" cy="-5821.0" r="11.4"/>
+      <circle class="degeneratesegment wavefront phase_s swave time_0.00" cx="3.5643344E-13" cy="-5821.0" r="9.5"/>
     </g>
       </g>
       <g>
         <desc>Phase:S at     0.00</desc>
     <g>
       <desc>seg 0/14 S of S at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_S swave time_0.00" cx="3.5643345089183717E-13" cy="-5821.0" r="11.4"/>
+      <circle class="degeneratesegment wavefront phase_S swave time_0.00" cx="3.5643344E-13" cy="-5821.0" r="9.5"/>
     </g>
       </g>
       <g>
         <desc>Phase:ScS at     0.00</desc>
     <g>
       <desc>seg 0/14 S of ScS at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_ScS swave time_0.00" cx="3.5643345089183717E-13" cy="-5821.0" r="11.4"/>
+      <circle class="degeneratesegment wavefront phase_ScS swave time_0.00" cx="3.5643344E-13" cy="-5821.0" r="9.5"/>
     </g>
       </g>
       <g>
         <desc>Phase:sS at     0.00</desc>
     <g>
       <desc>seg 0/17 s of sS at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_sS swave time_0.00" cx="3.5643345089183717E-13" cy="-5821.0" r="11.4"/>
+      <circle class="degeneratesegment wavefront phase_sS swave time_0.00" cx="3.5643344E-13" cy="-5821.0" r="9.5"/>
     </g>
       </g>
       <g>
         <desc>Phase:sScS at     0.00</desc>
     <g>
       <desc>seg 0/17 s of sScS at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_sScS swave time_0.00" cx="3.5643345089183717E-13" cy="-5821.0" r="11.4"/>
+      <circle class="degeneratesegment wavefront phase_sScS swave time_0.00" cx="3.5643344E-13" cy="-5821.0" r="9.5"/>
     </g>
       </g>
 </g>

@@ -427,12 +427,21 @@ public class SvgEarth {
         out.println("<g class=\"sources\">");
         float circleSize = calcIconSizeForZoom(3, R, pixelWidth, scaleTrans);
 
-        System.err.println("source scale: "+scaleTrans.getZoomScale()+" R "+R+" -> "+circleSize);
-
         for (Double sourceDepth : sourceDepths) {
             double[] xy = xyForDistDegRadius(0, R -sourceDepth);
             out.println("  <circle class=\"source\" cx=\""+((float)xy[0])+"\" cy=\""+((float)xy[1])+"\" r=\"" + circleSize + "\" />");
         }
+        out.println("</g>");
+    }
+
+
+    public static void drawScatterSymbols(PrintWriter out, Scatterer scatterer, float R, float pixelWidth, SvgEarthScaling scaleTrans) {
+        out.println("<g class=\"sources\">");
+        float circleSize = calcIconSizeForZoom(3, R, pixelWidth, scaleTrans);
+
+        double[] xy = xyForDistDegRadius(scatterer.getDistanceDegree(), R -scatterer.depth);
+        out.println("  <circle class=\"scatterer\" cx=\""+((float)xy[0])+"\" cy=\""+((float)xy[1])+"\" r=\"" + circleSize + "\" />");
+
         out.println("</g>");
     }
 

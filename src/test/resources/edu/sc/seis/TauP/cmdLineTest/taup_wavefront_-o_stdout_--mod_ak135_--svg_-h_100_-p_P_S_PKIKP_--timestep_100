@@ -11,10 +11,20 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font-size: 382px;
+            font-size: 319px;
         }
         g.phasename text {
-            font-size: 382px;
+            font-size: 319px;
+        }
+        g.phase text {
+            font-size: 319px;
+        }
+        g.eigen text {
+            font-size: 319px;
+            font-weight: bold;
+        }
+        g.arrival text {
+            font-size: 319px;
         }
 
         g.swave polyline {
@@ -138,6 +148,10 @@ circle.tick {
 .source {
     vector-effect: non-scaling-stroke;
     fill: red;
+}
+.scatterer {
+    vector-effect: non-scaling-stroke;
+    fill: grey;
 }
 .receiver {
     vector-effect: non-scaling-stroke;
@@ -289,6 +303,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<!-- end SvgEarth.printScriptBeginningSvg -->
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
 <g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
@@ -398,7 +413,7 @@ circle.discontinuity.iocb {
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <g class="sources">
-  <circle class="source" cx="3.839880038726526E-13" cy="-6271.0" r="100.0" />
+  <circle class="source" cx="3.83988E-13" cy="-6271.0" r="79.637505" />
 </g>
   <g class="autocolor" >
     <g>
@@ -407,21 +422,21 @@ circle.discontinuity.iocb {
         <desc>Phase:P at     0.00</desc>
     <g>
       <desc>seg 0/9 P of P at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_P pwave time_0.00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_P pwave time_0.00" cx="3.83988E-13" cy="-6271.0" r="15.95"/>
     </g>
       </g>
       <g>
         <desc>Phase:S at     0.00</desc>
     <g>
       <desc>seg 0/15 S of S at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_S swave time_0.00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_S swave time_0.00" cx="3.83988E-13" cy="-6271.0" r="15.95"/>
     </g>
       </g>
       <g>
         <desc>Phase:PKIKP at     0.00</desc>
     <g>
       <desc>seg 0/12 P of PKIKP at     0.00</desc>
-      <circle class="degeneratesegment wavefront phase_PKIKP pwave time_0.00" cx="3.839880038726526E-13" cy="-6271.0" r="19.1"/>
+      <circle class="degeneratesegment wavefront phase_PKIKP pwave time_0.00" cx="3.83988E-13" cy="-6271.0" r="15.95"/>
     </g>
       </g>
 </g>
