@@ -406,8 +406,8 @@ public class SvgEarth {
         }
 
         double[] xy = xyForVector(z);
-        double x = xy[0]*R/scaleTrans.getZoomScale();
-        double y = xy[1]*R/scaleTrans.getZoomScale();
+        float x = (float) (xy[0]*R/scaleTrans.getZoomScale());
+        float y = (float) (xy[1]*R/scaleTrans.getZoomScale());
         writer.println("<g>");
         if (tooltip!= null && tooltip.length() > 0) {
             writer.println("<title>" + tooltip + "</title>");
@@ -431,7 +431,7 @@ public class SvgEarth {
 
         for (Double sourceDepth : sourceDepths) {
             double[] xy = xyForDistDegRadius(0, R -sourceDepth);
-            out.println("  <circle class=\"source\" cx=\""+xy[0]+"\" cy=\""+xy[1]+"\" r=\"" + circleSize + "\" />");
+            out.println("  <circle class=\"source\" cx=\""+((float)xy[0])+"\" cy=\""+((float)xy[1])+"\" r=\"" + circleSize + "\" />");
         }
         out.println("</g>");
     }
