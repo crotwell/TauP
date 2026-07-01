@@ -657,6 +657,7 @@ public class SeismicPhaseFactory {
         for (ShadowOrProto hszProto : hszSplitProtoList) {
             if (hszProto.isProto()) {
                 SimpleContigSeismicPhase phaseSeg = internalSumContigPhase(hszProto.getProto());
+                phaseSeg.name = name;
                 contigPhaseList.add(phaseSeg);
                 if (prevShadow != null) {
                     prevShadow.setPrePostArrival(prevPhaseSeg.createArrivalAtIndex(prevPhaseSeg.getNumRays()-1),
