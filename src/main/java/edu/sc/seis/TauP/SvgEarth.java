@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.SphericalCoords.RtoD;
-
 /**
  * Utilities for generating SVG plots of a slice through the earth model.
  * Used for plotting ray paths or wavefronts.
@@ -265,7 +263,91 @@ public class SvgEarth {
         }
         return arrivalList;
     }
+    public static void printCircleTicksAsSVG(PrintWriter out, double R, float pixelWidth, SvgEarthScaling scaleTrans) {
+        float zoomScale = scaleTrans.getZoomScale();
+        double minDist = scaleTrans.getLabelRange()[0];
+        double maxDist = scaleTrans.getLabelRange()[1];
+        out.println("<g class=\"ticks\">");
+        out.println("<!-- draw surface and label distances.-->");
+        // whole earth radius (scales to mapWidth)
+        float majorStep = 30;
+        float minorStep = 5;
+        float maxTick = 180;
+        float minTick = -180 + minorStep;
+        if (zoomScale > 1) {
+            double distRangeDeg = (maxDist - minDist) * 180 / Math.PI;
+            if (distRangeDeg >= 60) {
+                majorStep = 10;
+                minorStep = 2;
+            } else if (distRangeDeg >= 30) {
+                majorStep = 5;
+                minorStep = 1;
+            } else if (distRangeDeg >= 10) {
+                majorStep = 2;
+                minorStep = 0.5f;
+            } else if (distRangeDeg > 5) {
+                majorStep = 1;
+                minorStep = 0.2f;
+            } else {
+                majorStep = (float) Math.floor(maxDist / 10);
+                minorStep = majorStep/5;
+            }
+            if (majorStep < 5) {
+                maxTick = (float) (Math.ceil(maxDist * 180 / Math.PI / minorStep + 2) * minorStep);
+                minTick = (float) (Math.floor(minDist * 180 / Math.PI / minorStep - 2) * minorStep);
+            } else {
+                // might as well draw all just in case as not zoomed in much
+                maxTick = 180;
+                minTick = -180 + minorStep;
+            }
+        }
+        double majorTickLen = R * .05;
+        double minorTickLen = R * 0.03;
+        out.println("<!-- tick marks every " + minorStep + " degrees to " + maxTick + ".-->");
+        out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R*1.05/ zoomScale) + "\" />");
+        out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R*1.06/ zoomScale) + "\" />");
+        for (float i = minTick; i <= maxTick; i += minorStep) {
+            double tickLen;
+            if (i % Math.round(majorStep/minorStep) == 0) {
+                tickLen = majorTickLen;
+            } else {
+                tickLen = minorTickLen;
+            }
+            tickLen -= (R*0.01/ zoomScale);
+            out.println("  <polyline  class=\"tick\"  points=\"" +
+                    formatDistRadiusAsXY(i, R+(majorTickLen-tickLen)/ zoomScale)+", "+formatDistRadiusAsXY(i, R + majorTickLen / zoomScale)+"\" />");
 
+            if (i % Math.round(majorStep/minorStep) == 0) {
+                float labelOffset = 1.7f;
+                double radian = (i - 90) * Math.PI / 180;
+                double x = (R + (majorTickLen * labelOffset) / zoomScale) * Math.cos(radian);
+                double y = (R + (majorTickLen * labelOffset) / zoomScale) * Math.sin(radian);
+                String anchor;
+                if (i < -135 || (-45 < i && i < 45) || i > 135) {
+                    anchor = "middle";
+                } else if (45 <= i && i < 135) {
+                    anchor = "start";
+                } else if ((-135 <= i && i < -45) || (225 <= i && i < 315)) {
+                    anchor = "end";
+                } else {
+                    anchor = "middle";
+                }
+                String alignBaseline;
+                if ((-60 < i && i < 60) || (300 < i)) {
+                    alignBaseline = "baseline";
+                } else if ((-120 < i && i <= 120) || (240 < i && i < 300)) {
+                    alignBaseline = "middle";
+                } else if (i < -120 || i > 120) {
+                    alignBaseline = "hanging";
+                } else {
+                    alignBaseline = "baseline";
+                }
+
+                out.println("  <text dominant-baseline=\"" + alignBaseline + "\" text-anchor=\"" + anchor + "\" class=\"label\" x=\"" + Outputs.formatDistance(x).trim() + "\" y=\"" + Outputs.formatDistance(y).trim() + "\">" + i + "</text>");
+            }
+        }
+        out.println("  </g>");
+    }
     public static void printModelAsSVG(PrintWriter out, TauModel tMod, float pixelWidth, SvgEarthScaling scaleTrans, boolean onlyNamedDiscon) {
         float zoomScale = scaleTrans.getZoomScale();
         float zoomTranslateX = scaleTrans.getZoomTranslateX();
@@ -276,74 +358,14 @@ public class SvgEarth {
         float plotSize = R * plotOverScaleFactor;
         float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
 
+        printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
+
         out.println("<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->");
         out.println("<g transform=\"scale(" + plotScale + "," + (plotScale) + ")\" >");
         out.println("<g transform=\"translate(" + plotSize + "," + (plotSize) + ")\" >");
         out.println("<!-- scale/translate so zoomed in on area of interest -->");
         out.println("<g transform=\"scale(" + zoomScale + "," + zoomScale + ")\" >");
         out.println("<g transform=\"translate(" + zoomTranslateX + "," + zoomTranslateY + ")\" >");
-        out.println("<g class=\"ticks\">");
-        out.println("<!-- draw surface and label distances.-->");
-        // whole earth radius (scales to mapWidth)
-        float step = 30;
-        float maxTick = 180;
-        float minTick = -180 + step;
-        if (zoomScale > 1) {
-            double distRangeDeg = (maxDist - minDist) * 180 / Math.PI;
-            if (distRangeDeg >= 60) {
-                step = 10;
-            } else if (distRangeDeg >= 30) {
-                step = 5;
-            } else if (distRangeDeg >= 10) {
-                step = 2;
-            } else if (distRangeDeg > 5) {
-                step = 1;
-            } else {
-                step = (int) Math.floor(maxDist / 10);
-            }
-            if (step < 5) {
-                maxTick = (float) (Math.ceil(maxDist * 180 / Math.PI / step + 2) * step);
-                minTick = (float) (Math.floor(minDist * 180 / Math.PI / step - 2) * step);
-            } else {
-                // might as well draw all just in case as not zoomed in much
-                maxTick = 180;
-                minTick = -180 + step;
-            }
-        }
-        double tickLen = R * .05;
-        out.println("<!-- tick marks every " + step + " degrees to " + maxTick + ".-->");
-        for (float i = minTick; i <= maxTick; i += step) {
-            out.println("  <polyline  class=\"tick\"  points=\"" +
-                formatDistRadiusAsXY(i, R)+", "+formatDistRadiusAsXY(i, R + tickLen / zoomScale)+"\" />");
-
-            double radian = (i - 90) * Math.PI / 180;
-            double x = (R + (tickLen * 1.05) / zoomScale) * Math.cos(radian);
-            double y = (R + (tickLen * 1.05) / zoomScale) * Math.sin(radian);
-            String anchor;
-            if (i < -135 || (-45 < i && i < 45) || i > 135) {
-                anchor = "middle";
-            } else if (45 <= i && i < 135) {
-                anchor = "start";
-            } else if ((-135 <= i && i < -45) || (225 <= i && i < 315)) {
-                anchor = "end";
-            } else {
-                anchor = "middle";
-            }
-            String alignBaseline;
-            if ((-60 < i && i < 60) || (300 < i)) {
-                alignBaseline = "baseline";
-            } else if ((-120 < i && i <= 120) || (240 < i && i < 300)) {
-                alignBaseline = "middle";
-            } else if (i < -120 || i > 120) {
-                alignBaseline = "hanging";
-            } else {
-                alignBaseline = "baseline";
-            }
-
-            out.println("  <text dominant-baseline=\"" + alignBaseline + "\" text-anchor=\"" + anchor + "\" class=\"label\" x=\"" + Outputs.formatDistance(x).trim() + "\" y=\"" + Outputs.formatDistance(y).trim() + "\">" + i + "</text>");
-
-        }
-        out.println("  </g>");
 
         out.println("<g class=\"layers\">");
         out.println("  <circle class=\"discontinuity surface\" cx=\"0.0\" cy=\"0.0\" r=\"" + R + "\" />");
@@ -369,6 +391,34 @@ public class SvgEarth {
         out.println("  </g>");
 
         out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
+    }
+
+    public static void drawSourceSymbols(PrintWriter out, double R, List<Double> sourceDepths, SvgEarthScaling scaleTrans) {
+        out.println("<g class=\"sources\">");
+        float circleSize = 100* scaleTrans.getZoomScale();
+        for (Double sourceDepth : sourceDepths) {
+            double[] xy = xyForDistRadius(0, R -sourceDepth);
+            out.println("  <circle class=\"source\" cx=\""+xy[0]+"\" cy=\""+xy[1]+"\" r=\"" + circleSize + "\" />");
+        }
+        out.println("</g>");
+    }
+
+    public static void drawStationSymbols(PrintWriter out, double R, List<Double> stationDegreeList, SvgEarthScaling scaleTrans) {
+        float zoomScale = scaleTrans.getZoomScale();
+        float tSize=100*zoomScale;
+        float ySize = (float) (tSize*Math.sqrt(3));
+        out.println("<g class=\"sources\">");
+        for (Double distDeg : stationDegreeList) {
+            double stationDepth = 0;
+            double[] xy = xyForDistRadius(distDeg, R -stationDepth);
+            float x = (float) xy[0];
+            float y = (float) xy[1];
+            //out.println("  <g >");
+            out.println("  <g transform=\"rotate("+(Math.rint(180+distDeg))+", "+x+", "+y+")\">");
+            out.println("  <polygon class=\"receiver\" points=\""+x+","+y+" "+(x+tSize)+","+(y+ySize)+" "+(x-tSize)+","+(y+ySize)+" " + "\" />");
+            out.println("  </g>");
+        }
+        out.println("</g>");
     }
 
     protected static double[] xyForDistRadius(double calcDist, double radius) {

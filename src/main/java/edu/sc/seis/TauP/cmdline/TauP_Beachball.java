@@ -283,10 +283,12 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 getCmdLineArgs(),  pixelWidth, plotOffset, coloring.getColorList(),
                 extraCSS, null, extraDefs);
 
-        float scale = pixelWidth/2;
-        float hpw = pixelWidth/2;
+        float scale = 0.9f*(pixelWidth-40)/2;
+        float hpw = 0.9f*(pixelWidth-40)/2;
 
-
+        writer.println("<g transform=\"translate("+pixelWidth/2+", "+pixelWidth/2+")\" >  <!-- flip scale -->");
+        SvgEarth.printCircleTicksAsSVG(writer, hpw, pixelWidth, new SvgEarthScaling(hpw));
+        writer.println(("</g>"));
 
         writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
 
@@ -296,7 +298,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
         writer.println("<line x1=\""+(-1*hpw)+"\" y1=\""+(0)+"\" x2=\""+hpw+"\" y2=\""+(0)+"\" />");
-        writer.println("<circle class=\"discontinuity\" cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
+
+        writer.println("<circle class=\"tick\" cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
 
         writer.println("</g> <!-- end axis -->");
 

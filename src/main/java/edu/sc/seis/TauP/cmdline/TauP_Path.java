@@ -27,7 +27,9 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
@@ -245,7 +247,25 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 	public void printResultSVG(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
 		float pixelWidth = outputTypeArgs.getPixelWidth();
-		printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
+		SvgEarthScaling scaleTrans = printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
+		float R = 6371f;
+		if (! arrivalList.isEmpty()) {
+			R = (float)arrivalList.get(0).getTauModel().getRadiusOfEarth();
+		}
+		Set<Double> sourceDepths = new HashSet<>();
+		for (Arrival a : arrivalList) {
+			sourceDepths.add(a.getSourceDepth());
+		}
+		SvgEarth.drawSourceSymbols(out, R, sourceDepths.stream().toList(), scaleTrans);
+		List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(new SeismicSourceArgs());
+		Set<Double> stationRadianList = new HashSet<>();
+		for (RayCalculateable ray : distanceValues) {
+			if (ray instanceof DistanceRay) {
+				stationRadianList.add(SphericalCoords.distanceTrim180(((DistanceRay)ray).getDegrees()));
+			}
+		}
+		SvgEarth.drawStationSymbols(out, R, stationRadianList.stream().toList(), scaleTrans);
+
 		if (coloring.getColoring() == ColorType.auto){
 			SvgUtil.startAutocolorG(out);
 		}
@@ -342,7 +362,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		out.println("    </g> <!-- end labels -->");
 	}
 
-	public void printScriptBeginningSVG(PrintWriter out,
+	public SvgEarthScaling printScriptBeginningSVG(PrintWriter out,
 										List<Arrival> arrivalList,
 										float pixelWidth,
 										DistDepthRange distDepthRange,
@@ -371,6 +391,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 				coloring.getColorList(), extraCSS);
 
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans, onlyNamedDiscon);
+		return scaleTrans;
 	}
 
 	@Override

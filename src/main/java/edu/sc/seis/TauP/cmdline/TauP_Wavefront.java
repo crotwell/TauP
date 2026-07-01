@@ -196,7 +196,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 coloring.getColorList(), cssExtra);
 
         SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans, onlyNamedDiscon);
-
+        SvgEarth.drawSourceSymbols(out, modelArgs.getTauModel().getRadiusOfEarth(), getSourceDepths(), scaleTrans);
         if (coloring.getColoring() == ColorType.auto){
             SvgUtil.startAutocolorG(out);
         }
