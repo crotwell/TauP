@@ -4,10 +4,10 @@ Usage: taup beachball [--arrows] [--colorphases] [--debug] [--geodetic]
                       [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--equitorialradius=m] [--equitorialradius=m]
-                      [--gridstep=<gridAngleStep>] [--invflattening=f]
-                      [--invflattening=f] [--mapwidth=<mapwidth>]
-                      [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
-                      [--numattenuationfreq=<numFrequencies>]
+                      [--gridstep=<gridAngleStep>] [--hemi=type]
+                      [--invflattening=f] [--invflattening=f]
+                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                      [--mw=<mw>] [--numattenuationfreq=<numFrequencies>]
                       [--numpoints=<numPoints>] [-o=<outFile>]
                       [--planet=<planet>] [--planet=<planet>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
@@ -54,6 +54,8 @@ Options:
                              Step in degrees for griding the background
                                radiation pattern for svg image
       --help                 display this help message
+      --hemi=type            Beachball hemisphere type, default is lower, one
+                               of upper, lower, both
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                              plot width unit, i for inch, c for cm or p for px.

@@ -75,6 +75,19 @@ line.tick {
     stroke: black;
     fill: transparent;
 }
+circle.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.source {
+    vector-effect: non-scaling-stroke;
+    fill: red;
+}
+.receiver {
+    vector-effect: non-scaling-stroke;
+    fill: blue;
+}
 .xlabel {
     text-anchor: middle;
 }
@@ -221,40 +234,102 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<g class="ticks">
+<!-- draw surface and label distances.-->
+<!-- tick marks every 5.0 degrees to 180.0.-->
+  <circle class="tick" cx="0.0" cy="0.0" r="6689.55" />
+  <circle class="tick" cx="0.0" cy="0.0" r="6753.26" />
+  <polyline  class="tick"  points=" -571.93   6537.16,  -583.03   6664.09" />
+  <polyline  class="tick"  points="-1139.50   6462.44, -1161.63   6587.92" />
+  <polyline  class="tick"  points="-1698.40   6338.53, -1731.38   6461.61" />
+  <polyline  class="tick"  points="-2244.38   6166.39, -2287.96   6286.12" />
+  <polyline  class="tick"  points="-2773.28   5947.31, -2827.13   6062.79" />
+  <polyline  class="tick"  points="-3217.36   5572.62, -3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3456.27" y="5986.43">-150.0</text>
+  <polyline  class="tick"  points="-3763.88   5375.38, -3836.97   5479.76" />
+  <polyline  class="tick"  points="-4218.06   5026.88, -4299.96   5124.49" />
+  <polyline  class="tick"  points="-4640.13   4640.13, -4730.23   4730.23" />
+  <polyline  class="tick"  points="-5026.88   4218.06, -5124.49   4299.96" />
+  <polyline  class="tick"  points="-5375.38   3763.88, -5479.76   3836.97" />
+  <polyline  class="tick"  points="-5572.62   3217.36, -5793.32   3344.78" />
+  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5986.43" y="3456.27">-120.0</text>
+  <polyline  class="tick"  points="-5947.31   2773.28, -6062.79   2827.13" />
+  <polyline  class="tick"  points="-6166.39   2244.38, -6286.12   2287.96" />
+  <polyline  class="tick"  points="-6338.53   1698.40, -6461.61   1731.38" />
+  <polyline  class="tick"  points="-6462.44   1139.50, -6587.92   1161.63" />
+  <polyline  class="tick"  points="-6537.16    571.93, -6664.09    583.03" />
+  <polyline  class="tick"  points="-6434.71     -0.00, -6689.55     -0.00" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6912.54" y="-0.00">-90.0</text>
+  <polyline  class="tick"  points="-6537.16   -571.93, -6664.09   -583.03" />
+  <polyline  class="tick"  points="-6462.44  -1139.50, -6587.92  -1161.63" />
+  <polyline  class="tick"  points="-6338.53  -1698.40, -6461.61  -1731.38" />
+  <polyline  class="tick"  points="-6166.39  -2244.38, -6286.12  -2287.96" />
+  <polyline  class="tick"  points="-5947.31  -2773.28, -6062.79  -2827.13" />
+  <polyline  class="tick"  points="-5572.62  -3217.35, -5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5986.43" y="-3456.27">-60.0</text>
+  <polyline  class="tick"  points="-5375.38  -3763.88, -5479.76  -3836.97" />
+  <polyline  class="tick"  points="-5026.88  -4218.06, -5124.49  -4299.96" />
+  <polyline  class="tick"  points="-4640.13  -4640.13, -4730.23  -4730.23" />
+  <polyline  class="tick"  points="-4218.06  -5026.88, -4299.96  -5124.49" />
+  <polyline  class="tick"  points="-3763.88  -5375.38, -3836.97  -5479.76" />
+  <polyline  class="tick"  points="-3217.35  -5572.62, -3344.77  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3456.27" y="-5986.43">-30.0</text>
+  <polyline  class="tick"  points="-2773.28  -5947.31, -2827.13  -6062.79" />
+  <polyline  class="tick"  points="-2244.38  -6166.39, -2287.96  -6286.12" />
+  <polyline  class="tick"  points="-1698.40  -6338.53, -1731.38  -6461.61" />
+  <polyline  class="tick"  points="-1139.50  -6462.44, -1161.63  -6587.92" />
+  <polyline  class="tick"  points=" -571.93  -6537.16,  -583.03  -6664.09" />
+  <polyline  class="tick"  points="    0.00  -6434.71,     0.00  -6689.55" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6912.54">0.0</text>
+  <polyline  class="tick"  points="  571.93  -6537.16,   583.03  -6664.09" />
+  <polyline  class="tick"  points=" 1139.50  -6462.44,  1161.63  -6587.92" />
+  <polyline  class="tick"  points=" 1698.40  -6338.53,  1731.38  -6461.61" />
+  <polyline  class="tick"  points=" 2244.38  -6166.39,  2287.96  -6286.12" />
+  <polyline  class="tick"  points=" 2773.28  -5947.31,  2827.13  -6062.79" />
+  <polyline  class="tick"  points=" 3217.36  -5572.62,  3344.78  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3456.27" y="-5986.43">30.0</text>
+  <polyline  class="tick"  points=" 3763.88  -5375.38,  3836.97  -5479.76" />
+  <polyline  class="tick"  points=" 4218.06  -5026.88,  4299.96  -5124.49" />
+  <polyline  class="tick"  points=" 4640.13  -4640.13,  4730.23  -4730.23" />
+  <polyline  class="tick"  points=" 5026.88  -4218.06,  5124.49  -4299.96" />
+  <polyline  class="tick"  points=" 5375.38  -3763.88,  5479.76  -3836.97" />
+  <polyline  class="tick"  points=" 5572.62  -3217.35,  5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5986.43" y="-3456.27">60.0</text>
+  <polyline  class="tick"  points=" 5947.31  -2773.28,  6062.79  -2827.13" />
+  <polyline  class="tick"  points=" 6166.39  -2244.38,  6286.12  -2287.96" />
+  <polyline  class="tick"  points=" 6338.53  -1698.40,  6461.61  -1731.38" />
+  <polyline  class="tick"  points=" 6462.44  -1139.50,  6587.92  -1161.63" />
+  <polyline  class="tick"  points=" 6537.16   -571.93,  6664.09   -583.03" />
+  <polyline  class="tick"  points=" 6434.71      0.00,  6689.55      0.00" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="6912.54" y="0.00">90.0</text>
+  <polyline  class="tick"  points=" 6537.16    571.93,  6664.09    583.03" />
+  <polyline  class="tick"  points=" 6462.44   1139.50,  6587.92   1161.63" />
+  <polyline  class="tick"  points=" 6338.53   1698.40,  6461.61   1731.38" />
+  <polyline  class="tick"  points=" 6166.39   2244.38,  6286.12   2287.96" />
+  <polyline  class="tick"  points=" 5947.31   2773.28,  6062.79   2827.13" />
+  <polyline  class="tick"  points=" 5572.62   3217.35,  5793.32   3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5986.43" y="3456.27">120.0</text>
+  <polyline  class="tick"  points=" 5375.38   3763.88,  5479.76   3836.97" />
+  <polyline  class="tick"  points=" 5026.88   4218.06,  5124.49   4299.96" />
+  <polyline  class="tick"  points=" 4640.13   4640.13,  4730.23   4730.23" />
+  <polyline  class="tick"  points=" 4218.06   5026.88,  4299.96   5124.49" />
+  <polyline  class="tick"  points=" 3763.88   5375.38,  3836.97   5479.76" />
+  <polyline  class="tick"  points=" 3217.36   5572.62,  3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3456.27" y="5986.43">150.0</text>
+  <polyline  class="tick"  points=" 2773.28   5947.31,  2827.13   6062.79" />
+  <polyline  class="tick"  points=" 2244.38   6166.39,  2287.96   6286.12" />
+  <polyline  class="tick"  points=" 1698.40   6338.53,  1731.38   6461.61" />
+  <polyline  class="tick"  points=" 1139.50   6462.44,  1161.63   6587.92" />
+  <polyline  class="tick"  points="  571.93   6537.16,   583.03   6664.09" />
+  <polyline  class="tick"  points="    0.00   6434.71,     0.00   6689.55" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6912.54">180.0</text>
+  </g>
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
 <g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >
 <g transform="translate(-0.0,0.0)" >
-<g class="ticks">
-<!-- draw surface and label distances.-->
-<!-- tick marks every 30.0 degrees to 180.0.-->
-  <polyline  class="tick"  points="-3185.50   5517.45, -3344.78   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3352.74" y="5807.11">-150.0</text>
-  <polyline  class="tick"  points="-5517.45   3185.50, -5793.32   3344.78" />
-  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5807.11" y="3352.74">-120.0</text>
-  <polyline  class="tick"  points="-6371.00     -0.00, -6689.55     -0.00" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6705.48" y="-0.00">-90.0</text>
-  <polyline  class="tick"  points="-5517.45  -3185.50, -5793.32  -3344.77" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5807.11" y="-3352.74">-60.0</text>
-  <polyline  class="tick"  points="-3185.50  -5517.45, -3344.77  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3352.74" y="-5807.11">-30.0</text>
-  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6689.55" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6705.48">0.0</text>
-  <polyline  class="tick"  points=" 3185.50  -5517.45,  3344.78  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3352.74" y="-5807.11">30.0</text>
-  <polyline  class="tick"  points=" 5517.45  -3185.50,  5793.32  -3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="-3352.74">60.0</text>
-  <polyline  class="tick"  points=" 6371.00      0.00,  6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="6705.48" y="0.00">90.0</text>
-  <polyline  class="tick"  points=" 5517.45   3185.50,  5793.32   3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="3352.74">120.0</text>
-  <polyline  class="tick"  points=" 3185.50   5517.45,  3344.78   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3352.74" y="5807.11">150.0</text>
-  <polyline  class="tick"  points="    0.00   6371.00,     0.00   6689.55" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6705.48">180.0</text>
-  </g>
 <g class="layers">
   <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
   <circle class="discontinuity 0.0" cx="0.0" cy="0.0" r="6371.0" />
@@ -267,6 +342,14 @@ circle.discontinuity.iocb {
   <circle class="discontinuity iocb" cx="0.0" cy="0.0" r="1217.1000000000004" />
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
+<g class="sources">
+  <circle class="source" cx="3.894989144688157E-13" cy="-6361.0" r="100.0" />
+</g>
+<g class="sources">
+  <g transform="rotate(315.0, 4504.9775, 4504.9775)">
+  <polygon class="receiver" points="4504.9775,4504.9775 4604.9775,4678.1826 4404.9775,4678.1826 " />
+  </g>
+</g>
   <g class="autocolor" >
 <g>
     <desc>  135.00    10.0   Pdiff    980.43     4.439     13.41    13.39   135.00   = Pdiff</desc>

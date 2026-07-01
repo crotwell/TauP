@@ -17,289 +17,82 @@
             font-size: 382px;
         }
 
-        .time_0\.00 {
-          stroke: skyblue;
+        g.swave polyline {
+            stroke: red;
         }
-        circle.time_0\.00 {
-          stroke: skyblue;
-          fill: skyblue;
+        g.swave circle {
+            stroke: red;
+            fill: red;
         }
-        .time_0\.00.label {
-          stroke: skyblue;
-          fill: skyblue;
+        polyline.swave {
+            stroke: red;
         }
-        .legend .time_0\.00 {
-          stroke: skyblue;
-          fill: skyblue;
+        circle.swave {
+            stroke: red;
+            fill: red;
         }
-        .legend .time_0\.00 text {
-          fill: skyblue;
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave text {
+          fill: red;
           stroke: transparent;
         }
-        .time_100\.00 {
-          stroke: olivedrab;
+        g.pwave polyline {
+            stroke: blue;
         }
-        circle.time_100\.00 {
-          stroke: olivedrab;
-          fill: olivedrab;
+        g.pwave circle {
+            stroke: blue;
+            fill: blue;
         }
-        .time_100\.00.label {
-          stroke: olivedrab;
-          fill: olivedrab;
+        polyline.pwave {
+            stroke: blue;
         }
-        .legend .time_100\.00 {
-          stroke: olivedrab;
-          fill: olivedrab;
+        circle.pwave {
+            stroke: blue;
+            fill: blue;
         }
-        .legend .time_100\.00 text {
-          fill: olivedrab;
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave text {
+          fill: blue;
           stroke: transparent;
         }
-        .time_200\.00 {
-          stroke: goldenrod;
+        g.both_p_swave polyline {
+            stroke: green;
         }
-        circle.time_200\.00 {
-          stroke: goldenrod;
-          fill: goldenrod;
+        g.both_p_swave circle {
+            stroke: green;
+            fill: green;
         }
-        .time_200\.00.label {
-          stroke: goldenrod;
-          fill: goldenrod;
+        polyline.both_p_swave {
+            stroke: green;
         }
-        .legend .time_200\.00 {
-          stroke: goldenrod;
-          fill: goldenrod;
+        circle.both_p_swave {
+            stroke: green;
+            fill: green;
         }
-        .legend .time_200\.00 text {
-          fill: goldenrod;
-          stroke: transparent;
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
         }
-        .time_300\.00 {
-          stroke: firebrick;
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
         }
-        circle.time_300\.00 {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .time_300\.00.label {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .time_300\.00 {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .time_300\.00 text {
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .time_400\.00 {
-          stroke: darkcyan;
-        }
-        circle.time_400\.00 {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .time_400\.00.label {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .time_400\.00 {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .time_400\.00 text {
-          fill: darkcyan;
-          stroke: transparent;
-        }
-        .time_500\.00 {
-          stroke: chocolate;
-        }
-        circle.time_500\.00 {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .time_500\.00.label {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .legend .time_500\.00 {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .legend .time_500\.00 text {
-          fill: chocolate;
-          stroke: transparent;
-        }
-        .time_600\.00 {
-          stroke: darkmagenta;
-        }
-        circle.time_600\.00 {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .time_600\.00.label {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .legend .time_600\.00 {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .legend .time_600\.00 text {
-          fill: darkmagenta;
-          stroke: transparent;
-        }
-        .time_700\.00 {
-          stroke: mediumvioletred;
-        }
-        circle.time_700\.00 {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .time_700\.00.label {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .legend .time_700\.00 {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .legend .time_700\.00 text {
-          fill: mediumvioletred;
-          stroke: transparent;
-        }
-        .time_800\.00 {
-          stroke: sienna;
-        }
-        circle.time_800\.00 {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .time_800\.00.label {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .legend .time_800\.00 {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .legend .time_800\.00 text {
-          fill: sienna;
-          stroke: transparent;
-        }
-        .time_900\.00 {
-          stroke: rebeccapurple;
-        }
-        circle.time_900\.00 {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .time_900\.00.label {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .legend .time_900\.00 {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .legend .time_900\.00 text {
-          fill: rebeccapurple;
-          stroke: transparent;
-        }
-        .time_1000\.00 {
-          stroke: skyblue;
-        }
-        circle.time_1000\.00 {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .time_1000\.00.label {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .legend .time_1000\.00 {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .legend .time_1000\.00 text {
-          fill: skyblue;
-          stroke: transparent;
-        }
-        .time_1100\.00 {
-          stroke: olivedrab;
-        }
-        circle.time_1100\.00 {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .time_1100\.00.label {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .legend .time_1100\.00 {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .legend .time_1100\.00 text {
-          fill: olivedrab;
-          stroke: transparent;
-        }
-        .time_1200\.00 {
-          stroke: goldenrod;
-        }
-        circle.time_1200\.00 {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .time_1200\.00.label {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .legend .time_1200\.00 {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .legend .time_1200\.00 text {
-          fill: goldenrod;
-          stroke: transparent;
-        }
-        .time_1300\.00 {
-          stroke: firebrick;
-        }
-        circle.time_1300\.00 {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .time_1300\.00.label {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .time_1300\.00 {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .time_1300\.00 text {
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .time_1400\.00 {
-          stroke: darkcyan;
-        }
-        circle.time_1400\.00 {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .time_1400\.00.label {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .time_1400\.00 {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .time_1400\.00 text {
-          fill: darkcyan;
+        .legend .both_p_swave text {
+          fill: green;
           stroke: transparent;
         }
 
@@ -336,6 +129,19 @@ line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;
     fill: transparent;
+}
+circle.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.source {
+    vector-effect: non-scaling-stroke;
+    fill: red;
+}
+.receiver {
+    vector-effect: non-scaling-stroke;
+    fill: blue;
 }
 .xlabel {
     text-anchor: middle;
@@ -483,40 +289,102 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<g class="ticks">
+<!-- draw surface and label distances.-->
+<!-- tick marks every 5.0 degrees to 180.0.-->
+  <circle class="tick" cx="0.0" cy="0.0" r="6689.55" />
+  <circle class="tick" cx="0.0" cy="0.0" r="6753.26" />
+  <polyline  class="tick"  points=" -571.93   6537.16,  -583.03   6664.09" />
+  <polyline  class="tick"  points="-1139.50   6462.44, -1161.63   6587.92" />
+  <polyline  class="tick"  points="-1698.40   6338.53, -1731.38   6461.61" />
+  <polyline  class="tick"  points="-2244.38   6166.39, -2287.96   6286.12" />
+  <polyline  class="tick"  points="-2773.28   5947.31, -2827.13   6062.79" />
+  <polyline  class="tick"  points="-3217.36   5572.62, -3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3456.27" y="5986.43">-150.0</text>
+  <polyline  class="tick"  points="-3763.88   5375.38, -3836.97   5479.76" />
+  <polyline  class="tick"  points="-4218.06   5026.88, -4299.96   5124.49" />
+  <polyline  class="tick"  points="-4640.13   4640.13, -4730.23   4730.23" />
+  <polyline  class="tick"  points="-5026.88   4218.06, -5124.49   4299.96" />
+  <polyline  class="tick"  points="-5375.38   3763.88, -5479.76   3836.97" />
+  <polyline  class="tick"  points="-5572.62   3217.36, -5793.32   3344.78" />
+  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5986.43" y="3456.27">-120.0</text>
+  <polyline  class="tick"  points="-5947.31   2773.28, -6062.79   2827.13" />
+  <polyline  class="tick"  points="-6166.39   2244.38, -6286.12   2287.96" />
+  <polyline  class="tick"  points="-6338.53   1698.40, -6461.61   1731.38" />
+  <polyline  class="tick"  points="-6462.44   1139.50, -6587.92   1161.63" />
+  <polyline  class="tick"  points="-6537.16    571.93, -6664.09    583.03" />
+  <polyline  class="tick"  points="-6434.71     -0.00, -6689.55     -0.00" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6912.54" y="-0.00">-90.0</text>
+  <polyline  class="tick"  points="-6537.16   -571.93, -6664.09   -583.03" />
+  <polyline  class="tick"  points="-6462.44  -1139.50, -6587.92  -1161.63" />
+  <polyline  class="tick"  points="-6338.53  -1698.40, -6461.61  -1731.38" />
+  <polyline  class="tick"  points="-6166.39  -2244.38, -6286.12  -2287.96" />
+  <polyline  class="tick"  points="-5947.31  -2773.28, -6062.79  -2827.13" />
+  <polyline  class="tick"  points="-5572.62  -3217.35, -5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5986.43" y="-3456.27">-60.0</text>
+  <polyline  class="tick"  points="-5375.38  -3763.88, -5479.76  -3836.97" />
+  <polyline  class="tick"  points="-5026.88  -4218.06, -5124.49  -4299.96" />
+  <polyline  class="tick"  points="-4640.13  -4640.13, -4730.23  -4730.23" />
+  <polyline  class="tick"  points="-4218.06  -5026.88, -4299.96  -5124.49" />
+  <polyline  class="tick"  points="-3763.88  -5375.38, -3836.97  -5479.76" />
+  <polyline  class="tick"  points="-3217.35  -5572.62, -3344.77  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3456.27" y="-5986.43">-30.0</text>
+  <polyline  class="tick"  points="-2773.28  -5947.31, -2827.13  -6062.79" />
+  <polyline  class="tick"  points="-2244.38  -6166.39, -2287.96  -6286.12" />
+  <polyline  class="tick"  points="-1698.40  -6338.53, -1731.38  -6461.61" />
+  <polyline  class="tick"  points="-1139.50  -6462.44, -1161.63  -6587.92" />
+  <polyline  class="tick"  points=" -571.93  -6537.16,  -583.03  -6664.09" />
+  <polyline  class="tick"  points="    0.00  -6434.71,     0.00  -6689.55" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6912.54">0.0</text>
+  <polyline  class="tick"  points="  571.93  -6537.16,   583.03  -6664.09" />
+  <polyline  class="tick"  points=" 1139.50  -6462.44,  1161.63  -6587.92" />
+  <polyline  class="tick"  points=" 1698.40  -6338.53,  1731.38  -6461.61" />
+  <polyline  class="tick"  points=" 2244.38  -6166.39,  2287.96  -6286.12" />
+  <polyline  class="tick"  points=" 2773.28  -5947.31,  2827.13  -6062.79" />
+  <polyline  class="tick"  points=" 3217.36  -5572.62,  3344.78  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3456.27" y="-5986.43">30.0</text>
+  <polyline  class="tick"  points=" 3763.88  -5375.38,  3836.97  -5479.76" />
+  <polyline  class="tick"  points=" 4218.06  -5026.88,  4299.96  -5124.49" />
+  <polyline  class="tick"  points=" 4640.13  -4640.13,  4730.23  -4730.23" />
+  <polyline  class="tick"  points=" 5026.88  -4218.06,  5124.49  -4299.96" />
+  <polyline  class="tick"  points=" 5375.38  -3763.88,  5479.76  -3836.97" />
+  <polyline  class="tick"  points=" 5572.62  -3217.35,  5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5986.43" y="-3456.27">60.0</text>
+  <polyline  class="tick"  points=" 5947.31  -2773.28,  6062.79  -2827.13" />
+  <polyline  class="tick"  points=" 6166.39  -2244.38,  6286.12  -2287.96" />
+  <polyline  class="tick"  points=" 6338.53  -1698.40,  6461.61  -1731.38" />
+  <polyline  class="tick"  points=" 6462.44  -1139.50,  6587.92  -1161.63" />
+  <polyline  class="tick"  points=" 6537.16   -571.93,  6664.09   -583.03" />
+  <polyline  class="tick"  points=" 6434.71      0.00,  6689.55      0.00" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="6912.54" y="0.00">90.0</text>
+  <polyline  class="tick"  points=" 6537.16    571.93,  6664.09    583.03" />
+  <polyline  class="tick"  points=" 6462.44   1139.50,  6587.92   1161.63" />
+  <polyline  class="tick"  points=" 6338.53   1698.40,  6461.61   1731.38" />
+  <polyline  class="tick"  points=" 6166.39   2244.38,  6286.12   2287.96" />
+  <polyline  class="tick"  points=" 5947.31   2773.28,  6062.79   2827.13" />
+  <polyline  class="tick"  points=" 5572.62   3217.35,  5793.32   3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5986.43" y="3456.27">120.0</text>
+  <polyline  class="tick"  points=" 5375.38   3763.88,  5479.76   3836.97" />
+  <polyline  class="tick"  points=" 5026.88   4218.06,  5124.49   4299.96" />
+  <polyline  class="tick"  points=" 4640.13   4640.13,  4730.23   4730.23" />
+  <polyline  class="tick"  points=" 4218.06   5026.88,  4299.96   5124.49" />
+  <polyline  class="tick"  points=" 3763.88   5375.38,  3836.97   5479.76" />
+  <polyline  class="tick"  points=" 3217.36   5572.62,  3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3456.27" y="5986.43">150.0</text>
+  <polyline  class="tick"  points=" 2773.28   5947.31,  2827.13   6062.79" />
+  <polyline  class="tick"  points=" 2244.38   6166.39,  2287.96   6286.12" />
+  <polyline  class="tick"  points=" 1698.40   6338.53,  1731.38   6461.61" />
+  <polyline  class="tick"  points=" 1139.50   6462.44,  1161.63   6587.92" />
+  <polyline  class="tick"  points="  571.93   6537.16,   583.03   6664.09" />
+  <polyline  class="tick"  points="    0.00   6434.71,     0.00   6689.55" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6912.54">180.0</text>
+  </g>
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
 <g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >
 <g transform="translate(-0.0,0.0)" >
-<g class="ticks">
-<!-- draw surface and label distances.-->
-<!-- tick marks every 30.0 degrees to 180.0.-->
-  <polyline  class="tick"  points="-3185.50   5517.45, -3344.78   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3352.74" y="5807.11">-150.0</text>
-  <polyline  class="tick"  points="-5517.45   3185.50, -5793.32   3344.78" />
-  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5807.11" y="3352.74">-120.0</text>
-  <polyline  class="tick"  points="-6371.00     -0.00, -6689.55     -0.00" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6705.48" y="-0.00">-90.0</text>
-  <polyline  class="tick"  points="-5517.45  -3185.50, -5793.32  -3344.77" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5807.11" y="-3352.74">-60.0</text>
-  <polyline  class="tick"  points="-3185.50  -5517.45, -3344.77  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3352.74" y="-5807.11">-30.0</text>
-  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6689.55" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6705.48">0.0</text>
-  <polyline  class="tick"  points=" 3185.50  -5517.45,  3344.78  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3352.74" y="-5807.11">30.0</text>
-  <polyline  class="tick"  points=" 5517.45  -3185.50,  5793.32  -3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="-3352.74">60.0</text>
-  <polyline  class="tick"  points=" 6371.00      0.00,  6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="6705.48" y="0.00">90.0</text>
-  <polyline  class="tick"  points=" 5517.45   3185.50,  5793.32   3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="3352.74">120.0</text>
-  <polyline  class="tick"  points=" 3185.50   5517.45,  3344.78   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3352.74" y="5807.11">150.0</text>
-  <polyline  class="tick"  points="    0.00   6371.00,     0.00   6689.55" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6705.48">180.0</text>
-  </g>
 <g class="layers">
   <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
   <circle class="discontinuity 0.0" cx="0.0" cy="0.0" r="6371.0" />
@@ -529,6 +397,9 @@ circle.discontinuity.iocb {
   <circle class="discontinuity iocb" cx="0.0" cy="0.0" r="1217.5" />
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
+<g class="sources">
+  <circle class="source" cx="3.839880038726526E-13" cy="-6271.0" r="100.0" />
+</g>
   <g class="autocolor" >
     <g>
       <desc>Time    0.00</desc>
