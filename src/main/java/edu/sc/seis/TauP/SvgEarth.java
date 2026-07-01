@@ -358,7 +358,6 @@ public class SvgEarth {
         float plotSize = R * plotOverScaleFactor;
         float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
 
-        printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
 
         out.println("<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->");
         out.println("<g transform=\"scale(" + plotScale + "," + (plotScale) + ")\" >");
@@ -367,6 +366,8 @@ public class SvgEarth {
         out.println("<g transform=\"scale(" + zoomScale + "," + zoomScale + ")\" >");
         out.println("<g transform=\"translate(" + zoomTranslateX + "," + zoomTranslateY + ")\" >");
 
+        printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
+        
         out.println("<g class=\"layers\">");
         out.println("  <circle class=\"discontinuity surface\" cx=\"0.0\" cy=\"0.0\" r=\"" + R + "\" />");
         // other boundaries

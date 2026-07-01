@@ -2,7 +2,9 @@
 
 import taup
 
-with taup.TauPServer() as taupserver:
+
+TAUP_PATH="/Users/crotwell/Code/seis/TauP/build/install/TauP/bin/taup"
+with taup.TauPServer(TAUP_PATH, verbose=True) as taupserver:
     params = taup.TimeQuery()
     params.phase(["P", "S"])
     params.degree(35)

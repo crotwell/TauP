@@ -289,6 +289,12 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
+<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
+<g transform="scale(0.037670694,0.037670694)" >
+<g transform="translate(7645.2,7645.2)" >
+<!-- scale/translate so zoomed in on area of interest -->
+<g transform="scale(1.7038383,1.7038383)" >
+<g transform="translate(-3177.582,2631.7954)" >
 <g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 2.0 degrees to 180.0.-->
@@ -511,12 +517,6 @@ circle.discontinuity.iocb {
   <polyline  class="tick"  points="    0.00   6392.95,     0.00   6557.96" />
   <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6688.83">180.0</text>
   </g>
-<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.037670694,0.037670694)" >
-<g transform="translate(7645.2,7645.2)" >
-<!-- scale/translate so zoomed in on area of interest -->
-<g transform="scale(1.7038383,1.7038383)" >
-<g transform="translate(-3177.582,2631.7954)" >
 <g class="layers">
   <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
   <circle class="discontinuity 0.0" cx="0.0" cy="0.0" r="6371.0" />
