@@ -74,7 +74,7 @@ public class FaultPlane {
     public Vector pAxis() {
         Vector n = faultNormal();
         Vector d = faultSlip();
-        Vector p = n.plus(d).normalize();
+        Vector p = n.minus(d).normalize();
         if (p.z > 0) {
             p = p.negate();
         }
@@ -84,7 +84,7 @@ public class FaultPlane {
     public Vector tAxis() {
         Vector n = faultNormal();
         Vector d = faultSlip();
-        Vector t = n.minus(d).normalize();
+        Vector t = n.plus(d).normalize();
         if (t.z > 0) {
             t = t.negate();
         }

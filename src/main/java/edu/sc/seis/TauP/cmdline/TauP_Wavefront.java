@@ -9,7 +9,6 @@ import picocli.CommandLine;
 import java.io.*;
 import java.util.*;
 
-import static edu.sc.seis.TauP.SvgEarth.calcFontSizeForEarthScale;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -189,15 +188,19 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
         double minPolylineSize = 2;
         if (scaleTrans != null) {
-            minPolylineSize = calcFontSizeForEarthScale(modelArgs.getTauModel(), scaleTrans)/ 20.0;
+            minPolylineSize = SvgEarth.calcFontSizeForEarthScale(12, modelArgs.getTauModel().getRadiusOfEarth(), pixelWidth, scaleTrans)/20.0;
         }
-        SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
+        String extraDefs = "";
+        SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel().getRadiusOfEarth(), pixelWidth,
                 scaleTrans, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                coloring.getColorList(), cssExtra);
+                coloring.getColorList(), cssExtra, extraDefs);
 
+        float R = (float) modelArgs.getTauModel().getRadiusOfEarth();
+        SvgEarth.printSvgBeginZoom(out, R, pixelWidth, scaleTrans);
+        SvgEarth.printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
         SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans, onlyNamedDiscon);
 
-        SvgEarth.drawSourceSymbols(out, modelArgs.getTauModel().getRadiusOfEarth(), getSourceDepths(), scaleTrans);
+        SvgEarth.drawSourceSymbols(out, modelArgs.getTauModel().getRadiusOfEarth(), pixelWidth, getSourceDepths(), scaleTrans);
         if (coloring.getColoring() == ColorType.auto){
             SvgUtil.startAutocolorG(out);
         }

@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.JSONLabels.*;
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 
 /**
@@ -206,11 +205,11 @@ public abstract class AbstractPathSegment {
         pw.println("    <g>");
         pw.println("      <desc>" + description() + "</desc>");
         boolean isDegenerate = path.size() <= 2;
-        double[] prevXY = SvgEarth.xyForDistRadius( path.get(0).getDistDeg(), radiusOfEarth - path.get(0).getDepth());
+        double[] prevXY = SvgEarth.xyForDistDegRadius( path.get(0).getDistDeg(), radiusOfEarth - path.get(0).getDepth());
         if (minPolylineSize > 0) {
             // check if points are all within minPolylineSize, in which case we will draw a circle instead of a polyline
             for (TimeDist td : path) {
-                double[] xy = SvgEarth.xyForDistRadius(td.getDistDeg(), radiusOfEarth - td.getDepth());
+                double[] xy = SvgEarth.xyForDistDegRadius(td.getDistDeg(), radiusOfEarth - td.getDepth());
                 if (Math.abs(xy[0] - prevXY[0]) > minPolylineSize || Math.abs(xy[1] - prevXY[1]) > minPolylineSize) {
                     // different enough to plot line
                     isDegenerate = false;
@@ -221,7 +220,7 @@ public abstract class AbstractPathSegment {
         }
         if (isDegenerate) {
             TimeDist td = path.get(0);
-            double[] xy = SvgEarth.xyForDistRadius( td.getDistDeg(), radiusOfEarth - td.getDepth());
+            double[] xy = SvgEarth.xyForDistDegRadius( td.getDistDeg(), radiusOfEarth - td.getDepth());
             pw.println("      <circle class=\"degeneratesegment " + getCssClasses() + "\" cx=\""+xy[0] + "\" cy=\""+xy[1] + "\" r=\""+minPolylineSize+"\"/>");
         } else {
             pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");

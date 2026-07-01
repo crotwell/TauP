@@ -256,7 +256,6 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     }
 
     public void printResultSVG(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList, BeachballType bbType) throws TauPException {
-        System.err.println("printResultSVG");
         if (faultPlane == null) {
             for (Arrival arrival : arrivalList) {
                 if (arrival.getRayCalculateable().hasFaultPlane()) {
@@ -266,10 +265,46 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             }
         }
         float pixelWidth = outputTypeArgs.getPixelWidth();
-        int plotOffset = 0;
         StringBuilder extraCSS = getBeachballExtraCSS();
+        StringBuilder extraDefs = getBeachballExtraDefs();
+
+        float R = 100; // doesn't matter for beachball
+        SvgEarthScaling earthScaling = new SvgEarthScaling(R);
+
+        SvgEarth.printScriptBeginningSvg(writer, R, pixelWidth,
+                earthScaling, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                coloring.getColorList(), extraCSS, extraDefs);
+
+        SvgEarth.printSvgBeginZoom(writer, R, pixelWidth, earthScaling);
+        SvgEarth.printCircleTicksAsSVG(writer, R, pixelWidth, earthScaling);
+
+        drawRadiationPatternSVG(writer, faultPlane, bbType, R, pixelWidth, earthScaling);
+
+        writer.println("<g class=\"axis\">");
+
+        writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*R)+"\" x2=\""+(0)+"\" y2=\""+(R)+"\" />");
+        writer.println("<line x1=\""+(-1*R)+"\" y1=\""+(0)+"\" x2=\""+R+"\" y2=\""+(0)+"\" />");
+
+        writer.println("<circle class=\"tick\" cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(R)+"\" />");
+
+        writer.println("</g> <!-- end axis -->");
+
+        drawFaultsSVG(writer, faultPlane, R, earthScaling);
+
+        drawPTNAxes(writer, faultPlane, 0, R, pixelWidth, earthScaling);
+        drawArrivalsSVG(writer, arrivalList, 2, R, pixelWidth, earthScaling);
+        if (! phaseArgs.isEmpty() && colorPhases) {
+            drawPhasesSVG(writer, getSeismicPhases(), bbType, 2, R, pixelWidth, earthScaling);
+        }
+        SvgEarth.printSvgEndZoom(writer);
+
+        SvgEarth.printSvgEnd(writer);
+        writer.flush();
+    }
+
+    private static StringBuilder getBeachballExtraDefs() {
         StringBuilder extraDefs = new StringBuilder();
-        extraDefs.append("<marker\n");
+        extraDefs.append("    <marker\n");
         extraDefs.append("      id=\"arrow\"\n" );
         extraDefs.append("      viewBox=\"0 0 10 10\"\n");
         extraDefs.append("      refX=\"5\"\n");
@@ -279,55 +314,24 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraDefs.append("      orient=\"auto-start-reverse\">\n");
         extraDefs.append("      <path d=\"M 0 0 L 10 5 L 0 10 z\" />\n");
         extraDefs.append("    </marker>");
-        SvgUtil.xyplotScriptBeginning( writer, toolNameFromClass(this.getClass()),
-                getCmdLineArgs(),  pixelWidth, plotOffset, coloring.getColorList(),
-                extraCSS, null, extraDefs);
-
-        float scale = 0.9f*(pixelWidth-40)/2;
-        float hpw = 0.9f*(pixelWidth-40)/2;
-
-        writer.println("<g transform=\"translate("+pixelWidth/2+", "+pixelWidth/2+")\" >  <!-- flip scale -->");
-        SvgEarth.printCircleTicksAsSVG(writer, hpw, pixelWidth, new SvgEarthScaling(hpw));
-        writer.println(("</g>"));
-
-        writer.println("<g transform=\"scale(1,-1) translate("+pixelWidth/2+", -"+pixelWidth/2+")\" >  <!-- flip scale -->");
-
-        drawRadiationPatternSVG(writer, faultPlane, scale, bbType);
-
-        writer.println("<g class=\"axis\">");
-
-        writer.println("<line x1=\""+(0)+"\" y1=\""+(-1*hpw)+"\" x2=\""+(0)+"\" y2=\""+(hpw)+"\" />");
-        writer.println("<line x1=\""+(-1*hpw)+"\" y1=\""+(0)+"\" x2=\""+hpw+"\" y2=\""+(0)+"\" />");
-
-        writer.println("<circle class=\"tick\" cx=\""+(0)+"\" cy=\""+(0)+"\" r=\""+(hpw)+"\" />");
-
-        writer.println("</g> <!-- end axis -->");
-
-        drawFaultsSVG(writer, faultPlane, scale);
-
-        writer.println("</g> <!-- end flip scale -->");
-        drawPTNAxes(writer, faultPlane, scale);
-        drawArrivalsSVG(writer, scale, arrivalList);
-        System.err.println("Before drawPhasesSVG");
-        if (! phaseArgs.isEmpty() && colorPhases) {
-            drawPhasesSVG(writer, scale, getSeismicPhases(), bbType);
-        }
-
-        writer.println("</svg>");
-        writer.flush();
+        return extraDefs;
     }
 
     private static StringBuilder getBeachballExtraCSS() {
         StringBuilder extraCSS = new StringBuilder();
         extraCSS.append("g.radpattern line {\n");
-        extraCSS.append("  stroke: black;\n");
+        extraCSS.append("  stroke: grey;\n");
+        //extraCSS.append("  stroke-width: 0.75px;\n");
+        extraCSS.append("  vector-effect: non-scaling-stroke;\n");
         extraCSS.append("}\n");
         extraCSS.append("g.axis line {\n");
-        extraCSS.append("  stroke: cyan;\n");
+        extraCSS.append("  vector-effect: non-scaling-stroke;\n");
+        extraCSS.append("  stroke: lightgrey;\n");
         extraCSS.append("  stroke-width: 0.5px;\n");
         extraCSS.append("}\n");
         extraCSS.append("g.axis circle {\n");
-        extraCSS.append("  stroke: cyan;\n");
+        extraCSS.append("  vector-effect: non-scaling-stroke;;\n");
+        extraCSS.append("  stroke: lightgrey;\n");
         extraCSS.append("}\n");
         extraCSS.append("g.fault polyline {\n");
         extraCSS.append("  stroke: green;\n");
@@ -391,7 +395,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         return extraCSS;
     }
 
-    public void drawPhasesSVG(PrintWriter writer, float scale, List<SeismicPhase> phaseList, BeachballType bbType) {
+    public void drawPhasesSVG(PrintWriter writer, List<SeismicPhase> phaseList, BeachballType bbType, float iconSize,
+                              float R, float pixelWidth, SvgEarthScaling earthScaling) {
         writer.println("<g class=\"phase\">");
         float phaseLabelAzimuth = 45;
         for (SeismicPhase phase : phaseList) {
@@ -407,24 +412,21 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 takeoffList.add(phase.calcTakeoffAngleDegree(phase.getMinRayParam()));
                 takeoffList.sort(Comparator.reverseOrder());
                 String minmaxclass = "max";
-                System.err.println("phase label: "+takeoffList.size());
                 for (double takeoff : takeoffList) {
                     if (takeoff < 0.1) {
                         // don't draw inner circle if takeoff is zero
                         continue;
                     }
                     SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(phaseLabelAzimuth, takeoff);
-
+                    Vector v  = coord.toCartesian().times(R);
+                    double[] xy = SvgEarth.xyForVector(v);
                     double sterR = coord.stereoR();
-                    double x1 = scale * (1+0);
-                    double y1 = scale * (1+0);
                     writer.println("<circle class=\"phase " + phase.getName() + " " + minmaxclass +
-                            "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + sterR * scale + "\" />");
+                            "\" cx=\"" + 0 + "\" cy=\"" + 0 + "\" r=\"" + sterR * R/earthScaling.getZoomScale() + "\" />");
 
-                    double sterX = sterR*Math.cos(coord.getTheta());
-                    double sterY = sterR*Math.sin(coord.getTheta());
-                    double xText = scale*(1+sterX);
-                    double yText = scale*(1+sterY);
+                    double xText = xy[0]*R/earthScaling.getZoomScale();
+                    double yText = xy[1]*R/earthScaling.getZoomScale();
+
                     writer.println("<text class=\"phase " + phase.getName() + "\" dx=\"1\" x=\"" + xText + "\" y=\"" + yText + "\" >"+phase.getName()+"</text>");
 
                     minmaxclass = "min";
@@ -435,7 +437,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         writer.println("</g>");
     }
 
-    public void drawArrivalsSVG(PrintWriter writer, float scale, List<Arrival> arrivalList) throws SlownessModelException, TauModelException {
+    public void drawArrivalsSVG(PrintWriter writer, List<Arrival> arrivalList, float iconSize,
+                                float R, float pixelWidth, SvgEarthScaling earthScaling) throws SlownessModelException, TauModelException {
         writer.println("<g class=\"arrival\">");
         for (Arrival arr : arrivalList) {
             if (arr.getRayCalculateable().hasAzimuth()) {
@@ -444,26 +447,23 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(az, takeoff);
                 Vector v = coord.toCartesian();
                 String compression = (arr.getAmplitudeFactorPSV()>0)? "compress" : "dilitate";
-                drawLabeledDot(writer, v, scale, arr.getName(), compression, arr.toString());
-
+                SvgEarth.drawLabeledDot(writer, v.times(R), iconSize, R, pixelWidth, earthScaling, arr.getName(), compression, arr.toString());
             }
         }
         writer.println("</g>");
     }
 
-    public void drawFaultsSVG(PrintWriter writer, FaultPlane faultPlane, float scale) {
+    public void drawFaultsSVG(PrintWriter writer, FaultPlane faultPlane,
+                              float R, SvgEarthScaling earthScaling) {
 
         writer.println("<g class=\"fault\">");
         writer.print("<polyline class=\"fault\" points=\"");
         for (int i = 180; i <= 360; i++) {
-            Vector fvec = faultPlane.faultVector(i);
-            SphericalCoordinate co = fvec.toSpherical();
+            Vector fvec = faultPlane.faultVector(i).times(R);
 
-            double sterR = co.stereoR();
-            double sterX = sterR*Math.cos(co.getTheta());
-            double sterY = sterR*Math.sin(co.getTheta());
-            double x = scale*(sterX);
-            double y = scale*(sterY);
+            double[] xy = SvgEarth.xyForVector(fvec);
+            double x = xy[0]*R/earthScaling.getZoomScale();
+            double y = xy[1]*R/earthScaling.getZoomScale();
             writer.print(x+","+y+" ");
         }
         writer.println("\" />");
@@ -471,25 +471,24 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         FaultPlane auxPlane = faultPlane.auxPlane();
         for (int i = 180; i <= 360; i++) {
             Vector fvec = auxPlane.faultVector(i);
-            SphericalCoordinate co = fvec.toSpherical();
 
-            double sterR = co.stereoR();
-            double sterX = sterR*Math.cos(co.getTheta());
-            double sterY = sterR*Math.sin(co.getTheta());
-            double x = scale * (sterX);
-            double y = scale * (sterY);
-            writer.print(x + "," + y + " ");
+            double[] xy = SvgEarth.xyForVector(fvec);
+            double x = xy[0]*R/earthScaling.getZoomScale();
+            double y = xy[1]*R/earthScaling.getZoomScale();
+            writer.print(x+","+y+" ");
         }
         writer.println("\" />");
         writer.println("</g>");
     }
 
-    public void drawRadiationPatternSVG(PrintWriter writer, FaultPlane faultPlane, float scale, BeachballType bbType) {
+    public void drawRadiationPatternSVG(PrintWriter writer, FaultPlane faultPlane, BeachballType bbType,
+                                        float R, float pixelWidth, SvgEarthScaling earthScaling) {
         int numAzPts = Math.round((float)Math.ceil(360/gridAngleStep));
         float azStep = 360f/numAzPts;
         int numTOPts = Math.round((float)Math.ceil(90/gridAngleStep));
         float toStep = 90f/numTOPts;
         writer.println("<g class=\"radpattern\">");
+        float scale = R/earthScaling.getZoomScale();
         for (int iTO = 0; iTO < numTOPts; iTO++) {
 
             for (int iAz = 0; iAz < numAzPts; iAz++) {
@@ -516,43 +515,37 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     compression = (radAmp.getThetaAmplitude()*radAmp.getPhiAmplitude()>0);
                 }
 
-                double sterR = radAmp.getCoord().stereoR();
-                double sterX = sterR*Math.cos(radAmp.getCoord().getTheta());
-                double sterY = sterR*Math.sin(radAmp.getCoord().getTheta());
-                double x1 = scale*(sterX);
-                double y1 = scale*(sterY);
-
                 String compressionStr = compression ? "compress" : "dilitate";
                 Color color = seismicColorMap.calcFor(ampValue);
                 String colorStr = "rgb("+color.getRed()+","+color.getGreen()+","+color.getBlue()+")";
 
                 String ptsStr = "";
-                SphericalCoordinate point = SphericalCoordinate.fromAzTakeoffDegree((iAz)*azStep,(iTO)*toStep);
-                double pTheta = point.getTheta();
-                double pR = point.stereoR();
-                ptsStr += (float)(scale*pR*Math.cos(pTheta))+", "+(float)(scale*pR*Math.sin(pTheta));
-                point = SphericalCoordinate.fromAzTakeoffDegree((iAz+1)*azStep, iTO*toStep);
-                pTheta = point.getTheta();
-                pR = point.stereoR();
-                ptsStr += " "+(float)(scale*pR*Math.cos(pTheta))+", "+(float)(scale*pR*Math.sin(pTheta));
-                point = SphericalCoordinate.fromAzTakeoffDegree((iAz+1)*azStep, (iTO+1)*toStep);
-                pTheta = point.getTheta();
-                pR = point.stereoR();
-                ptsStr += " "+(float)(scale*pR*Math.cos(pTheta))+", "+(float)(scale*pR*Math.sin(pTheta));
-                point = SphericalCoordinate.fromAzTakeoffDegree((iAz)*azStep, (iTO+1)*toStep);
-                pTheta = point.getTheta();
-                pR = point.stereoR();
-                ptsStr += " "+(float)(scale*pR*Math.cos(pTheta))+", "+(float)(scale*pR*Math.sin(pTheta));
+                List<SphericalCoordinate> pointList = List.of(
+                        SphericalCoordinate.fromAzTakeoffDegree((iAz)*azStep,(iTO)*toStep),
+                        SphericalCoordinate.fromAzTakeoffDegree((iAz+1)*azStep, iTO*toStep),
+                        SphericalCoordinate.fromAzTakeoffDegree((iAz+1)*azStep, (iTO+1)*toStep),
+                        SphericalCoordinate.fromAzTakeoffDegree((iAz)*azStep, (iTO+1)*toStep)
+                );
+                for (SphericalCoordinate point : pointList) {
+                    double[] xy = SvgEarth.xyForVector(point.toCartesian().times(R));
+                    float x = (float) (xy[0] * R / earthScaling.getZoomScale());
+                    float y = (float) (xy[1] * R / earthScaling.getZoomScale());
+                    ptsStr += x + "," + y+" ";
+                }
                 writer.println("<polygon class=\""+compressionStr+"\" points=\""+ptsStr+"\" stroke=\""+colorStr+"\" fill=\""+colorStr+"\"/>");
             }
         }
         writer.println("</g>");
         if (withArrows) {
-            drawRadiationPatternSVGArrows(writer, faultPlane, scale, bbType);
+            drawRadiationPatternSVGArrows(writer, faultPlane, bbType, R, pixelWidth, earthScaling);
         }
     }
 
-    public void drawRadiationPatternSVGArrows(PrintWriter writer, FaultPlane faultPlane, float scale, BeachballType bbType) {
+    public void drawRadiationPatternSVGArrows(PrintWriter writer, FaultPlane faultPlane, BeachballType bbType,
+                                              float R, float pixelWidth, SvgEarthScaling earthScaling) {
+
+        float circleSize = SvgEarth.calcIconSizeForZoom(1, R, pixelWidth, earthScaling);
+        float scale = R/earthScaling.getZoomScale();
 
         List<RadiationAmplitude> radPattern = new ArrayList<>();
         if (hemisphereType == HemisphereType.upper || hemisphereType == HemisphereType.both) {
@@ -568,37 +561,31 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             if (radAmp.getCoord().getTakeoffAngleDegree() > 90) {
                 continue;
             }
-            double sterR = radAmp.getCoord().stereoR();
-            double sterX = sterR*Math.cos(radAmp.getCoord().getTheta());
-            double sterY = sterR*Math.sin(radAmp.getCoord().getTheta());
+            double[] xy = SvgEarth.xyForVector(radAmp.getCoord().toCartesian().times(R));
+            double sterX = xy[0];
+            double sterY = xy[1];
+
             double ampX=0;
             double ampY=0;
-            boolean compression = true;
             if (bbType.equals(BeachballType.ampp)) {
                 // P
                 ampX = (Math.cos(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
                 ampY = (Math.sin(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
-                compression = radAmp.getRadialAmplitude()>0;
             }
             if (bbType.equals(BeachballType.ampsv) || bbType.equals(BeachballType.amps)) {
                 // Sv
                 ampX += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
                 ampY += (Math.sin(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
-                compression = radAmp.getThetaAmplitude()>0;
             }
             if (bbType.equals(BeachballType.ampsh) || bbType.equals(BeachballType.amps)) {
                 // Sh
                 ampX += (-Math.sin(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
                 ampY += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
-                compression = radAmp.getPhiAmplitude()>0;
-            }
-            if (bbType.equals(BeachballType.amps)) {
-                compression = (radAmp.getThetaAmplitude() * radAmp.getPhiAmplitude() > 0);
             }
             float x1, y1, x2, y2, cx, cy;
             if (bbType.equals(BeachballType.ampp)) {
-                x1 = (float) (scale * (sterX));
-                y1 = (float) (scale * (sterY));
+                x1 = (float) (scale * (sterX ));
+                y1 = (float) (scale * (sterY ));
                 x2 = (float) (scale * ((sterX + ampX)));
                 y2 = (float) (scale * ((sterY + ampY)));
                 cx = x1;
@@ -611,46 +598,24 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 cx = ((x1+x2)/2);
                 cy = ((y1+y2)/2);
             }
-            writer.println("<circle cx=\"" + cx + "\" cy=\"" + cy +"\" r=\"2\" fill=\"black=\" />");
+            writer.println("<circle cx=\"" + cx + "\" cy=\"" + cy +"\" r=\""+circleSize+"\" fill=\"black=\" />");
             writer.println("<line x1=\"" + (x1) + "\" y1=\"" + (y1)
                     + "\" x2=\"" + (x2) + "\" y2=\"" + (y2) + "\" marker-end=\"url(#arrow)\" />");
         }
 
-        writer.println("</g>");
+        writer.println("</g> <!-- end radpattern arrows -->");
     }
 
-    public void drawPTNAxes(PrintWriter writer, FaultPlane faultPlane, float scale ) {
+    public void drawPTNAxes(PrintWriter writer, FaultPlane faultPlane, float iconSize,
+                            float R, float pixelWidth, SvgEarthScaling earthScaling ) {
 
         writer.println("<g class=\"eigen\">");
 
-        drawLabeledDot(writer, faultPlane.pAxis(), scale, " P", "compress", "P Axis");
-        drawLabeledDot(writer, faultPlane.tAxis(), scale, " T", "dilitate", "T Axis");
-        drawLabeledDot(writer, faultPlane.nullAxis(), scale, " N", "", "Null Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.pAxis().times(R), iconSize, R, pixelWidth, earthScaling, " P", "compress", "P Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.tAxis().times(R), iconSize, R, pixelWidth, earthScaling, " T", "dilitate", "T Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().times(R), iconSize, R, pixelWidth, earthScaling, " N", "", "Null Axis");
 
         writer.println("</g>");
-    }
-
-    public void drawLabeledDot(PrintWriter writer, Vector z, float scale,
-                               String label, String cssclass, String tooltip) {
-
-        SphericalCoordinate coordZ = z.toSpherical();
-        if (coordZ.getTakeoffAngleDegree()>90) {
-            z = z.negate();
-            coordZ = z.toSpherical();
-        }
-        double sterR = coordZ.stereoR();
-        double sterX = sterR * Math.cos(coordZ.getTheta());
-        double sterY = sterR * Math.sin(coordZ.getTheta());
-        double x1 = scale * (1+sterX ); // text not inside flipped-g
-        double y1 = scale * (1-sterY );
-        writer.println("<g>");
-        if (tooltip!= null && tooltip.length() > 0) {
-            writer.println("<title>" + tooltip + "</title>");
-        }
-        writer.println("<circle class=\"arrival " + cssclass + "\" cx=\"" + x1 + "\" cy=\"" + y1 + "\" r=\"" + 2 + "\" />");
-        writer.println("<text class=\"arrival " + cssclass + "\" dx=\"1\" x=\"" + x1 + "\" y=\"" + y1 + "\" >"+label+"</text>");
-        writer.println("</g>");
-
     }
 
     public void printResultHtml(PrintWriter writer, FaultPlane faultPlane, List<Arrival> arrivalList) throws TauPException {

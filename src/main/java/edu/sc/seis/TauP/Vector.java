@@ -23,6 +23,10 @@ public class Vector {
         return new Vector(x-b.x, y-b.y, z-b.z);
     }
 
+    public Vector times(double d) {
+        return new Vector(d*x, d*y, d*z);
+    }
+
     public double magnitude() {
         return Math.sqrt(x*x+y*y+z*z);
     }

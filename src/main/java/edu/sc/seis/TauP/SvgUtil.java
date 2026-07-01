@@ -492,6 +492,16 @@ public class SvgUtil {
         extrtaCSS.append("        g.phasename text {\n");
         extrtaCSS.append("            font-size: "+fontSize+"px;\n");
         extrtaCSS.append("        }\n");
+        extrtaCSS.append("        g.phase text {\n");
+        extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+        extrtaCSS.append("        }\n");
+        extrtaCSS.append("        g.eigen text {\n");
+        extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+        extrtaCSS.append("            font-weight: bold;\n");
+        extrtaCSS.append("        }\n");
+        extrtaCSS.append("        g.arrival text {\n");
+        extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+        extrtaCSS.append("        }\n");
         return extrtaCSS;
     }
 

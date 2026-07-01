@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class SvgEarth {
 
-    private static final float plotOverScaleFactor = 1.2f;
+    public static final float plotOverScaleFactor = 1.2f;
 
     public static SvgEarthScaling calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange, boolean includeNegDist) {
         float R = 6371;
@@ -348,16 +348,15 @@ public class SvgEarth {
         }
         out.println("  </g>");
     }
-    public static void printModelAsSVG(PrintWriter out, TauModel tMod, float pixelWidth, SvgEarthScaling scaleTrans, boolean onlyNamedDiscon) {
+
+    public static void printSvgBeginZoom(PrintWriter out, float R, float pixelWidth, SvgEarthScaling scaleTrans) {
         float zoomScale = scaleTrans.getZoomScale();
         float zoomTranslateX = scaleTrans.getZoomTranslateX();
         float zoomTranslateY = scaleTrans.getZoomTranslateY();
         double minDist = scaleTrans.getLabelRange()[0];
         double maxDist = scaleTrans.getLabelRange()[1];
-        float R = (float) tMod.getRadiusOfEarth();
         float plotSize = R * plotOverScaleFactor;
         float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
-
 
         out.println("<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->");
         out.println("<g transform=\"scale(" + plotScale + "," + (plotScale) + ")\" >");
@@ -365,9 +364,11 @@ public class SvgEarth {
         out.println("<!-- scale/translate so zoomed in on area of interest -->");
         out.println("<g transform=\"scale(" + zoomScale + "," + zoomScale + ")\" >");
         out.println("<g transform=\"translate(" + zoomTranslateX + "," + zoomTranslateY + ")\" >");
+    }
 
-        printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
-        
+    public static void printModelAsSVG(PrintWriter out, TauModel tMod, float pixelWidth, SvgEarthScaling scaleTrans, boolean onlyNamedDiscon) {
+        float R = (float) tMod.getRadiusOfEarth();
+
         out.println("<g class=\"layers\">");
         out.println("  <circle class=\"discontinuity surface\" cx=\"0.0\" cy=\"0.0\" r=\"" + R + "\" />");
         // other boundaries
@@ -394,27 +395,56 @@ public class SvgEarth {
         out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
     }
 
-    public static void drawSourceSymbols(PrintWriter out, double R, List<Double> sourceDepths, SvgEarthScaling scaleTrans) {
+    public static void drawLabeledDot(PrintWriter writer, Vector z, float iconSize,
+                               double R, float pixelWidth, SvgEarthScaling scaleTrans,
+                               String label, String cssclass, String tooltip) {
+
+        SphericalCoordinate coordZ = z.toSpherical();
+        if (coordZ.getTakeoffAngleDegree()>90) {
+            z = z.negate();
+            coordZ = z.toSpherical();
+        }
+
+        double[] xy = xyForVector(z);
+        double x = xy[0]*R/scaleTrans.getZoomScale();
+        double y = xy[1]*R/scaleTrans.getZoomScale();
+        writer.println("<g>");
+        if (tooltip!= null && tooltip.length() > 0) {
+            writer.println("<title>" + tooltip + "</title>");
+        }
+        String dxOffset = "";
+        if (iconSize > 0) {
+            float circleSize = calcIconSizeForZoom(iconSize, R, pixelWidth, scaleTrans);
+            writer.println("<circle class=\"arrival " + cssclass + "\" cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + circleSize + "\" />");
+            dxOffset = " dx=\"1\" ";
+        }
+        writer.println("<text class=\"arrival " + cssclass + "\" "+dxOffset+" x=\"" + x + "\" y=\"" + y + "\" >"+label+"</text>");
+        writer.println("</g>");
+
+    }
+
+    public static void drawSourceSymbols(PrintWriter out, double R, float pixelWidth, List<Double> sourceDepths, SvgEarthScaling scaleTrans) {
         out.println("<g class=\"sources\">");
-        float circleSize = 100* scaleTrans.getZoomScale();
+        float circleSize = calcIconSizeForZoom(5, R, pixelWidth, scaleTrans);
+
+        System.err.println("source scale: "+scaleTrans.getZoomScale()+" R "+R+" -> "+circleSize);
+
         for (Double sourceDepth : sourceDepths) {
-            double[] xy = xyForDistRadius(0, R -sourceDepth);
+            double[] xy = xyForDistDegRadius(0, R -sourceDepth);
             out.println("  <circle class=\"source\" cx=\""+xy[0]+"\" cy=\""+xy[1]+"\" r=\"" + circleSize + "\" />");
         }
         out.println("</g>");
     }
 
-    public static void drawStationSymbols(PrintWriter out, double R, List<Double> stationDegreeList, SvgEarthScaling scaleTrans) {
-        float zoomScale = scaleTrans.getZoomScale();
-        float tSize=100*zoomScale;
+    public static void drawStationSymbols(PrintWriter out, double R, List<Double> stationDegreeList, float pixelWidth, SvgEarthScaling scaleTrans) {
+        float tSize = calcIconSizeForZoom(5, R, pixelWidth, scaleTrans);
         float ySize = (float) (tSize*Math.sqrt(3));
         out.println("<g class=\"sources\">");
         for (Double distDeg : stationDegreeList) {
             double stationDepth = 0;
-            double[] xy = xyForDistRadius(distDeg, R -stationDepth);
+            double[] xy = xyForDistDegRadius(distDeg, R -stationDepth);
             float x = (float) xy[0];
             float y = (float) xy[1];
-            //out.println("  <g >");
             out.println("  <g transform=\"rotate("+(Math.rint(180+distDeg))+", "+x+", "+y+")\">");
             out.println("  <polygon class=\"receiver\" points=\""+x+","+y+" "+(x+tSize)+","+(y+ySize)+" "+(x-tSize)+","+(y+ySize)+" " + "\" />");
             out.println("  </g>");
@@ -422,7 +452,17 @@ public class SvgEarth {
         out.println("</g>");
     }
 
-    protected static double[] xyForDistRadius(double calcDist, double radius) {
+    public static double[] xyForVector(Vector v) {
+        SphericalCoordinate sp = v.toSpherical();
+        double radian = sp.getAzimuthRadian()-Math.PI/2;
+        double stereoR = sp.stereoR();
+        return new double[] {
+                stereoR*Math.cos(radian),
+                stereoR*Math.sin(radian)
+        };
+    }
+
+    public static double[] xyForDistDegRadius(double calcDist, double radius) {
         double radian = (calcDist-90)*Math.PI/180;
         double x = radius*Math.cos(radian);
         double y = radius*Math.sin(radian);
@@ -430,7 +470,7 @@ public class SvgEarth {
     }
 
     protected static String formatDistRadiusAsXY(double calcDist, double radius) {
-        double[] xy = xyForDistRadius(calcDist, radius);
+        double[] xy = xyForDistDegRadius(calcDist, radius);
         return Outputs.formatDistance(xy[0])
                 + "  "
                 + Outputs.formatDistance(xy[1]);
@@ -481,13 +521,6 @@ public class SvgEarth {
         return new SvgEarthScaling(minmax, R);
     }
 
-    public static void printSvgEnding(PrintWriter out) {
-        out.println("  </g> ");
-        out.println("  </g> <!-- end zoom -->");
-        out.println("  </g> <!-- end translate -->");
-        out.println("  </g> ");
-        out.println("</svg>");
-    }
     public static void printSvgEndZoom(PrintWriter out) {
         out.println("  </g> ");
         out.println("  </g> <!-- end zoom -->");
@@ -527,27 +560,34 @@ public class SvgEarth {
         out.println("# draw paths");
     }
 
-    public static int calcFontSizeForEarthScale(TauModel tMod, SvgEarthScaling scaleTrans) {
+    public static int calcFontSizeForEarthScale(double R, SvgEarthScaling scaleTrans) {
         float zoomScale = scaleTrans.getZoomScale();
-        float R = (float) tMod.getRadiusOfEarth();
-        float plotSize = R * plotOverScaleFactor;
+        float plotSize = (float) (R * plotOverScaleFactor);
 
         int fontSize = (int) (plotSize / 20);
         fontSize = (int) (fontSize / zoomScale);
         return fontSize;
     }
 
-    public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
+    public static int calcFontSizeForEarthScale(float baseSize, double R, float pixelWidth, SvgEarthScaling scaleTrans) {
+        return Math.round(calcIconSizeForZoom(baseSize, R, pixelWidth, scaleTrans));
+    }
+
+    public static float calcIconSizeForZoom(float baseSize, double R, float pixelWidth, SvgEarthScaling scaleTrans) {
+        return (float) (baseSize*2*(R * plotOverScaleFactor)/pixelWidth/ scaleTrans.getZoomScale());
+    }
+
+    public static void printScriptBeginningSvg(PrintWriter out, double R, float pixelWidth,
                                                SvgEarthScaling scaleTrans, String toolName,
                                                List<String> cmdLineArgs,
-                                               List<String> colorList, String extraCSS) {
+                                               List<String> colorList, CharSequence extraCSS, CharSequence extraDefs) {
         int plotOffset = 0;
-        int fontSize = calcFontSizeForEarthScale(tMod, scaleTrans);
+        int fontSize = calcFontSizeForEarthScale(12, R, pixelWidth, scaleTrans);
         StringBuffer addCSS = SvgUtil.resizeLabels(fontSize);
         addCSS.append(extraCSS);
-
+        double[] minmax = null;
         SvgUtil.xyplotScriptBeginning( out, toolName,
-                cmdLineArgs,  pixelWidth, plotOffset, colorList, addCSS.toString());
-
+                cmdLineArgs,  pixelWidth, plotOffset, colorList, addCSS.toString(), minmax, extraDefs);
+        out.println("<!-- end SvgEarth.printScriptBeginningSvg -->");
     }
 }

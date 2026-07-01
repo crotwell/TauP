@@ -256,7 +256,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		for (Arrival a : arrivalList) {
 			sourceDepths.add(a.getSourceDepth());
 		}
-		SvgEarth.drawSourceSymbols(out, R, sourceDepths.stream().toList(), scaleTrans);
+		SvgEarth.drawSourceSymbols(out, R, pixelWidth, sourceDepths.stream().toList(), scaleTrans);
 		List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(new SeismicSourceArgs());
 		Set<Double> stationRadianList = new HashSet<>();
 		for (RayCalculateable ray : distanceValues) {
@@ -264,7 +264,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 				stationRadianList.add(SphericalCoords.distanceTrim180(((DistanceRay)ray).getDegrees()));
 			}
 		}
-		SvgEarth.drawStationSymbols(out, R, stationRadianList.stream().toList(), scaleTrans);
+		SvgEarth.drawStationSymbols(out, R, stationRadianList.stream().toList(), pixelWidth, scaleTrans);
 
 		if (coloring.getColoring() == ColorType.auto){
 			SvgUtil.startAutocolorG(out);
@@ -386,10 +386,14 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			default:
 				extraCSS += SvgUtil.createNoneColorCSS(coloring);
 		}
-		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans,
+		String extraDefs = "";
+		SvgEarth.printScriptBeginningSvg(out, tMod.getRadiusOfEarth(), pixelWidth, scaleTrans,
 				toolNameFromClass(this.getClass()), cmdLineArgs,
-				coloring.getColorList(), extraCSS);
+				coloring.getColorList(), extraCSS, extraDefs);
 
+		float R = (float) tMod.getRadiusOfEarth();
+		SvgEarth.printSvgBeginZoom(out, R, pixelWidth, scaleTrans);
+		SvgEarth.printCircleTicksAsSVG(out, R, pixelWidth, scaleTrans);
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans, onlyNamedDiscon);
 		return scaleTrans;
 	}
