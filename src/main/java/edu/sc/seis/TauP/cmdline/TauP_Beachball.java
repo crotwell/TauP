@@ -6,7 +6,7 @@ import edu.sc.seis.TauP.Vector;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
-import edu.sc.seis.TauP.gson.HemisphereType;
+import edu.sc.seis.TauP.HemisphereType;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
