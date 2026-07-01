@@ -293,7 +293,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         drawPTNAxes(writer, faultPlane, 0, R, pixelWidth, earthScaling);
         drawArrivalsSVG(writer, arrivalList, 2, R, pixelWidth, earthScaling);
-        if (! phaseArgs.isEmpty() && colorPhases) {
+        if (! phaseArgs.isEmpty() && phasesCircles) {
             drawPhasesSVG(writer, getSeismicPhases(), bbType, 2, R, pixelWidth, earthScaling);
         }
         SvgEarth.printSvgEndZoom(writer);
@@ -700,10 +700,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             defaultValue = "false")
     public boolean withArrows = false;
 
-    @CommandLine.Option(names = "--colorphases",
-            description = "Color takeoff range for phases.",
+    @CommandLine.Option(names = "--phasecircles",
+            description = "Draw circles for takeoff range for phases.",
             defaultValue = "false")
-    public boolean colorPhases = false;
+    public boolean phasesCircles = false;
 
     Colormap seismicColorMap = Colormap.blueGrey(-1.0f, 1.0f);
 

@@ -1,5 +1,5 @@
-Usage: taup beachball [--arrows] [--colorphases] [--debug] [--geodetic]
-                      [--geodetic] [--help] [--verbose]
+Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
+                      [--phasecircles] [--verbose]
                       [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                       [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
@@ -45,7 +45,6 @@ Options:
                                Sv, Sh
       --color=<coloring>     style of coloring for paths and wavefronts, one
                                of: auto, wavetype, phase, none
-      --colorphases          Color takeoff range for phases.
       --debug                enable debugging output
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
@@ -68,6 +67,7 @@ Options:
                              Number of points for json, number of arrows to
                                show direction for svg
   -o, --output=<outFile>     output to file, default is stdout.
+      --phasecircles         Draw circles for takeoff range for phases.
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
