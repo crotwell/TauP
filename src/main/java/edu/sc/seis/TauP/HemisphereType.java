@@ -1,4 +1,4 @@
-package edu.sc.seis.TauP.gson;
+package edu.sc.seis.TauP;
 
 public enum HemisphereType {
     upper,
