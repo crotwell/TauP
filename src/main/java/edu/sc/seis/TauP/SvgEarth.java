@@ -425,7 +425,7 @@ public class SvgEarth {
 
     public static void drawSourceSymbols(PrintWriter out, double R, float pixelWidth, List<Double> sourceDepths, SvgEarthScaling scaleTrans) {
         out.println("<g class=\"sources\">");
-        float circleSize = calcIconSizeForZoom(5, R, pixelWidth, scaleTrans);
+        float circleSize = calcIconSizeForZoom(3, R, pixelWidth, scaleTrans);
 
         System.err.println("source scale: "+scaleTrans.getZoomScale()+" R "+R+" -> "+circleSize);
 

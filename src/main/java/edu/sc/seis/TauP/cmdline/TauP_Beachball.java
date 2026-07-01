@@ -322,7 +322,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraCSS.append("g.radpattern line {\n");
         extraCSS.append("  stroke: grey;\n");
         //extraCSS.append("  stroke-width: 0.75px;\n");
-        extraCSS.append("  vector-effect: non-scaling-stroke;\n");
+        //extraCSS.append("  vector-effect: non-scaling-stroke;\n");
         extraCSS.append("}\n");
         extraCSS.append("g.axis line {\n");
         extraCSS.append("  vector-effect: non-scaling-stroke;\n");
@@ -567,20 +567,22 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
             double ampX=0;
             double ampY=0;
+            double radian = radAmp.getCoord().getAzimuthRadian()-Math.PI/2;
             if (bbType.equals(BeachballType.ampp)) {
                 // P
-                ampX = (Math.cos(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
-                ampY = (Math.sin(radAmp.getCoord().getTheta()) * radAmp.getRadialAmplitude()) * ampScale;
+
+                ampX = (Math.cos(radian) * radAmp.getRadialAmplitude()) * ampScale;
+                ampY = (Math.sin(radian) * radAmp.getRadialAmplitude()) * ampScale;
             }
             if (bbType.equals(BeachballType.ampsv) || bbType.equals(BeachballType.amps)) {
-                // Sv
-                ampX += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
-                ampY += (Math.sin(radAmp.getCoord().getTheta())*radAmp.getPhiAmplitude())*ampScale;
+                // Sv, or add to S
+                ampX += (Math.cos(radian)*radAmp.getPhiAmplitude())*ampScale;
+                ampY += (Math.sin(radian)*radAmp.getPhiAmplitude())*ampScale;
             }
             if (bbType.equals(BeachballType.ampsh) || bbType.equals(BeachballType.amps)) {
-                // Sh
-                ampX += (-Math.sin(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
-                ampY += (Math.cos(radAmp.getCoord().getTheta())*radAmp.getThetaAmplitude())*ampScale;
+                // Sh, or add to S
+                ampX += (-Math.sin(radian)*radAmp.getThetaAmplitude())*ampScale;
+                ampY += (Math.cos(radian)*radAmp.getThetaAmplitude())*ampScale;
             }
             float x1, y1, x2, y2, cx, cy;
             if (bbType.equals(BeachballType.ampp)) {
