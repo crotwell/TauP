@@ -1190,8 +1190,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             desc += seg.legName+" ";
         }
         desc += "\n";
-        desc += proto.branchNumSeqStr();
-        desc += "\n";
         desc += "minRayParam=" + minRayParam + " maxRayParam=" + maxRayParam;
         desc += "\n";
         desc += "minDistance=" + (minDistance * 180.0 / Math.PI)
