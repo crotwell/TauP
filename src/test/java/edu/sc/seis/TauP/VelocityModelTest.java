@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import edu.sc.seis.TauP.cmdline.WalkPhaseNamesTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +15,13 @@ import java.io.InputStreamReader;
 
 public class VelocityModelTest {
 
-    public static String[] modelNames = new String[]{"crustless.nd",
+    public static String[] modelNames = new String[]{
+            "crustless.nd",
             MoonTest.lunarModelFile,
             "cn01.tvel",
-            "constant.tvel"};
+            "constant.tvel",
+            WalkPhaseNamesTest.marsModelFile
+    };
 
     @BeforeEach
     public void setUp() throws Exception {
