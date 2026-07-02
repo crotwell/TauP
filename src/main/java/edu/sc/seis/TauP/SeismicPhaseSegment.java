@@ -69,12 +69,16 @@ public class SeismicPhaseSegment {
 							   double maxRayParam) {
 		SeismicPhaseSegment seg = new SeismicPhaseSegment(tMod, startBranch, endBranch,
 				isPWave, endAction, layerPropogationType, legName, minRayParam, maxRayParam);
-		seg.prevEndAction = switch(layerPropogationType) {
+		seg.prevEndAction = prevEndActionForStart(layerPropogationType);
+		return seg;
+	}
+
+	public static PhaseInteraction prevEndActionForStart(LayerPropogationType layerPropogationType) {
+		return switch(layerPropogationType) {
 			case UP -> START_UP;
 			case DOWN -> START_DOWN;
 			case HEAD, DIFF, SURFACE -> START_FLAT;
 		};
-		return seg;
 	}
 
 	public static SeismicPhaseSegment failSegment(TauModel tMod) {

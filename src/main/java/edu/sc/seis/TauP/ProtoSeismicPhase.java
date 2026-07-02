@@ -15,6 +15,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public ProtoSeismicPhase(List<SeismicPhaseSegment> segmentList, double receiverDepth) {
         this(segmentList, receiverDepth, null);
+        if (!segmentList.isEmpty() && segmentList.get(0).prevEndAction == null) {
+            segmentList.get(0).prevEndAction = SeismicPhaseSegment.prevEndActionForStart(segmentList.get(0).layerPropogationType);
+        }
         this.tMod = segmentList.get(0).tMod;
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {

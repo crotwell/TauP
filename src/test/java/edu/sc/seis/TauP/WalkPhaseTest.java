@@ -465,12 +465,12 @@ public class WalkPhaseTest {
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> upper = new ArrayList<>();
-        upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "p", 0, 100));
+        upper.add( SeismicPhaseSegment.startingSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "p", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, END, LayerPropogationType.UP, "p", 0, 100));
         ProtoSeismicPhase upperProto = new ProtoSeismicPhase(upper, 0);
         List<SeismicPhaseSegment> lower = new ArrayList<>();
-        lower.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "p", 0, 100));
+        lower.add( SeismicPhaseSegment.startingSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "p", 0, 100));
         lower.add(new SeismicPhaseSegment(tMod, 0, 2, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 100));
         lower.add(new SeismicPhaseSegment(tMod, 2, 0, isPWave, END, LayerPropogationType.UP, "p", 0, 100));
         ProtoSeismicPhase lowerProto = new ProtoSeismicPhase(lower, 0);
@@ -488,14 +488,14 @@ public class WalkPhaseTest {
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> turnOnly = new ArrayList<>();
-        turnOnly.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 10));
+        turnOnly.add( SeismicPhaseSegment.startingSegment(tMod, 0, 1, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 10));
         turnOnly.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, LayerPropogationType.UP, "p", 0, 10));
         ProtoSeismicPhase proto = new ProtoSeismicPhase(turnOnly, 0);
         int num = proto.calcInteractionNumber();
         assertEquals(0, num);
 
         List<SeismicPhaseSegment> reflUnder = new ArrayList<>();
-        reflUnder.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 10));
+        reflUnder.add( SeismicPhaseSegment.startingSegment(tMod, 0, 1, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 10));
         reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "p", 0, 10));
         reflUnder.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, LayerPropogationType.DOWN, "P", 0, 10));
         reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, LayerPropogationType.UP, "p", 0, 10));
@@ -508,7 +508,7 @@ public class WalkPhaseTest {
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> convTransDown = new ArrayList<>();
-        convTransDown.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TRANSDOWN, LayerPropogationType.DOWN, "P", 0, 10));
+        convTransDown.add( SeismicPhaseSegment.startingSegment(tMod, 0, 1, isPWave, TRANSDOWN, LayerPropogationType.DOWN, "P", 0, 10));
         convTransDown.add(new SeismicPhaseSegment(tMod, 2, 2, !isPWave, TURN, LayerPropogationType.DOWN, "s", 0, 10));
         convTransDown.add(new SeismicPhaseSegment(tMod, 2, 0, !isPWave, END, LayerPropogationType.UP, "s", 0, 10));
         ProtoSeismicPhase transProto = new ProtoSeismicPhase(convTransDown, 0);

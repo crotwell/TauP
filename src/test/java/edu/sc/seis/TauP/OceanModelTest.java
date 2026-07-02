@@ -297,10 +297,21 @@ public class OceanModelTest {
         TauModel tMod = TauModelLoader.createTauModel(marsVMod);
         String Pdiff = "Pdiff";
         assertTrue(PhaseSymbols.isDiffracted(Pdiff, 0), "isDiffracted "+Pdiff+" re: "+LegPuller.namedHeadDiffRE) ;
+
         String liqsilDiffName = "P" + PhaseSymbols.NAMED_DISCON_START + marsCustomDiscon + PhaseSymbols.NAMED_DISCON_END + "diff";
         assertTrue(PhaseSymbols.isDiffracted(liqsilDiffName, 0), "isDiffracted "+liqsilDiffName);
         SeismicPhase liqsilDiff = SeismicPhaseFactory.createPhase(liqsilDiffName, tMod, 0, 0);
         assertTrue(liqsilDiff.phasesExistsInModel());
+
+        String liqsilDiffDownName = "P" + PhaseSymbols.NAMED_DISCON_START + marsCustomDiscon + PhaseSymbols.NAMED_DISCON_END + "diffdnPcp";
+        assertTrue(PhaseSymbols.isDiffractedDown(liqsilDiffDownName, 0), "isDiffracted down "+liqsilDiffName);
+        SeismicPhase liqsilDiffDown = SeismicPhaseFactory.createPhase(liqsilDiffDownName, tMod, 0, 0);
+        assertTrue(liqsilDiffDown.phasesExistsInModel());
+
+        String oddDiffDownPhase = "PcpP1540diffdnPcp";
+        SeismicPhase oddDiffDownSP = SeismicPhaseFactory.createPhase(oddDiffDownPhase, tMod, 0, 0);
+        assertTrue(oddDiffDownSP.phasesExistsInModel());
+
     }
 
     public static final String marsCustomDiscon = "liquid-silicate";
