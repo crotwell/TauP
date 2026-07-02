@@ -62,11 +62,11 @@ public class WalkPhaseTest {
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( tMod,
                 startBranch, startBranch,
                 isPWave, TURN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+                0, sourceBranchP.getMaxRayParam(), receiverDepth);
 
         assertEquals(1, transDProto.endSegment().endBranch);
         assertEquals(TURN, transDProto.endSegment().endAction);
@@ -93,11 +93,11 @@ public class WalkPhaseTest {
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( tMod,
                 startBranch, tMod.getCmbBranch()-1,
                 isPWave, DIFFRACT, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+                0, sourceBranchP.getMaxRayParam(), receiverDepth);
 
         assertEquals(tMod.getCmbBranch()-1, transDProto.endSegment().endBranch);
         assertEquals(DIFFRACT, transDProto.endSegment().endAction);
@@ -141,11 +141,11 @@ public class WalkPhaseTest {
         int startBranch = tMod.getSourceBranch();
         assertEquals(0, startBranch);
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase proto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase proto = ProtoSeismicPhase.start(tMod,
                 startBranch, startBranch,
                 isPWave, TRANSDOWN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getTopRayParam()), receiverDepth);
+                0, sourceBranchP.getTopRayParam(), receiverDepth);
         assertEquals(20.0, proto.endSegment().getEndDepth());
         ProtoSeismicPhase P35diff = proto;
 
@@ -212,11 +212,11 @@ public class WalkPhaseTest {
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase manualWalk = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase manualWalk = ProtoSeismicPhase.start(tMod,
                 startBranch, tMod.getCmbBranch()-1,
                 isPWave, TRANSDOWN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+                0, sourceBranchP.getMaxRayParam(), receiverDepth);
 
         ProtoSeismicPhase autoWalk = manualWalk;
         assertEquals(tMod.getCmbBranch()-1, manualWalk.endSegment().endBranch);
@@ -257,11 +257,11 @@ public class WalkPhaseTest {
         int startBranch = tMod.getSourceBranch();
         assertEquals(1, startBranch);
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase manualWalk = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase manualWalk = ProtoSeismicPhase.start( tMod,
                 startBranch, tMod.getCmbBranch()-1,
                 isPWave, TRANSDOWN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+                0, sourceBranchP.getMaxRayParam(), receiverDepth);
 
         ProtoSeismicPhase autoWalk = manualWalk;
         assertEquals(tMod.getCmbBranch()-1, manualWalk.endSegment().endBranch);
@@ -308,11 +308,11 @@ public class WalkPhaseTest {
         assertEquals(0, startBranch);
         boolean isPWave = true;
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start(tMod,
                 startBranch, startBranch,
                 isPWave, TRANSDOWN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMinRayParam()), receiverDepth);
+                0, sourceBranchP.getMinRayParam(), receiverDepth);
         outTree = walker.nextLegs(tMod, transDProto, true);
         ProtoSeismicPhase Pedvmp = null;
         for (ProtoSeismicPhase p : outTree) {
@@ -354,11 +354,11 @@ public class WalkPhaseTest {
         int startBranch = 0;
         boolean isPWave = true;
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
-        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start(tMod,
                 startBranch, startBranch,
                 false, TRANSDOWN, LayerPropogationType.DOWN,
                 walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, LayerPropogationType.DOWN),
-                0, sourceBranchP.getMinRayParam()), receiverDepth);
+                0, sourceBranchP.getMinRayParam(), receiverDepth);
 
         outTree = walker.nextLegs(tMod, transDProto, isPWave);
         ProtoSeismicPhase phaseS20P = null;
@@ -527,15 +527,15 @@ public class WalkPhaseTest {
         Double d210 = 210.0;
         walker.excludeBoundaries(List.of(d, d210));
 
-        ProtoSeismicPhase proto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TRANSDOWN, LayerPropogationType.DOWN, "P", 0, 10), receiverDepth);
+        ProtoSeismicPhase proto = ProtoSeismicPhase.start(tMod, 0, 0, isPWave, TRANSDOWN, LayerPropogationType.DOWN, "P", 0, 10, receiverDepth);
         List<ProtoSeismicPhase> next = walker.nextLegs(tMod, proto, !isPWave);
         assertEquals(0, next.size(), "no P20S");
 
-        ProtoSeismicPhase proto_pPv20 = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "P", 0, 10), receiverDepth);
+        ProtoSeismicPhase proto_pPv20 = ProtoSeismicPhase.start(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, LayerPropogationType.UP, "P", 0, 10, receiverDepth);
         List<ProtoSeismicPhase> next_Pv20 = walker.nextLegs(tMod, proto_pPv20, isPWave);
         assertEquals(1, next_Pv20.size(), "no pPv20p, only trans, " + next_Pv20.get(0).phaseName );
 
-        ProtoSeismicPhase s20p = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 1, 1, false, TRANSUP, LayerPropogationType.UP, "s", 0, 1000), receiverDepth);
+        ProtoSeismicPhase s20p = ProtoSeismicPhase.start(tMod, 1, 1, false, TRANSUP, LayerPropogationType.UP, "s", 0, 1000, receiverDepth);
         List<ProtoSeismicPhase> next_s20p = walker.nextLegs(tMod, s20p, true);
         assertEquals(0, next_s20p.size(), "no s20p, s^20");
 

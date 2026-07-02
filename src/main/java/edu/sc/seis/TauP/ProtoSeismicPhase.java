@@ -60,6 +60,22 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)), receiverDepth);
     }
 
+    public static ProtoSeismicPhase start(TauModel tMod,
+                                          int startBranch,
+                                          int endBranch,
+                                          boolean isPWave,
+                                          PhaseInteraction endAction,
+                                          LayerPropogationType layerPropogationType,
+                                          String legName,
+                                          double minRayParam,
+                                          double maxRayParam,
+                                          double receiverDepth) {
+        SeismicPhaseSegment startSeg =
+                SeismicPhaseSegment.startingSegment(tMod,startBranch, endBranch, isPWave,
+                        endAction, layerPropogationType, legName, minRayParam, maxRayParam);
+        return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)), receiverDepth);
+    }
+
     public static ProtoSeismicPhase failNewPhase(TauModel tMod,
                                                  boolean isPWave,
                                                  LayerPropogationType layerPropogationType,
@@ -88,7 +104,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             startBranchNum = startBranchNum-1;
         }
         String legName = legNameForSegment(tMod, startBranchNum, isPWave, layerPropogationType, endAction);
-        ProtoSeismicPhase proto = startEmpty(legName, tMod, receiverDepth);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         double minRayParam = 0.0;
         double maxRayParam;
@@ -152,9 +167,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             }
             default -> throw new TauPException("Not imple type: "+layerPropogationType);
         }
-        proto.add(new SeismicPhaseSegment(tMod, startBranchNum, startBranchNum,
-                        isPWave, endAction, layerPropogationType, legName, minRayParam, maxRayParam));
-        return proto;
+        return start(tMod, startBranchNum, startBranchNum,
+                    isPWave, endAction, layerPropogationType, legName, minRayParam, maxRayParam, receiverDepth);
     }
 
 
@@ -163,6 +177,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             Alert.debug("Fail: " + reason + " empty: " + segmentList.isEmpty());
         }
         SeismicPhaseSegment failSeg = SeismicPhaseSegment.failSegment(tMod);
+        if (segmentList.isEmpty()) {
+            failSeg.prevEndAction = START_DOWN;
+        } else {
+            failSeg.prevEndAction = segmentList.get(segmentList.size() - 1).endAction;
+        }
         segmentList.add(failSeg);
         isFail = true;
         failReason = reason;
@@ -392,8 +411,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         nextSeg = new SeismicPhaseSegment(tMod,
                 startBranchNum, endBranchNum, isPWave, endAction, propTypeBeforeEndAction, nextLegName,
-                minRayParam, maxRayParam);
-        nextSeg.prevEndAction = endSeg.endAction;
+                minRayParam, maxRayParam, endSeg.endAction);
         out.add(nextSeg);
         ProtoSeismicPhase proto = new ProtoSeismicPhase(out, receiverDepth);
         try {
@@ -438,6 +456,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if (endSegment().endAction == FAIL) {
             // failing is failing, no need to validate
             return;
+        }
+        if (segmentList.get(0).prevEndAction==null) {
+            throw new TauModelException("start segment prevEndAction is null: "+phaseNameForSegments());
+
         }
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {
@@ -650,9 +672,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         hszRayParam,
-                        seg.maxRayParam
+                        seg.maxRayParam,
+                        seg.prevEndAction
                 );
-                downSplitSeg.prevEndAction = seg.prevEndAction;
                 preShadowSegList.add(downSplitSeg);
                 SeismicPhaseSegment upSplitSeg = new SeismicPhaseSegment(
                         next.tMod,
@@ -663,9 +685,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         next.layerPropogationType,
                         next.legName,
                         hszRayParam,
-                        seg.maxRayParam
+                        seg.maxRayParam,
+                        next.prevEndAction
                 );
-                upSplitSeg.prevEndAction = next.prevEndAction;
                 preShadowSegList.add(upSplitSeg);
                 if (hszBranchNum == seg.startBranch) {
                     // high slowness at top, so only need turn below phase, so fail the above phase
@@ -690,9 +712,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         seg.minRayParam,
-                        Math.min(hszRayParam, transBranch.getBotRayParam())
+                        Math.min(hszRayParam, transBranch.getBotRayParam()),
+                        seg.prevEndAction
                 );
-                downTransSeg.prevEndAction = seg.prevEndAction;
                 postShadowSegList.add(downTransSeg);
 
                 // phase that turns below HSZ
@@ -705,9 +727,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        hszRayParam,
+                        downTransSeg.endAction
                 );
-                downBelowSeg.prevEndAction = downTransSeg.endAction;
                 if (downBelowSeg.maxRayParam < downBelowSeg.minRayParam) {throw new RuntimeException("downBelowSeg max rp < min rp");}
 
                 postShadowSegList.add(downBelowSeg);
@@ -720,9 +742,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         next.layerPropogationType,
                         next.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        hszRayParam,
+                        next.prevEndAction
                 );
-                upBelowSeg.prevEndAction = next.prevEndAction;
                 if (upBelowSeg.maxRayParam < upBelowSeg.minRayParam) {throw new RuntimeException("upBelowSeg max rp < min rp");}
                 postShadowSegList.add(upBelowSeg);
 
@@ -842,9 +864,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         hszRayParam,
-                        seg.maxRayParam
+                        seg.maxRayParam,
+                        seg.prevEndAction
                 );
-                downSplitSeg.prevEndAction = seg.prevEndAction;
                 preShadowSegList.add(downSplitSeg);
                 if (next.endBranch > hszBranchNum-1) {
                     throw new RuntimeException("next seg ends before HSZ: "+next.endBranch+" > "+(hszBranchNum-1));
@@ -858,9 +880,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         next.layerPropogationType,
                         next.legName,
                         hszRayParam,
-                        seg.maxRayParam
+                        seg.maxRayParam,
+                        next.prevEndAction
                 );
-                upSplitSeg.prevEndAction = next.prevEndAction;
                 preShadowSegList.add(upSplitSeg);
                 if (hszBranchNum == seg.startBranch) {
                     // high slowness at top, so only need turn below phase, so fail the above phase
@@ -882,9 +904,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        hszRayParam,
+                        seg.prevEndAction
                 );
-                downTransSeg.prevEndAction = seg.prevEndAction;
                 postShadowSegList.add(downTransSeg);
 
                 // phase that turns below HSZ
@@ -897,9 +919,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.layerPropogationType,
                         seg.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        hszRayParam,
+                        downTransSeg.endAction
                 );
-                downBelowSeg.prevEndAction = downTransSeg.endAction;
                 if (downBelowSeg.maxRayParam < downBelowSeg.minRayParam) {throw new RuntimeException("downBelowSeg max rp < min rp");}
 
                 postShadowSegList.add(downBelowSeg);
@@ -912,9 +934,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         next.layerPropogationType,
                         next.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        hszRayParam,
+                        next.prevEndAction
                 );
-                upBelowSeg.prevEndAction = next.prevEndAction;
                 if (upBelowSeg.maxRayParam < upBelowSeg.minRayParam) {throw new RuntimeException("upBelowSeg max rp < min rp");}
                 postShadowSegList.add(upBelowSeg);
 
@@ -1358,7 +1380,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     + endAction);
         }
         SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch,
-                isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam);
+                isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam, prevEndAction);
         if ( ! isPWave &&  ! (currLeg.startsWith("K") || currLeg.equals("k"))) {
             // outer core K is treated as S wave as special case
             for(int i = Math.min(startBranch, endBranch); i <= Math.max(startBranch,endBranch); i++) {
@@ -1468,7 +1490,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             minRayParam = tMod.radiusOfEarth / velocity;
             maxRayParam = minRayParam;
             flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
-                    isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam);
+                    isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam, prevEndAction);
 
         } else {
             minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
@@ -1494,7 +1516,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     maxRayParam = headRP;
                 }
                 flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
-                        isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam);
+                        isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam, prevEndAction);
             } else if (prevEndAction == DIFFRACT || prevEndAction == TRANSUPDIFFRACT){
                 layerPropogationType = LayerPropogationType.DIFF;
                 double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
@@ -1507,13 +1529,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     maxRayParam = diffRP;
                 }
                 flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
-                        isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam);
+                        isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam, prevEndAction);
             } else {
                 throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
             }
         }
-        flatSegment.prevEndAction = prevEndAction;
-
 
         if(TauPConfig.DEBUG) {
             Alert.debug("after addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
