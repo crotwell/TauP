@@ -23,6 +23,7 @@ import java.io.*;
 				TauP_DistAz.class,
 				TauP_VelocityDison.class,
 				TauP_Find.class,
+				//TauP_Walk.class,
 				TauP_Path.class,
 				TauP_PhaseDescribe.class,
 				TauP_Pierce.class,
@@ -62,6 +63,7 @@ public class ToolRun {
 	public static final String REFLTRANSPLOT = "refltrans";
 	public static final String DISTAZ = "distaz";
 	public static final String VERSION = "version";
+	public static final String WALK = "walk";
 
 	public static void saveUsageToFile(String toolname, File dir, String filename) throws IOException {
 		TauP_Tool tool = getToolForName(toolname);
@@ -111,6 +113,7 @@ public class ToolRun {
 			case SPIKES:
 			case VERSION:
 				return true;
+			case WALK:
 			default:
 				return false;
 		}
@@ -138,6 +141,7 @@ public class ToolRun {
 			case CREATE:
 			case SETSAC:
 			case SETMSEED3:
+			case WALK:
 			default:
 				return false;
 		}
@@ -156,6 +160,8 @@ public class ToolRun {
 			tool = new TauP_PhaseDescribe();
 		} else if (toolToRun.contentEquals(FIND)) {
 			tool = new TauP_Find();
+		} else if (toolToRun.contentEquals(WALK)) {
+			tool = new TauP_Walk();
 		} else if (toolToRun.contentEquals(DISTAZ)) {
 			tool = new TauP_DistAz();
 		} else if (toolToRun.contentEquals(PIERCE)) {
