@@ -559,10 +559,7 @@ public class SeismicPhaseWalk {
                 if (startBranchNum < tMod.getNumBranches()-1) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, TRANSDOWN));
                     int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.DOWN);
-                    if (!excludeBranch.contains(endDiscon)) {
-                        if (endDiscon == tMod.getMohoBranch()) {
-                            ProtoSeismicPhase ref = proto.nextSegment(isPWave, endDiscon, REFLECT_TOPSIDE);
-                        }
+                    if (!excludeBranch.contains(endDiscon) && tMod.isDiscontinuityBranch(endDiscon, isPWave)) {
                         outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, REFLECT_TOPSIDE));
                         if (tMod.isDiffractionBranch(endDiscon, isPWave)) {
                             outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, DIFFRACT));
@@ -599,11 +596,11 @@ public class SeismicPhaseWalk {
                     }
                 }
                 int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.UP);
-                if ( ! excludeBranch.contains(endDiscon)) {
+                if ( ! excludeBranch.contains(endDiscon) && tMod.isDiscontinuityBranch(endDiscon, isPWave)) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, REFLECT_UNDERSIDE));
                     if (tMod.isDiffractionBranch(endDiscon, isPWave)) {
                         // should allow up to diffract???
-                        //outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, TRANSUPDIFFRACT));
+                        outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, TRANSUPDIFFRACT));
                     }
                 }
                 break;
@@ -620,7 +617,9 @@ public class SeismicPhaseWalk {
 
                     }
                     if ( ! excludeBranch.contains(endDisconAfterTurn) ) {
-                        outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, endDisconAfterTurn, REFLECT_UNDERSIDE));
+                        if (  tMod.isDiscontinuityBranch(endDisconAfterTurn, isPWave)) {
+                            outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, endDisconAfterTurn, REFLECT_UNDERSIDE));
+                        }
                     }
                 }
                 break;
