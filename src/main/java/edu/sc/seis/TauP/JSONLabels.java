@@ -129,11 +129,11 @@ public interface JSONLabels {
     String LEGNAME = "legname";
     String UPDOWN = "updown";
 
-    String MODEL_NAME = "modelName";
-    String RADIUS_OF_EARTH = "radiusOfEarth";
+    String MODEL_NAME = "modelname";
+    String RADIUS_OF_EARTH = "modelradius";
     String NAMED_DISCONS = "nameddisons";
-    String MODEL_MIN_RADIUS = "minRadius";
-    String MODEL_MAX_RADIUS = "maxRadius";
+    String MODEL_MIN_RADIUS = "minradius";
+    String MODEL_MAX_RADIUS = "maxradius";
     String MODEL_SPHERICAL = "spherical";
     String MODEL_LAYERS = "layers";
     String LAYER_VP = "vp";

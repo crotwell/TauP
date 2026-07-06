@@ -43,6 +43,8 @@ public class PythonBindings {
             dataclassType = "DistazResult";
         } else if (toolname.equals("curve")) {
             dataclassType = "CurveResult";
+        } else if (toolname.equals("velmerge")) {
+            dataclassType = "VelocityModel";
         } else if (toolname.equals("wavefront")) {
             dataclassType = "WavefrontResult";
         }
@@ -527,6 +529,10 @@ public class PythonBindings {
                     "SphericalCoord",
                     "TimeDist",
                     "TimeResult",
+                    "VelocityModel",
+                    "VelocityLayer",
+                    "VelocityLayerParams",
+                    "NamedDiscon",
                     "Wavefront",
                     "WavefrontPathSegment",
                     "WavefrontResult"

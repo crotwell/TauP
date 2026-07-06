@@ -34,14 +34,14 @@ public class VelocityModelSerializer
         JsonObject json = new JsonObject();
         json.addProperty(MODEL_NAME, vmod.getModelName());
         json.addProperty(RADIUS_OF_EARTH, vmod.getRadiusOfEarth());
+        json.addProperty(MODEL_MIN_RADIUS, vmod.getMinRadius());
+        json.addProperty(MODEL_MAX_RADIUS, vmod.getMaxRadius());
+        json.addProperty(MODEL_SPHERICAL, vmod.getSpherical());
         JsonArray ndArr = new JsonArray(vmod.getNamedDiscons().size());
         json.add(NAMED_DISCONS, ndArr);
         for (NamedVelocityDiscon nd : vmod.getNamedDiscons()) {
             ndArr.add(nd.asJSON());
         }
-        json.addProperty(MODEL_MIN_RADIUS, vmod.getMinRadius());
-        json.addProperty(MODEL_MAX_RADIUS, vmod.getMaxRadius());
-        json.addProperty(MODEL_SPHERICAL, vmod.getSpherical());
         JsonArray layers = new JsonArray();
         json.add(MODEL_LAYERS, layers);
         for (VelocityLayer vl : vmod.getLayers()) {
