@@ -759,8 +759,8 @@ export function form_tool_url() {
   if (toolname === 'beachball') {
     let wavetype = document.querySelector('input[name="bbwavetype"]:checked').value;
     url += `&bbtype=${wavetype}`
-    let colorphases = document.querySelector('input[name="colorphases"]').checked;
-    if (colorphases) { url += `&colorphases=true`;}
+    let phasecircles = document.querySelector('input[name="phasecircles"]').checked;
+    if (phasecircles) { url += `&phasecircles=true`;}
 
     let witharrows = document.querySelector('input[name="witharrows"]').checked;
     if ( witharrows) { url += `&arrows=true`;}
