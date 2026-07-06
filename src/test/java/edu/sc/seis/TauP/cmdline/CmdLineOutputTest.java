@@ -88,6 +88,10 @@ public class CmdLineOutputTest {
             "taup curve -o stdout -h 10 -p P,2kmps --mod prem --svg",
     };
 
+    String[] beachballTestCmds = new String[] {
+            "taup beachball --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
+    };
+
     String[] wavefrontTestCmds = new String[] {
             "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP --timestep 100",
             "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype"
@@ -183,6 +187,7 @@ public class CmdLineOutputTest {
             "taup distaz --sta 31 -80 --evt -11 21",
             "taup distaz --sta 0 0 --evt 0 30 --evt 30 0  --geodist spherical geocentric geodetic",
             "taup discon --mod ak135fcont",
+            "taup beachball --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
     };
 
     String[] setInFileCmds = new String[] {
@@ -221,6 +226,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
         allList.addAll(Arrays.asList(curveTestCmds));
+        allList.addAll(Arrays.asList(beachballTestCmds));
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
         allList.addAll(Arrays.asList(disconTestCmds));
@@ -255,6 +261,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
         allList.addAll(Arrays.asList(curveTestCmds));
+        allList.addAll(Arrays.asList(beachballTestCmds));
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
         allList.addAll(Arrays.asList(disconTestCmds));
@@ -630,6 +637,11 @@ public class CmdLineOutputTest {
     @Test
     public void testTauPCurve() throws Exception {
         runTests(curveTestCmds);
+    }
+
+    @Test
+    public void testTauPBeachball() throws Exception {
+        runTests(beachballTestCmds);
     }
 
     @Test

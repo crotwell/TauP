@@ -23,6 +23,7 @@ Tools
     taup_discon
     taup_refltrans
     taup_wavefront
+    taup_beachball
     taup_spikes
     taup_create
     taup_web
@@ -49,6 +50,7 @@ Tools included with the TauP package:
 :ref:`discon <taup_discon>`         list discontinuities in a velocity model.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
 :ref:`spikes <taup_spikes>`         create spike seismogram.
+:ref:`beachball <taup_beachball>`   plot beachballs for source.
 :ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.
 :ref:`web <taup_web>`               http access to the tools
 :ref:`version <taup_version>`       print the version.

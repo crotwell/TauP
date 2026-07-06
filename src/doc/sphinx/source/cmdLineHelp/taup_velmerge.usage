@@ -1,4 +1,4 @@
-Usage: taup velmerge [--asjson] [--debug] [--help] [--smoothbot] [--smoothtop]
+Usage: taup velmerge [--debug] [--help] [--json] [--smoothbot] [--smoothtop]
                      [--verbose] [--elev=<elevationMeters>] [-o=<outFile>]
                      [--prop=<toolPropsFilename>] (--mod=<modelName> |
                      --nd=<nDModelFilename> | --tvel=<tvelModelFilename>)
@@ -8,12 +8,13 @@ Merge part of one model into another.
 
 Options:
 
-      --asjson             output as a ".json" velocity file
       --debug              enable debugging output
       --elev=<elevationMeters>
                            modify topmost layers for an elevation (meters), may
                              be negative
       --help               display this help message
+      --json               output as a ".json" velocity file, otherwise will be
+                             a ".nd" velocity file
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
