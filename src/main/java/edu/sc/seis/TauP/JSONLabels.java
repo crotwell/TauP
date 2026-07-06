@@ -23,6 +23,10 @@ public interface JSONLabels {
     String FREE_FACTOR = "freeFactor";
     String MOMENT = "moment";
     String RADIATION_PATTERN = "radiationPattern";
+    String NPT_AXIS = "nptAxis";
+    String N_AXIS = "n";
+    String P_AXIS = "p";
+    String T_AXIS = "t";
     String RADIATION_TERM = "radiationTerm";
     String UNITCONV = "unitconv";
     String ERROR = "error";

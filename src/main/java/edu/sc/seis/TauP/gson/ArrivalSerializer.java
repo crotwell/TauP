@@ -51,10 +51,10 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         a.addProperty(JSONLabels.TAKEOFF, (float) arr.getTakeoffAngleDegree());
         a.addProperty(JSONLabels.INCIDENT, (float) arr.getIncidentAngleDegree());
         if (arr.getRayCalculateable().hasAzimuth()) {
-            a.addProperty(JSONLabels.AZ, arr.getRayCalculateable().getAzimuth());
+            a.addProperty(JSONLabels.AZ, arr.getRayCalculateable().getAzimuth().floatValue());
         }
         if (arr.getRayCalculateable().hasBackAzimuth()) {
-            a.addProperty(JSONLabels.BAZ, arr.getRayCalculateable().getBackAzimuth());
+            a.addProperty(JSONLabels.BAZ, arr.getRayCalculateable().getBackAzimuth().floatValue());
         }
         a.addProperty(JSONLabels.PURISTDIST, (float)arr.getDistDeg());
         a.addProperty(JSONLabels.PURISTNAME, arr.getPuristName());

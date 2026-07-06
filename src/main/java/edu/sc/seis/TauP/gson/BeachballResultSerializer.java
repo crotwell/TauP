@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.BeachballResult;
-import edu.sc.seis.TauP.JSONLabels;
-import edu.sc.seis.TauP.RadiationAmplitude;
-import edu.sc.seis.TauP.TimeResult;
+import edu.sc.seis.TauP.*;
 
 import java.lang.reflect.Type;
 
@@ -15,6 +12,14 @@ public class BeachballResultSerializer  implements JsonSerializer<BeachballResul
     @Override
     public JsonElement serialize(BeachballResult src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject out = baseSerialize(src, context);
+
+        JsonObject nptAxis = new JsonObject();
+        FaultPlane fp1 = src.getSourceArg().getNodalPlane1();
+        nptAxis.add(JSONLabels.N_AXIS, asAzTakeoff(fp1.nullAxis()));
+        nptAxis.add(JSONLabels.P_AXIS, asAzTakeoff(fp1.pAxis()));
+        nptAxis.add(JSONLabels.T_AXIS, asAzTakeoff(fp1.tAxis()));
+        out.add(JSONLabels.NPT_AXIS, nptAxis);
+
         out.add(JSONLabels.ARRIVAL_LIST, context.serialize(src.getArrivals()));
         JsonArray radArr = new JsonArray();
         for (RadiationAmplitude radAmp : src.getRadiationPattern()) {
@@ -28,5 +33,13 @@ public class BeachballResultSerializer  implements JsonSerializer<BeachballResul
         }
         out.add(JSONLabels.RADIATION_PATTERN, radArr);
         return out;
+    }
+
+    JsonObject asAzTakeoff(Vector v) {
+        SphericalCoordinate n = v.toSpherical();
+        JsonObject azto = new JsonObject();
+        azto.addProperty(JSONLabels.AZ, n.getAzimuthDegree());
+        azto.addProperty(JSONLabels.TAKEOFF, n.getTakeoffAngleDegree());
+        return azto;
     }
 }
