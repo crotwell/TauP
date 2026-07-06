@@ -61,12 +61,12 @@ public class VelocityLayerSerializer
             VelocityLayer vLayer = new VelocityLayer(
                     jObj.getAsJsonPrimitive("num").getAsInt(),
                     top.getAsJsonPrimitive(DEPTH).getAsDouble(),
-                    top.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
-                    top.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
-                    top.getAsJsonPrimitive(LAYER_RHO).getAsDouble(),
                     bot.getAsJsonPrimitive(DEPTH).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
                     bot.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
                     bot.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
+                    top.getAsJsonPrimitive(LAYER_RHO).getAsDouble(),
                     bot.getAsJsonPrimitive(LAYER_RHO).getAsDouble()
             );
             if (top.has(LAYER_QP)) {
