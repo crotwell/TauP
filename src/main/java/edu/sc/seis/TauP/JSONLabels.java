@@ -145,4 +145,9 @@ public interface JSONLabels {
 
     String TOP = "top";
     String BOT = "bot";
+
+    String QUAKEML_TEXT = "quakemltext";
+    String STAXML_TEXT = "staxmltext";
+    String VELOCITYMODEL_TEXT = "velocitymodeltext";
+    String VELOCITYMODELMERGE_TEXT = "velocitymodelmergetext";
 }

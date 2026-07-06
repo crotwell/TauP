@@ -67,13 +67,13 @@ public class TauP_VelocityMerge extends TauP_Tool {
         }
 
         PrintWriter dos;
-        if (Objects.equals(getOutFile(), "stdout") || Objects.equals(getOutFile(), "-")) {
-            dos = new PrintWriter(new OutputStreamWriter(System.out));
+        if (Objects.equals(outputTypeArgs.getOutFile(), "stdout") || Objects.equals(outputTypeArgs.getOutFile(), "-")) {
+            dos = outputTypeArgs.createWriter(spec.commandLine().getOut());
         } else {
             if (isDEBUG()) {
-                Alert.debug("Save to "+getOutFile());
+                Alert.debug("Save to "+outputTypeArgs.getOutFile());
             }
-            dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
+            dos = new PrintWriter(new BufferedWriter(new FileWriter(outputTypeArgs.getOutFile())));
         }
         if (Objects.equals(getOutputFormat(), ND) || Objects.equals(getOutputFormat(), OutputTypes.TEXT)) {
             outVMod.writeToND(dos);
@@ -108,7 +108,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        if (outAsJson) {
+        if (outputTypeArgs.getOutputFormat().equals(OutputTypes.JSON)) {
             return OutputTypes.JSON;
         }
         String type = inputFileArgs.getVelFileType();
@@ -121,22 +121,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
     @CommandLine.ArgGroup(multiplicity = "1", heading = "Base Velocity Model %n")
     VelocityModelArgs inputFileArgs = new VelocityModelArgs();
 
-    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is stdout.")
-    public void setOutFile(String outfile) {
-        this.outfile = outfile;
-    }
-    public String getOutFile() {
-        return this.outfile;
-    }
-    String outfile = "stdout";
-
-    @CommandLine.Option(names = "--asjson",
-            description = "output as a \".json\" velocity file"
-    )
-    public void setJsonModelFilename(boolean outAsJson) {
-        this.outAsJson = outAsJson;
-    }
-    boolean outAsJson = false;
 
     @CommandLine.ArgGroup(multiplicity = "0..1", heading = "Merge Velocity Model %n")
     OverlayVelocityModelArgs overlayModelArgs = new OverlayVelocityModelArgs();
@@ -151,6 +135,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     float elevationMeters = 0;
 
 
+    @CommandLine.Mixin
     VelModelOutputTypeArgs outputTypeArgs;
 
 

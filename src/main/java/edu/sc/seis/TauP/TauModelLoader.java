@@ -193,9 +193,11 @@ public class TauModelLoader {
          * Couldn't find it in the taup.model.path either, look in the current
          * directory.
          */
-        modelFile = new File(filename);
-        if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
-            return TauModel.readModel(modelFile.getCanonicalPath());
+        if (safeMode == false) {
+            modelFile = new File(filename);
+            if (modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
+                return TauModel.readModel(modelFile.getCanonicalPath());
+            }
         }
         // try to load velocity model of same name and do a create
         try {
@@ -276,9 +278,10 @@ public class TauModelLoader {
                 }
             }
         }
-        if (vMod == null) {
+        if (vMod == null && safeMode == false) {
             // couldn't get as a resource, so keep going
             // try a .tvel or .nd file in current directory, or no suffix
+            // but only if not in safeMode (ie taup web)
             String[] types = new String[] {"", "."+fileType};
             if (fileType == null) {
                 types = new String[] {"", ".nd", ".tvel"};
@@ -365,4 +368,12 @@ public class TauModelLoader {
     public static void clearCache() {
         tModCache.clear();
     }
+
+    public static void enableSafeModel() {
+        safeMode = true;
+    }
+    /**
+     * Safe mode, only loads from classpath or taup.model.path, not directly by filename. For use by taup web.
+     */
+    static boolean safeMode = false;
 }

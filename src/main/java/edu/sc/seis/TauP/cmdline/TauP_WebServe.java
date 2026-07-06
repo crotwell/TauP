@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.ArgumentValidationException;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
@@ -29,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static edu.sc.seis.TauP.JSONLabels.*;
+
 
 public class TauP_WebServe extends TauP_Tool {
 
@@ -38,6 +39,7 @@ public class TauP_WebServe extends TauP_Tool {
      */
     public TauP_WebServe() {
         super(null);
+        TauModelLoader.enableSafeModel();
     }
 
     /**
@@ -45,7 +47,7 @@ public class TauP_WebServe extends TauP_Tool {
      *
      */
     public TauP_WebServe(String wsNamespace) {
-        super(null);
+        this();
         this.wsNamespace = wsNamespace;
     }
 
@@ -202,18 +204,24 @@ public class TauP_WebServe extends TauP_Tool {
                     String contents = new String(bufin.readAllBytes()).trim();
                     JSONObject postParams = new JSONObject(contents);
                     // special values
-                    if (postParams.has("quakemltext")) {
-                        setQuakeML(tool, postParams.getString("quakemltext"));
-                        postParams.remove("quakemltext");
+
+                    if (postParams.has(QUAKEML_TEXT)) {
+                        setQuakeML(tool, postParams.getString(QUAKEML_TEXT));
+                        postParams.remove(QUAKEML_TEXT);
                     }
-                    if (postParams.has("staxmltext")) {
-                        setStationXML(tool, postParams.getString("staxmltext"));
-                        postParams.remove("staxmltext");
+                    if (postParams.has(STAXML_TEXT)) {
+                        setStationXML(tool, postParams.getString(STAXML_TEXT));
+                        postParams.remove(STAXML_TEXT);
                     }
-                    if (postParams.has("velocitymodeltext")) {
-                        VelocityModel vMod = GsonUtil.createGsonBuilder().create().fromJson(postParams.getString("velocitymodel"), VelocityModel.class);
+                    if (postParams.has(VELOCITYMODEL_TEXT)) {
+                        VelocityModel vMod = GsonUtil.createGsonBuilder().create().fromJson(postParams.getString(VELOCITYMODEL_TEXT), VelocityModel.class);
                         setNamedDisconModel(tool, vMod);
-                        postParams.remove("velocitymodeltext");
+                        postParams.remove(VELOCITYMODEL_TEXT);
+                    }
+                    if (postParams.has(VELOCITYMODELMERGE_TEXT)) {
+                        VelocityModel vMod = GsonUtil.createGsonBuilder().create().fromJson(postParams.getString(VELOCITYMODELMERGE_TEXT), VelocityModel.class);
+                        setMergeNamedDisconModel(tool, vMod);
+                        postParams.remove(VELOCITYMODELMERGE_TEXT);
                     }
                     queryParams = createQueryParamsFromPost(postParams, exchange);
                     webRunTool(tool, queryParams, exchange);
@@ -339,13 +347,25 @@ public class TauP_WebServe extends TauP_Tool {
     }
 
     public static void setNamedDisconModel(TauP_Tool tool, VelocityModel vMod) throws SlownessModelException, TauModelException, IOException {
-        TauModel tMod = TauModelLoader.createTauModel(vMod);
-        if (tool instanceof TauP_AbstractRayTool) {
-            ((TauP_AbstractRayTool) tool).modelArgs.setTMod(tMod);
-        } else if (tool instanceof TauP_ReflTransPlot) {
-            ((TauP_ReflTransPlot) tool).modelArgs.setTMod(tMod);
+        if (tool instanceof TauP_VelocityMerge) {
+            ((TauP_VelocityMerge) tool).inputFileArgs.setVelocityModel(vMod);
         } else {
-            throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support nameddiscon model");
+            TauModel tMod = TauModelLoader.createTauModel(vMod);
+            if (tool instanceof TauP_AbstractRayTool) {
+                ((TauP_AbstractRayTool) tool).modelArgs.setTMod(tMod);
+            } else if (tool instanceof TauP_ReflTransPlot) {
+                ((TauP_ReflTransPlot) tool).modelArgs.setTMod(tMod);
+            } else {
+                throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support nameddiscon model");
+            }
+        }
+    }
+
+    public static void setMergeNamedDisconModel(TauP_Tool tool, VelocityModel vMod) throws SlownessModelException, TauModelException, IOException {
+        if (tool instanceof TauP_VelocityMerge) {
+            ((TauP_VelocityMerge) tool).overlayModelArgs.setVelocityModel(vMod);
+        } else {
+            throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support mergenameddiscon model");
         }
     }
 
@@ -461,7 +481,13 @@ public class TauP_WebServe extends TauP_Tool {
 
     static Pattern allowedModelNamePat = Pattern.compile("[^[\\w._-]]");
 
-    public static List<String> disableOptions = List.of("o", "output", "help", "version", "phasefile");
+    public static List<String> disableOptions = List.of(
+            "o", "output", "help", "version",
+            "debug", "verbose", "prop", "phasefile",
+            "nd", "tvel", "modmerge", "ndmerge", "tvelmerge",
+            "staxml", "quakeml",
+            "sid", "eid"
+    );
 
     public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,
                                                         Map<String, Deque<String>> queryParams) throws TauPException {
@@ -623,7 +649,7 @@ public class TauP_WebServe extends TauP_Tool {
                 String contents = new String(bufin.readAllBytes()).trim();
                 JSONObject postParams = new JSONObject(contents);
                 // special values
-                List<String> disallowParams = List.of("quakemltext","staxmltext",  "velocitymodel");
+                List<String> disallowParams = List.of(QUAKEML_TEXT, STAXML_TEXT, VELOCITYMODEL_TEXT, VELOCITYMODELMERGE_TEXT);
                 for (String disallowedCmd : disallowParams) {
                     if (postParams.has(disallowedCmd)) {
                         specialNonCmdLine.add(disallowedCmd);

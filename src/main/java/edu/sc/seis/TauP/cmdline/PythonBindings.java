@@ -74,12 +74,20 @@ public class PythonBindings {
         CommandLine.Model.OptionSpec qmlText = null;
         CommandLine.Model.OptionSpec staxmlText = null;
         CommandLine.Model.OptionSpec velmodelText = null;
+        CommandLine.Model.OptionSpec velmodelMergeText = null;
+
         for (CommandLine.Model.OptionSpec op : sortedOptions) {
             if (op.longestName().equals("--model")) {
                 velmodelText = CommandLine.Model.OptionSpec.builder("--velocitymodeltext")
-                    .paramLabel("txt")
-                    .type(String.class)
-                    .description("Velocity model as json to load for calculations, similar to --model but is text instead of a file or name").build();
+                        .paramLabel("txt")
+                        .type(String.class)
+                        .description("Velocity model as json to load for calculations, similar to --model but is text instead of a file or name").build();
+
+            } else if (op.longestName().equals("--modmerge")) {
+                velmodelMergeText = CommandLine.Model.OptionSpec.builder("--velocitymodelmergetext")
+                        .paramLabel("txt")
+                        .type(String.class)
+                        .description("Velocity merge model as json to load for calculations, similar to --modmerge but is text instead of a file or name").build();
 
             } else if (op.longestName().equals("--quakeml")) {
                 qmlText = CommandLine.Model.OptionSpec.builder("--quakemltext")
@@ -95,6 +103,9 @@ public class PythonBindings {
         }
         if (velmodelText != null) {
             sortedOptions.add(velmodelText);
+        }
+        if (velmodelMergeText != null) {
+            sortedOptions.add(velmodelMergeText);
         }
         if (qmlText != null) {
             sortedOptions.add(qmlText);
@@ -391,12 +402,7 @@ public class PythonBindings {
             "nameddiscon" // arg for OutputTypes.ND
     );
 
-    public static List<String> ignoreOptions = new ArrayList<>(List.of(
-            "help", "version", "debug", "verbose",
-            "prop", "output", "nd", "tvel",
-            "staxml", "quakeml", "phasefile",
-            "sid", "eid"
-    ));
+    public static List<String> ignoreOptions = new ArrayList<>(TauP_WebServe.disableOptions);
     static {
         ignoreOptions.addAll(outputFormatOptions);
     }
