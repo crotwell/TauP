@@ -1,16 +1,15 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import edu.sc.seis.TauP.cmdline.WalkPhaseNamesTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class VelocityModelTest {
@@ -28,8 +27,11 @@ public class VelocityModelTest {
     }
 
     public static VelocityModel loadTestVelMod(String name) throws IOException, VelocityModelException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(VelocityModelTest.class.getClassLoader()
-                .getResourceAsStream("edu/sc/seis/TauP/" + name)));
+        String jarPath = "edu/sc/seis/TauP/" + name;
+        InputStream inStream = VelocityModelTest.class.getClassLoader()
+                .getResourceAsStream(jarPath);
+        assertNotNull(inStream, jarPath);
+        BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         VelocityModel vmod;
         if (name.endsWith(".tvel")) {
             vmod = VelocityModel.readTVelFile(in, name);

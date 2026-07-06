@@ -86,7 +86,7 @@ public class MarsTest {
 
     @Test
     public void marsMay25LiquidLowerMantleDiffdown() throws VelocityModelException, IOException, SlownessModelException, TauModelException {
-        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsMay2025.nd");
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsKahnMay2025.nd");
         assertEquals(0.0, marsVMod.getVelocityLayer(marsVMod.layerNumberAbove(1560)).getTopSVelocity());
         TauModel tMod = TauModelLoader.createTauModel(marsVMod);
         String oddDiffDownPhase = "PcpP1540diffdnPcp";
