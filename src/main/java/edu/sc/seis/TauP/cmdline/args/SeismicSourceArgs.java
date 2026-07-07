@@ -99,8 +99,8 @@ public class SeismicSourceArgs {
             if (strikeDipRake.get(1) < -90 || 90 < strikeDipRake.get(1) ) {
                 throw new ArgumentValidationException("Dip should be -90 to 90, but was "+strikeDipRake.get(1));
             }
-            if (strikeDipRake.get(2) < -180 || 180 < strikeDipRake.get(2) ) {
-                throw new ArgumentValidationException("Rake should be -180 to 180, but was "+strikeDipRake.get(2));
+            if (strikeDipRake.get(2) < -180 || 360 < strikeDipRake.get(2) ) {
+                throw new ArgumentValidationException("Rake should be -180 to 360, but was "+strikeDipRake.get(2));
             }
         }
     }
