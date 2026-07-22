@@ -57,7 +57,7 @@ taup curve -o stdout -h 10 -p P
 taup curve -o stdout -h 10 -p P --mod ak135
 taup curve -o stdout -h 10 -p P --mod ak135 --redkm 8
 taup curve -o stdout -h 10 -p P,2kmps --mod prem --svg
-taup beachball --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg
+taup beachball -o stdout --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg
 taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP --timestep 100
 taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype
 taup velplot -o stdout --mod ak135 --svg

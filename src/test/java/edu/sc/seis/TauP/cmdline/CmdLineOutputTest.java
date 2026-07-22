@@ -89,7 +89,7 @@ public class CmdLineOutputTest {
     };
 
     String[] beachballTestCmds = new String[] {
-            "taup beachball --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
+            "taup beachball -o stdout --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
     };
 
     String[] wavefrontTestCmds = new String[] {
@@ -721,7 +721,7 @@ public class CmdLineOutputTest {
     public void testCmd(String cmd) throws Exception {
         String outContent = runCmd(cmd);
         assertNotNull(outContent);
-        assertNotEquals(0, outContent.length());
+        assertNotEquals(0, outContent.length(), cmd);
         BufferedReader prior = getPriorOutput(cmd);
         BufferedReader current = new BufferedReader(new StringReader(outContent));
         int lineNum = 1;
