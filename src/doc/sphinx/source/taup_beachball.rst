@@ -8,6 +8,9 @@ TauP Beachball creates a focal mechanism "beachball" plots of
 seismic sources, optionally overlain by takeoff angles for seismic phases,
 and arrivals at their takeoff and azimuth.
 
+Note that only phases starting with a P leg will plot on the P beachball, and only phases starting with
+an S leg will plot on the Sv, Sh and S beachball.
+
 For example, this command plots a beachball, phase distance circles and
 a few arrivals.
 
