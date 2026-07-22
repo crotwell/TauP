@@ -241,6 +241,23 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getIncidentAngleDegree();
             }
+        } else if (axisType==AxisType.dincidentddeg || axisType==AxisType.dtakeoffddeg) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            Arrival prev = arrivalAtIndex(0, phase);
+            double num;
+            for (int i = 0; i < dist.length-1; i++) {
+                Arrival arrival = arrivalAtIndex(i+1, phase);
+                if (axisType == AxisType.dincidentddeg) {
+                    num = arrival.getIncidentAngleDegree()-prev.getIncidentAngleDegree();
+                } else {
+                    num = arrival.getTakeoffAngleDegree()-prev.getTakeoffAngleDegree();
+                }
+                out[i] = (num)/(arrival.getDistDeg()-prev.getDistDeg());
+                prev = arrival;
+            }
+            // last point use backwards, so same as -1
+            out[out.length-1] = out[out.length-2];
         } else if (axisType==AxisType.maxdepth) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
@@ -737,6 +754,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "dp/ddelta (rad)";
             case dpddeg:
                 return "dp/ddelta (deg)";
+            case dtakeoffddeg:
+                return "dtakeoff/ddelta (deg)";
+            case dincidentddeg:
+                return "dincident/ddelta (deg)";
             case refltran:
                 return "Energy Flux Factor Reflection/Transmission Coef. PSv,Sh";
             case refltranpsv:

@@ -176,6 +176,8 @@ public class Outputs {
                 outFormat = distanceFormatNoPad;
                 break;
             case dpddeg:
+            case dtakeoffddeg:
+            case dincidentddeg:
                 outFormat = rayParamFormat;
                 break;
             case index:

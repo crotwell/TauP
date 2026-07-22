@@ -18,6 +18,8 @@ public enum AxisType {
     maxdepth,
     dpddelta,
     dpddeg,
+    dtakeoffddeg,
+    dincidentddeg,
     amp,
     amppsv,
     ampsh,
@@ -66,6 +68,8 @@ public enum AxisType {
             case maxdepth:
             case dpddelta:
             case dpddeg:
+            case dtakeoffddeg:
+            case dincidentddeg:
             case geospread:
             case energygeospread:
             case pathlength:
@@ -120,6 +124,8 @@ public enum AxisType {
             case maxdepth:
             case dpddelta:
             case dpddeg:
+            case dtakeoffddeg:
+            case dincidentddeg:
             case geospread:
             case energygeospread:
             case radiation:
