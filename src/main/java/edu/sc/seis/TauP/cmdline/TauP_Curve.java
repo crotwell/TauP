@@ -13,6 +13,7 @@ import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 import static edu.sc.seis.TauP.XYPlottingData.trimAllToMinMax;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
+import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
 @CommandLine.Command(name = "curve",
         description = "Plot travel time vs. distance and other curves for seismic phases.",
@@ -498,7 +499,12 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
-        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        XYPlotOutput xyOut = new XYPlotOutput(xyPlots);
+        String title = modelArgs.getTauModel().getModelName();
+        if (getSourceDepths().isEmpty()) {
+            title +=" (h=" + depthsToString(getSourceDepths()) + " km)";
+        }
+        xyOut.setTitle(title);
         xyOut.setColoringArgs(coloring);
         List<PhaseName> phaseNameList = parsePhaseNameList();
         xyOut.setPhaseNames(phaseNameList);

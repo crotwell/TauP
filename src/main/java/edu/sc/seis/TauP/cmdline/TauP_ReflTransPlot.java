@@ -101,7 +101,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
-        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        XYPlotOutput xyOut = new XYPlotOutput(xyPlots);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
         xyOut.getColoringArgs().setColoring(ColorType.phase);

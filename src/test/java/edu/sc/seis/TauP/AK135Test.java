@@ -248,7 +248,7 @@ public class AK135Test  {
             //xyData.add(xyPlot);
 
             // plot raw published values
-            XYPlotOutput xyPlotOutput = new XYPlotOutput(List.of(publishedxyPlot) , taup.modelArgs);
+            XYPlotOutput xyPlotOutput = new XYPlotOutput(List.of(publishedxyPlot));
             xyPlotOutput.setTitle("Published AK135 for "+phaseTitle+" at "+sourceDepth+" km, red="+redVel+" s/deg");
             String filename = "pub_ak135_"+phase+"_"+sourceDepthList.get(0)+".html";
             PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, filename)));
@@ -291,7 +291,7 @@ public class AK135Test  {
         }
 
         // plot delta time
-        XYPlotOutput xyPlotOutput = new XYPlotOutput(xyData, taup.modelArgs);
+        XYPlotOutput xyPlotOutput = new XYPlotOutput(xyData);
         String sourceTitle = "";
         for (Float sourceDepth : sourceDepthList){
             sourceTitle+=","+sourceDepth;

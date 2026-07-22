@@ -91,7 +91,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             coloringArgs.setColorList(colorList);
             ModelArgs modelArgs = new ModelArgs();
             modelArgs.setModelName("");
-            XYPlotOutput xyOut = new XYPlotOutput(xyPlotList, null);
+            XYPlotOutput xyOut = new XYPlotOutput(xyPlotList );
             title = title.substring(2);
             xyOut.setTitle(title.trim());
             xyOut.setxAxisMinMax(xAxisMinMax);

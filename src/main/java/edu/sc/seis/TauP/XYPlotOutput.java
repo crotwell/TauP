@@ -10,9 +10,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
 /**
@@ -20,9 +18,8 @@ import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
  */
 public class XYPlotOutput {
 
-    public XYPlotOutput(List<XYPlottingData> xyPlots, ModelArgs modelArgs) {
+    public XYPlotOutput(List<XYPlottingData> xyPlots) {
         this.xyPlots = xyPlots;
-        this.modelArgs = modelArgs;
     }
 
     public static void checkEqualMinMax(double[] minmax, double xpercent, double ypercent) {
@@ -313,8 +310,8 @@ public class XYPlotOutput {
     }
 
     public String getTitle() {
-        if (title == null && modelArgs != null) {
-            return modelArgs.getModelName() + " (h=" + depthsToString(modelArgs.getSourceDepths()) + " km)";
+        if (title == null) {
+            return "";
         } else {
             return title;
         }
@@ -339,53 +336,6 @@ public class XYPlotOutput {
         this.yLabel = y;
     }
     String yLabel = "";
-
-    public XYPlotOutput convertToCartesian() throws TauPException {
-        List<XYPlottingData> convXYPlotList = new ArrayList<>();
-        for (XYPlottingData xyp : xyPlots) {
-            if ( ! (Objects.equals(xyp.xAxisType, radian.name())
-                        || Objects.equals(xyp.xAxisType, degree180.name())
-                        || Objects.equals(xyp.xAxisType, degree.name())
-                        || Objects.equals(xyp.yAxisType, ModelAxisType.depth.name())
-                        || Objects.equals(xyp.yAxisType, ModelAxisType.radius.name())
-                )) {
-                throw new TauPException("Unable to convert to cartesian for axis: "+xyp.xAxisType+" "+xyp.yAxisType);
-            }
-            List<XYSegment> convSegList = new ArrayList<>();
-            for (XYSegment seg : xyp.segmentList) {
-                double[] xVal = new double[seg.x.length];
-                double[] yVal = new double[xVal.length];
-                for (int i = 0; i < xVal.length; i++) {
-                    double radian = 0;
-                    if (Objects.equals(xyp.xAxisType, AxisType.radian.name())) {
-                        radian = seg.x[i]-Math.PI/2;
-                    } else if (Objects.equals(xyp.xAxisType, degree.name())
-                            || Objects.equals(xyp.xAxisType, degree180.name())) {
-                        radian = (seg.x[i]-90)*Math.PI/180;
-                    }
-                    double radius = 0;
-                    if (Objects.equals(xyp.yAxisType, ModelAxisType.depth.name())) {
-                        radius = modelArgs.getTauModel().getRadiusOfEarth()-seg.y[i];
-                    } else if (Objects.equals(xyp.yAxisType, ModelAxisType.radius.name())) {
-                        radius = seg.y[i];
-                    }
-                    xVal[i] = radius*Math.cos(radian);
-                    yVal[i] = radius*Math.sin(radian);
-                }
-                XYSegment convSeg = new XYSegment(xVal, yVal);
-                convSeg.cssClasses = List.copyOf(seg.cssClasses);
-                convSeg.description = seg.description;
-                convSegList.add(convSeg);
-            }
-            convXYPlotList.add(new XYPlottingData(convSegList, kilometer.name(), kilometer.name(),
-                    xyp.label, xyp.description, xyp.cssClasses));
-        }
-        XYPlotOutput out = new XYPlotOutput(convXYPlotList, modelArgs);
-        out.setPhaseNames(phaseNames);
-        out.title = title;
-        out.coloringArgs = coloringArgs;
-        return out;
-    }
 
     public boolean isAutoColor() {
         return coloringArgs.getColoring() == ColorType.auto;
@@ -436,7 +386,6 @@ public class XYPlotOutput {
     }
 
     List<XYPlottingData> xyPlots;
-    ModelArgs modelArgs;
     List<PhaseName> phaseNames = new ArrayList<>();
 
     String title = null;
@@ -451,10 +400,6 @@ public class XYPlotOutput {
 
     boolean xAxisInvert = false;
     boolean yAxisInvert = false;
-
-    public ModelArgs getModelArgs() {
-        return modelArgs;
-    }
 
     public List<PhaseName> getPhaseNames() {
         return phaseNames;
