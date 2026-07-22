@@ -533,6 +533,7 @@ public class Arrival {
      * Energy Geometrical spreading factor.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.10.
      * Note that eq 13.10 has divide by zero in case of a horizontal ray arriving at the receiver.
+     * Also infinite in case of horizontal takeoff angle tan(90)=inf
      *
      */
     public double getEnergyGeometricSpreadingFactor() {
@@ -542,9 +543,21 @@ public class Arrival {
         out *= getPhase().velocityAtSource()/
                 ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
         double takeoffRadian = getTakeoffAngleRadian();
-        out *= Math.tan(takeoffRadian)/Math.cos(getIncidentAngleRadian());
-        out *= 1/Math.sin(getModuloDist());
-        double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta
+        double incidentRadian = getIncidentAngleRadian();
+        // tan(90) is infinity, limit to ~89.95 deg
+        if (Math.abs(takeoffRadian-Math.PI/2)<1e-3) {
+            out *= Math.tan(Math.PI/2-1e-3) / Math.cos(incidentRadian);
+        } else {
+            out *= Math.tan(takeoffRadian) / Math.cos(incidentRadian);
+        }
+        // sin(180) = 0, limit to ~189.95 deg
+        double modDist = getModuloDist();
+        if (Math.abs(modDist-Math.PI)<1e-3) {
+            out *= 1 / Math.sin(Math.PI-1e-3);
+        } else {
+            out *= 1 / Math.sin(modDist);
+        }
+        double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta, same as d2T/ddelta2 as p = dT/ddelta
         out *= Math.abs(dRPdDist);
         return out;
     }
