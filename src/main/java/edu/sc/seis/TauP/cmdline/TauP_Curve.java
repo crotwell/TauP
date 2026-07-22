@@ -1,7 +1,11 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -518,7 +522,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots);
         String title = modelArgs.getTauModel().getModelName();
-        if (getSourceDepths().isEmpty()) {
+        if (!getSourceDepths().isEmpty()) {
             title +=" (h=" + depthsToString(getSourceDepths()) + " km)";
         }
         xyOut.setTitle(title);
@@ -533,7 +537,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             xyOut.setyAxisInvert(true);
         }
         if (outputTypeArgs.isJSON()) {
-            xyOut.printAsJSON(writer, 2);
+
+            CurveResult curveResult = new CurveResult(modelArgs.getModelName(),
+                    getSourceDepths(), getReceiverDepths(),
+                    getPhaseArgs().parsePhaseNameList(),
+                    getScatterer(), xyOut);
+            GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+            writer.println(gsonBuilder.create().toJson(curveResult));
+            writer.flush();
         } else if (outputTypeArgs.isText()) {
             xyOut.printAsGmtText(writer);
         } else if (outputTypeArgs.isGMT()) {
