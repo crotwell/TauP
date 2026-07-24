@@ -41,6 +41,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(BeachballResult.class, new BeachballResultSerializer());
         gson.registerTypeAdapter(CurveResult.class, new CurveResultSerializer());
         gson.registerTypeAdapter(PhaseDescribeResult.class, new PhaseDescribeSerializer());
+        gson.registerTypeAdapter(ReflTransResult.class, new ReflTransResultSerializier());
         gson.registerTypeAdapter(WavefrontResult.class, new WavefrontSerializer());
 
     }

@@ -1,10 +1,12 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.ColorType;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         List<XYPlottingData> xypList;
 
         VelocityModel vMod = null;
-        if (layerParams == null) {
+        if (velocityDiscontinuity == null) {
             vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName(), modelType);
             if (vMod == null) {
                 throw new TauPException("Unable to find model " + modelArgs.getModelName());
@@ -56,16 +58,16 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (fsrf) {
             // special case for free surface as which is above/below can be confusing, fix by using the non-zero layer
             yAxisType.addAll(ReflTransAxisType.allFreeRF);
-            if (layerParams == null) {
+            if (velocityDiscontinuity == null) {
                 xypList = calculateFSRF(vMod, inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
-                modelArgs.setModelName(layerParams.asName());
-                if (layerParams.inVp == 0 && layerParams.trVp != 0) {
+                modelArgs.setModelName(velocityDiscontinuity.asName());
+                if (velocityDiscontinuity.getInVp() == 0 && velocityDiscontinuity.getTrVp() != 0) {
                     // use lower layer
-                    xypList = calculateFSRF(layerParams.trVp, layerParams.trVs, layerParams.trRho,
+                    xypList = calculateFSRF(velocityDiscontinuity.getTrVp(), velocityDiscontinuity.getTrVs(), velocityDiscontinuity.getTrRho(),
                             inpwave, inswave, inshwave, isLinearRayParam(), step);
-                } else if (layerParams.trVp == 0 && layerParams.inVp != 0) {
-                    xypList = calculateFSRF(layerParams.inVp, layerParams.inVs, layerParams.inRho,
+                } else if (velocityDiscontinuity.getTrVp() == 0 && velocityDiscontinuity.getInVp() != 0) {
+                    xypList = calculateFSRF(velocityDiscontinuity.getInVp(), velocityDiscontinuity.getInVs(), velocityDiscontinuity.getInRho(),
                             inpwave, inswave, inshwave, isLinearRayParam(), step);
                 } else {
                     throw new TauPException("Both above and below Vp are zero, cannot calculate free surface receiver function");
@@ -81,14 +83,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             } else if (yAxisType.isEmpty()) {
                 yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
-            if (layerParams == null) {
+            if (velocityDiscontinuity == null) {
                 xypList = calculate(vMod, getDepth(), isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
                 xypList = calculate(
-                        layerParams.inVp, layerParams.inVs, layerParams.inRho,
-                        layerParams.trVp, layerParams.trVs, layerParams.trRho,
+                        velocityDiscontinuity.getInVp(), velocityDiscontinuity.getInVs(), velocityDiscontinuity.getInRho(),
+                        velocityDiscontinuity.getTrVp(), velocityDiscontinuity.getTrVs(), velocityDiscontinuity.getTrRho(),
                         isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
-                modelArgs.setModelName(layerParams.asName());
+                modelArgs.setModelName(velocityDiscontinuity.asName());
             }
         }
         if (xAxisMinMax.length == 2 || yAxisMinMax.length == 2) {
@@ -106,8 +108,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         xyOut.setyAxisMinMax(yAxisMinMax);
         xyOut.getColoringArgs().setColoring(ColorType.phase);
         String title = "";
-        if (layerParams != null) {
-            title = layerParams.asName();
+        if (velocityDiscontinuity != null) {
+            title = velocityDiscontinuity.asName();
         } else {
             title = modelArgs.getModelName() +" at ";
             if (fsrf || depth == 0 || NamedVelocityDiscon.SURFACE.equalsIgnoreCase(depthName)) {
@@ -174,7 +176,32 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         xyOut.setXLabel(DegRayParam.labelFor(xAxisType));
         xyOut.setYLabel(yAxisActual);
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
-            xyOut.printAsJSON(writer, 2);
+            ReflTransResult rtResult;
+            VelocityDiscontinuity lp;
+            if (velocityDiscontinuity != null) {
+                lp = velocityDiscontinuity;
+                if (!isIncidentDown()) {
+                    lp = lp.flip();
+                }
+            } else {
+                if (fsrf) {
+                    lp = VelocityDiscontinuity.freeSurface(modelArgs.getTauModel().getVelocityModel());
+                } else {
+                    lp = VelocityDiscontinuity.fromVelocityModel(modelArgs.getTauModel().getVelocityModel(), depth, isIncidentDown());
+                }
+            }
+            rtResult = new ReflTransResult(lp, xyOut);
+            rtResult.setDepth(depth);
+            rtResult.setDepthName(depthName);
+            rtResult.setFsrf(fsrf);
+            rtResult.setDowngoing(isIncidentDown()&&!fsrf); // free surface always up
+            boolean doAll =  (!inpwave && ! inswave && ! inshwave);
+            rtResult.setInpwave(inpwave || doAll);
+            rtResult.setInswave(inswave || doAll);
+            rtResult.setInshwave(inshwave || doAll);
+            GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+            writer.println(gsonBuilder.create().toJson(rtResult));
+            writer.flush();
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.HTML)) {
@@ -199,7 +226,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (layerParams == null && (depth == -1 && depthName == null) && ! fsrf) {
+        if (velocityDiscontinuity == null && (depth == -1 && depthName == null) && ! fsrf) {
             throw new TauPException(
                     "Either --layer, or --mod and --depth must be given to specify layer parameters");
         }
@@ -975,13 +1002,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public void setLayerParams(double topVp, double topVs, double topDensity,
                                double botVp, double botVs, double botDensity) {
-        layerParams = new LayerParams();
-        layerParams.inVp = topVp;
-        layerParams.inVs = topVs;
-        layerParams.inRho = topDensity;
-        layerParams.trVp = botVp;
-        layerParams.trVs = botVs;
-        layerParams.trRho = botDensity;
+        velocityDiscontinuity = new VelocityDiscontinuity(topVp, topVs, topDensity, botVp, botVs, botDensity);
     }
 
     @CommandLine.Mixin
@@ -1075,34 +1096,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     )
     public void setLayerParams(double[] params) {
         if (params.length == 0) {
-            layerParams = null;
+            velocityDiscontinuity = null;
         } else if (params.length != 6) {
             throw new CommandLine.ParameterException(spec.commandLine(), "layer params must be 6 numbers, inbould vp, vs, rho, transmitted vp, vs, rho");
         } else {
-            layerParams = new LayerParams();
-            layerParams.inVp = params[0];
-            layerParams.inVs = params[1];
-            layerParams.inRho = params[2];
-            layerParams.trVp = params[3];
-            layerParams.trVs = params[4];
-            layerParams.trRho = params[5];
+            velocityDiscontinuity = new VelocityDiscontinuity(params);
         }
     }
 
-    LayerParams layerParams = null;
-    static class LayerParams {
-        double inVp;
-        double inVs;
-        double inRho;
-        double trVp;
-        double trVs;
-        double trRho;
-
-        public String asName() {
-            return inVp+","+inVs+","+inRho+" "+trVp+","+trVs+","+trRho;
-        }
-    }
-
+    VelocityDiscontinuity velocityDiscontinuity = null;
 
 
     public DegRayParam getxAxisType() {
@@ -1200,17 +1202,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return xAxisType == DegRayParam.rayparam;
     }
 
-    public boolean isInpwave() {
-        return inpwave;
-    }
-
-
-    public boolean isInswave() {
-        return inswave;
-    }
-    public boolean isInshwave() {
-        return inshwave;
-    }
 
     @CommandLine.Option(names = "--anglestep",
             paramLabel = "deg",

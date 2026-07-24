@@ -110,11 +110,6 @@ public interface JSONLabels {
     String HEMISPHERE = "hemisphere";
     String SECONDS = "seconds";
 
-    String VP = "Vp";
-    String VS = "Vs";
-    String QP = "Qp";
-    String QS = "Qs";
-    String DENSITY = "density";
     String SLOWP = "slowness_p";
     String SLOWS = "slowness_s";
     String ABOVE = "above";
@@ -138,7 +133,7 @@ public interface JSONLabels {
     String MODEL_LAYERS = "layers";
     String LAYER_VP = "vp";
     String LAYER_VS = "vs";
-    String LAYER_RHO = "rho";
+    String DENSITY = "density";
     String LAYER_QP = "qp";
     String LAYER_QS = "qs";
 
@@ -150,4 +145,13 @@ public interface JSONLabels {
     String STAXML_TEXT = "staxmltext";
     String VELOCITYMODEL_TEXT = "velocitymodeltext";
     String VELOCITYMODELMERGE_TEXT = "velocitymodelmergetext";
+    String INBOUND = "incident";
+    String TRANSBOUND = "transmitted";
+    String DISCONITUITY = "discon";
+    String DISCON_NAME = "disconname";
+    String DISCON_DEPTH = "discondepth";
+    String SHWAVE = "shwave";
+    String INBOUND_WAVE = "incidentwave";
+    String FSRF = "fsrf";
+    String DOWNGOING = "downgoing";
 }

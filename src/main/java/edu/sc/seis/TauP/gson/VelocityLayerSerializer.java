@@ -1,13 +1,11 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.VelocityLayer;
 
 import java.lang.reflect.Type;
 
 import static edu.sc.seis.TauP.JSONLabels.*;
-import static edu.sc.seis.TauP.PhaseSymbols.j;
 
 public class VelocityLayerSerializer
         implements JsonSerializer<VelocityLayer>, JsonDeserializer<VelocityLayer> {
@@ -35,13 +33,13 @@ public class VelocityLayerSerializer
         top.addProperty(DEPTH, src.getTopDepth());
         top.addProperty(LAYER_VP, src.getTopPVelocity());
         top.addProperty(LAYER_VS, src.getTopSVelocity());
-        top.addProperty(LAYER_RHO, src.getTopDensity());
+        top.addProperty(DENSITY, src.getTopDensity());
         json.add(TOP, top);
         JsonObject bot = new JsonObject();
         bot.addProperty(DEPTH, src.getBotDepth());
         bot.addProperty(LAYER_VP, src.getBotPVelocity());
         bot.addProperty(LAYER_VS, src.getBotSVelocity());
-        bot.addProperty(LAYER_RHO, src.getBotDensity());
+        bot.addProperty(DENSITY, src.getBotDensity());
         json.add(BOT, bot);
         if ( ! src.QIsDefault()) {
             top.addProperty(LAYER_QP, src.getTopQp());
@@ -66,8 +64,8 @@ public class VelocityLayerSerializer
                     bot.getAsJsonPrimitive(LAYER_VP).getAsDouble(),
                     top.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
                     bot.getAsJsonPrimitive(LAYER_VS).getAsDouble(),
-                    top.getAsJsonPrimitive(LAYER_RHO).getAsDouble(),
-                    bot.getAsJsonPrimitive(LAYER_RHO).getAsDouble()
+                    top.getAsJsonPrimitive(DENSITY).getAsDouble(),
+                    bot.getAsJsonPrimitive(DENSITY).getAsDouble()
             );
             if (top.has(LAYER_QP)) {
                 vLayer.setTopQp(top.getAsJsonPrimitive(LAYER_QP).getAsDouble());

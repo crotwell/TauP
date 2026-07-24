@@ -43,6 +43,8 @@ public class PythonBindings {
             dataclassType = "DistazResult";
         } else if (toolname.equals("curve")) {
             dataclassType = "CurveResult";
+        } else if (toolname.equals("refltrans")) {
+            dataclassType = "ReflTransResult";
         } else if (toolname.equals("velmerge")) {
             dataclassType = "VelocityModel";
         } else if (toolname.equals("wavefront")) {
@@ -495,53 +497,11 @@ public class PythonBindings {
                 out.println("from ." + toolname + " import " + capToolname + "Query");
             }
 
-            List<String> dataclasses = List.of(
-                    "Amplitude",
-                    "Arrival",
-                    "BeachballResult",
-                    "Curve",
-                    "CurveResult",
-                    "CurveSegment",
-                    "Daz",
-                    "DataClassJsonEncoder",
-                    "Derivative",
-                    "DerivativeSR",
-                    "DisconLayer",
-                    "Discontinuity",
-                    "ModelDiscon",
-                    "DisconResult",
-                    "DistazResult",
-                    "DistCalcType",
-                    "Fault",
-                    "FindResult",
-                    "Isochron",
-                    "LatLonDepth",
-                    "NPTAxis",
-                    "PathSegment",
-                    "PhaseBranch",
-                    "PhaseDescription",
-                    "PhaseRay",
-                    "PhaseResult",
-                    "PhaseSegment",
-                    "RelativeArrival",
-                    "Scatter",
-                    "Source",
-                    "SphericalCoord",
-                    "TimeDist",
-                    "TimeResult",
-                    "VelocityModel",
-                    "VelocityLayer",
-                    "VelocityLayerParams",
-                    "NamedDiscon",
-                    "Wavefront",
-                    "WavefrontPathSegment",
-                    "WavefrontResult"
-            );
-            dataclasses = new ArrayList<>(dataclasses);// modifyable for sort
-            Collections.sort(dataclasses);
+            List<String> sortedDataclasses = new ArrayList<>(dataclasses);// modifyable for sort
+            Collections.sort(sortedDataclasses);
 
             out.println("from .dataclass import (");
-            for (String dc : dataclasses) {
+            for (String dc : sortedDataclasses) {
                 out.println("    " + dc + ",");
             }
             out.println(")");
@@ -554,7 +514,7 @@ public class PythonBindings {
                 String capToolname = toolname.substring(0, 1).toUpperCase() + toolname.substring(1);
                 out.println("    \"" + capToolname + "Query\",");
             }
-            for (String dc : dataclasses) {
+            for (String dc : sortedDataclasses) {
                 out.println("    \"" + dc + "\",");
             }
             out.println("]");
@@ -565,4 +525,50 @@ public class PythonBindings {
             throw new RuntimeException(e);
         }
     }
+
+    public static final List<String> dataclasses = List.of(
+            "Amplitude",
+            "Arrival",
+            "BeachballResult",
+            "Curve",
+            "CurveResult",
+            "CurveSegment",
+            "Daz",
+            "DataClassJsonEncoder",
+            "Derivative",
+            "DerivativeSR",
+            "DisconLayer",
+            "Discontinuity",
+            "ModelDiscon",
+            "DisconResult",
+            "DistazResult",
+            "DistCalcType",
+            "Fault",
+            "FindResult",
+            "Isochron",
+            "LatLonDepth",
+            "NPTAxis",
+            "PathSegment",
+            "PhaseBranch",
+            "PhaseDescription",
+            "PhaseRay",
+            "PhaseResult",
+            "PhaseSegment",
+            "ReflTransResult",
+            "RelativeArrival",
+            "Scatter",
+            "Source",
+            "SphericalCoord",
+            "TimeDist",
+            "TimeResult",
+            "VelocityModel",
+            "VelocityParams",
+            "VelocityLayer",
+            "VelocityLayerParams",
+            "VelocityDiscontinuity",
+            "NamedDiscon",
+            "Wavefront",
+            "WavefrontPathSegment",
+            "WavefrontResult"
+    );
 }
