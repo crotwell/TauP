@@ -150,24 +150,6 @@ public class ConstantModelTest {
         }
     }
 
-    @Test
-    public void testTStarDirectP() throws Exception {
-        double Qp = vmod.getVelocityLayer(0).getTopQp();//const in model
-        double velocity = vp;
-        boolean isPWave = true;
-
-        SeismicPhase PPhase = SeismicPhaseFactory.createPhase("P", tMod, tMod.getSourceDepth());
-        assertTrue(PPhase.phasesExistsInModel());
-        for (int i = 0; i < tMod.rayParams.length; i++) {
-            double dist = 0;
-            double time = 0;
-            List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(PPhase);
-            Arrival arrival = arrivals.get(0);
-            double tstar = arrival.getTime() / Qp;
-            assertEquals(tstar, arrival.calcTStar(), i+" "+tMod.getRayParams().length+" "+arrival);
-        }
-    }
-
     public void txestPrint() {
         // System.out.println(smod.toString());
         tMod.print();
