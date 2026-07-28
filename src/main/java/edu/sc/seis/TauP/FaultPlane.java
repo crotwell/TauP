@@ -110,7 +110,8 @@ public class FaultPlane {
 
     /**
      * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
-     * ALl in radians.
+     * ALl in radians. Eq 17.71 in FMGS.
+     *
      * @param azimuth azimuth to receiver in radian
      * @param takeoff takeoff angle in radian
      * @return  Fp, Fsv, Fsh
@@ -120,25 +121,25 @@ public class FaultPlane {
         double phi_f = strike*DtoR;
         double phi_r = azimuth;
         double phi_r_f = phi_r - phi_f;
-        double theta = dip*DtoR;
+        double delta = dip*DtoR;
         double lam = rake*DtoR;
-        double Fp = (Math.cos(lam)*Math.sin(theta)*Math.sin(2*phi_r_f)
-                - Math.sin(lam)*Math.sin(2*theta)*Math.sin(phi_r_f)*Math.sin(phi_r_f)
+        double Fp = (Math.cos(lam)*Math.sin(delta)*Math.sin(2*phi_r_f)
+                - Math.sin(lam)*Math.sin(2*delta)*Math.sin(phi_r_f)*Math.sin(phi_r_f)
         )*Math.sin(ih)*Math.sin(ih)
-                + (Math.sin(lam)*Math.cos(2*theta)*Math.sin(phi_r_f)
-                - Math.cos(lam)*Math.cos(theta)*Math.cos(phi_r_f)
+                + (Math.sin(lam)*Math.cos(2*delta)*Math.sin(phi_r_f)
+                - Math.cos(lam)*Math.cos(delta)*Math.cos(phi_r_f)
         )*Math.sin(2*ih)
-                + Math.sin(lam)*Math.sin(2*theta)*Math.cos(ih)*Math.cos(ih);
+                + Math.sin(lam)*Math.sin(2*delta)*Math.cos(ih)*Math.cos(ih);
 
-        double Fsv = (Math.sin(lam)*Math.cos(2*theta)*Math.sin(phi_r_f)
-                - Math.cos(lam)*Math.cos(theta)*Math.cos(phi_r_f)) * Math.cos(2*ih)
-                + 1.0/2*Math.cos(lam)*Math.sin(theta)*Math.sin(2*phi_r_f)*Math.sin(2*ih)
-                - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*Math.sin(2*ih)*(1 + Math.sin(phi_r_f)*Math.sin(phi_r_f));
+        double Fsv = (Math.sin(lam)*Math.cos(2*delta)*Math.sin(phi_r_f)
+                - Math.cos(lam)*Math.cos(delta)*Math.cos(phi_r_f)) * Math.cos(2*ih)
+                + 1.0/2*Math.cos(lam)*Math.sin(delta)*Math.sin(2*phi_r_f)*Math.sin(2*ih)
+                - 1.0/2*Math.sin(lam)*Math.sin(2*delta)*Math.sin(2*ih)*(1 + Math.sin(phi_r_f)*Math.sin(phi_r_f));
 
-        double Fsh = (Math.cos(lam)*Math.cos(theta)*Math.sin(phi_r_f)
-                + Math.sin(lam)*Math.cos(2*theta)*Math.cos(phi_r_f))*Math.cos(ih)
-                +(Math.cos(lam)*Math.sin(theta)*Math.cos(2*phi_r_f)
-                - 1.0/2*Math.sin(lam)*Math.sin(2*theta)*Math.sin(2*phi_r_f))*Math.sin(ih);
+        double Fsh = (Math.cos(lam)*Math.cos(delta)*Math.sin(phi_r_f)
+                + Math.sin(lam)*Math.cos(2*delta)*Math.cos(phi_r_f))*Math.cos(ih)
+                +(Math.cos(lam)*Math.sin(delta)*Math.cos(2*phi_r_f)
+                - 1.0/2*Math.sin(lam)*Math.sin(2*delta)*Math.sin(2*phi_r_f))*Math.sin(ih);
         return new double[] {Fp, Fsv, Fsh};
     }
 
