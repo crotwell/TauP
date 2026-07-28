@@ -661,7 +661,7 @@ public class Arrival {
             } else {
                 freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
             }
-            freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
+            freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0]).plus(freeSurfRF[1].times(freeSurfRF[1]))));
         }
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
         //       km/s
@@ -672,6 +672,7 @@ public class Arrival {
         if (attenuationFrequency > 0) {
             attenuation = calcAttenuation(attenuationFrequency, numFreq);
         }
+        // follows FGMS 13.71
         return 1                   // units:
                 * attenuation      // 1
                 * freeFactor       // 1
