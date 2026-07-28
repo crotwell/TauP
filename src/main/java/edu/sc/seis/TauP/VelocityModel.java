@@ -1665,8 +1665,6 @@ public class VelocityModel implements Cloneable, Serializable {
             abovePVel = evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
             aboveSVel = evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
             aboveRho = evaluateAbove(depth, VelocityModelMaterial.DENSITY);
-        } else {
-            abovePVel = belowPVel;
         }
         return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, downgoing);
     }
