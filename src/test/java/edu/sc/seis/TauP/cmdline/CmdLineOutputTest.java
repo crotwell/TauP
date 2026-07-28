@@ -552,6 +552,14 @@ public class CmdLineOutputTest {
         figureTitles.put("Shearer_fig_6_5b.svg", "Shearer, phase, fig 6.5");
         figureCompare.put("Shearer_fig_6_5b.svg", "Shearer_fig_6_5.pdf");
 
+        fmgsFigureTestCmds.put("FMGS_17_12_p.svg",
+        "taup beachball --arrows --bbtype ampp  --svg --gridstep 0.5 --numpoints 200 --strikediprake 20 50 50");
+        figureTitles.put("FMGS_17_12_p.svg", "FMGS, fig 17_12, focal mech sdr 20/50/50 P");
+        figureCompare.put("FMGS_17_12_p.svg", "FMGS_fig_17_12.png");
+        fmgsFigureTestCmds.put("FMGS_17_12_s.svg",
+                "taup beachball --arrows --bbtype amps  --svg --gridstep 0.5 --numpoints 200 --strikediprake 20 50 50");
+        figureTitles.put("FMGS_17_12_s.svg", "FMGS, fig 17_12, focal mech sdr 20/50/50 S");
+        figureCompare.put("FMGS_17_12_s.svg", "FMGS_fig_17_12.png");
 
         File topdir = new File("build/cmdLineTest");
         if ( ! topdir.isDirectory()) {topdir.mkdirs(); }
