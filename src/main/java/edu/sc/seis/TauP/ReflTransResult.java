@@ -3,14 +3,6 @@ package edu.sc.seis.TauP;
 public class ReflTransResult {
 
 
-    public ReflTransResult(String model, double layerDepth, String depthName,
-                           XYPlotOutput xy) {
-        this.model = model;
-        this.layerDepth = layerDepth;
-        this.depthName = depthName;
-        this.xy = xy;
-    }
-
     public ReflTransResult(VelocityDiscontinuity velocityDiscontinuity,
                            XYPlotOutput xy) {
         this.velocityDiscontinuity = velocityDiscontinuity;
