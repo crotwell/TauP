@@ -673,13 +673,14 @@ public class Arrival {
             attenuation = calcAttenuation(attenuationFrequency, numFreq);
         }
         // follows FGMS 13.71
-        return 1                   // units:
-                * attenuation      // 1
-                * freeFactor       // 1
-                * momentRate       // Kg m2 / s3
+        // this is without strike,dip, rake radiation pattern
+        return 1                   // units:                FMGS:
+                * attenuation      // 1                     13.2.2
+                * freeFactor       // 1                     13.67, 68
+                * momentRate       // Kg m2 / s3            7.24, Mw to N-m conversion
                 * refltran         // 1
-                * geoSpread        // 1/km
-                / radiationTerm    // 1/(Kg/s3)
+                * geoSpread        // 1/km                  13.10
+                / radiationTerm    // 1/(Kg/s3)             13.70
                 / 1e3;             //  m2/km =>  m / 1e3
     }
 

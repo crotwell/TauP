@@ -557,7 +557,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @CommandLine.Option(names = "--deltatime",
             paramLabel = "dt",
-            description = "find arrivals within the +- deltatime, --times must have single time")
+            defaultValue = "5.0",
+            description = "find arrivals within the +- deltatime in seconds, --times must have single time. Default value is ${DEFAULT-VALUE}.")
     Double deltaTime = 5.0;
 
     /**

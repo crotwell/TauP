@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 /**
  * Reflection and transmission coefficients at a solid-free surface boundary.
+ * FMGS 13.67, 68
  */
 public class ReflTransSolidFreeSurface extends ReflTransFreeSurface {
 
