@@ -624,12 +624,18 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
                     right.getDist(), right.getTime(), searchDist);
             dRPdDist = 0;
-        } else if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
-            arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
-            dRPdDist = (left.getRayParam() - arrivalRayParam) / (left.getDist() - searchDist);
         } else {
-            arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
-            dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - searchDist);
+            if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
+                arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
+            } else {
+                arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
+            }
+            if (right.getRayParam() == arrivalRayParam
+                    || Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
+                dRPdDist = (left.getRayParam() - arrivalRayParam) / (left.getDist() - searchDist);
+            } else {
+                dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - searchDist);
+            }
         }
         if (Double.isNaN(arrivalTime)) {
             throw new RuntimeException("Time is NaN, search " + searchDist + " leftDist " + left.getDist() + " leftTime " + left.getTime()
@@ -1072,7 +1078,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                             throw new RuntimeException("tstar unknown for flat for prevendaction= "+pseg.getPhaseSegment().prevEndAction);
                         }
                     } else if (td.getDepth() == pseg.getPhaseSegment().getBotDepth()) {
-                        // careful of turning at bottom, use above istead of below
+                        // careful of turning at bottom, use above instead of below
                         Q = vMod.evaluateAbove(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
                     } else {
                         Q = vMod.evaluateBelow(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
