@@ -1,0 +1,60 @@
+
+Some Errata for Foundations of Modern Global Seismology.
+--------------------------------------------------------
+
+
+1) p382 Table 3.1 the solid-solid P-Sv Tss coefficient looks wrong to me. Could it be rho1 instead of rho2?
+
+2) table 13.2, p385
+in the fluid-solid Rss coefficient, table 13.2, p385, should there be a big bracket around the whole mess so that the DF-1 term multiplies the whole expression? There is that "+" in there and operator precedence is so annoying! :)
+Same question on the from-Fluid for Rpp in the lower part. Haven't done the derivation myself, so this is just me thinking those two look kind of different and some more parenthesis might help.
+Solid fluid: For RSS the brackets are missing. Otherwise, the terms a just products.
+Fluid fluid: For RPP the brackets are missing. Otherwise, the terms a just products.
+
+3) table 13.1 p382
+One more question, in solid-solid Rss coefficient, table 13.1 p382, should the "b" in the "G" term be a "d"? That matches Aki and Richards and makes it look similar to the Rpp term. Also, if I use b then my energy conservation check fails.
+This looks like it would change figure 13.12b and 13.13b. It gets rid of the down-up swing in Rss near 0.22 which just looks odd to me.
+
+
+4) It kind of looks like the Tpp in 13.63 might have had the potential-to-displacement factor applied twice, extra factor of alpha1/alpha2?
+
+5) Not sure about the Rpp term, but my algebra on the formula from the table for vertical incidence gives
+Rpp = 1-   2 alpha1 rho1 / (alpha1 rho1 + alpha2 rho2)
+which has some 1s and 2s swapped as compared to the Rpp in eq 13.63.
+
+6) Table 13.3, Free surface Rss, A&R is different by factor -1. Maybe Rss was a copy/paste of Rpp and missed changing the sign?
+With this change, my test of energy conservation for a few ray parameters passes for free surface, so going with A&R on this. And I think it makes sense for Rss to have a sign change relative to Rpp?
+
+
+7) So, good news and bad news. The good news is that I think I have the fluid to solid coefficients working. The bad news is that what I have looks very different from what chapter 13 has. I started with the matrix representation in Seismic Waves and Source for this case (sect 3.5 on p104), then used sympy in a jupyter notebook (attached) to do the algebra as I didn't trust myself to not make mistakes. At the end I verified the energy conservation, so while I am not sure it is correct, it is at least internally consistent.
+I was never able to get the energy conservation to work with the equations in the bottom of table 13.2 and they also don't seem to correspond to the equations in 13.65 when ray parameter is set to zero. I also tried 13.65 directly to see if I could get energy to balance for at least vertical incidence, but I couldn't get it to satisfy it. Anyway, I am not sure what to say about the fluid-solid equations in FMGS, but I think I am going with what I have and hope for the best. Let me know if you have any thoughts.
+
+8) One more errata, formula 11.49 for poisson's ratio, I think there should not be a sqrt on the second equation.
+
+9) In eq 13.67, should the ray parameter have a factor of 2 times it, as is in the A term in table 13.3?
+(beta^-2 - 2 p^2)
+If I make that change, then I can reproduce PZ, SR and SZ in  fig 13.16.
+
+10) PR curve is still not looking correct, but if I modify 13.66 to remove the (eta^2 - p^2) term to make it similar to Fsv_x3 in 13.68 then the PR curve matches as well.
+
+11) In equation 17.71, on p476, should there be a plus sign between the two square bracket terms for Fp?
+
+
+
+12) I'm still fighting with amplitudes and may have another one for you. Can you look at eq 13.69 and 13.70 and see if you think the in/out and 1 and 2 are switched on the rho and alpha terms relative to the cosine terms? A&R in section 5.2.5 has rho1 alpha1 cos i1 but you have rho1 alpha1 cos i2 if I am reading correctly. If I try to do an energy balance like the code at the bottom it works, but if I flip the rho,alpha vs cosines it doesn't.
+
+So should 13.69 be
+
+sqrt(    rho_in  v_in  cos i_in
+           --------------------------------
+           rho_out v_out  cos i_out      )
+
+and then 13.70 would be
+
+u2 = u1  Tpp   sqrt(  rho_1  alpha_1  cos i_1  )
+                                 -------------------------------
+                                 rho_2 alpha_2  cos i_2
+
+where 1 is inbound and 2 is outbound. I think this matches A&R, middle eq on p.146 (2nd ed), translating their P'S` to your Tpp.
+
+
