@@ -108,7 +108,7 @@ public class ReflTransSolidSolid extends ReflTrans {
     /**
      * Calculates incident SV wave to reflected SV wave Complex coefficient.
      * <P>= -1 * ((b * topVertSlownessS - c * botVertSlownessS) * E -<BR>
-     * (a + b * botVertSlownessP * topVertSlownessS) * G * sqRP) /<BR>
+     * (a + d * botVertSlownessP * topVertSlownessS) * G * sqRP) /<BR>
      * det
      */
     @Override
