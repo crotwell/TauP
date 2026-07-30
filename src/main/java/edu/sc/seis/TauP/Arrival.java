@@ -677,7 +677,7 @@ public class Arrival {
         return 1                   // units:                FMGS:
                 * attenuation      // 1                     13.2.2
                 * freeFactor       // 1                     13.67, 68
-                * momentRate       // Kg m2 / s3            7.24, Mw to N-m conversion
+                * momentRate       // Kg m2 / s3            7.24, Mw to N-m conversion, extra per second due to d/dt
                 * refltran         // 1
                 * geoSpread        // 1/km                  13.10
                 / radiationTerm    // 1/(Kg/s3)             13.70
