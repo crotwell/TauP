@@ -32,8 +32,7 @@ public class ScatteredArrival extends Arrival {
                 inboundArrival.getPhase().getSourceDepth(),
                 scatteredArrival.getPhase().getReceiverDepth(),
                 inboundArrival.getPhase().calcTakeoffAngle(inboundArrival.getRayParam()),
-                scatteredArrival.getPhase().calcIncidentAngle(scatteredArrival.getRayParam()),
-                scatteredArrival.getDRayParamDDelta()
+                scatteredArrival.getPhase().calcIncidentAngle(scatteredArrival.getRayParam())
         );
         this.inboundArrival = inboundArrival;
         this.scatteredArrival = scatteredArrival;

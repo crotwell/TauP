@@ -39,21 +39,21 @@ public class TimeRay extends RayCalculateable {
                     double arrivalRayParam = LinearInterpolation.linearInterp(left.getTime(),left.getRayParam(),
                             right.getTime(), right.getRayParam(), seconds);
                     double arrivalDist;
-                    double dRPdDist;
+                    Arrival neighborArrival = left.getTime()==seconds?right:left;
                     if (simp.getMaxRayParam() == simp.getMinRayParam()) {
                         // degenerate phase, all ray parameters are the same, just interpolate time
                         arrivalDist = LinearInterpolation.linearInterp(left.getTime(),left.getDist(),
                                 right.getTime(), right.getDist(), seconds);
-                        dRPdDist = 0;
                     } else if (Math.abs(seconds - left.getTime()) < Math.abs(seconds - right.getTime())) {
                         arrivalDist = (seconds-left.getTime())/arrivalRayParam+left.getDist();
-                        dRPdDist = (left.getRayParam() - arrivalRayParam) / (left.getDist() - arrivalDist);
+                        neighborArrival = left;
                     } else {
                         arrivalDist = (seconds-right.getTime())/arrivalRayParam+right.getDist();
-                        dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - arrivalDist);
+                        neighborArrival = right;
                     }
-                    Arrival a = new Arrival(phase, simp, seconds, arrivalDist, arrivalRayParam, rayNum, this, dRPdDist);
+                    Arrival a = new Arrival(phase, simp, seconds, arrivalDist, arrivalRayParam, rayNum, this);
                     a.setSearchValue(this);
+                    a.setNeighborArrival(neighborArrival);
                     arrivals.add(a);
                 }
             }

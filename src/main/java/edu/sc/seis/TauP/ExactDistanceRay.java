@@ -50,7 +50,14 @@ public class ExactDistanceRay extends DistanceRay {
         List<Arrival> scatArrivals = new ArrayList<>();
         for (Arrival a : arrivals) {
             a.setSearchValue(scatRay);
-            scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
+            ScatteredArrival sa = new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter());
+            if (a.getNeighborArrival() != null) {
+                sa.setNeighborArrival(
+                        new ScatteredArrival(phase, this,
+                                phase.getInboundArrival(), a.neighborArrival,
+                                phase.isBackscatter()));
+            }
+            scatArrivals.add(sa);
         }
         Arrival.sortArrivals(scatArrivals);
         return scatArrivals;

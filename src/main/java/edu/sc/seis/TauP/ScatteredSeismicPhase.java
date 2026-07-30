@@ -253,13 +253,21 @@ public class ScatteredSeismicPhase implements SeismicPhase {
      */
     public Arrival createArrivalAtIndex(int rayNum) {
         Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
-        return new ScatteredArrival(
+        ScatteredArrival sa = new ScatteredArrival(
                 this,
                 DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg(),
                         scatteredArrival.getRayCalculateable().getDistCalc()),
                 inboundArrival,
                 scatteredArrival,
                 isBackscatter());
+        sa.setNeighborArrival( new ScatteredArrival(
+                this,
+                DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg(),
+                        scatteredArrival.getRayCalculateable().getDistCalc()),
+                inboundArrival,
+                scatteredArrival.neighborArrival,
+                isBackscatter()));
+        return sa;
     }
 
     /**

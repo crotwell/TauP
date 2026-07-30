@@ -207,7 +207,12 @@ public abstract class DistanceRay extends RayCalculateable implements Cloneable 
             if (scatDistDeg < 0) {
                 a.negateDistance();
             }
-            scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
+            ScatteredArrival sa = new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter());
+            if (a.getNeighborArrival() != null) {
+                sa.setNeighborArrival( new ScatteredArrival(phase, this, phase.getInboundArrival(),
+                        a.getNeighborArrival(), phase.isBackscatter()));
+            }
+            scatArrivals.add(sa);
         }
         Arrival.sortArrivals(scatArrivals);
         return scatArrivals;

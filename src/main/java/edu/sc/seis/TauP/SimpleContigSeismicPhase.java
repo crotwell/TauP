@@ -415,29 +415,35 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      * @return
      */
     public Arrival createArrivalAtIndex(int rayNum) {
-        double dRPdDist = 0;
-        if (rayParams.length > 1) {
-            if (rayNum == 0) {
-                dRPdDist = (getRayParams(rayNum) - getRayParams(rayNum + 1)) / (getDist(rayNum) - getDist(rayNum + 1));
-            } else if (rayNum == rayParams.length - 1) {
-                dRPdDist = (getRayParams(rayNum) - getRayParams(rayNum - 1)) / (getDist(rayNum) - getDist(rayNum - 1));
-            } else {
-                // average left and right ray params
-                dRPdDist = ((getRayParams(rayNum) - getRayParams(rayNum - 1)) / (getDist(rayNum) - getDist(rayNum - 1))
-                        + (getRayParams(rayNum) - getRayParams(rayNum + 1)) / (getDist(rayNum) - getDist(rayNum + 1)))
-                        / 2.0;
-            }
-
+        int neighborShift = 1;
+        if (rayParams.length > 1 && rayNum == rayParams.length - 1) {
+            neighborShift = -1;
         }
-        return new Arrival(this,
+
+        Arrival neighborArrival = null;
+        if (rayParams.length > 1) {
+            neighborArrival = new Arrival(this,
+                    this, getTime(rayNum+neighborShift),
+                    getDist(rayNum+neighborShift),
+                    getRayParams(rayNum+neighborShift),
+                    rayNum+neighborShift,
+                    new RayParamIndexRay(rayNum+neighborShift,
+                            gettMod().getVelocityModel().getSphericalDistCalc())
+            );
+        }
+        Arrival out = new Arrival(this,
                 this, getTime(rayNum),
                 getDist(rayNum),
                 getRayParams(rayNum),
                 rayNum,
                 new RayParamIndexRay(rayNum,
-                        gettMod().getVelocityModel().getSphericalDistCalc()),
-                dRPdDist
+                        gettMod().getVelocityModel().getSphericalDistCalc())
         );
+        out.setNeighborArrival( neighborArrival);
+        if (neighborArrival!= null) {
+            neighborArrival.setNeighborArrival(out);
+        }
+        return out;
     }
 
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
@@ -590,6 +596,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 rayParamIndex,
                 dRPdDist
         );
+        a.setNeighborArrival(createArrivalAtIndex(rayParamIndex));
         return a;
     }
 
@@ -618,12 +625,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
         // use closest edge to interpolate time
         double arrivalTime;
-        double dRPdDist;
+        Arrival neighborArrival = left.getDist()==searchDist?right:left;
         if (maxRayParam == minRayParam) {
             // degenerate phase, all ray parameters are the same, just interpolate time
             arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
                     right.getDist(), right.getTime(), searchDist);
-            dRPdDist = 0;
         } else {
             if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
                 arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
@@ -632,9 +638,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             }
             if (right.getRayParam() == arrivalRayParam
                     || Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
-                dRPdDist = (left.getRayParam() - arrivalRayParam) / (left.getDist() - searchDist);
+                neighborArrival = left;
             } else {
-                dRPdDist = (right.getRayParam() - arrivalRayParam) / (right.getDist() - searchDist);
+                neighborArrival = right;
             }
         }
         if (Double.isNaN(arrivalTime)) {
@@ -642,14 +648,15 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                     + "  rightDist " + right.getDist() + "  rightTime " + right.getTime());
         }
 
-        return new Arrival(this,
+        Arrival a = new Arrival(this,
                 this, arrivalTime,
                 searchDist,
                 arrivalRayParam,
                 left.getRayParamIndex(),
-                left.getRayCalculateable(),
-                dRPdDist
+                left.getRayCalculateable()
         );
+        a.setNeighborArrival( neighborArrival);
+        return a;
     }
 
     @Override

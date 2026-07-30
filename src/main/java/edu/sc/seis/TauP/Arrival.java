@@ -45,7 +45,6 @@ import static edu.sc.seis.TauP.SphericalCoords.ONE_DEG_AS_RADIAN;
  */
 public class Arrival {
 
-
     public Arrival(SeismicPhase phase,
                    SimpleContigSeismicPhase simpleContigSeismicPhase,
                    List<TimeDist> pierce,
@@ -64,8 +63,7 @@ public class Arrival {
                 phase.getSourceDepth(),
                 phase.getReceiverDepth(),
                 phase.calcTakeoffAngle(pierce.get(pierce.size() - 1).getP()),
-                phase.calcIncidentAngle(pierce.get(pierce.size() - 1).getP()),
-                dRPdDist
+                phase.calcIncidentAngle(pierce.get(pierce.size() - 1).getP())
                 );
         this.pierce = pierce.toArray(new TimeDist[0]);
     }
@@ -76,8 +74,7 @@ public class Arrival {
                    double dist,
                    double rayParam,
                    int rayParamIndex,
-                   RayCalculateable searchDist,
-                   double dRPdDist) {
+                   RayCalculateable searchDist) {
         this(phase,
                 simpleContigSeismicPhase,
                 time,
@@ -90,8 +87,7 @@ public class Arrival {
                 phase.getSourceDepth(),
                 phase.getReceiverDepth(),
                 phase.calcTakeoffAngle(rayParam),
-                phase.calcIncidentAngle(rayParam),
-                dRPdDist
+                phase.calcIncidentAngle(rayParam)
         );
     }
     public Arrival(SeismicPhase phase,
@@ -106,8 +102,7 @@ public class Arrival {
                    double sourceDepth,
                    double receiverDepth,
                    double takeoffAngleRadian,
-                   double incidentAngleRadian,
-                   double dRPdDist) {
+                   double incidentAngleRadian) {
         if ( ! (phase instanceof SimpleContigSeismicPhase || phase instanceof ScatteredSeismicPhase)) {
             throw new IllegalArgumentException("Phase must be SimpleContigSeismicPhase or ScatteredSeismicPhase");
         }
@@ -129,7 +124,6 @@ public class Arrival {
         this.receiverDepth = receiverDepth;
         this.takeoffAngleRadian = takeoffAngleRadian;
         this.incidentAngleRadian = incidentAngleRadian;
-        this.dRPdDist = dRPdDist;
         this.simpleContigSeismicPhase = simpleContigSeismicPhase;
         this.pierce = null;
         this.pathSegments = null;
@@ -153,7 +147,7 @@ public class Arrival {
 
     private final int rayParamIndex;
 
-    private final double dRPdDist;
+    public Arrival neighborArrival = null;
 
     /**
      * Finds a distance near the arrival distance at which the phase still exists.
@@ -251,7 +245,13 @@ public class Arrival {
         // as part of a triplication like moho, 410 and 660 as the complex refl-trans coefficients will also
         // add that shift
         int internalCaustic = 0;
-        Arrival near = nearbyArrival(0.01);
+        Arrival near;
+        if (neighborArrival!=null) {
+            near = neighborArrival;
+        } else {
+            // try to find one?
+            near = nearbyArrival(0.01);
+        }
         List<ArrivalPathSegment> arrSegList = getPathSegments();
         List<ArrivalPathSegment> nearSegList = near.getPathSegments();
         TimeDist prevArr = arrSegList.get(0).prevEnd;
@@ -506,11 +506,16 @@ public class Arrival {
     }
 
     public double getDRayParamDDelta() {
-        return dRPdDist;
+
+        if (neighborArrival == null) {
+            throw new RuntimeException("No neighbor, can't calc derivative");
+        }
+        return (neighborArrival.rayParam-rayParam)/(neighborArrival.getDist()-getDist());
     }
 
     public double getDRayParamDDeltaDeg() {
-        return dRPdDist/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
+        // convert ray param to s/deg and dist to deg
+        return getDRayParamDDelta()/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
     }
 
     public ArrivalAmplitude calcAmplitude() throws SlownessModelException, TauModelException {
@@ -523,42 +528,37 @@ public class Arrival {
      *
      */
     public double getAmplitudeGeometricSpreadingFactor() {
-        double d = getEnergyGeometricSpreadingFactor();
-        if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
         return Math.sqrt(getEnergyGeometricSpreadingFactor());
     }
 
 
     /**
-     * Energy Geometrical spreading factor.
-     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.10.
-     * Note that eq 13.10 has divide by zero in case of a horizontal ray arriving at the receiver.
-     * Also infinite in case of horizontal takeoff angle tan(90)=inf
+     * Energy Geometrical spreading factor, units of per area (1/km2).
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.9.
+     * We do not use 13.10 as the tan(ih) term has infinity for a horizontal takeoff ray, which is not physical.
+     * Staying with 13.9 and using dih/ddelta avoids this.
+     *
+     * Note that eq 13.9 does have divide by zero in case of a horizontal ray arriving at the receiver, which should
+     * only happen for zero distance and zero source depth.
+     * Also it is infinite at the antipode, 1/sin(180)=inf.
      *
      */
     public double getEnergyGeometricSpreadingFactor() {
-        double out = 1;
         TauModel tMod = getTauModel();
         double R = tMod.radiusOfEarth;
-        out *= getPhase().velocityAtSource()/
-                ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
-        double takeoffRadian = getTakeoffAngleRadian();
-        double incidentRadian = getIncidentAngleRadian();
-        // tan(90) is infinity, limit to ~89.95 deg
-        if (Math.abs(takeoffRadian-Math.PI/2)<1e-3) {
-            out *= Math.tan(Math.PI/2-1e-3) / Math.cos(incidentRadian);
-        } else {
-            out *= Math.tan(takeoffRadian) / Math.cos(incidentRadian);
-        }
+        double r0 = R-getReceiverDepth();
         // sin(180) = 0, limit to ~189.95 deg
         double modDist = getModuloDist();
+        double distTerm;
         if (Math.abs(modDist-Math.PI)<1e-3) {
-            out *= 1 / Math.sin(Math.PI-1e-3);
+            distTerm = 1 / Math.sin(Math.PI-1e-3);
         } else {
-            out *= 1 / Math.sin(modDist);
+            distTerm = 1 / Math.sin(modDist);
         }
-        double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta, same as d2T/ddelta2 as p = dT/ddelta
-        out *= Math.abs(dRPdDist);
+
+        double dih_ddelta = getDtakeoffDdeltaRadian();
+        double out = Math.abs(Math.sin(getTakeoffAngleRadian())*distTerm*dih_ddelta/
+                (r0*r0*Math.cos(getIncidentAngleRadian())));
         return out;
     }
 
@@ -783,6 +783,14 @@ public class Arrival {
     
     public double getTakeoffAngleRadian() {
         return takeoffAngleRadian;
+    }
+
+    public double getDtakeoffDdeltaRadian() {
+        if (neighborArrival == null) {
+            throw new RuntimeException("No neighbor, can't calc derivative");
+        }
+        return (getTakeoffAngleRadian()-neighborArrival.getTakeoffAngleRadian()) /
+                (getDist()-neighborArrival.getDist());
     }
 
     public double velocityAtSource() {
@@ -1052,12 +1060,25 @@ public class Arrival {
     /**
      * Negates the arrival distance. Primarily used when printing a scatter arrival that is at negative distance.
      * No other fields are changed.
-     * @return new Arrival with dist and search dist negated
+     * @return new Arrival with  dist negated
      */
     public Arrival negateDistance() {
-        return new Arrival( phase,
+        Arrival negArrival = internalNegateDistance();
+        if (neighborArrival != null) {
+            negArrival.setNeighborArrival( neighborArrival.internalNegateDistance());
+            negArrival.getNeighborArrival().setNeighborArrival( negArrival); // enemy of my enemy is my friend
+        }
+        return negArrival;
+    }
+
+    /**
+     * Internal negate distance, but do not touch neighborArrival. Avoid recursion.
+     * @return new Arrival with dist negated
+     */
+    Arrival internalNegateDistance() {
+        Arrival negArrival = new Arrival(phase,
                 simpleContigSeismicPhase, time,
-                -1* dist,
+                -1 * dist,
                 rayParam,
                 rayParamIndex,
                 searchCalc,
@@ -1066,9 +1087,9 @@ public class Arrival {
                 sourceDepth,
                 receiverDepth,
                 takeoffAngleRadian,
-                incidentAngleRadian,
-                dRPdDist
+                incidentAngleRadian
         );
+        return negArrival;
     }
 
     public boolean isRelativeToArrival() {
@@ -1081,6 +1102,14 @@ public class Arrival {
 
     public void setRelativeToArrival(Arrival relativeToArrival) {
         this.relativeToArrival = relativeToArrival;
+    }
+
+    public void setNeighborArrival(Arrival neighborArrival) {
+        this.neighborArrival = neighborArrival;
+    }
+
+    public Arrival getNeighborArrival() {
+        return neighborArrival;
     }
 
     public static String toStringHeader() {
