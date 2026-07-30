@@ -32,6 +32,8 @@ public class TauP_Web implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             TauP_WebServe tool;
+            // load any models on cmd line before TauP_WebServe enables safe mode
+            loadExtraModels();
             if (Objects.equals(base_path, LOCAL_WS)) {
                 tool = new TauP_WebServe();
             } else {
@@ -39,16 +41,6 @@ public class TauP_Web implements Callable<Integer> {
             }
             tool.port = port;
             tool.host = host;
-            for (String modName : extraModelNames) {
-                if (! StdModelGenerator.standardModels.contains(modName)) {
-                    VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
-                    if (vMod == null) {
-                        // were not able to find it
-                        throw new VelocityModelException("Unable to load model: " + modName);
-                    }
-                    TauModelLoader.otherVelocityModels.put(vMod.getModelName(), vMod);
-                }
-            }
 
             tool.init();
             tool.start();
@@ -77,6 +69,19 @@ public class TauP_Web implements Callable<Integer> {
             return 1;
         }
         return 0;
+    }
+
+    public void loadExtraModels() throws VelocityModelException, IOException {
+        for (String modName : extraModelNames) {
+            if (! StdModelGenerator.standardModels.contains(modName)) {
+                VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
+                if (vMod == null) {
+                    // were not able to find it
+                    throw new VelocityModelException("Unable to load model: " + modName);
+                }
+                TauModelLoader.otherVelocityModels.put(vMod.getModelName(), vMod);
+            }
+        }
     }
 
     @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7409", description = "port to use, defaults to ${DEFAULT-VALUE}")
