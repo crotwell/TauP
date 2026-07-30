@@ -27,7 +27,7 @@ public class ReflTransSolidFluid extends ReflTrans {
         Complex a1Term = topVertSlownessP.times(
                 botVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity).plus(botDensity)
         );
-        Complex a2Term = botVertSlownessP.times(topDensity).times((1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+        Complex a2Term = botVertSlownessP.times(topDensity).times((cosfterm)*(cosfterm));
         return CX.over(CX.minus(a1Term, a2Term), DSolidFluid);
     }
 
@@ -48,7 +48,7 @@ public class ReflTransSolidFluid extends ReflTrans {
     @Override
     public Complex getComplexTpp(double rayParam) {
         calcTempVars(rayParam, true);
-        Complex numeratorTerm = topVertSlownessP.times( 2*(topVp/botVp)*topDensity).times(1-2*sqTopVs*sqRP);
+        Complex numeratorTerm = topVertSlownessP.times( 2*(topVp/botVp)*topDensity).times(cosfterm);
         return CX.over(numeratorTerm, DSolidFluid);
     }
 
@@ -59,7 +59,7 @@ public class ReflTransSolidFluid extends ReflTrans {
     @Override
     public Complex getComplexRss(double rayParam) {
         calcTempVars(rayParam, false);
-        Complex a2Term = CX.times(botVertSlownessP, topDensity*(1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+        Complex a2Term = CX.times(botVertSlownessP, topDensity*cosfterm*cosfterm);
         Complex a1Term = CX.times(topVertSlownessP, CX.minus(botDensity, CX.times(botVertSlownessP, topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity)));
         return CX.over(CX.plus(a2Term, a1Term), DSolidFluid);
     }
@@ -70,7 +70,7 @@ public class ReflTransSolidFluid extends ReflTrans {
     @Override
     public Complex getComplexRsp(double rayParam) {
         calcTempVars(rayParam, false);
-        Complex numeratorTerm = CX.times(botVertSlownessP, topVertSlownessS).times(4/topVp*sqTopVs*topVs*rp*topDensity*(1-2*sqTopVs*sqRP));
+        Complex numeratorTerm = CX.times(botVertSlownessP, topVertSlownessS).times(4/topVp*sqTopVs*topVs*rp*topDensity*cosfterm);
         return CX.over(numeratorTerm, DSolidFluid);
     }
 
@@ -134,10 +134,11 @@ public class ReflTransSolidFluid extends ReflTrans {
             botVertSlownessP = calcTransVerticalSlownessP(rp);
             //botVertSlownessS = calcTransVerticalSlownessS(rp);
 
+            cosfterm = 1-2*sqTopVs*sqRP;
 
             // solid-fluid
             Complex dsfBracketTerm = CX.plus(topVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP),
-                    (1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+                    cosfterm*cosfterm);
             DSolidFluid = CX.plus(topVertSlownessP.times(botDensity),
                     botVertSlownessP.times(topDensity).times(dsfBracketTerm));
 
@@ -146,5 +147,6 @@ public class ReflTransSolidFluid extends ReflTrans {
         }
     }
 
+    double cosfterm;
     Complex DSolidFluid;
 }

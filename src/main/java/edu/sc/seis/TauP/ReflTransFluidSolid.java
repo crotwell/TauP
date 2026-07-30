@@ -26,7 +26,7 @@ public class ReflTransFluidSolid extends ReflTrans {
         calcTempVars(rayParam, true);
         Complex t1 = botVertSlownessP.times(botVertSlownessS).times(4*sqBotVs*sqBotVs*sqRP).plus(cos2fterm*cos2fterm);
         Complex parenA = topVertSlownessP.times(botDensity).times(t1).times(-1);
-        Complex parenB = botVertSlownessP.times(topDensity).times(2*sqBotVs*sqRP+cos2fterm);
+        Complex parenB = botVertSlownessP.times(topDensity); // .times(1)?
         Complex out = (parenA.plus(parenB)).times(sqBotVp/(botVs*topDensity));
         return out.over(DFluidSolid);
     }
