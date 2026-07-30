@@ -553,7 +553,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         out_rayParams[rayParams.length - 1 + shift] = rayParams[rayParams.length - 1];
         out_time[rayParams.length - 1 + shift] = time[rayParams.length - 1];
         SimpleContigSeismicPhase out = new SimpleContigSeismicPhase(proto, out_rayParams, out_time, out_dist,
-                minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, false);
+                minRayParam, maxRayParam, minRayParamIndex+numToAdd, maxRayParamIndex, minDistance, maxDistance, false);
         if (shift != numToAdd) {
             throw new RuntimeException("shifty not numAdd " + shift + " " + numToAdd);
         }
