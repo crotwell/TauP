@@ -415,22 +415,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
      * @return
      */
     public Arrival createArrivalAtIndex(int rayNum) {
-        int neighborShift = 1;
-        if (rayParams.length > 1 && rayNum == rayParams.length - 1) {
-            neighborShift = -1;
-        }
 
-        Arrival neighborArrival = null;
-        if (rayParams.length > 1) {
-            neighborArrival = new Arrival(this,
-                    this, getTime(rayNum+neighborShift),
-                    getDist(rayNum+neighborShift),
-                    getRayParams(rayNum+neighborShift),
-                    rayNum+neighborShift,
-                    new RayParamIndexRay(rayNum+neighborShift,
-                            gettMod().getVelocityModel().getSphericalDistCalc())
-            );
-        }
         Arrival out = new Arrival(this,
                 this, getTime(rayNum),
                 getDist(rayNum),
@@ -439,21 +424,63 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 new RayParamIndexRay(rayNum,
                         gettMod().getVelocityModel().getSphericalDistCalc())
         );
-        out.setNeighborArrival( neighborArrival);
-        if (neighborArrival!= null) {
-            neighborArrival.setNeighborArrival(out);
+
+        int neighborShift = 1;
+        List<Arrival> potentailList = new ArrayList<>();
+        while (potentailList.isEmpty()) {
+            if (rayNum + neighborShift < rayParams.length) {
+                int idx = rayNum + neighborShift;
+                potentailList.add(new Arrival(this,
+                        this, getTime(idx),
+                        getDist(idx),
+                        getRayParams(idx),
+                        idx,
+                        new RayParamIndexRay(idx,
+                                gettMod().getVelocityModel().getSphericalDistCalc())
+                ));
+            }
+            if (rayNum - neighborShift >= 0) {
+                int idx = rayNum - neighborShift;
+                potentailList.add(new Arrival(this,
+                        this, getTime(idx),
+                        getDist(idx),
+                        getRayParams(idx),
+                        idx,
+                        new RayParamIndexRay(idx,
+                                gettMod().getVelocityModel().getSphericalDistCalc())
+                ));
+            }
+            if (potentailList.isEmpty()) {
+                throw new RuntimeException("Can't find any neighbors far enough away..."+this.getName()+" at rayNum"+rayNum+" nshift "+neighborShift+" "+rayParams.length);
+            }
+            Arrival potentialNeighbor = Arrival.bestNeighbor(out.getDist(), potentailList);
+            potentailList = new ArrayList<>();
+            if (potentialNeighbor != null) {
+                potentailList.add(potentialNeighbor);
+            }
+            neighborShift+=1;
+        }
+
+        if ( ! potentailList.isEmpty()) {
+            out.setNeighborArrival( potentailList.get(0));
+            potentailList.get(0).setNeighborArrival(out);
         }
         return out;
     }
 
-    public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
+    public Arrival refineArrival(int rayNum, double searchDistRadian, double distTolRadian, int maxRecursion) {
         Arrival left = createArrivalAtIndex(rayNum);
         Arrival right = createArrivalAtIndex(rayNum + 1);
-        return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
+
+        Arrival potentialNeighbor = Arrival.bestNeighbor(searchDistRadian, List.of(left, right, left.getNeighborArrival(), right.getNeighborArrival()));
+        return refineArrival(left, right, searchDistRadian, distTolRadian, maxRecursion, potentialNeighbor);
     }
 
-    public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
+    public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist,
+                                 double distTolRadian, int maxRecursion, Arrival potentialNeighbor) {
         Arrival linInterp = linearInterpArrival(searchDist, leftEstimate, rightEstimate);
+        potentialNeighbor = Arrival.bestNeighbor(searchDist, List.of(leftEstimate, rightEstimate, potentialNeighbor));
+        linInterp.setNeighborArrival(potentialNeighbor);
         if (maxRecursion <= 0 || countFlatLegs() > 0) {
             // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
@@ -482,21 +509,30 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
         try {
             Arrival shoot = shootRay(linInterp.getRayParam());
+
             double distError = Math.abs(shoot.getDist() - linInterp.getDist());
             if ((leftEstimate.getDist() - searchDist)
                     * (searchDist - shoot.getDist()) > 0) {
                 // search between left and shoot
                 if (distError < distTolRadian) {
-                    return linearInterpArrival(searchDist, leftEstimate, shoot);
+                    Arrival out = linearInterpArrival(searchDist, leftEstimate, shoot);
+                    out.setNeighborArrival(Arrival.bestNeighbor(searchDist,
+                            List.of(leftEstimate, rightEstimate, shoot, potentialNeighbor)));
+                    return out;
                 } else {
-                    return refineArrival(leftEstimate, shoot, searchDist, distTolRadian, maxRecursion - 1);
+                    return refineArrival(leftEstimate, shoot, searchDist, distTolRadian, maxRecursion - 1,
+                            Arrival.bestNeighbor(searchDist, List.of(leftEstimate, rightEstimate, shoot, potentialNeighbor)));
                 }
             } else {
                 // search between shoot and right
                 if (distError < distTolRadian) {
-                    return linearInterpArrival(searchDist, shoot, rightEstimate);
+                    Arrival out =  linearInterpArrival(searchDist, shoot, rightEstimate);
+                    out.setNeighborArrival(Arrival.bestNeighbor(searchDist,
+                            List.of(leftEstimate, rightEstimate, shoot, potentialNeighbor)));
+                    return out;
                 } else {
-                    return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion - 1);
+                    return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion - 1,
+                            Arrival.bestNeighbor(searchDist, List.of(leftEstimate, rightEstimate, shoot, potentialNeighbor)));
                 }
             }
         } catch (TauModelException | SlownessModelException e) {
@@ -589,19 +625,35 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             sum = sum.add(td);
             pierce.add(sum);
         }
-        double dRPdDist = (rayParam - rayParams[rayParamIndex]) / (sum.getDistRadian() - dist[rayParamIndex]);
         Arrival a = new Arrival(this,
                 this,
                 pierce,
-                rayParamIndex,
-                dRPdDist
+                rayParamIndex
         );
-        a.setNeighborArrival(createArrivalAtIndex(rayParamIndex));
+        List<Arrival> potentialNeighbors = new ArrayList<>();
+        Arrival idxA = createArrivalAtIndex(rayParamIndex);
+        if (idxA!=null) {
+            potentialNeighbors.add(idxA);
+            if (idxA.getNeighborArrival()!= null) {
+                potentialNeighbors.add(idxA.getNeighborArrival());
+            }
+        }
+        Arrival idxB = (rayParamIndex+1<rayParams.length)?createArrivalAtIndex(rayParamIndex+1):null;
+        if (idxB!=null) {
+            potentialNeighbors.add(idxB);
+            if (idxB.getNeighborArrival()!= null) {
+                potentialNeighbors.add(idxB.getNeighborArrival());
+            }
+        }
+        a.setNeighborArrival(Arrival.bestNeighbor(
+                pierce.get(pierce.size() - 1).getDistRadian(),
+                potentialNeighbors));
         return a;
     }
 
     /**
      * Interprets between two arrivals to find new arrival at given distance.
+     * Note does not set the neighbor arrival.
      *
      * @param searchDist new arrival distance
      * @param left       known arrival to left
@@ -625,9 +677,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
         // use closest edge to interpolate time
         double arrivalTime;
-        Arrival neighborArrival = left.getDist()==searchDist?right:left;
         if (maxRayParam == minRayParam) {
             // degenerate phase, all ray parameters are the same, just interpolate time
+            arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
+                    right.getDist(), right.getTime(), searchDist);
+        } else if ((Math.abs(right.getDist() - left.getDist())<NEIGHBOR_MIN_DIST)) {
+            // rays too close for further interpolation
             arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
                     right.getDist(), right.getTime(), searchDist);
         } else {
@@ -635,12 +690,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
             } else {
                 arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
-            }
-            if (right.getRayParam() == arrivalRayParam
-                    || Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
-                neighborArrival = left;
-            } else {
-                neighborArrival = right;
             }
         }
         if (Double.isNaN(arrivalTime)) {
@@ -655,7 +704,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                 left.getRayParamIndex(),
                 left.getRayCalculateable()
         );
-        a.setNeighborArrival( neighborArrival);
         return a;
     }
 
@@ -1216,4 +1264,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             System.out.println(j + "  " + dist[j] + "  " + rayParams[j]);
         }
     }
+
+    public static final double NEIGHBOR_MIN_DIST = 1e-6;
 }

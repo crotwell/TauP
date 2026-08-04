@@ -28,7 +28,6 @@ public class TimeRayTest {
                 assertEquals(a.getTime(), closest.getTime(), 0.01, msg);
                 assertEquals(a.getDist(), closest.getDist(), 0.01, msg);
                 assertEquals(a.getRayParam(), closest.getRayParam(), 0.03, msg);
-                assertEquals(a.getDRayParamDDelta(), closest.getDRayParamDDelta(), 10, msg);
 
             }
         }

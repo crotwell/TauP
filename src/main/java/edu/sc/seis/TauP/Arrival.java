@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.TURN;
+import static edu.sc.seis.TauP.SimpleContigSeismicPhase.NEIGHBOR_MIN_DIST;
 import static edu.sc.seis.TauP.SphericalCoords.ONE_DEG_AS_RADIAN;
 
 /**
@@ -48,8 +49,7 @@ public class Arrival {
     public Arrival(SeismicPhase phase,
                    SimpleContigSeismicPhase simpleContigSeismicPhase,
                    List<TimeDist> pierce,
-                   int rayParamIndex,
-                   double dRPdDist) {
+                   int rayParamIndex) {
         this(phase,
                 simpleContigSeismicPhase,
                 pierce.get(pierce.size() - 1).getTime(),
@@ -1349,4 +1349,16 @@ public class Arrival {
         return getRayCalculateable() != null ? getRayCalculateable().getLatLonable() : null;
     }
 
+    public static Arrival bestNeighbor(double distRadian, List<Arrival> nearbyList) {
+        List<Arrival> bestNearbyList = nearbyList.stream()
+                .filter(a -> a != null)
+                .filter(a -> Math.abs(a.getDist()-distRadian)>NEIGHBOR_MIN_DIST)
+                .sorted( Comparator.comparingDouble(Arrival::getDist))
+                .toList();
+        if (!bestNearbyList.isEmpty()) {
+            return bestNearbyList.get(0);
+        } else {
+            return null;
+        }
+    }
 }
