@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.LatLonLocatable;
-import edu.sc.seis.seisFile.LatLonSimple;
 import edu.sc.seis.seisFile.Location;
 
 import java.util.ArrayList;

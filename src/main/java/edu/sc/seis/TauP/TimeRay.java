@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import net.sf.geographiclib.Geodesic;
-
 import java.util.ArrayList;
 import java.util.List;
 
