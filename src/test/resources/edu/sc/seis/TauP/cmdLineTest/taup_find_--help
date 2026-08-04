@@ -24,8 +24,9 @@ Options:
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
-      --deltatime=dt       find arrivals within the +- deltatime, --times must
-                             have single time
+      --deltatime=dt       find arrivals within the +- deltatime in seconds,
+                             --times must have single time. Default value is
+                             5.0.
       --exclude=depth[,depth...]...
                            Exclude boundaries from phase conversion or
                              reflection interactions
