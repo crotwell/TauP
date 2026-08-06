@@ -21,14 +21,6 @@ plugins {
 application {
   mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
   applicationName = "taup"
-  //applicationName = "taupdev"
-  //
-  // below to address undertow, jboss-threads warning:
-  // WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-  // WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.jboss.threads.JBossExecutors
-  // can be removed if/when undertow upgrades dependency
-  // but this jvm arg not available on java11 or 17, so...
-  // applicationDefaultJvmArgs = listOf("--sun-misc-unsafe-memory-access=allow")
 }
 
 group = "edu.sc.seis"
