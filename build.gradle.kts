@@ -14,7 +14,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.59.0"
+  id("io.github.ben-manes.versions") version "0.59.0"
   id("org.jreleaser") version "1.25.0"
 }
 
@@ -224,8 +224,8 @@ dependencies {
     implementation("net.sf.geographiclib:GeographicLib-Java:2.1")
     implementation("org.json:json:20260719")
     implementation("com.google.code.gson:gson:2.14.0")
-    implementation("edu.sc.seis:seisFile:2.3.4")
-    //implementation("edu.sc.seis:seisFile:2.3.1-SNAPSHOT")
+    implementation("edu.sc.seis:seisFile:2.4.0")
+    //implementation("edu.sc.seis:seisFile:2.4.1-SNAPSHOT")
     implementation("edu.sc.seis:seedCodec:1.2.0")
 
     // temporary use modified picocli to allow sort of ArgGroup options
