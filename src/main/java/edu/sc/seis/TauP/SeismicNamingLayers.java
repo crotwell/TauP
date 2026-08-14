@@ -79,7 +79,7 @@ public class SeismicNamingLayers {
 
     /**
      * Gets [top, bot] for range containing the given branchNum, with
-     * top <= branchNum <= bot.
+     * top &lt;= branchNum &lt;= bot.
      * @param branchNum search for number
      * @return range that include brnachNum
      */

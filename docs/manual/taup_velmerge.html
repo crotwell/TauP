@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP VelocityMerge &#8212; TauP 3.2.0-SNAPSHOT8 documentation</title>
+    <title>TauP VelocityMerge &#8212; TauP 3.2.0-SNAPSHOT10 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=487741ec"></script>
+    <script src="_static/documentation_options.js?v=2699cfa9"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT8</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT10</p>
 
 
 
@@ -176,7 +176,7 @@ depth in the merge to cover the named in both models. The merge
 model does not have to start at the surface, it can be just a
 range of depths.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velmerge [--asjson] [--debug] [--help] [--smoothbot] [--smoothtop]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velmerge [--debug] [--help] [--json] [--smoothbot] [--smoothtop]
                      [--verbose] [--elev=&lt;elevationMeters&gt;] [-o=&lt;outFile&gt;]
                      [--prop=&lt;toolPropsFilename&gt;] (--mod=&lt;modelName&gt; |
                      --nd=&lt;nDModelFilename&gt; | --tvel=&lt;tvelModelFilename&gt;)
@@ -186,12 +186,13 @@ Merge part of one model into another.
 
 Options:
 
-      --asjson             output as a &quot;.json&quot; velocity file
       --debug              enable debugging output
       --elev=&lt;elevationMeters&gt;
                            modify topmost layers for an elevation (meters), may
                              be negative
       --help               display this help message
+      --json               output as a &quot;.json&quot; velocity file, otherwise will be
+                             a &quot;.nd&quot; velocity file
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
