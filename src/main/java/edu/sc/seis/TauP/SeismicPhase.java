@@ -45,6 +45,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     String describeShort();
 
+    String branchNumSeqStrWithSegBreaks();
+
     TauModel getTauModel();
 
     static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {

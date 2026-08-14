@@ -520,7 +520,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
                 s.append(shadowZones.get(idx)).append("\n");
             }
         }
-        return s.toString();
+        return s.toString().trim();
     }
 
     @Override
@@ -529,7 +529,16 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
         for (SimpleContigSeismicPhase sp : simplePhaseList) {
             s.append(sp.describeShort()).append("\n");
         }
-        return s.toString();
+        return s.toString().trim();
+    }
+
+    @Override
+    public String branchNumSeqStrWithSegBreaks() {
+        StringBuilder s = new StringBuilder();
+        for (SimpleContigSeismicPhase sp : simplePhaseList) {
+            s.append(sp.branchNumSeqStrWithSegBreaks()).append("\n");
+        }
+        return s.toString().trim();
     }
 
 }

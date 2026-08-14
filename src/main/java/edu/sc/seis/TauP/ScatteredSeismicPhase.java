@@ -403,6 +403,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public String branchNumSeqStrWithSegBreaks() {
+        return inboundArrival.getPhase().branchNumSeqStrWithSegBreaks()+" scatter "+scatteredPhase.branchNumSeqStrWithSegBreaks();
+    }
+
+    @Override
     public boolean isFail() {
         return inboundArrival == null || scatteredPhase.isFail();
     }

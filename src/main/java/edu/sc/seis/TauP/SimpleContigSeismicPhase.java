@@ -1244,6 +1244,10 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return desc;
     }
 
+    public String branchNumSeqStrWithSegBreaks() {
+        return proto.branchNumSeqStrWithSegBreaks();
+    }
+
     @Override
     public String toString() {
         String desc = name + ": ";
