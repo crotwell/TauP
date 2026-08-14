@@ -828,7 +828,6 @@ public class SeismicPhaseWalk {
 
             List<ProtoSeismicPhase> cleaned = cleanDuplicates(outTree);
             if (outTree.size() != cleaned.size()) {
-                }
                 outTree.clear();
                 outTree.addAll(cleaned);
             }
@@ -861,6 +860,8 @@ public class SeismicPhaseWalk {
                         prev.prevEndAction);
                 out.remove(prev);
                 out.add(conSeg);
+                assert conSeg.endAction == seg.endAction : ("consolidated end not same as seg end: "+conSeg.endAction+" "+seg.endAction);
+
                 prev = conSeg;
             } else {
                 out.add(seg);

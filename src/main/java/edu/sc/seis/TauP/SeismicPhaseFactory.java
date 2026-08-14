@@ -602,7 +602,7 @@ public class SeismicPhaseFactory {
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
         if (endSeg.endAction == FAIL) {
-            throw new RuntimeException("Cannot sum failed phase");
+            return new FailedSeismicPhase(proto);
         }
         double[] rayParams;
         double[] dist;
@@ -682,7 +682,7 @@ public class SeismicPhaseFactory {
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
         if (endSeg.endAction == FAIL) {
-            throw new RuntimeException("Cannot sum failed phase");
+            return new FailedSeismicPhase(proto);
         }
         double[] rayParams;
         double[] dist;
@@ -706,11 +706,11 @@ public class SeismicPhaseFactory {
             }
         }
         if(maxRayParamIndex < 0) {
-            throw new RuntimeException(proto.getName()+" Should not happen, did not find max ray param"+maxRayParam);
+            throw new TauModelException(proto.getName()+" Should not happen, did not find max ray param"+maxRayParam);
         }
 
         if(minRayParamIndex < 0) {
-            throw new RuntimeException(proto.getName()+" Should not happen, did not find min ray param"+minRayParam);
+            throw new TauModelException(proto.getName()+" Should not happen, did not find min ray param"+minRayParam);
         }
 
 

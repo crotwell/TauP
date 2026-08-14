@@ -1717,6 +1717,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             ) {
                 // like PcpPdiff changed to PdiffPdiff, so no legname
                 // previous leg converted reflection to diff
+                // maybe not??? might keep PcPPdiff???
                 legName = "";
             } else if (prev.legName.substring(0,1).equals("I") && seg.legName.substring(0,1).equals("y") && prev.getEndAction()==TURN) {
                 // special case, I TURN y should be just I
@@ -1898,6 +1899,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             out = diff;
         } else {
             out = (int) (Math.round(botDepth))+diff;
+        }
+        if (prev != null && prev.endAction == TRANSUPDIFFRACT) {
+            // should updiff have separate leg name?
+            //out = "up"+out;
         }
         return out;
     }
