@@ -312,17 +312,17 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraDefs.append("      markerWidth=\"3\"\n" );
         extraDefs.append("      markerHeight=\"3\"\n");
         extraDefs.append("      orient=\"auto-start-reverse\">\n");
-        extraDefs.append("      <path d=\"M 0 0 L 10 5 L 0 10 z\" />\n");
+        extraDefs.append("      <path d=\"M 0 0 L 10 5 L 0 10 z\" stroke=\"context-stroke\" fill=\"context-fill\"/>\n");
         extraDefs.append("    </marker>");
         return extraDefs;
     }
 
     private static StringBuilder getBeachballExtraCSS() {
         StringBuilder extraCSS = new StringBuilder();
-        extraCSS.append("g.radpattern line {\n");
-        extraCSS.append("  stroke: grey;\n");
-        //extraCSS.append("  stroke-width: 0.75px;\n");
-        //extraCSS.append("  vector-effect: non-scaling-stroke;\n");
+        extraCSS.append("g.radpattern  {\n");
+        extraCSS.append("  stroke: goldenrod;\n");
+        extraCSS.append("  fill: goldenrod;\n");
+        extraCSS.append("  stroke-width: 0.5px;\n");
         extraCSS.append("}\n");
         extraCSS.append("g.axis line {\n");
         extraCSS.append("  vector-effect: non-scaling-stroke;\n");
@@ -595,7 +595,6 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 cx = ((x1+x2)/2);
                 cy = ((y1+y2)/2);
             }
-            writer.println("<circle cx=\"" + cx + "\" cy=\"" + cy +"\" r=\""+circleSize+"\" fill=\"black=\" />");
             writer.println("<line x1=\"" + (x1) + "\" y1=\"" + (y1)
                     + "\" x2=\"" + (x2) + "\" y2=\"" + (y2) + "\" marker-end=\"url(#arrow)\" />");
         }
