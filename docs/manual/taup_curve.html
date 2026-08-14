@@ -82,6 +82,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_discon.html">TauP Discon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_beachball.html">TauP Beachball</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
@@ -1359,7 +1360,7 @@ and <cite>-y</cite> options. For example tau vs ray parameter with:</p>
   <metadata>
     <taup>
       <command>taup curve -x rayparamdeg -y tau &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="33.09372816802343" ymin="0.0" ymax="1636.3816586476075" />
     </taup>
@@ -1564,7 +1565,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">iasp91 (h= km)</text>
+<text class="title" x="208.0" y="0">iasp91 (h=0.0 km)</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Tau</text>
@@ -3382,11 +3383,12 @@ Options:
                              radian, radian180, degree, degree180, kilometer,
                              kilometer180, rayparamrad, rayparamdeg,
                              rayparamkm, time, tau, takeoffangle,
-                             incidentangle, maxdepth, dpddelta, dpddeg, amp,
-                             amppsv, ampsh, phase, phasepsv, phasesh, phasedeg,
-                             phasedegpsv, phasedegsh, unwrapphasedeg,
-                             unwrapphasedegpsv, unwrapphasedegsh, geospread,
-                             refltran, refltranpsv, refltransh, index, tstar,
+                             incidentangle, maxdepth, dpddelta, dpddeg,
+                             dtakeoffddeg, dincidentddeg, amp, amppsv, ampsh,
+                             phase, phasepsv, phasesh, phasedeg, phasedegpsv,
+                             phasedegsh, unwrapphasedeg, unwrapphasedegpsv,
+                             unwrapphasedegsh, geospread, refltran,
+                             refltranpsv, refltransh, index, tstar,
                              attenuation, energygeospread, pathlength,
                              radiation, radiationpsv, radiationsh, intcaustic
       --xabs               X axis is absolute value
@@ -3396,11 +3398,12 @@ Options:
                              radian180, degree, degree180, kilometer,
                              kilometer180, rayparamrad, rayparamdeg,
                              rayparamkm, time, tau, takeoffangle,
-                             incidentangle, maxdepth, dpddelta, dpddeg, amp,
-                             amppsv, ampsh, phase, phasepsv, phasesh, phasedeg,
-                             phasedegpsv, phasedegsh, unwrapphasedeg,
-                             unwrapphasedegpsv, unwrapphasedegsh, geospread,
-                             refltran, refltranpsv, refltransh, index, tstar,
+                             incidentangle, maxdepth, dpddelta, dpddeg,
+                             dtakeoffddeg, dincidentddeg, amp, amppsv, ampsh,
+                             phase, phasepsv, phasesh, phasedeg, phasedegpsv,
+                             phasedegsh, unwrapphasedeg, unwrapphasedegpsv,
+                             unwrapphasedegsh, geospread, refltran,
+                             refltranpsv, refltransh, index, tstar,
                              attenuation, energygeospread, pathlength,
                              radiation, radiationpsv, radiationsh, intcaustic
       --yabs               Y axis is absolute value
