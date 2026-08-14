@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path &#45;&#45;mod iasp91 -h 550 &#45;&#45;deg 74 -p S,ScS,sS,sScS &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -696,7 +696,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 S of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in crust/mantle from 35.56 deg, 2036.0 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 2/2 s of S at  1168.49 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   10.906 s/deg. in crust/mantle from 35.56 deg, 2036.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_S swave" points="
  2521.10  -3526.56
  2572.01  -3493.02
@@ -1064,7 +1064,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 2/2 s of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_ScS swave" points="
  2047.05  -2816.72
  2091.21  -2800.18
@@ -1571,7 +1571,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 S of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle from 38.57 deg, 1817.2 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 3/3 s of sS at  1373.84 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam   11.626 s/deg. in crust/mantle from 38.57 deg, 1817.2 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_sS swave" points="
  2839.14  -3560.36
  2895.79  -3519.03
@@ -2077,7 +2077,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 3/3 s of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_sScS swave" points="
  2142.61  -2744.73
  2199.94  -2723.86

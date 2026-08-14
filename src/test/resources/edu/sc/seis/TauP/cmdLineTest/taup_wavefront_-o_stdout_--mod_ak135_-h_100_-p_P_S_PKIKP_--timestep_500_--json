@@ -93,7 +93,7 @@
           "receiverdepth": 0.0,
           "segments": [
             {
-              "name": "P",
+              "name": "p",
               "wavetype": "pwave",
               "segment": [
                 [
@@ -488,7 +488,7 @@
           "receiverdepth": 0.0,
           "segments": [
             {
-              "name": "S",
+              "name": "s",
               "wavetype": "swave",
               "segment": [
                 [
@@ -509,7 +509,7 @@
               ]
             },
             {
-              "name": "S",
+              "name": "s",
               "wavetype": "swave",
               "segment": [
                 [
@@ -535,7 +535,7 @@
               ]
             },
             {
-              "name": "S",
+              "name": "s",
               "wavetype": "swave",
               "segment": [
                 [
@@ -706,7 +706,7 @@
               ]
             },
             {
-              "name": "S",
+              "name": "s",
               "wavetype": "swave",
               "segment": [
                 [
@@ -1691,7 +1691,7 @@
           "receiverdepth": 0.0,
           "segments": [
             {
-              "name": "S",
+              "name": "s",
               "wavetype": "swave",
               "segment": [
                 [
@@ -2156,7 +2156,7 @@
           "receiverdepth": 0.0,
           "segments": [
             {
-              "name": "P",
+              "name": "p",
               "wavetype": "pwave",
               "segment": [
                 [

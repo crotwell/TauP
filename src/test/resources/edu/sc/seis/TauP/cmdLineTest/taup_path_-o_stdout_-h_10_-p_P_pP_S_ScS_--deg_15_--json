@@ -193,7 +193,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -503,7 +503,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -783,7 +783,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -1127,7 +1127,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -1501,7 +1501,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -1905,7 +1905,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -2390,7 +2390,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -3040,7 +3040,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -3754,7 +3754,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -4468,7 +4468,7 @@
           ]
         },
         {
-          "name": "P",
+          "name": "p",
           "wavetype": "pwave",
           "updown": "up",
           "endaction": "END",
@@ -4913,7 +4913,7 @@
           ]
         },
         {
-          "name": "S",
+          "name": "s",
           "wavetype": "swave",
           "updown": "up",
           "endaction": "END",
@@ -5283,7 +5283,7 @@
           ]
         },
         {
-          "name": "S",
+          "name": "s",
           "wavetype": "swave",
           "updown": "up",
           "endaction": "END",
@@ -5778,7 +5778,7 @@
           ]
         },
         {
-          "name": "S",
+          "name": "s",
           "wavetype": "swave",
           "updown": "up",
           "endaction": "END",
@@ -7183,7 +7183,7 @@
           ]
         },
         {
-          "name": "S",
+          "name": "s",
           "wavetype": "swave",
           "updown": "up",
           "endaction": "END",

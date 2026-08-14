@@ -92,7 +92,7 @@
               "then": "turn"
             },
             {
-              "name": "S",
+              "name": "s",
               "updown": "up",
               "type": "swave",
               "branch_desc": "crust",
@@ -142,7 +142,7 @@
               "then": "turn"
             },
             {
-              "name": "S",
+              "name": "s",
               "updown": "up",
               "type": "swave",
               "branch_desc": "crust/mantle",

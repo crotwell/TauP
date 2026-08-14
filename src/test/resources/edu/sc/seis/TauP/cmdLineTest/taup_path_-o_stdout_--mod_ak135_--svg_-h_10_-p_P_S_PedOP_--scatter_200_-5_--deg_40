@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 10 -p P,S,PedOP &#45;&#45;scatter 200 -5 &#45;&#45;deg 40 </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -659,7 +659,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 P of P at   454.86 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.305 s/deg. in crust/mantle from 19.98 deg, 954.2 km to 40.00 deg, 0.0 km</desc>
+      <desc>seg 2/2 p of P at   454.86 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.305 s/deg. in crust/mantle from 19.98 deg, 954.2 km to 40.00 deg, 0.0 km</desc>
       <polyline class="path phase_P pwave" points="
  1850.72  -5090.78
  1897.14  -5074.10
@@ -903,7 +903,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 P of PedOP at   548.50 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    7.872 s/deg. in crust/mantle from 16.88 deg, 1118.7 km to 40.00 deg, 0.0 km</desc>
+      <desc>seg 3/3 p of PedOP at   548.50 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    7.872 s/deg. in crust/mantle from 16.88 deg, 1118.7 km to 40.00 deg, 0.0 km</desc>
       <polyline class="path phase_PedOP pwave" points="
  1525.05  -5026.01
  1591.68  -5008.51
@@ -1152,7 +1152,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 S of S at   820.36 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam   14.970 s/deg. in crust/mantle from 19.98 deg, 936.6 km to 40.00 deg, 0.0 km</desc>
+      <desc>seg 2/2 s of S at   820.36 seconds at    40.00 degrees for a     10.0 km deep source in the ak135 model with rayParam   14.970 s/deg. in crust/mantle from 19.98 deg, 936.6 km to 40.00 deg, 0.0 km</desc>
       <polyline class="path phase_S swave" points="
  1856.57  -5107.45
  1922.32  -5084.60
