@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
+import static edu.sc.seis.TauP.SphericalCoords.rtod;
 
 /**
  * Partial segment of a full seismic phase, usually between major boundaries or turn points.
@@ -275,6 +276,14 @@ public class SeismicPhaseSegment {
 		return maxRayParam;
 	}
 
+	public double getMinRayParamDeg() {
+		return getMinRayParam()/rtod;
+	}
+
+	public double getMaxRayParamDeg() {
+		return getMaxRayParam()/rtod;
+	}
+
 	public String getDepthRangeString() {
 		String depthRange;
 		if (startBranch == -1 && endBranch == -1) {
@@ -334,6 +343,13 @@ public class SeismicPhaseSegment {
 	}
 	public double getEndDepth() {
 		return getDepthRange()[getDepthRange().length-1];
+	}
+
+	public int getStartBranch() {
+		return startBranch;
+	}
+	public int getEndBranch() {
+		return endBranch;
 	}
 
 	public double[] getDepthRange() {
@@ -754,11 +770,17 @@ public class SeismicPhaseSegment {
 	}
 
 	public static String segmentDescribe(List<SeismicPhaseSegment> segmentList) {
+		return segmentDescribe(segmentList, false);
+	}
+
+	public static String segmentDescribe(List<SeismicPhaseSegment> segmentList, boolean includeRP) {
 		String desc = "";
 		String indent = "  ";
 		for(SeismicPhaseSegment segment : segmentList) {
 			if (segment.endAction != PhaseInteraction.FAIL || segment.endBranch != -1) {
-				desc += indent + segment + "\n";
+				desc += indent + segment.toString()
+						+ (includeRP? (" rp: "+segment.getMinRayParam()+" "+segment.getMaxRayParam()): "")
+						+ "\n";
 			} else {
 				desc += indent + "then " + segment.endAction + "\n";
 			}

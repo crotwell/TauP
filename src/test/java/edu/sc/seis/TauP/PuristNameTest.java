@@ -10,6 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PuristNameTest {
 
+
+    @Test
+    public void puristNamePv410P410n() throws TauModelException {
+        String phaseName =  "Pv410P410n";
+        String puristName = "Pv410pP410n";
+        TauModel tauModel = TauModelLoader.load("iasp91");
+        SeismicPhase sp = SeismicPhaseFactory.createPhase(phaseName, tauModel);
+        assertTrue(sp.phasesExistsInModel());
+        assertEquals(puristName, sp.getPuristName());
+    }
+
     @Test
     public void puristNamePdiff() throws TauModelException {
         String Pdiff = "Pdiff";

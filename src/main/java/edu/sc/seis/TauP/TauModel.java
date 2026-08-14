@@ -16,8 +16,6 @@
  */
 package edu.sc.seis.TauP;
 
-import net.sf.geographiclib.Geodesic;
-
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
@@ -434,6 +432,13 @@ public class TauModel implements Serializable {
 
     public int getNumBranches() {
         return tauBranches[0].length;
+    }
+
+    public SeismicNamingLayers getNamingLayers() {
+        if (namingLayers == null) {
+            namingLayers = new SeismicNamingLayers(this);
+        }
+        return namingLayers;
     }
 
 
@@ -1150,6 +1155,8 @@ public class TauModel implements Serializable {
         }
         return null;
     }
+
+    private transient SeismicNamingLayers namingLayers = null;
     
     private final HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<>();
 

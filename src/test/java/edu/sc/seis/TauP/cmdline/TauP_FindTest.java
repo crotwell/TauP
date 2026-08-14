@@ -24,7 +24,6 @@ public class TauP_FindTest {
         SeismicPhaseWalk allwalker = find.createWalker(tMod, receiverDepth, find.getExcludedDepths(tMod));
         List<ProtoSeismicPhase> allwalk = allwalker.findEndingPaths(maxActions);
 
-
         for (int i = 0; i < allwalk.size()-1; i++) {
             ProtoSeismicPhase proto = allwalk.get(i);
             assertEquals(receiverDepth, proto.endSegment().getEndDepth(), proto.getPuristName());

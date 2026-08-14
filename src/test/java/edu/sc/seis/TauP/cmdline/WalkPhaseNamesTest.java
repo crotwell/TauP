@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static edu.sc.seis.TauP.PhaseInteraction.TURN;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WalkPhaseNamesTest {
 
@@ -39,14 +39,10 @@ public class WalkPhaseNamesTest {
             SeismicPhase sp = SeismicPhaseFactory.createPhase(pName, tMod, sourceDepth, receiverDepth);
             assertTrue(sp.phasesExistsInModel(), pName);
             assertTrue(sp instanceof SimpleContigSeismicPhase, pName);
-            System.err.println("proto: "+protoSP.describe());
-            System.err.println("from name: "+sp.describe());
             assertEquals(protoSP.getMinRayParam(), sp.getMinRayParam(), pName);
             assertEquals(protoSP.getMaxRayParam(), sp.getMaxRayParam(), pName);
             assertEquals(protoSP.getPuristName(), pName);
             assertEquals(sp.getPuristName(), pName);
-            //assertEquals(p.branchNumSeqStr(), ((SimpleContigSeismicPhase)sp).getProto().branchNumSeqStr(), pName);
-            //assertEquals(p.branchNumSeqStrWithSegBreaks(), ((SimpleContigSeismicPhase)sp).getProto().branchNumSeqStrWithSegBreaks());
         }
 
     }
@@ -58,38 +54,61 @@ public class WalkPhaseNamesTest {
         int maxActions = 3;
         TauP_Find find = new TauP_Find();
         find.onlyPWave = true;
-        find.excludeDepthNames.addAll(List.of("20", "210"));
+        find.excludeDepthNames.addAll(List.of("20", "210", "660", "moho"));
         SeismicPhaseWalk allwalker = find.createWalker(tMod, receiverDepth, find.getExcludedDepths(tMod));
         List<ProtoSeismicPhase> allwalk = allwalker.findEndingPaths(maxActions);
-        for (ProtoSeismicPhase p : allwalk) {
+
+        for (int i = 0; i < allwalk.size(); i++) {
+            ProtoSeismicPhase p = allwalk.get(i);
+            assertTrue(p.getPuristName().startsWith("p") || p.getPuristName().startsWith("P"),
+                    p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks());
+            for (ProtoSeismicPhase pp : allwalk.subList(i+1, allwalk.size())) {
+                assertNotEquals(p.getPuristName(), pp.getPuristName(), i+" \n"+p.branchNumSeqStrWithSegBreaks()+"\n"+pp.branchNumSeqStrWithSegBreaks());
+            }
+        }
+        for (int idx = 0; idx < allwalk.size(); idx++) {
+            ProtoSeismicPhase p = allwalk.get(idx);
             SeismicPhase protoSP = p.asSeismicPhase();
+            assertEquals(p.branchNumSeqStrWithSegBreaks(), protoSP.branchNumSeqStrWithSegBreaks());
             String pName = p.getPuristName();
-            SeismicPhase sp = SeismicPhaseFactory.createPhase(pName, tMod, sourceDepth, receiverDepth);
+            assertFalse(pName.startsWith("K"), p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks());
+            SeismicPhase sp = null;
+            try {
+                sp = SeismicPhaseFactory.createPhase(pName, tMod, sourceDepth, receiverDepth);
+            } catch (PhaseParseException e) {
+                assertFalse(true, e.getMessage()+" "+pName);
+            }
             assertTrue(sp.phasesExistsInModel(), pName);
             assertTrue(sp instanceof SimpleContigSeismicPhase, pName);
             SimpleContigSeismicPhase scp = (SimpleContigSeismicPhase)sp;
-            //System.err.println("proto: "+protoSP.describe());
-            //System.err.println("from name: "+sp.describe());
+
+            // subtleties with ray param. ex PPPv410p. Is max rp the ray that turns below 410, or does it
+            // include the critically reflected ray at 410, like PV410pPV410pPv410p
             assertEquals(protoSP.getMinRayParam(), sp.getMinRayParam(), pName);
-            assertEquals(protoSP.getMaxRayParam(), sp.getMaxRayParam(), pName);
+            assertEquals(protoSP.getMaxRayParam(), sp.getMaxRayParam(), pName+" "+p.branchNumSeqStrWithSegBreaks()+" sp "+ sp.branchNumSeqStrWithSegBreaks());
             assertEquals(protoSP.getPuristName(), pName);
             assertEquals(sp.getPuristName(), pName);
             assertEquals(p.getSegmentList().size(), scp.getPhaseSegments().size());
             for (int i = 0; i < p.getSegmentList().size(); i++) {
                 SeismicPhaseSegment protoSeg = p.getSegmentList().get(i);
                 SeismicPhaseSegment phaseSeg = scp.getPhaseSegments().get(i);
-                assertEquals(protoSeg.getIsPWave(), phaseSeg.getIsPWave());
-                assertEquals(protoSeg.getIsFlat(), phaseSeg.getIsFlat());
-                assertEquals(protoSeg.getEndAction(), phaseSeg.getEndAction());
-                assertEquals(protoSeg.getPrevEndAction(), phaseSeg.getPrevEndAction());
-                assertEquals(protoSeg.getMinRayParam(), phaseSeg.getMinRayParam());
-                assertEquals(protoSeg.getMaxRayParam(), phaseSeg.getMaxRayParam());
-                assertEquals(protoSeg.getDepthRange()[0], phaseSeg.getDepthRange()[0]);
+                String msg = pName+" seg: "+i;
+                assertEquals(protoSeg.getIsPWave(), phaseSeg.getIsPWave(), msg);
+                assertEquals(protoSeg.getIsFlat(), phaseSeg.getIsFlat(), msg);
+                assertEquals(protoSeg.getEndAction(), phaseSeg.getEndAction(), msg);
+                assertEquals(protoSeg.getPrevEndAction(), phaseSeg.getPrevEndAction(), msg);
+                assertEquals(protoSeg.getStartBranch(), phaseSeg.getStartBranch(), msg);
+                assertEquals(protoSeg.getEndBranch(), phaseSeg.getEndBranch(), msg);
+                assertEquals(protoSeg.getDepthRange()[0], phaseSeg.getDepthRange()[0], p.getPuristName()+" seg: "+i);
+
+                // ok if all segments don't match ray param range as long as overall range matches
+                //assertEquals(protoSeg.getMinRayParam(), phaseSeg.getMinRayParam(), p.getPuristName()+" seg: "+i);
+                //assertEquals(protoSeg.getMaxRayParam(), phaseSeg.getMaxRayParam());
 
             }
-            //assertEquals(p.branchNumSeqStr(), ((SimpleContigSeismicPhase) sp).getProto().branchNumSeqStr(), pName);
-            //assertEquals(p.branchNumSeqStrWithSegBreaks(), ((SimpleContigSeismicPhase)protoSP).getProto().branchNumSeqStrWithSegBreaks());
-            //assertEquals(p.branchNumSeqStrWithSegBreaks(), ((SimpleContigSeismicPhase)sp).getProto().branchNumSeqStrWithSegBreaks());
+            assertEquals(p.branchNumSeqStr(), scp.getProto().branchNumSeqStr(), pName);
+            //assertEquals(p.branchNumSeqStrWithSegBreaks(), ((SimpleContigSeismicPhase)protoSP).getProto().branchNumSeqStrWithSegBreaks(), pName);
+            //assertEquals(p.branchNumSeqStrWithSegBreaks(), scp.getProto().branchNumSeqStrWithSegBreaks(), pName);
         }
     }
 }

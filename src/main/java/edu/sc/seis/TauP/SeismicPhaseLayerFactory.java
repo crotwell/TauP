@@ -518,7 +518,8 @@ public class SeismicPhaseLayerFactory {
                 if (isDowngoing) {
                     proto.addToBranch(baseFactory.downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
                 } else {
-                    proto.addToBranch(baseFactory.upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                    String upLegName = tMod.getNamingLayers().legCharForBranch(baseFactory.upgoingRecBranch, isPWave, false);
+                    proto.addToBranch(baseFactory.upgoingRecBranch, isPWave, nextIsPWave, endAction, upLegName);
                 }
             } else {
                 endAction = REFLECT_UNDERSIDE;
@@ -632,6 +633,7 @@ public class SeismicPhaseLayerFactory {
         } else if(getBelowFactory()!= null && getBelowFactory().isLayerLeg(nextLeg)) {
             endAction = TRANSDOWN;
             if (isHead(nextLeg)) {
+                // ex: PKnP
                 endAction = HEAD;
             }
             proto.addToBranch(
@@ -762,7 +764,7 @@ public class SeismicPhaseLayerFactory {
                 proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
-                        nextIsPWave,
+                        isPWave, // possible flat head leg is different from downgoing?
                         endAction,
                         currLeg);
                 endAction = HEADTURN;
@@ -1036,7 +1038,11 @@ public class SeismicPhaseLayerFactory {
             // head must be downgoing, so start at source branch if phase beginning
             int startBranch = proto.isEmpty() ? tMod.sourceBranch : proto.nextStartBranch();
             if (startBranch<disconBranch) {
-                proto.addToBranch(disconBranch-1, isPWave, nextIsPWave, HEAD, currLeg);
+                if (layerPropogationTypeAfter(proto.getEndAction()) == LayerPropogationType.UP) {
+                    // have to first reflect off surface?
+                    proto.addToBranch(0, isPWave, isPWave, REFLECT_UNDERSIDE, currLeg);
+                }
+                proto.addToBranch(disconBranch-1, isPWave, isPWave, HEAD, currLeg);
             } else if (startBranch > disconBranch) {
                 return baseFactory.failWithMessage(proto,
                         "Unable to head wave, "+currLeg+", start branch "+startBranch+" > "+disconBranch+" discon");
@@ -1044,7 +1050,8 @@ public class SeismicPhaseLayerFactory {
             if (startsWith(nextLeg, getBelowPLegSymbol()) || startsWith(nextLeg, getBelowSLegSymbol()) ) {
                 // down into  below layers, like core
                 // should this be allowed???
-                proto.addFlatBranch(isPWave, proto.getEndAction(), TRANSDOWN, currLeg);
+                //proto.addFlatBranch(isPWave, proto.getEndAction(), TRANSDOWN, currLeg);
+                return baseFactory.failWithMessage(proto, "Unable to go down after head wave, "+currLeg+" "+nextLeg);
             } else {
                 // normal case
                 proto.addFlatBranch(isPWave, proto.getEndAction(), HEADTURN, currLeg);
@@ -1081,6 +1088,8 @@ public class SeismicPhaseLayerFactory {
             } else if (nextLeg.charAt(0) == getAbovePLegSymbol() || nextLeg.charAt(0) == getAboveSLegSymbol()
                     || nextLeg.charAt(0) == getAboveUpPLegSymbol() || nextLeg.charAt(0) == getAboveUpSLegSymbol()) {
                 // no need as already at top and did HEADTURN
+            } else if (nextLeg.charAt(0) == up_p_leg || nextLeg.charAt(0) == up_s_leg) {
+                // continue up after head, handle by nextLeg
             } else if (topBranchNum==0 && (nextLeg.charAt(0) == p_leg || nextLeg.charAt(0)==s_leg)) {
                 // crust mantle surface reflect
                 endAction = REFLECT_UNDERSIDE;
@@ -1096,7 +1105,7 @@ public class SeismicPhaseLayerFactory {
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            return baseFactory.failWithMessage(proto,  " Phase not recognized for non-standard head wave: "
+            return baseFactory.failWithMessage(proto,  " Phase not recognized for non-standard head wave (2): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;

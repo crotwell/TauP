@@ -53,18 +53,28 @@ public class TauP_Walk extends TauP_Find {
             if (prevProto==null) {
                 System.out.println("Start...");
             } else {
+                ProtoSeismicPhase cons = walker.consolidateSegment(prevProto);
                 System.out.println("current: ");
-                System.out.println("   "+prevProto.getPuristName()+" "+prevProto.branchNumSeqStrWithSegBreaks()+" -> "+prevProto.getEndAction()+" at "+prevProto.endSegment().getEndDepth());
+                System.out.println("   "+cons.getPuristName()+" "+cons.branchNumSeqStrWithSegBreaks()+" -> "+cons.getEndAction()+" at "+cons.endSegment().getEndDepth());
             }
             System.out.println("-------------------------------------");
             for (int i = 0; i < protoList.size(); i++) {
                 ProtoSeismicPhase p = protoList.get(i);
-                System.out.println(i+" "+p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks()+" -> "+p.getEndAction()+" at "+p.endSegment().getEndDepth());
+                String article = " at ";
+                if (p.endSegment().getEndAction()==PhaseInteraction.TURN) {
+                    article = " above ";
+                }
+                System.out.println(i+" -> "+p.getEndAction()+" at "+p.endSegment().getEndDepth()+"   "+p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks()+"   rp: "+p.endSegment().getMinRayParamDeg()+" "+p.endSegment().getMaxRayParamDeg());
             }
             String nextCmd = scanner.next();
             System.out.println(nextCmd);
             if (nextCmd.startsWith("q")) {
                 break;
+            } else if (nextCmd.equals("b")) {
+                prevProto = new ProtoSeismicPhase(prevProto.getSegmentList().subList(0, prevProto.getSegmentList().size()-1),
+                        recDepth );
+                protoList = walker.nextLegs(tModRecDepth, prevProto, true);
+                continue;
             }
             try {
                 int choice = Integer.parseInt(nextCmd.trim());
@@ -77,7 +87,7 @@ public class TauP_Walk extends TauP_Find {
                     System.out.println(cons.getPuristName());
 
                     for (SeismicPhaseSegment seg : cons.getSegmentList()) {
-                        System.out.println("    "+seg.describe());
+                        System.out.println("    "+seg.describe()+"   rp: "+seg.getMinRayParamDeg()+" "+seg.getMaxRayParamDeg());
                     }
                     break;
                 }

@@ -6,6 +6,8 @@ import java.util.List;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.SeismicPhaseFactory.endActionString;
+import static edu.sc.seis.TauP.SphericalCoords.dtor;
+import static edu.sc.seis.TauP.SphericalCoords.rtod;
 
 /**
  * Represents a partial seismic phase, appended to as a name is parsed.
@@ -59,7 +61,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static ProtoSeismicPhase start(SeismicPhaseSegment startSeg, double receiverDepth) {
-        if (startSeg == null) {throw new RuntimeException("Start Segment cannot be null");}
+        if (startSeg == null) {throw new IllegalArgumentException("Start Segment cannot be null");}
         return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)), receiverDepth);
     }
 
@@ -106,7 +108,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if ( layerPropogationType == LayerPropogationType.UP || layerPropogationType == LayerPropogationType.DIFF) {
             startBranchNum = startBranchNum-1;
         }
-        String legName = legNameForSegment(tMod, startBranchNum, isPWave, layerPropogationType, endAction);
+        String legName = tMod.getNamingLayers().legNameForTauBranch(startBranchNum, isPWave, layerPropogationType, endAction);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         double minRayParam = 0.0;
         double maxRayParam;
@@ -224,6 +226,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         int startBranchNum = nextStartBranch();
         // usually same as start unless cross source depth that is not a discon
         int endDisconBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, propTypeBeforeEndAction);
+        if (endAction == TURN) {
+            // in case of TURN, we want to include all branch layers below until the name changes,
+            // ex if downgoing to turn below the moho, include all layers down to the cmb, like P
+            endDisconBranchNum = new SeismicNamingLayers(tMod).disconBranchBelow(startBranchNum);
+        }
         return nextSegment(isPWave, endDisconBranchNum, endAction);
     }
 
@@ -231,10 +238,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if (segmentList.isEmpty()) {
             throw new TauModelException("Unable to calc next start for empty proto phase");
         }
-        if (segmentList.isEmpty()) {
-            throw new TauModelException("Unable to calc next start for empty proto phase");
-        }
-        SeismicPhaseSegment endSeg = segmentList.get(segmentList.size()-1);
+        SeismicPhaseSegment endSeg = endSegment();
         if (endSeg.endAction == FAIL) {
             throw new TauModelException("Unable to calc next start for FAIL proto phase");
         }
@@ -295,7 +299,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             default ->
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         };
-        if (propTypeBeforeEndAction== LayerPropogationType.UP && endSeg != null && (endSeg.endBranch == 0 && (endSeg.endAction != TURN))) {
+        if (endDisconBranchNum==0 && propTypeBeforeEndAction == LayerPropogationType.DOWN) {
+            throw new IllegalArgumentException(getPuristName()+" End discon cannot be 0 with prop is "+propTypeBeforeEndAction
+                    +" endDisconBranchNum="+endDisconBranchNum+"  "+branchNumSeqStrWithSegBreaks());
+        }
+
+        if (propTypeBeforeEndAction== LayerPropogationType.UP
+                && endSeg != null
+                && (endSeg.endBranch == 0 && (endSeg.endAction != TURN))) {
+            // upgoing at surface not possible
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
                     isPWave, propTypeBeforeEndAction, "");
             out.add(nextSeg);
@@ -328,16 +340,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             return outProto;
         }
 
-        if (endDisconBranchNum==0 && propTypeBeforeEndAction == LayerPropogationType.DOWN) {
-            throw new RuntimeException("End discon cannot be 0 with prop is "+propTypeBeforeEndAction+" endDisconBranchNum="+endDisconBranchNum);
-        }
         int endBranchNum = switch (propTypeBeforeEndAction) {
             case DOWN, DIFF -> endDisconBranchNum-1;
             default -> endDisconBranchNum;
 
         };
 
-        String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, propTypeBeforeEndAction);
+        String nextLegName = tMod.getNamingLayers().legNameForTauBranch(startBranchNum, isPWave, propTypeBeforeEndAction, endAction);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         TauBranch endBranch = tMod.getTauBranch(endBranchNum, isPWave);
 
@@ -365,6 +374,32 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             default:
         }
 
+        if ( propTypeBeforeEndAction == LayerPropogationType.DOWN) {
+            if (endAction!=TURN) {
+                for (int i = startBranchNum; i < endBranchNum; i++) {
+                    // have to propogate all the way down to end
+                    TauBranch tb = tMod.getTauBranch(i, isPWave);
+                    maxRayParam = Math.min(maxRayParam, tb.getTopRayParam());
+                    maxRayParam = Math.min(maxRayParam, tb.getBotRayParam());
+                }
+
+            } else {
+                double minTurnInSegRayParam = startBranch.getTopRayParam();
+                for (int bnum = startBranchNum; bnum <= endBranchNum; bnum++) {
+                    minTurnInSegRayParam = Math.min(minTurnInSegRayParam, tMod.getTauBranch(bnum,
+                            isPWave).getMinTurnRayParam()); // should be getMinRayParam???
+                }
+                minRayParam = Math.max(minRayParam, minTurnInSegRayParam);
+            }
+        } else if (endSeg.endAction != TURN &&  propTypeBeforeEndAction == LayerPropogationType.UP) {
+            for (int i = startBranchNum; i >= endBranchNum; i--) {
+                // have to propogate all the way up to end
+                TauBranch tb = tMod.getTauBranch(i, isPWave);
+                maxRayParam = Math.min(maxRayParam, tb.getTopRayParam());
+                maxRayParam = Math.min(maxRayParam, tb.getBotRayParam());
+            }
+        }
+
         switch (endAction) {
             case REFLECT_TOPSIDE_CRITICAL:
                 minRayParam = Math.max(minRayParam, endBranch.getMinRayParam());
@@ -383,7 +418,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 break;
 
             case TURN:
-                minRayParam = Math.max(minRayParam, endBranch.getBotRayParam());
                 maxRayParam = Math.min(maxRayParam, startBranch.getTopRayParam());
                 break;
             case TRANSUP:
@@ -412,6 +446,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             outProto.failReason = "no ray param compatible with boundary: maxRayParam < minRayParam: "+startBranchNum+" to "+endDisconBranchNum+" "+propTypeBeforeEndAction;
             return outProto;
         }
+
         nextSeg = new SeismicPhaseSegment(tMod,
                 startBranchNum, endBranchNum, isPWave, endAction, propTypeBeforeEndAction, nextLegName,
                 minRayParam, maxRayParam, endSeg.endAction);
@@ -460,106 +495,134 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             // failing is failing, no need to validate
             return;
         }
+        if (endSegment().maxRayParam < 0.0 || endSegment().minRayParam > endSegment().maxRayParam) {
+            // no ray params satisfy, kind a fail but maybe legit phase just source/receiver depth not compatible
+            return;
+        }
         if (segmentList.get(0).prevEndAction==null) {
-            throw new TauModelException("start segment prevEndAction is null: "+phaseNameForSegments());
+            throw new TauModelException("start segment prevEndAction is null: "+phaseNameForSegments()
+                    +" "+branchNumSeqStrWithSegBreaks());
 
         }
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {
             if (seg.maxRayParam < 0) {
-                throw new TauModelException("maxRayParam is zero: "+phaseNameForSegments());
+                throw new TauModelException("maxRayParam is zero: "+phaseNameForSegments()
+                        +" "+branchNumSeqStrWithSegBreaks());
             }
             if (seg.endBranch == seg.tMod.getNumBranches()-1 && seg.layerPropogationType==LayerPropogationType.DOWN && seg.endAction != TURN) {
                 throw new TauModelException("down not turn in innermost core layer: "
-                        +phaseNameForSegments()+" "+seg.endBranch+" "+ seg.tMod.getNumBranches()+" "+seg.endAction);
+                        +phaseNameForSegments()+" "+seg.endBranch+" "+ seg.tMod.getNumBranches()+" "+seg.endAction
+                        +" "+branchNumSeqStrWithSegBreaks());
             }
             if (prev != null) {
                 String currLeg = seg.legName;
                 if (seg.prevEndAction != prev.endAction) {
                     throw new TauModelException("segment prevEndAction is not prev segment endAction: "
-                            +phaseNameForSegments()+" "+seg.prevEndAction+" "+prev.endAction);
+                            +phaseNameForSegments()+" "+seg.prevEndAction+" "+prev.endAction
+                            +" "+branchNumSeqStrWithSegBreaks());
                 }
                 if (prev.endAction == TRANSDOWN && prev.endBranch != seg.startBranch-1) {
                     throw new TauModelException("prev is TRANSDOWN, but seg is not +1\n"
                             +phaseNameForSegments()+" "
-                            +prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments());
+                            +prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments()
+                            +" "+branchNumSeqStrWithSegBreaks());
                 }
                 if (prev.endAction == TURN &&
                         ( seg.endAction == TURN || seg.endAction == TRANSDOWN || seg.endAction == DIFFRACTTURN
                                 || seg.endAction == HEADTURN || seg.endAction == DIFFRACTDOWN
                                 || seg.endAction == END_DOWN || seg.endAction == REFLECT_TOPSIDE)) {
-                    throw new TauModelException("prev is TURN, but seg is "+phaseNameForSegments()+" "+seg.endAction);
+                    throw new TauModelException("prev is TURN, but seg is "+phaseNameForSegments()+" "+seg.endAction
+                            +" "+branchNumSeqStrWithSegBreaks());
                 }
                 if (prev.layerPropogationType==LayerPropogationType.DOWN && seg.layerPropogationType==LayerPropogationType.DOWN && prev.endBranch +1 != seg.startBranch) {
                     throw new TauModelException("Prev and Curr both downgoing but prev.endBranch+1 != seg.startBranch "
                             +phaseNameForSegments()+" "
                             +" pdown: "+prev.layerPropogationType+" currdown "+seg.layerPropogationType
-                            +" && "+prev.endBranch+" +1 != "+seg.startBranch);
+                            +" && "+prev.endBranch+" +1 != "+seg.startBranch
+                            +" "+branchNumSeqStrWithSegBreaks());
                 }
                 if (prev.layerPropogationType==LayerPropogationType.UP && seg.layerPropogationType==LayerPropogationType.UP && prev.endBranch  != seg.startBranch+1) {
                     throw new TauModelException("Prev and Curr both upgoing but prev.endBranch != seg.startBranch+1 "
                             +phaseNameForSegments()+" "
                             +" pdown: "+prev.layerPropogationType+" currdown "+seg.layerPropogationType
-                            +" && "+prev.endBranch+" != "+seg.startBranch+" +1");
+                            +" && "+prev.endBranch+" != "+seg.startBranch+" +1 "
+                            +" "+branchNumSeqStrWithSegBreaks());
                 }
                 if (LayerPropogationType.isFlat(prev.layerPropogationType)) {
                     if (seg.layerPropogationType==LayerPropogationType.DOWN) {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch) {
                             throw new TauModelException(getName()
-                                    + ": Flat Segment is ends at top, but start is not current branch: " + currLeg);
+                                    + ": Flat Segment is ends at top, but start is not current branch: " + currLeg
+                                    +" "+branchNumSeqStrWithSegBreaks());
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch - 1) {
                             throw new TauModelException(getName()
-                                    + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg+"\n"+prev.describe()+"\n"+seg.describe());
+                                    + ": Flat Segment is ends at bottom, but start is not next deeper branch: "
+                                    + currLeg+"\n"+prev.describe()+"\n"+seg.describe());
                         }
                     } else {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch +1) {
                             throw new TauModelException(getName()
-                                    + ": Flat Segment is ends at top, but upgoing start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
+                                    + ": Flat Segment is ends at top, but upgoing start is not next shallower branch: "
+                                    + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1"
+                                    +" "+branchNumSeqStrWithSegBreaks());
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch) {
                             throw new TauModelException(getName()
-                                    + ": Flat Segment is ends at bottom, but upgoing start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
+                                    + ": Flat Segment is ends at bottom, but upgoing start is not current branch: "
+                                    + currLeg+" "+prev.endBranch +"!= "+seg.startBranch
+                                    +" "+branchNumSeqStrWithSegBreaks());
                         }
                     }
                 } else if (seg.layerPropogationType==LayerPropogationType.DOWN) {
                     if (prev.endBranch > seg.startBranch) {
                         throw new TauModelException(getName()
-                                +": Segment is downgoing, but we are already below the start: "+currLeg);
+                                +": Segment is downgoing, but we are already below the start: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL) {
                         throw new TauModelException(getName()
-                                +": Segment is downgoing, but previous action was to reflect up: "+currLeg+" "+prev.endAction+" "+seg);
+                                +": Segment is downgoing, but previous action was to reflect up: "
+                                +currLeg+" "+prev.endAction+" "+seg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == TURN) {
                         throw new TauModelException(getName()
-                                +": Segment is downgoing, but previous action was to turn: "+currLeg);
+                                +": Segment is downgoing, but previous action was to turn: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == DIFFRACTTURN) {
                         throw new TauModelException(getName()
-                                +": Segment is downgoing, but previous action was to diff turn: "+currLeg);
+                                +": Segment is downgoing, but previous action was to diff turn: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == TRANSUP) {
                         throw new TauModelException(getName()
-                                +": Segment is downgoing, but previous action was to transmit up: "+currLeg);
+                                +": Segment is downgoing, but previous action was to transmit up: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endBranch == seg.startBranch && prev.layerPropogationType==LayerPropogationType.UP &&
                             ! (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL)) {
                         throw new TauModelException(getName()
                                 +": Segment "+currLeg
                                 +" is downgoing, but previous action was not to reflect underside: "
-                                +currLeg+" "+endActionString(prev.endAction));
+                                +currLeg+" "+endActionString(prev.endAction)
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                 } else {
                     if (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL) {
                         throw new TauModelException(getName()
-                                +": Segment is upgoing, but previous action was to underside reflect down: "+currLeg);
+                                +": Segment is upgoing, but previous action was to underside reflect down: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == TRANSDOWN) {
                         throw new TauModelException(getName()
-                                +": Segment is upgoing, but previous action was  to trans down: "+currLeg);
+                                +": Segment is upgoing, but previous action was  to trans down: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endAction == DIFFRACTDOWN) {
                         throw new TauModelException(getName()
-                                +": Segment is upgoing, but previous action was  to diffract down: "+currLeg);
+                                +": Segment is upgoing, but previous action was  to diffract down: "+currLeg
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                     if (prev.endBranch == seg.startBranch && prev.layerPropogationType==LayerPropogationType.DOWN
                             && ! ( prev.endAction == TURN || prev.endAction == DIFFRACTTURN
@@ -567,7 +630,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                             || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
                         throw new TauModelException(getName()
                                 +": Segment is upgoing, but previous action was not to reflect topside: "
-                                +currLeg+" "+endActionString(prev.endAction));
+                                +currLeg+" "+endActionString(prev.endAction)
+                                +" "+branchNumSeqStrWithSegBreaks());
                     }
                 }
             }
@@ -1339,10 +1403,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             layerPropogationType = LayerPropogationType.DOWN;
             // ray must reach discon, at turn/critical ray parameter
             maxRayParam = calcMaxTransitRP(startBranch, endBranch, isPWave, prevEndAction, maxRayParam);
-            // and cross into lower layer, possible phase change
+            // and cross into lower layer, possible phase change?
             maxRayParam = Math.min(maxRayParam,
                     tMod.getTauBranch(endBranch+1, nextIsPWave).getTopRayParam());
-            minRayParam = Math.max(minRayParam, maxRayParam);
+            // don't change minRayParam, let flat leg handle
         } else if(endAction == DIFFRACT) {
             if (endBranch == tMod.getNumBranches()-1 ) {
                 /*
@@ -1512,7 +1576,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
                 if (minRayParam > headRP || maxRayParam < headRP) {
                     // can't do head wave, no rp match
-                    return failNext("Head wave ray parameter, "+headRP
+                    return failNext(currLeg+" Head wave ray parameter, "+headRP
                             +", outside of min,max rayparameter for phase "+minRayParam+" "+maxRayParam);
                 } else {
                     minRayParam = headRP;
@@ -1694,7 +1758,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             prevAddedDepthToName = false;
             switch (seg.endAction) {
                 case REFLECT_TOPSIDE:
-                    if (flatSeg!= null && flatSeg!=seg && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
+                    if (flatSeg!= null && flatSeg!=seg
+                            && flatSeg.layerPropogationType==LayerPropogationType.DIFF
+                            && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
                         // looks like PcpPdiff, so purist is PdiffPdiff
                         prevDepthToName += diffStringForSeg(seg, prev, botDepth);
                     } else if (botDepth == tMod.cmbDepth) {
@@ -1708,7 +1774,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     }
                     break;
                 case REFLECT_TOPSIDE_CRITICAL:
-                    if (flatSeg!= null && flatSeg!=seg && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
+                    if (flatSeg!= null && flatSeg!=seg
+                            && flatSeg.layerPropogationType==LayerPropogationType.DIFF
+                            && seg.isPWave==flatSeg.isPWave&&seg.getEndDepth()==flatSeg.getEndDepth()) {
                         // looks like PVcpPdiff, so purist is PdiffPdiff
                         prevDepthToName += diffStringForSeg(seg, prev, botDepth);
                     } else {
@@ -1835,14 +1903,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
-        return legNameForSegment(tMod, seg.endBranch, seg.isPWave, seg.layerPropogationType, seg.endAction);
-    }
-    public static String legNameForSegment(TauModel tMod, int endBranch, boolean isPWave, LayerPropogationType layerPropogationType, PhaseInteraction endAction) {
-        String name = SeismicPhaseWalk.legNameForTauBranch(tMod, endBranch, isPWave, layerPropogationType);
-        if (endAction == TURN && name.endsWith("ed")) {
-            name = name.substring(0, name.length()-2);
-        }
-        return name;
+        return tMod.getNamingLayers().legNameForTauBranch(seg.endBranch, seg.isPWave, seg.layerPropogationType, seg.endAction);
     }
 
     public List<Integer> branchNumSeg() {
@@ -1878,7 +1939,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         for (SeismicPhaseSegment seg : segmentList) {
             out.append(seg.legName);
             if (seg.endAction == FAIL) {
-                out.append(" FAIL");
+                out.append(" FAIL: "+failReason);
                 break;
             }
             int indexIncr = seg.layerPropogationType==LayerPropogationType.DOWN ? 1 : -1;
