@@ -101,7 +101,8 @@ public class TauP_DistAz extends TauP_Tool {
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
                         +" "+describeLatLon(dr.getSource())
                         +" "+describeLatLon(dr.getReceiver())
-                        +"      "+(dr.hasDescription() ? dr.getDescription() : "") + geodistDesc
+                        +"      "+(dr.hasDescription() ? dr.getDescription() : "")
+                        +" "+ geodistDesc
                 );
             }
         } else if (outputTypeArgs.isHTML()) {

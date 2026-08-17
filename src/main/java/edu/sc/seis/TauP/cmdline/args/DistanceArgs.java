@@ -150,9 +150,6 @@ public class DistanceArgs {
                 for (LatLonLocatable staLoc : stationList) {
                     for (DistanceCalc distCalc : distCalcList) {
                         DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc, distCalc);
-                        String sourceDesc = describeLatLon(dr.getSource());
-                        String receiverDesc = describeLatLon(dr.getReceiver());
-                        dr.setDescription(sourceDesc+" to "+receiverDesc);
                         out.add(dr);
                     }
                 }

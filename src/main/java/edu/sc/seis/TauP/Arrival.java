@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static edu.sc.seis.TauP.DescribeLatLon.describeLatLon;
 import static edu.sc.seis.TauP.PhaseInteraction.TURN;
 import static edu.sc.seis.TauP.SimpleContigSeismicPhase.NEIGHBOR_MIN_DIST;
 import static edu.sc.seis.TauP.SphericalCoords.ONE_DEG_AS_RADIAN;
@@ -373,11 +374,17 @@ public class Arrival {
         if (getPhase().getReceiverDepth() != 0.0) {
             out += ", receiver at depth: "+getPhase().getReceiverDepth()+" km";
         }
-        if (getRayCalculateable().hasDescription()) {
+        RayCalculateable ray = getRayCalculateable();
+        if (ray.hasDescription()) {
             out += ", "+getRayCalculateable().getDescription()+".";
-        } else {
-            out += ".";
+        } else if (ray.hasSource() || ray.hasReceiver()) {
+            String sourceDesc = describeLatLon(ray.getSource());
+            String receiverDesc = describeLatLon(ray.getReceiver());
+            if (!sourceDesc.isEmpty() && !receiverDesc.isEmpty()) {
+                out += ", " + sourceDesc + " to " + receiverDesc;
+            }
         }
+        out += ".";
         return out;
     }
 
@@ -1131,8 +1138,15 @@ public class Arrival {
             desc += "   * ";
         }
         desc += getPuristName();
-        if (getRayCalculateable().hasDescription()) {
-            desc += " "+getRayCalculateable().getDescription();
+        RayCalculateable ray = getRayCalculateable();
+        if (ray.hasDescription()) {
+            desc += " "+ray.getDescription();
+        } else if (ray.hasSource() || ray.hasReceiver()) {
+            String sourceDesc = describeLatLon(ray.getSource());
+            String receiverDesc = describeLatLon(ray.getReceiver());
+            if (!sourceDesc.isEmpty() && !receiverDesc.isEmpty()) {
+                desc += " " + sourceDesc + " to " + receiverDesc;
+            }
         }
         return desc;
     }
@@ -1316,8 +1330,15 @@ public class Arrival {
             line.add(Outputs.formatDepth(receiverRadius()));
             line.add(Outputs.formatDpDdeg(getDRayParamDDeltaDeg()));
         }
-        if (getRayCalculateable().hasDescription()) {
-            line.add(" "+getRayCalculateable().getDescription());
+        RayCalculateable ray = getRayCalculateable();
+        if (ray.hasDescription()) {
+            line.add(" "+ray.getDescription());
+        } else {
+            String sourceDesc = describeLatLon(ray.getSource());
+            String receiverDesc = describeLatLon(ray.getReceiver());
+            if (!sourceDesc.isEmpty() && !receiverDesc.isEmpty()) {
+                line.add(" " + sourceDesc + " to " + receiverDesc);
+            }
         }
         return line;
     }

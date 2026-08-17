@@ -9,7 +9,9 @@ public class Daz {
 
     public Daz(DistanceRay ray) {
         this.ray = ray;
-        this.description = ray.getDescription();
+        if (ray.hasDescription()) {
+            this.description = ray.getDescription();
+        }
     }
 
     public double getDegrees() {

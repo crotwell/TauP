@@ -355,7 +355,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
             lineTwo.add("       ");
         }
         for (Arrival arrival : arrivalList) {
-            if (arrival.getRayCalculateable().hasDescription()) {
+            if (arrival.getRayCalculateable().hasDescription()
+                    || arrival.getRayCalculateable().hasSource()
+                    || arrival.getRayCalculateable().hasReceiver()) {
                 lineOne.add(" Description");
                 lineTwo.add("            ");
                 break;
