@@ -47,6 +47,8 @@ public class PythonBindings {
             dataclassType = "ReflTransResult";
         } else if (toolname.equals("velmerge")) {
             dataclassType = "VelocityModel";
+        } else if (toolname.equals("velplot")) {
+            dataclassType = "VelPlotResult";
         } else if (toolname.equals("wavefront")) {
             dataclassType = "WavefrontResult";
         }
@@ -566,6 +568,7 @@ public class PythonBindings {
             "VelocityLayer",
             "VelocityLayerParams",
             "VelocityDiscontinuity",
+            "VelPlotResult",
             "NamedDiscon",
             "Wavefront",
             "WavefrontPathSegment",

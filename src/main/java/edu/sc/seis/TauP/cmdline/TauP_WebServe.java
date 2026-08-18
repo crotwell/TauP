@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.VelocityModelArgs;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
@@ -355,6 +356,10 @@ public class TauP_WebServe extends TauP_Tool {
                 ((TauP_AbstractRayTool) tool).modelArgs.setTMod(tMod);
             } else if (tool instanceof TauP_ReflTransPlot) {
                 ((TauP_ReflTransPlot) tool).modelArgs.setTMod(tMod);
+            } else if (tool instanceof TauP_VelocityPlot) {
+                VelocityModelArgs vModArg = new VelocityModelArgs();
+                vModArg.setVelocityModel(vMod);
+                ((TauP_VelocityPlot) tool).velModelArgs.addIfNotAlready(vModArg);
             } else {
                 throw new IllegalArgumentException("Tool " + tool.getClass().getName() + " doesn't support nameddiscon model");
             }
@@ -533,10 +538,18 @@ public class TauP_WebServe extends TauP_Tool {
                             int idx = 0;
                             for (String p : paramItems) {
                                 out.add(p);
-                                if (idx <= paramItems.size()-op.arity().max() && idx % op.arity().max() == op.arity().max()-1) {
+                                if (idx <= paramItems.size() - op.arity().max() && idx % op.arity().max() == op.arity().max() - 1) {
                                     out.add(dashedQP);
                                 }
                                 idx++;
+                            }
+                        } else if (op.isMultiValue() && op.arity().max()==1) {
+                            // multiple, but each item needs a dash arg in front
+                            // zap original dashedQP
+                            out.remove(out.size()-1);
+                            for (String p : paramItems) {
+                                out.add(dashedQP);
+                                out.add(p);
                             }
                         } else {
                             out.addAll(paramItems);

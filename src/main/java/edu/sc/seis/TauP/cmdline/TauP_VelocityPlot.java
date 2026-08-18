@@ -1,7 +1,9 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -102,14 +104,21 @@ public class TauP_VelocityPlot extends TauP_Tool {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.setyAxisInvert(true);
             }
-            printResult(writer, xyOut);
+            printResult(writer, xyOut, vModList);
             writer.close();
         }
     }
 
-    public void printResult(PrintWriter writer, XYPlotOutput xyOut) throws TauPException {
+    public void printResult(PrintWriter writer, XYPlotOutput xyOut, List<VelocityModel> vModList) throws TauPException {
         if (getOutputTypeArgs().isJSON()) {
-            xyOut.printAsJSON(writer, 2);
+            List<String> modelList = new ArrayList<>();
+            for (VelocityModel v : vModList) {
+                modelList.add(v.getModelName());
+            }
+            VelocityPlotResult result = new VelocityPlotResult(modelList,
+                    getxAxisType(), getxAxisType(), xyOut);
+            GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+            writer.println(gsonBuilder.create().toJson(result));
         } else if (getOutputTypeArgs().isText()) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputTypeArgs().isGMT()) {

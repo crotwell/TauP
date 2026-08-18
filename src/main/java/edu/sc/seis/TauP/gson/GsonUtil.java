@@ -43,6 +43,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(PhaseDescribeResult.class, new PhaseDescribeSerializer());
         gson.registerTypeAdapter(ReflTransResult.class, new ReflTransResultSerializier());
         gson.registerTypeAdapter(WavefrontResult.class, new WavefrontSerializer());
+        gson.registerTypeAdapter(VelocityPlotResult.class, new VelocityPlotSerializer());
 
     }
 
