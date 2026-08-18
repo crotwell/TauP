@@ -289,6 +289,11 @@ circle.discontinuity {
     dominant-baseline: middle;
 }
 
+path.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
 line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;
@@ -467,8 +472,12 @@ circle.discontinuity.iocb {
 <g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 2.0 degrees to 180.0.-->
-  <circle class="tick" cx="0.0" cy="0.0" r="4000.1503118656656" />
-  <circle class="tick" cx="0.0" cy="0.0" r="4038.246981502481" />
+  <path class="tick" d="M    -0.00   6561.48 A 6561.48 6561.48 0 0 1 -5682.41  -3280.74" />
+  <path class="tick" d="M    -0.00   6599.58 A 6599.58 6599.58 0 0 1 -5715.40  -3299.79" />
+  <path class="tick" d="M -5682.41  -3280.74 A 6561.48 6561.48 0 0 1  5682.41  -3280.74" />
+  <path class="tick" d="M -5715.40  -3299.79 A 6599.58 6599.58 0 0 1  5715.40  -3299.79" />
+  <path class="tick" d="M  5682.41  -3280.74 A 6561.48 6561.48 0 0 1     0.00   6561.48" />
+  <path class="tick" d="M  5715.40  -3299.79 A 6599.58 6599.58 0 0 1     0.00   6599.58" />
   <polyline  class="tick"  points=" -225.80   6466.03,  -228.99   6557.49" />
   <polyline  class="tick"  points=" -451.32   6454.21,  -457.71   6545.50" />
   <polyline  class="tick"  points=" -676.30   6434.53,  -685.86   6525.54" />

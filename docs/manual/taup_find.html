@@ -132,8 +132,7 @@
 <p>TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
-given constraints. It does not yet include diffracted or head waves, but these
-can be added manually via the <code class="code docutils literal notranslate"><span class="pre">-p</span></code> argument.
+given constraints.
 The output is either a simple list of possible phase names or
 travel times in the same format as <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span></code>.</p>
 <p>The complexity or length of the path is limited by the <code class="code docutils literal notranslate"><span class="pre">--max</span></code>
@@ -147,11 +146,11 @@ boundary and sP has 2 due to one phase conversion and one reflection,
 both at the surface.</p>
 <p>Great care should be take as the combinatorial explosion is
 significant.  In the iasp91 model for a surface source, <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">1</span></code>
-results in 85 phases while <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">2</span></code> results in over 1000 phases.
-Then <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">3</span></code> results in almost 13,000 phases and
-<code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">4</span></code> is almost 150,000. The number of phase paths can be limited
-by a range of ray parameters or times or by disabling interactions with
-discontinuities in the model.</p>
+results in 106 phases while <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">2</span></code> results in over 1200 phases.
+Then <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">3</span></code> results in almost 14,000 phases and
+<code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">4</span></code> is over 170,000. The number of phase paths can be
+significantly reduced by disabling interactions with
+discontinuities in the model that are not of interest.</p>
 <p>The phases may also be limited by a ray parameter range or optionally by a
 travel time range. Note that limiting by interaction number, via <code class="code docutils literal notranslate"><span class="pre">--max</span></code>
 or limiting the ray parameter range via <code class="code docutils literal notranslate"><span class="pre">--rayparam</span></code> or

@@ -145,7 +145,7 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
   <metadata>
     <taup>
       <command>taup refltrans &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
@@ -1068,6 +1068,11 @@ circle.discontinuity {
     dominant-baseline: middle;
 }
 
+path.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
 line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;
@@ -2363,7 +2368,7 @@ circle.discontinuity.iocb {
   <metadata>
     <taup>
       <command>taup refltrans &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;energyflux &#45;&#45;svg -o stdout </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="0.0" ymax="1.0000166798651702" />
     </taup>
@@ -3286,6 +3291,11 @@ circle.discontinuity {
     dominant-baseline: middle;
 }
 
+path.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
 line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;
