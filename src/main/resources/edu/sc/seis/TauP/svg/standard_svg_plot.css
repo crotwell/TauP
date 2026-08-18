@@ -27,6 +27,11 @@ circle.discontinuity {
     dominant-baseline: middle;
 }
 
+path.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
 line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;

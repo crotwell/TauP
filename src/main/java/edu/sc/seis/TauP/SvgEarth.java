@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.SphericalCoords.dtor;
+
 /**
  * Utilities for generating SVG plots of a slice through the earth model.
  * Used for plotting ray paths or wavefronts.
@@ -301,11 +303,29 @@ public class SvgEarth {
                 minTick = -180 + minorStep;
             }
         }
+        double secondTickCircle = R * 0.06;
         double majorTickLen = R * .05;
         double minorTickLen = R * 0.03;
         out.println("<!-- tick marks every " + minorStep + " degrees to " + maxTick + ".-->");
-        out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R*1.05/ zoomScale) + "\" />");
-        out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R*1.06/ zoomScale) + "\" />");
+        if (zoomScale > 1) {
+            // zoomed in, bug in firefox doesn't draw circle if too big relative to visible screen
+            // so draw arcs instead
+            String scaleRadiusMajor = Outputs.formatDistanceNoPad(R + majorTickLen / zoomScale);
+            String scaleRadiusSecond = Outputs.formatDistanceNoPad(R + secondTickCircle / zoomScale);
+            int segmentAngle = 120;
+            for (int i = -180; i < 180; i+=segmentAngle) {
+                out.println("  <path class=\"tick\" d=\"M "+formatDistRadiusAsXY( i, R + majorTickLen / zoomScale)
+                        +" A "+scaleRadiusMajor+" "+scaleRadiusMajor+" 0 0 1 "
+                        +formatDistRadiusAsXY(i+segmentAngle,  R + majorTickLen / zoomScale)+"\" />");
+                out.println("  <path class=\"tick\" d=\"M "+formatDistRadiusAsXY( i, R + secondTickCircle / zoomScale)
+                        +" A "+scaleRadiusSecond+" "+scaleRadiusSecond+" 0 0 1 "
+                        +formatDistRadiusAsXY(i+segmentAngle,  R + secondTickCircle / zoomScale)+"\" />");
+            }
+        } else {
+            // full earth
+            out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + Outputs.formatDistanceNoPad(R + majorTickLen/ zoomScale) + "\" />");
+            out.println("  <circle class=\"tick\" cx=\"0.0\" cy=\"0.0\" r=\"" + Outputs.formatDistanceNoPad(R + secondTickCircle/ zoomScale) + "\" />");
+        }
         for (float i = minTick; i <= maxTick; i += minorStep) {
             double tickLen;
             if (i % Math.round(majorStep/minorStep) == 0) {

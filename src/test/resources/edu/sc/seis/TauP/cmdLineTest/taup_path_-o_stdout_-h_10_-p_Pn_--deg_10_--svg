@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p Pn &#45;&#45;deg 10 &#45;&#45;svg </command>
-      <version>3.2.0-SNAPSHOT8</version>
+      <version>3.2.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -80,6 +80,11 @@ circle.discontinuity {
     dominant-baseline: middle;
 }
 
+path.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
 line.tick {
     vector-effect: non-scaling-stroke;
     stroke: black;
@@ -258,8 +263,12 @@ circle.discontinuity.iocb {
 <g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 2.0 degrees to 180.0.-->
-  <circle class="tick" cx="0.0" cy="0.0" r="580.8140852000125" />
-  <circle class="tick" cx="0.0" cy="0.0" r="586.3456479162031" />
+  <path class="tick" d="M    -0.00   6398.66 A 6398.66 6398.66 0 0 1 -5541.40  -3199.33" />
+  <path class="tick" d="M    -0.00   6404.19 A 6404.19 6404.19 0 0 1 -5546.19  -3202.09" />
+  <path class="tick" d="M -5541.40  -3199.33 A 6398.66 6398.66 0 0 1  5541.40  -3199.33" />
+  <path class="tick" d="M -5546.19  -3202.09 A 6404.19 6404.19 0 0 1  5546.19  -3202.09" />
+  <path class="tick" d="M  5541.40  -3199.33 A 6398.66 6398.66 0 0 1     0.00   6398.66" />
+  <path class="tick" d="M  5546.19  -3202.09 A 6404.19 6404.19 0 0 1     0.00   6404.19" />
   <polyline  class="tick"  points=" -222.75   6378.66,  -223.31   6394.76" />
   <polyline  class="tick"  points=" -445.22   6367.00,  -446.35   6383.07" />
   <polyline  class="tick"  points=" -667.16   6347.58,  -668.84   6363.61" />
