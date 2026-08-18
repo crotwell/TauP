@@ -44,7 +44,7 @@ gives you arrival times for S and P for these earthquakes at those stations.
 Even more fun is to give a station id,
 like :code:`--sid CO_HAW` or a
 USGS event id, like :code:`--eid us7000pn9s`, and TauP will use the
-`IRIS FedCat <https://service.iris.edu/irisws/fedcatalog/1/>`_ and
+`Earthscope FedCat <https://service.earthscope.org/irisws/fedcatalog/1/>`_ and
 `USGS FDSN Event <https://earthquake.usgs.gov/fdsnws/event/1/>`_
 web services to get the station and event locations and depth. For example:
 

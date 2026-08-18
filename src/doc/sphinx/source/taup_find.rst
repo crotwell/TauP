@@ -7,8 +7,7 @@ TauP Find
 TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
-given constraints. It does not yet include diffracted or head waves, but these
-can be added manually via the :code:`-p` argument.
+given constraints.
 The output is either a simple list of possible phase names or
 travel times in the same format as :code:`taup time`.
 
@@ -25,11 +24,11 @@ both at the surface.
 
 Great care should be take as the combinatorial explosion is
 significant.  In the iasp91 model for a surface source, :code:`--max 1`
-results in 85 phases while :code:`--max 2` results in over 1000 phases.
-Then :code:`--max 3` results in almost 13,000 phases and
-:code:`--max 4` is almost 150,000. The number of phase paths can be limited
-by a range of ray parameters or times or by disabling interactions with
-discontinuities in the model.
+results in 106 phases while :code:`--max 2` results in over 1200 phases.
+Then :code:`--max 3` results in almost 14,000 phases and
+:code:`--max 4` is over 170,000. The number of phase paths can be
+significantly reduced by disabling interactions with
+discontinuities in the model that are not of interest.
 
 The phases may also be limited by a ray parameter range or optionally by a
 travel time range. Note that limiting by interaction number, via :code:`--max`

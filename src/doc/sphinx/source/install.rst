@@ -143,6 +143,10 @@ these are:
   page that allows access to the tools via a web browser. This functions both as
   a GUI and as a way to extract results from other programming languages via
   JSON and a HTTP query.
+* Python api. New in version 3.2 is a python compatible mode, via the
+  `taup <https://pypi.org/project/taup/>`__ library. This uses json from the
+  above web server interface to allow python script to easily get results
+  from the Java based TauP system.
 * Simple amplitudes. Also new is the ability to calculate an amplitude
   approximation from reflection and transmission coefficients and spreading.
 

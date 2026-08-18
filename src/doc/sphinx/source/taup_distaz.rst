@@ -14,7 +14,6 @@ For example:
 gives you spherical distance in degrees, azimuth and back azimuth between
 latitude longitude points -11/21 and 31/-80.
 
-
 .. literalinclude:: examples/taup_distaz_--sta_31_-80_--evt_-11_21
   :language: text
 

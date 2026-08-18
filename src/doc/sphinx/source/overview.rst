@@ -8,7 +8,7 @@ created |today|.
 
 The algorithms employed within the TauP package are based on the
 method of :cite:t:`bulandchapman`.
-The IASPEI *ttimes* package is a widely-used implementation of
+The IASPEI *ttimes* package is another widely-used implementation of
 the methodology.
 
 The main benefit of this new package is a marked increase in flexibility. It

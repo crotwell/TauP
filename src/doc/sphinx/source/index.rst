@@ -22,7 +22,6 @@ Useful References
 * `DOI <https://doi.org/10.5281/zenodo.10794857>`__ 10.5281/zenodo.10794857
 * `API JavaDocs <https://javadoc.io/doc/edu.sc.seis/TauP/latest/index.html>`__
 * `Maven Central <https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview>`__
-#* `XXX <https>`__
 
 .. toctree::
     :maxdepth: 2
