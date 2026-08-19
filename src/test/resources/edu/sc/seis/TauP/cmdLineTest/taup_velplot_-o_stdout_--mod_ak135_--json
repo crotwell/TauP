@@ -1,4 +1,9 @@
 {
+  "modelnames": [
+    "ak135"
+  ],
+  "x": "velocity",
+  "y": "velocity",
   "curves": [
     {
       "label": "P Vel.",
