@@ -244,7 +244,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return gsonBld;
     }
 
-    @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             boolean withPierce = false;

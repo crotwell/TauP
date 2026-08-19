@@ -183,7 +183,6 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
     public void destroy() throws TauPException {
     }
 
-    @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs.getSeismicSource(), arrivalList);

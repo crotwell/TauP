@@ -25,6 +25,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(Geodesic.class, new GeodesicSerializer());
         gson.registerTypeAdapter(Daz.class, new DazSerializier());
         gson.registerTypeAdapter(SeismicSource.class, new SeismicSourceSerializer());
+        gson.registerTypeAdapter(FaultPlane.class, new FaultPlaneSerializer());
         gson.registerTypeAdapter(Scatterer.class, new ScattererSerializer());
         gson.registerTypeAdapter(ShadowZone.class, new ShadowZoneSerializer());
         gson.registerTypeAdapter(NamedVelocityDiscon.class, new NamedVelocityDisconSerializer());
@@ -38,6 +39,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(Arrival.class, new ArrivalSerializer(false, false, false, false));
         gson.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(false, false, false, false));
         gson.registerTypeAdapter(TimeResult.class, new TimeResultSerializer());
+        gson.registerTypeAdapter(BeachBall.class, new BeachballSerializer());
         gson.registerTypeAdapter(BeachballResult.class, new BeachballResultSerializer());
         gson.registerTypeAdapter(CurveResult.class, new CurveResultSerializer());
         gson.registerTypeAdapter(PhaseDescribeResult.class, new PhaseDescribeSerializer());

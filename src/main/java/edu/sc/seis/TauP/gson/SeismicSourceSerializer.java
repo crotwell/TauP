@@ -19,12 +19,7 @@ public class SeismicSourceSerializer implements JsonSerializer<SeismicSource> {
         json.addProperty(JSONLabels.MW, src.getMw());
         if (src.hasNodalPlane()) {
             FaultPlane faultPlane = src.getNodalPlane1();
-            JsonObject jsonSDR = new JsonObject();
-            json.add(JSONLabels.FAULT, jsonSDR);
-            jsonSDR.addProperty(JSONLabels.STRIKE, faultPlane.getStrike());
-            jsonSDR.addProperty(JSONLabels.DIP, faultPlane.getDip());
-            jsonSDR.addProperty(JSONLabels.RAKE, faultPlane.getRake());
-
+            json.add(JSONLabels.FAULT, context.serialize(faultPlane));
         }
         json.addProperty(JSONLabels.ATTEN_FREQ, src.getAttenuationFrequency());
         json.addProperty(JSONLabels.ATTEN_NUM_FREQ, src.getNumFrequencies());

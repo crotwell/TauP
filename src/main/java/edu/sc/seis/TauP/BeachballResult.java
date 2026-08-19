@@ -8,14 +8,14 @@ public class BeachballResult extends TimeResult {
                            List<PhaseName> phases, Scatterer scatterer,
                            boolean withAmp, SeismicSource sourceArgs,
                            List<Arrival> arrivalList,
-                           List<RadiationAmplitude> radPattern) {
+                           List<BeachBall> beachBalls) {
         super(model, sourcedepthlist, receiverdepthlist, phases, scatterer, withAmp, sourceArgs, arrivalList);
-        this.radPattern = radPattern;
+        this.beachBalls = beachBalls;
     }
 
-    public List<RadiationAmplitude> getRadiationPattern() {
-        return radPattern;
+    public List<BeachBall> getBeachBalls() {
+        return beachBalls;
     }
 
-    List<RadiationAmplitude> radPattern;
+    List<BeachBall> beachBalls;
 }

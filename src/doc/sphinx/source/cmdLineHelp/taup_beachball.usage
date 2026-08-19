@@ -1,7 +1,7 @@
 Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
                       [--phasecircles] [--verbose]
                       [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                      [--az=<azimuth>] [-b=type] [--baz=<backAzimuth>]
+                      [--az=<azimuth>] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--equitorialradius=m] [--equitorialradius=m]
                       [--gridstep=<gridAngleStep>] [--hemi=type]
@@ -11,9 +11,9 @@ Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
                       [--numpoints=<numPoints>] [-o=<outFile>]
                       [--planet=<planet>] [--planet=<planet>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                      [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                      [--sid=sta[,sta...]]... [--evt=lat lon]... [--evt=lat
-                      lon]... [--sta=lat lon]... [--sta=lat lon]...
+                      [--staxml=<stationxmlFilename>] [-b=type]... [--eid=evt[,
+                      evt...]]... [--sid=sta[,sta...]]... [--evt=lat lon]...
+                      [--evt=lat lon]... [--sta=lat lon]... [--sta=lat lon]...
                       [--strikediprake=strike dip rake]...
                       [--geodist=<geoDistTypes>...]...
                       [--geodist=<geoDistTypes>...]... [[--mod=<modelName>]

@@ -154,4 +154,6 @@ public interface JSONLabels {
     String INBOUND_WAVE = "incidentwave";
     String FSRF = "fsrf";
     String DOWNGOING = "downgoing";
+    String BEACHBALLS = "beachballs";
+    String BBTYPE = "beachballtype";
 }

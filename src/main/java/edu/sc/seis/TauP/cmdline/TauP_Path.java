@@ -181,7 +181,6 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 	}
 
-	@Override
 	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
 		boolean withPierce = false;
 		boolean withPath = true;
