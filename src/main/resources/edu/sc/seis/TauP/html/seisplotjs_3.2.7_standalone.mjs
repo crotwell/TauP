@@ -4,7 +4,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
   get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
 }) : x2)(function(x2) {
@@ -12,7 +11,11 @@ var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? requir
   throw Error('Dynamic require of "' + x2 + '" is not supported');
 });
 var __commonJS = (cb, mod) => function __require2() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  try {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
 };
 var __export = (target, all) => {
   for (var name in all)
@@ -34,7 +37,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/oregondsp/kotlin/kotlin-kotlin-stdlib-js-ir.js
 var require_kotlin_kotlin_stdlib_js_ir = __commonJS({
@@ -3175,7 +3177,7 @@ var require_kotlin_kotlin_stdlib_js_ir = __commonJS({
           UNDEFINED_RESULT = tmp$ret$0;
         }
       }
-      function error48(message) {
+      function error51(message) {
         throw IllegalStateException_init_$Create$_0(toString_1(message));
       }
       function check2(value) {
@@ -19429,7 +19431,7 @@ var require_helpers = __commonJS({
       if (instance.helpers[helperName]) {
         instance.hooks[helperName] = instance.helpers[helperName];
         if (!keepHelper) {
-          delete instance.helpers[helperName];
+          instance.helpers[helperName] = void 0;
         }
       }
     }
@@ -19521,22 +19523,6 @@ var require_logger = __commonJS({
   }
 });
 
-// node_modules/handlebars/dist/cjs/handlebars/internal/create-new-lookup-object.js
-var require_create_new_lookup_object = __commonJS({
-  "node_modules/handlebars/dist/cjs/handlebars/internal/create-new-lookup-object.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-    exports.createNewLookupObject = createNewLookupObject;
-    var _utils = require_utils();
-    function createNewLookupObject() {
-      for (var _len = arguments.length, sources = Array(_len), _key = 0; _key < _len; _key++) {
-        sources[_key] = arguments[_key];
-      }
-      return _utils.extend.apply(void 0, [/* @__PURE__ */ Object.create(null)].concat(sources));
-    }
-  }
-});
-
 // node_modules/handlebars/dist/cjs/handlebars/internal/proto-access.js
 var require_proto_access = __commonJS({
   "node_modules/handlebars/dist/cjs/handlebars/internal/proto-access.js"(exports) {
@@ -19548,25 +19534,28 @@ var require_proto_access = __commonJS({
     function _interopRequireDefault(obj) {
       return obj && obj.__esModule ? obj : { "default": obj };
     }
-    var _createNewLookupObject = require_create_new_lookup_object();
+    var _utils = require_utils();
     var _logger = require_logger();
     var _logger2 = _interopRequireDefault(_logger);
     var loggedProperties = /* @__PURE__ */ Object.create(null);
     function createProtoAccessControl(runtimeOptions) {
-      var defaultMethodWhiteList = /* @__PURE__ */ Object.create(null);
-      defaultMethodWhiteList["constructor"] = false;
-      defaultMethodWhiteList["__defineGetter__"] = false;
-      defaultMethodWhiteList["__defineSetter__"] = false;
-      defaultMethodWhiteList["__lookupGetter__"] = false;
-      var defaultPropertyWhiteList = /* @__PURE__ */ Object.create(null);
-      defaultPropertyWhiteList["__proto__"] = false;
+      var propertyWhiteList = /* @__PURE__ */ Object.create(null);
+      propertyWhiteList["__proto__"] = false;
+      _utils.extend(propertyWhiteList, runtimeOptions.allowedProtoProperties);
+      var methodWhiteList = /* @__PURE__ */ Object.create(null);
+      methodWhiteList["constructor"] = false;
+      methodWhiteList["__defineGetter__"] = false;
+      methodWhiteList["__defineSetter__"] = false;
+      methodWhiteList["__lookupGetter__"] = false;
+      methodWhiteList["__lookupSetter__"] = false;
+      _utils.extend(methodWhiteList, runtimeOptions.allowedProtoMethods);
       return {
         properties: {
-          whitelist: _createNewLookupObject.createNewLookupObject(defaultPropertyWhiteList, runtimeOptions.allowedProtoProperties),
+          whitelist: propertyWhiteList,
           defaultValue: runtimeOptions.allowProtoPropertiesByDefault
         },
         methods: {
-          whitelist: _createNewLookupObject.createNewLookupObject(defaultMethodWhiteList, runtimeOptions.allowedProtoMethods),
+          whitelist: methodWhiteList,
           defaultValue: runtimeOptions.allowProtoMethodsByDefault
         }
       };
@@ -19619,7 +19608,7 @@ var require_base = __commonJS({
     var _logger = require_logger();
     var _logger2 = _interopRequireDefault(_logger);
     var _internalProtoAccess = require_proto_access();
-    var VERSION2 = "4.7.8";
+    var VERSION2 = "4.7.9";
     exports.VERSION = VERSION2;
     var COMPILER_REVISION = 8;
     exports.COMPILER_REVISION = COMPILER_REVISION;
@@ -19649,7 +19638,7 @@ var require_base = __commonJS({
       constructor: HandlebarsEnvironment,
       logger: _logger2["default"],
       log: _logger2["default"].log,
-      registerHelper: function registerHelper2(name, fn) {
+      registerHelper: function registerHelper(name, fn) {
         if (_utils.toString.call(name) === objectType) {
           if (fn) {
             throw new _exception2["default"]("Arg not supported with multiple helpers");
@@ -19805,14 +19794,12 @@ var require_runtime = __commonJS({
           }
         }
         partial2 = env.VM.resolvePartial.call(this, partial2, context, options);
-        var extendedOptions = Utils.extend({}, options, {
-          hooks: this.hooks,
-          protoAccessControl: this.protoAccessControl
-        });
-        var result = env.VM.invokePartial.call(this, partial2, context, extendedOptions);
+        options.hooks = this.hooks;
+        options.protoAccessControl = this.protoAccessControl;
+        var result = env.VM.invokePartial.call(this, partial2, context, options);
         if (result == null && env.compile) {
           options.partials[options.name] = env.compile(partial2, templateSpec.compilerOptions, env);
-          result = options.partials[options.name](context, extendedOptions);
+          result = options.partials[options.name](context, options);
         }
         if (result != null) {
           if (options.indent) {
@@ -19857,7 +19844,7 @@ var require_runtime = __commonJS({
           for (var i = 0; i < len; i++) {
             var result = depths[i] && container.lookupProperty(depths[i], name);
             if (result != null) {
-              return depths[i][name];
+              return result;
             }
           }
         },
@@ -19923,8 +19910,9 @@ var require_runtime = __commonJS({
       ret.isTop = true;
       ret._setup = function(options) {
         if (!options.partial) {
-          var mergedHelpers = Utils.extend({}, env.helpers, options.helpers);
-          wrapHelpersToPassLookupProperty(mergedHelpers, container);
+          var mergedHelpers = {};
+          addHelpers(mergedHelpers, env.helpers, container);
+          addHelpers(mergedHelpers, options.helpers, container);
           container.helpers = mergedHelpers;
           if (templateSpec.usePartial) {
             container.partials = container.mergeIfNeeded(options.partials, env.partials);
@@ -19974,18 +19962,18 @@ var require_runtime = __commonJS({
     function resolvePartial(partial2, context, options) {
       if (!partial2) {
         if (options.name === "@partial-block") {
-          partial2 = options.data["partial-block"];
+          partial2 = lookupOwnProperty(options.data, "partial-block");
         } else {
-          partial2 = options.partials[options.name];
+          partial2 = lookupOwnProperty(options.partials, options.name);
         }
       } else if (!partial2.call && !options.name) {
         options.name = partial2;
-        partial2 = options.partials[partial2];
+        partial2 = lookupOwnProperty(options.partials, partial2);
       }
       return partial2;
     }
     function invokePartial(partial2, context, options) {
-      var currentPartialBlock = options.data && options.data["partial-block"];
+      var currentPartialBlock = lookupOwnProperty(options.data, "partial-block");
       options.partial = true;
       if (options.ids) {
         options.data.contextPath = options.ids[0] || options.data.contextPath;
@@ -20018,6 +20006,11 @@ var require_runtime = __commonJS({
     function noop2() {
       return "";
     }
+    function lookupOwnProperty(obj, name) {
+      if (obj && Object.prototype.hasOwnProperty.call(obj, name)) {
+        return obj[name];
+      }
+    }
     function initData(context, data) {
       if (!data || !("root" in data)) {
         data = data ? _base.createFrame(data) : {};
@@ -20033,16 +20026,18 @@ var require_runtime = __commonJS({
       }
       return prog;
     }
-    function wrapHelpersToPassLookupProperty(mergedHelpers, container) {
-      Object.keys(mergedHelpers).forEach(function(helperName) {
-        var helper = mergedHelpers[helperName];
+    function addHelpers(mergedHelpers, helpers, container) {
+      if (!helpers) return;
+      Object.keys(helpers).forEach(function(helperName) {
+        var helper = helpers[helperName];
         mergedHelpers[helperName] = passLookupPropertyOption(helper, container);
       });
     }
     function passLookupPropertyOption(helper, container) {
       var lookupProperty = container.lookupProperty;
       return _internalWrapHelper.wrapHelper(helper, function(options) {
-        return Utils.extend({ lookupProperty }, options);
+        options.lookupProperty = lookupProperty;
+        return options;
       });
     }
   }
@@ -20852,7 +20847,7 @@ var require_parser = __commonJS({
               break;
           }
         };
-        lexer2.rules = [/^(?:[^\x00]*?(?=(\{\{)))/, /^(?:[^\x00]+)/, /^(?:[^\x00]{2,}?(?=(\{\{|\\\{\{|\\\\\{\{|$)))/, /^(?:\{\{\{\{(?=[^/]))/, /^(?:\{\{\{\{\/[^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=[=}\s\/.])\}\}\}\})/, /^(?:[^\x00]+?(?=(\{\{\{\{)))/, /^(?:[\s\S]*?--(~)?\}\})/, /^(?:\()/, /^(?:\))/, /^(?:\{\{\{\{)/, /^(?:\}\}\}\})/, /^(?:\{\{(~)?>)/, /^(?:\{\{(~)?#>)/, /^(?:\{\{(~)?#\*?)/, /^(?:\{\{(~)?\/)/, /^(?:\{\{(~)?\^\s*(~)?\}\})/, /^(?:\{\{(~)?\s*else\s*(~)?\}\})/, /^(?:\{\{(~)?\^)/, /^(?:\{\{(~)?\s*else\b)/, /^(?:\{\{(~)?\{)/, /^(?:\{\{(~)?&)/, /^(?:\{\{(~)?!--)/, /^(?:\{\{(~)?![\s\S]*?\}\})/, /^(?:\{\{(~)?\*?)/, /^(?:=)/, /^(?:\.\.)/, /^(?:\.(?=([=~}\s\/.)|])))/, /^(?:[\/.])/, /^(?:\s+)/, /^(?:\}(~)?\}\})/, /^(?:(~)?\}\})/, /^(?:"(\\["]|[^"])*")/, /^(?:'(\\[']|[^'])*')/, /^(?:@)/, /^(?:true(?=([~}\s)])))/, /^(?:false(?=([~}\s)])))/, /^(?:undefined(?=([~}\s)])))/, /^(?:null(?=([~}\s)])))/, /^(?:-?[0-9]+(?:\.[0-9]+)?(?=([~}\s)])))/, /^(?:as\s+\|)/, /^(?:\|)/, /^(?:([^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=([=~}\s\/.)|]))))/, /^(?:\[(\\\]|[^\]])*\])/, /^(?:.)/, /^(?:$)/];
+        lexer2.rules = [/^(?:[^\x00]*?(?=(\{\{)))/, /^(?:[^\x00]+)/, /^(?:[^\x00]{2,}?(?=(\{\{|\\\{\{|\\\\\{\{|$)))/, /^(?:\{\{\{\{(?=[^\/]))/, /^(?:\{\{\{\{\/[^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=[=}\s\/.])\}\}\}\})/, /^(?:[^\x00]+?(?=(\{\{\{\{)))/, /^(?:[\s\S]*?--(~)?\}\})/, /^(?:\()/, /^(?:\))/, /^(?:\{\{\{\{)/, /^(?:\}\}\}\})/, /^(?:\{\{(~)?>)/, /^(?:\{\{(~)?#>)/, /^(?:\{\{(~)?#\*?)/, /^(?:\{\{(~)?\/)/, /^(?:\{\{(~)?\^\s*(~)?\}\})/, /^(?:\{\{(~)?\s*else\s*(~)?\}\})/, /^(?:\{\{(~)?\^)/, /^(?:\{\{(~)?\s*else\b)/, /^(?:\{\{(~)?\{)/, /^(?:\{\{(~)?&)/, /^(?:\{\{(~)?!--)/, /^(?:\{\{(~)?![\s\S]*?\}\})/, /^(?:\{\{(~)?\*?)/, /^(?:=)/, /^(?:\.\.)/, /^(?:\.(?=([=~}\s\/.)|])))/, /^(?:[\/.])/, /^(?:\s+)/, /^(?:\}(~)?\}\})/, /^(?:(~)?\}\})/, /^(?:"(\\["]|[^"])*")/, /^(?:'(\\[']|[^'])*')/, /^(?:@)/, /^(?:true(?=([~}\s)])))/, /^(?:false(?=([~}\s)])))/, /^(?:undefined(?=([~}\s)])))/, /^(?:null(?=([~}\s)])))/, /^(?:-?[0-9]+(?:\.[0-9]+)?(?=([~}\s)])))/, /^(?:as\s+\|)/, /^(?:\|)/, /^(?:([^\s!"#%-,\.\/;->@\[-\^`\{-~]+(?=([=~}\s\/.)|]))))/, /^(?:\[(\\\]|[^\]])*\])/, /^(?:.)/, /^(?:$)/];
         lexer2.conditions = { "mu": { "rules": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44], "inclusive": false }, "emu": { "rules": [2], "inclusive": false }, "com": { "rules": [6], "inclusive": false }, "raw": { "rules": [3, 4, 5], "inclusive": false }, "INITIAL": { "rules": [0, 1, 44], "inclusive": true } };
         return lexer2;
       })();
@@ -21359,12 +21354,15 @@ var require_base2 = __commonJS({
     var _whitespaceControl2 = _interopRequireDefault(_whitespaceControl);
     var _helpers = require_helpers2();
     var Helpers = _interopRequireWildcard(_helpers);
+    var _exception = require_exception();
+    var _exception2 = _interopRequireDefault(_exception);
     var _utils = require_utils();
     exports.parser = _parser2["default"];
     var yy = {};
     _utils.extend(yy, Helpers);
     function parseWithoutProcessing(input, options) {
       if (input.type === "Program") {
+        validateInputAst(input);
         return input;
       }
       _parser2["default"].yy = yy;
@@ -21378,6 +21376,51 @@ var require_base2 = __commonJS({
       var ast = parseWithoutProcessing(input, options);
       var strip = new _whitespaceControl2["default"](options);
       return strip.accept(ast);
+    }
+    function validateInputAst(ast) {
+      validateAstNode(ast);
+    }
+    function validateAstNode(node) {
+      if (node == null) {
+        return;
+      }
+      if (Array.isArray(node)) {
+        node.forEach(validateAstNode);
+        return;
+      }
+      if (typeof node !== "object") {
+        return;
+      }
+      if (node.type === "PathExpression") {
+        if (!isValidDepth(node.depth)) {
+          throw new _exception2["default"]("Invalid AST: PathExpression.depth must be an integer");
+        }
+        if (!Array.isArray(node.parts)) {
+          throw new _exception2["default"]("Invalid AST: PathExpression.parts must be an array");
+        }
+        for (var i = 0; i < node.parts.length; i++) {
+          if (typeof node.parts[i] !== "string") {
+            throw new _exception2["default"]("Invalid AST: PathExpression.parts must only contain strings");
+          }
+        }
+      } else if (node.type === "NumberLiteral") {
+        if (typeof node.value !== "number" || !isFinite(node.value)) {
+          throw new _exception2["default"]("Invalid AST: NumberLiteral.value must be a number");
+        }
+      } else if (node.type === "BooleanLiteral") {
+        if (typeof node.value !== "boolean") {
+          throw new _exception2["default"]("Invalid AST: BooleanLiteral.value must be a boolean");
+        }
+      }
+      Object.keys(node).forEach(function(propertyName) {
+        if (propertyName === "loc") {
+          return;
+        }
+        validateAstNode(node[propertyName]);
+      });
+    }
+    function isValidDepth(depth) {
+      return typeof depth === "number" && isFinite(depth) && Math.floor(depth) === depth && depth >= 0;
     }
   }
 });
@@ -23807,12 +23850,10 @@ var require_javascript_compiler = __commonJS({
           var programs = _context.programs;
           var decorators = _context.decorators;
           for (i = 0, l2 = programs.length; i < l2; i++) {
-            if (programs[i]) {
-              ret[i] = programs[i];
-              if (decorators[i]) {
-                ret[i + "_d"] = decorators[i];
-                ret.useDecorators = true;
-              }
+            ret[i] = programs[i];
+            if (decorators[i]) {
+              ret[i + "_d"] = decorators[i];
+              ret.useDecorators = true;
             }
           }
           if (this.environment.usePartial) {
@@ -24073,22 +24114,25 @@ var require_javascript_compiler = __commonJS({
         }
         this.resolvePath("data", parts, 0, true, strict);
       },
-      resolvePath: function resolvePath(type, parts, i, falsy, strict) {
+      resolvePath: function resolvePath(type, parts, startPartIndex, falsy, strict) {
         var _this2 = this;
         if (this.options.strict || this.options.assumeObjects) {
-          this.push(strictLookup(this.options.strict && strict, this, parts, i, type));
+          this.push(strictLookup(this.options.strict && strict, this, parts, startPartIndex, type));
           return;
         }
         var len = parts.length;
-        for (; i < len; i++) {
-          this.replaceStack(function(current) {
-            var lookup = _this2.nameLookup(current, parts[i], type);
+        var _loop = function(i2) {
+          _this2.replaceStack(function(current) {
+            var lookup = _this2.nameLookup(current, parts[i2], type);
             if (!falsy) {
               return [" != null ? ", lookup, " : ", current];
             } else {
               return [" && ", lookup];
             }
           });
+        };
+        for (var i = startPartIndex; i < len; i++) {
+          _loop(i);
         }
       },
       // [resolvePossibleLambda]
@@ -24192,7 +24236,9 @@ var require_javascript_compiler = __commonJS({
       // and inserts the decorator into the decorators list.
       registerDecorator: function registerDecorator(paramSize, name) {
         var foundDecorator = this.nameLookup("decorators", name, "decorator"), options = this.setupHelperArgs(name, paramSize);
-        this.decorators.push(["fn = ", this.decorators.functionCall(foundDecorator, "", ["fn", "props", "container", options]), " || fn;"]);
+        this.decorators.push(["var decorator = ", foundDecorator, ";"]);
+        this.decorators.push(['if (typeof decorator !== "function") { throw new Error(', this.quotedString('Missing decorator: "' + name + '"'), "); }"]);
+        this.decorators.push(["fn = ", this.decorators.functionCall("decorator", "", ["fn", "props", "container", options]), " || fn;"]);
       },
       // [invokeHelper]
       //
@@ -24339,8 +24385,7 @@ var require_javascript_compiler = __commonJS({
           compiler = new this.compiler();
           var existing = this.matchExistingProgram(child);
           if (existing == null) {
-            this.context.programs.push("");
-            var index = this.context.programs.length;
+            var index = this.context.programs.push("") - 1;
             child.index = index;
             child.name = "program" + index;
             this.context.programs[index] = compiler.compile(child, options, this.context, !this.precompile);
@@ -24584,16 +24629,16 @@ var require_javascript_compiler = __commonJS({
     JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
       return !JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(name);
     };
-    function strictLookup(requireTerminal, compiler, parts, i, type) {
+    function strictLookup(requireTerminal, compiler, parts, startPartIndex, type) {
       var stack = compiler.popStack(), len = parts.length;
       if (requireTerminal) {
         len--;
       }
-      for (; i < len; i++) {
+      for (var i = startPartIndex; i < len; i++) {
         stack = compiler.nameLookup(stack, parts[i], type);
       }
       if (requireTerminal) {
-        return [compiler.aliasable("container.strict"), "(", stack, ", ", compiler.quotedString(parts[i]), ", ", JSON.stringify(compiler.source.currentLocation), " )"];
+        return [compiler.aliasable("container.strict"), "(", stack, ", ", compiler.quotedString(parts[len]), ", ", JSON.stringify(compiler.source.currentLocation), " )"];
       } else {
         return stack;
       }
@@ -27059,11 +27104,11 @@ var require_leaflet_src = __commonJS({
           }
           return this;
         },
-        _handleGeolocationError: function(error48) {
+        _handleGeolocationError: function(error51) {
           if (!this._container._leaflet_id) {
             return;
           }
-          var c = error48.code, message = error48.message || (c === 1 ? "permission denied" : c === 2 ? "position unavailable" : "timeout");
+          var c = error51.code, message = error51.message || (c === 1 ? "permission denied" : c === 2 ? "position unavailable" : "timeout");
           if (this._locateOptions.setView && !this._loaded) {
             this.fitWorld();
           }
@@ -30053,7 +30098,7 @@ var require_leaflet_src = __commonJS({
           return p.distanceTo(this._point) <= this._radius + this._clickTolerance();
         }
       });
-      function circleMarker2(latlng, options) {
+      function circleMarker(latlng, options) {
         return new CircleMarker(latlng, options);
       }
       var Circle = CircleMarker.extend({
@@ -34161,7 +34206,7 @@ var require_leaflet_src = __commonJS({
       exports2.bounds = toBounds;
       exports2.canvas = canvas;
       exports2.circle = circle2;
-      exports2.circleMarker = circleMarker2;
+      exports2.circleMarker = circleMarker;
       exports2.control = control;
       exports2.divIcon = divIcon2;
       exports2.extend = extend3;
@@ -36618,7 +36663,7 @@ var require_jszip_min = __commonJS({
   }
 });
 
-// src/animatedseismograph.ts
+// src/animatedseismograph.mts
 var animatedseismograph_exports = {};
 __export(animatedseismograph_exports, {
   AnimatedTimeScaler: () => AnimatedTimeScaler,
@@ -43151,7 +43196,7 @@ function friendlyDateTime(dateTimeish) {
 }
 var VERSION = "3.7.2";
 
-// src/datalink.ts
+// src/datalink.mts
 var datalink_exports = {};
 __export(datalink_exports, {
   ConnectionsResponse: () => ConnectionsResponse,
@@ -43162,6 +43207,7 @@ __export(datalink_exports, {
   DataLinkPacket: () => DataLinkPacket,
   DataLinkResponse: () => DataLinkResponse,
   DataLinkStats: () => DataLinkStats,
+  EARTHSCOPE_RINGSERVER_URL: () => EARTHSCOPE_RINGSERVER_URL,
   ENDSTREAM: () => ENDSTREAM,
   ERROR: () => ERROR,
   ID: () => ID,
@@ -43190,7 +43236,7 @@ __export(datalink_exports, {
   stringToUint8Array: () => stringToUint8Array
 });
 
-// src/util.ts
+// src/util.mts
 var util_exports = {};
 __export(util_exports, {
   BINARY_MIME: () => BINARY_MIME,
@@ -43260,10 +43306,10 @@ __export(util_exports, {
   warn: () => warn
 });
 
-// src/version.ts
-var version = "3.2.2";
+// src/version.mts
+var version = "3.2.7";
 
-// src/util.ts
+// src/util.mts
 var XML_MIME = "application/xml";
 var JSON_MIME = "application/json";
 var JSONAPI_MIME = "application/vnd.api+json";
@@ -43411,8 +43457,8 @@ function log(msg) {
     }
   }
 }
-function isError(error48) {
-  return typeof error48 === "object" && error48 !== null && error48 instanceof Error;
+function isError(error51) {
+  return typeof error51 === "object" && error51 !== null && error51 instanceof Error;
 }
 function toError(maybeError) {
   if (isError(maybeError)) return maybeError;
@@ -43423,10 +43469,35 @@ function toError(maybeError) {
   }
 }
 var DEBUG_ELEMENT = "sp-debug";
-var SeisPlotDebugElement = class extends HTMLDivElement {
+var SeisPlotDebugElement = class extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+    const shadow = this.shadowRoot;
+    if (shadow != null) {
+      const pre = shadow.appendChild(document.createElement("pre"));
+      pre.appendChild(document.createElement("code"));
+    }
+  }
+  getCodeElement() {
+    let code = null;
+    const shadow = this.shadowRoot;
+    if (shadow != null) {
+      code = shadow.querySelector("code");
+    }
+    return code;
+  }
+  debug(msg) {
+    const code = this.getCodeElement();
+    if (code != null) {
+      code.textContent = code.textContent + msg.trim() + "\n";
+    }
+  }
+  clear() {
+    const code = this.getCodeElement();
+    if (code != null) {
+      code.innerHTML = "";
+    }
   }
 };
 customElements.define(DEBUG_ELEMENT, SeisPlotDebugElement);
@@ -43769,7 +43840,7 @@ function doFetchWithTimeout(url2, fetchInit, timeoutSec2, fetcher) {
             if (httpsResponse.ok || httpsResponse.status === 404) {
               return httpsResponse;
             } else {
-              return response.text().then((text) => {
+              return httpsResponse.text().then((text) => {
                 throw new Error(
                   `fetch response was redirect for http and failed for https. ${response.ok} ${response.status}, ${httpsResponse.ok} ${httpsResponse.status} 
 ${text}`
@@ -43866,7 +43937,7 @@ function anplusb(value) {
   return [a, b];
 }
 
-// src/miniseed.ts
+// src/miniseed.mts
 var miniseed_exports = {};
 __export(miniseed_exports, {
   BTime: () => BTime,
@@ -43896,7 +43967,7 @@ __export(miniseed_exports, {
   seismogramSegmentPerChannel: () => seismogramSegmentPerChannel
 });
 
-// src/fdsnsourceid.ts
+// src/fdsnsourceid.mts
 var fdsnsourceid_exports = {};
 __export(fdsnsourceid_exports, {
   EMPTY_LOC_CODE: () => EMPTY_LOC_CODE,
@@ -43919,12 +43990,6 @@ var TESTING_NETWORK = "XX";
 var TESTING_STATION = "ABC";
 var FDSNSourceId = class _FDSNSourceId {
   constructor(networkCode, stationCode, locationCode, bandCode, sourceCode, subsourceCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
-    __publicField(this, "locationCode");
-    __publicField(this, "bandCode");
-    __publicField(this, "sourceCode");
-    __publicField(this, "subsourceCode");
     this.networkCode = networkCode;
     this.stationCode = stationCode;
     this.locationCode = locationCode;
@@ -44052,7 +44117,6 @@ var FDSNSourceId = class _FDSNSourceId {
 };
 var NetworkSourceId = class _NetworkSourceId {
   constructor(networkCode) {
-    __publicField(this, "networkCode");
     this.networkCode = networkCode;
   }
   static parse(id2) {
@@ -44081,8 +44145,6 @@ var NetworkSourceId = class _NetworkSourceId {
 };
 var StationSourceId = class _StationSourceId {
   constructor(networkCode, stationCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
     this.networkCode = networkCode;
     this.stationCode = stationCode;
   }
@@ -44115,9 +44177,6 @@ var StationSourceId = class _StationSourceId {
 };
 var LocationSourceId = class {
   constructor(networkCode, stationCode, locationCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
-    __publicField(this, "locationCode");
     this.networkCode = networkCode;
     this.stationCode = stationCode;
     this.locationCode = locationCode;
@@ -44180,10 +44239,6 @@ function bandCodeForRate(sampRate, resp_lb) {
 var EMPTY_LOC_CODE = "--";
 var NslcId = class _NslcId {
   constructor(net, sta, loc, chan) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
-    __publicField(this, "locationCode");
-    __publicField(this, "channelCode");
     this.networkCode = net;
     this.stationCode = sta;
     this.locationCode = loc;
@@ -44267,14 +44322,14 @@ function SourceIdSorter(aSid, bSid) {
   return aSid.subsourceCode.localeCompare(bSid.subsourceCode);
 }
 
-// src/seismogramsegment.ts
+// src/seismogramsegment.mts
 var seismogramsegment_exports = {};
 __export(seismogramsegment_exports, {
   COUNT_UNIT: () => COUNT_UNIT,
   SeismogramSegment: () => SeismogramSegment
 });
 
-// src/scale.ts
+// src/scale.mts
 var scale_exports = {};
 __export(scale_exports, {
   AMPLITUDE_MODE: () => AMPLITUDE_MODE,
@@ -44291,7 +44346,7 @@ __export(scale_exports, {
   TimeScalable: () => TimeScalable
 });
 
-// src/transition.ts
+// src/transition.mts
 var transition_exports = {};
 __export(transition_exports, {
   transition: () => transition
@@ -44313,7 +44368,7 @@ function transition(drawFn, duration_millis) {
   window.requestAnimationFrame(transFn);
 }
 
-// src/scale.ts
+// src/scale.mts
 var AMPLITUDE_MODE = /* @__PURE__ */ ((AMPLITUDE_MODE2) => {
   AMPLITUDE_MODE2["Raw"] = "raw";
   AMPLITUDE_MODE2["Zero"] = "zero";
@@ -44326,8 +44381,6 @@ var PHI = (1 + Math.sqrt(5)) / 2;
 var SQRT_PHI = Math.sqrt(PHI);
 var MinMaxable = class _MinMaxable {
   constructor(min, max) {
-    __publicField(this, "min");
-    __publicField(this, "max");
     this.min = min;
     this.max = max;
   }
@@ -44385,7 +44438,6 @@ var MinMaxable = class _MinMaxable {
 };
 var AmplitudeScalable = class {
   constructor(minMax) {
-    __publicField(this, "minMax");
     if (minMax) {
       this.minMax = minMax;
     } else {
@@ -44415,8 +44467,6 @@ var AmplitudeScalable = class {
 };
 var TimeScalable = class {
   constructor(alignmentTimeOffset, duration3) {
-    __publicField(this, "alignmentTimeOffset");
-    __publicField(this, "duration");
     this.alignmentTimeOffset = alignmentTimeOffset;
     this.duration = duration3;
   }
@@ -44425,13 +44475,6 @@ var TimeScalable = class {
 };
 var LinkedAmplitudeScale = class {
   constructor(graphList) {
-    /**
-     * @private
-     */
-    __publicField(this, "_graphSet");
-    __publicField(this, "_halfWidth");
-    __publicField(this, "_recalcTimeoutID");
-    __publicField(this, "_scaleId");
     this._scaleId = ++_lastId;
     const glist = graphList ? graphList : [];
     this._halfWidth = 0;
@@ -44568,17 +44611,8 @@ var FixedHalfWidthAmplitudeScale = class extends LinkedAmplitudeScale {
 };
 var LinkedTimeScale = class {
   constructor(graphList, originalDuration, originalOffset, scaleId) {
-    /**
-     * @private
-     */
-    __publicField(this, "_graphSet");
-    __publicField(this, "_originalDuration");
-    __publicField(this, "_originalOffset");
-    __publicField(this, "_zoomedDuration");
-    __publicField(this, "_zoomedOffset");
-    __publicField(this, "_scaleId");
-    __publicField(this, "_prev_zoom_k", 1);
-    __publicField(this, "_prev_zoom_x", 0);
+    this._prev_zoom_k = 1;
+    this._prev_zoom_x = 0;
     if (scaleId) {
       this._scaleId = scaleId;
     } else {
@@ -44752,15 +44786,12 @@ var AlignmentLinkedTimeScale = class extends LinkedTimeScale {
 };
 var PanZoomer = class {
   constructor(target, linkedTimeScale, wheelZoom) {
-    __publicField(this, "isMouseDown", false);
-    __publicField(this, "_target");
-    __publicField(this, "width");
-    __publicField(this, "linkedTimeScale");
-    __publicField(this, "wheelZoom", false);
-    __publicField(this, "_prev_zoom_k", 1);
-    __publicField(this, "_prev_zoom_x", 0);
-    __publicField(this, "min_k", 1 / 8192);
-    __publicField(this, "max_k", 8192);
+    this.isMouseDown = false;
+    this.wheelZoom = false;
+    this._prev_zoom_k = 1;
+    this._prev_zoom_x = 0;
+    this.min_k = 1 / 8192;
+    this.max_k = 8192;
     this._target = target;
     this.target = target;
     this.width = target.getBoundingClientRect().width;
@@ -44826,8 +44857,6 @@ var PanZoomer = class {
     transition((step) => {
       const transK = start_k + (end_k - start_k) * step;
       this.doZoom(transK, offsetX, width);
-      if (step === 1) {
-      }
     }, duration3);
   }
   doZoom(k, x2, width) {
@@ -44844,7 +44873,7 @@ var PanZoomer = class {
     const currDuration = linkedTS.duration;
     let zoomDuration = currDuration;
     const zoomDurationMillis = linkedTS.origDuration.toMillis() / k;
-    let timeShift = 0;
+    let timeShift;
     if (k !== this.linkedTimeScale._prev_zoom_k) {
       zoomDuration = Duration.fromMillis(zoomDurationMillis);
       timeShift = x2 / width * (currDuration.toMillis() - zoomDurationMillis);
@@ -44862,7 +44891,7 @@ var PanZoomer = class {
   }
 };
 
-// src/seedcodec.ts
+// src/seedcodec.mts
 var seedcodec_exports = {};
 __export(seedcodec_exports, {
   ASCII: () => ASCII,
@@ -44917,10 +44946,6 @@ function isFloatCompression(compressionType) {
 }
 var EncodedDataSegment = class {
   constructor(compressionType, dataView, numSamples, littleEndian) {
-    __publicField(this, "compressionType");
-    __publicField(this, "dataView");
-    __publicField(this, "numSamples");
-    __publicField(this, "littleEndian");
     this.compressionType = compressionType;
     this.dataView = dataView;
     this.numSamples = numSamples;
@@ -45019,8 +45044,8 @@ function decodeSteim1(dataView, numSamples, littleEndian, bias) {
   let tempSamples;
   const numFrames = dataView.byteLength / 64;
   let current = 0;
-  let start2 = 0;
-  let firstData = 0;
+  let start2;
+  let firstData;
   let lastValue = 0;
   let i, j;
   for (i = 0; i < numFrames; i++) {
@@ -45047,7 +45072,7 @@ function decodeSteim1(dataView, numSamples, littleEndian, bias) {
 }
 function extractSteim1Samples(dataView, offset2, littleEndian) {
   const nibbles = dataView.getInt32(offset2, littleEndian);
-  let currNibble = 0;
+  let currNibble;
   const temp = [];
   let currNum = 0;
   let i, n2;
@@ -45091,8 +45116,8 @@ function decodeSteim2(dataView, numSamples, swapBytes, bias) {
   let tempSamples;
   const numFrames = dataView.byteLength / 64;
   let current = 0;
-  let start2 = 0;
-  let firstData = 0;
+  let start2;
+  let firstData;
   let lastValue = 0;
   for (let i = 0; i < numFrames; i++) {
     tempSamples = extractSteim2Samples(dataView, i * 64, swapBytes);
@@ -45118,14 +45143,14 @@ function decodeSteim2(dataView, numSamples, swapBytes, bias) {
 }
 function extractSteim2Samples(dataView, offset2, swapBytes) {
   const nibbles = dataView.getUint32(offset2, swapBytes);
-  let currNibble = 0;
-  let dnib = 0;
+  let currNibble;
+  let dnib;
   const temp = new Int32Array(106);
   let tempInt;
   let currNum = 0;
-  let diffCount = 0;
-  let bitSize = 0;
-  let headerSize = 0;
+  let diffCount;
+  let bitSize;
+  let headerSize;
   for (let i = 0; i < 16; i++) {
     currNibble = nibbles >> 30 - i * 2 & 3;
     switch (currNibble) {
@@ -45165,9 +45190,6 @@ function extractSteim2Samples(dataView, offset2, swapBytes) {
       case 3:
         tempInt = dataView.getUint32(offset2 + i * 4, swapBytes);
         dnib = tempInt >> 30 & 3;
-        diffCount = 0;
-        bitSize = 0;
-        headerSize = 0;
         switch (dnib) {
           case 0:
             headerSize = 2;
@@ -45202,26 +45224,10 @@ function extractSteim2Samples(dataView, offset2, swapBytes) {
   return temp.slice(0, currNum);
 }
 
-// src/seismogramsegment.ts
+// src/seismogramsegment.mts
 var COUNT_UNIT = "count";
 var SeismogramSegment = class _SeismogramSegment {
   constructor(yArray, sampleRate, startTime, sourceId) {
-    /** Array of y values */
-    __publicField(this, "_y");
-    __publicField(this, "_compressed");
-    /**
-     * the sample rate in hertz
-     *
-     * @private
-     */
-    __publicField(this, "_sampleRate");
-    /** @private */
-    __publicField(this, "_startTime");
-    __publicField(this, "_endTime_cache");
-    __publicField(this, "_endTime_cache_numPoints");
-    __publicField(this, "_sourceId");
-    __publicField(this, "yUnit");
-    __publicField(this, "_highlow");
     if (yArray instanceof Int32Array || yArray instanceof Float32Array || yArray instanceof Float64Array) {
       this._y = yArray;
       this._compressed = null;
@@ -45527,7 +45533,7 @@ var SeismogramSegment = class _SeismogramSegment {
   }
 };
 
-// src/seismogram.ts
+// src/seismogram.mts
 var seismogram_exports = {};
 __export(seismogram_exports, {
   COUNT_UNIT: () => COUNT_UNIT2,
@@ -45546,12 +45552,17 @@ __export(seismogram_exports, {
   findMinMaxOverTimeRange: () => findMinMaxOverTimeRange,
   findStartEnd: () => findStartEnd,
   findStartEndOfSeismograms: () => findStartEndOfSeismograms,
+  uniqueBandCodes: () => uniqueBandCodes,
   uniqueChannels: () => uniqueChannels,
+  uniqueLocationCodes: () => uniqueLocationCodes,
   uniqueQuakes: () => uniqueQuakes,
-  uniqueStations: () => uniqueStations2
+  uniqueSourceCodes: () => uniqueSourceCodes,
+  uniqueSourceIds: () => uniqueSourceIds2,
+  uniqueStations: () => uniqueStations2,
+  uniqueSubsourceCodes: () => uniqueSubsourceCodes
 });
 
-// src/distaz.ts
+// src/distaz.mts
 var distaz_exports = {};
 __export(distaz_exports, {
   DistAzOutput: () => DistAzOutput,
@@ -45569,13 +45580,6 @@ function kmtodeg(km) {
 }
 var DistAzOutput = class {
   constructor(delta, az, baz) {
-    __publicField(this, "delta");
-    __publicField(this, "az");
-    __publicField(this, "baz");
-    __publicField(this, "stalat");
-    __publicField(this, "stalon");
-    __publicField(this, "evtlat");
-    __publicField(this, "evtlon");
     this.delta = delta ? delta : 0;
     this.az = az ? az : 0;
     this.baz = baz ? baz : 0;
@@ -45653,7 +45657,7 @@ function distaz(lat1, lon1, lat2, lon2) {
   return result;
 }
 
-// src/stationxml.ts
+// src/stationxml.mts
 var stationxml_exports = {};
 __export(stationxml_exports, {
   AbstractFilterType: () => AbstractFilterType,
@@ -45716,7 +45720,7 @@ __export(stationxml_exports, {
   uniqueStations: () => uniqueStations
 });
 
-// src/oregondsputil.ts
+// src/oregondsputil.mts
 var oregondsputil_exports = {};
 __export(oregondsputil_exports, {
   Allpass: () => Allpass,
@@ -45816,7 +45820,7 @@ function createComplex(real, imag) {
   );
 }
 
-// src/stationxml.ts
+// src/stationxml.mts
 var STAXML_MIME = "application/vnd.fdsn.stationxml+xml";
 var STAML_NS = "http://www.fdsn.org/xml/station/1";
 var COUNT_UNIT_NAME = "count";
@@ -45872,13 +45876,6 @@ function createStationClickEvent(sta, mouseclick) {
 }
 var Network = class {
   constructor(networkCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "_startDate");
-    __publicField(this, "_endDate");
-    __publicField(this, "restrictedStatus");
-    __publicField(this, "description");
-    __publicField(this, "totalNumberStations");
-    __publicField(this, "stations");
     this.networkCode = networkCode;
     this._startDate = FAKE_START_DATE;
     this._endDate = null;
@@ -45925,27 +45922,6 @@ var Network = class {
 };
 var Station = class {
   constructor(network, stationCode) {
-    __publicField(this, "network");
-    __publicField(this, "stationCode");
-    __publicField(this, "sourceID");
-    /** @private */
-    __publicField(this, "_startDate");
-    /** @private */
-    __publicField(this, "_endDate");
-    __publicField(this, "restrictedStatus");
-    __publicField(this, "name");
-    __publicField(this, "latitude");
-    __publicField(this, "longitude");
-    __publicField(this, "elevation");
-    __publicField(this, "waterLevel");
-    __publicField(this, "comments");
-    __publicField(this, "equipmentList");
-    __publicField(this, "dataAvailability");
-    __publicField(this, "identifierList");
-    __publicField(this, "description");
-    __publicField(this, "geology");
-    __publicField(this, "vault");
-    __publicField(this, "channels");
     this.network = network;
     this.name = "";
     this.description = "";
@@ -46006,34 +45982,12 @@ var Station = class {
 };
 var Channel = class {
   constructor(station, channelCode, locationCode) {
-    __publicField(this, "station");
-    /** @private */
-    __publicField(this, "_locationCode");
-    __publicField(this, "channelCode");
-    /** @private */
-    __publicField(this, "_sourceId");
-    /** @private */
-    __publicField(this, "_startDate");
-    /** @private */
-    __publicField(this, "_endDate");
-    __publicField(this, "restrictedStatus");
-    __publicField(this, "latitude");
-    __publicField(this, "longitude");
-    __publicField(this, "elevation");
-    __publicField(this, "depth");
-    __publicField(this, "azimuth");
-    __publicField(this, "dip");
-    __publicField(this, "sampleRate");
-    __publicField(this, "waterLevel", null);
-    __publicField(this, "comments", []);
-    __publicField(this, "equipmentList", []);
-    __publicField(this, "dataAvailability", null);
-    __publicField(this, "identifierList", []);
-    __publicField(this, "description", "");
-    __publicField(this, "response");
-    __publicField(this, "sensor");
-    __publicField(this, "preamplifier");
-    __publicField(this, "datalogger");
+    this.waterLevel = null;
+    this.comments = [];
+    this.equipmentList = [];
+    this.dataAvailability = null;
+    this.identifierList = [];
+    this.description = "";
     this.station = station;
     this._startDate = FAKE_START_DATE;
     this._endDate = null;
@@ -46167,10 +46121,6 @@ var Channel = class {
 };
 var InstrumentSensitivity = class {
   constructor(sensitivity, frequency, inputUnits, outputUnits) {
-    __publicField(this, "sensitivity");
-    __publicField(this, "frequency");
-    __publicField(this, "inputUnits");
-    __publicField(this, "outputUnits");
     this.sensitivity = sensitivity;
     this.frequency = frequency;
     this.inputUnits = inputUnits;
@@ -46179,16 +46129,6 @@ var InstrumentSensitivity = class {
 };
 var Equipment = class {
   constructor() {
-    __publicField(this, "resourceId");
-    __publicField(this, "type");
-    __publicField(this, "description");
-    __publicField(this, "manufacturer");
-    __publicField(this, "vendor");
-    __publicField(this, "model");
-    __publicField(this, "serialNumber");
-    __publicField(this, "installationDate");
-    __publicField(this, "removalDate");
-    __publicField(this, "calibrationDateList");
     this.resourceId = "";
     this.type = "";
     this.description = "";
@@ -46203,8 +46143,6 @@ var Equipment = class {
 };
 var Response2 = class {
   constructor(instrumentSensitivity, stages) {
-    __publicField(this, "instrumentSensitivity");
-    __publicField(this, "stages");
     if (instrumentSensitivity) {
       this.instrumentSensitivity = instrumentSensitivity;
     } else {
@@ -46219,9 +46157,6 @@ var Response2 = class {
 };
 var Stage = class {
   constructor(filter2, decimation, gain) {
-    __publicField(this, "filter");
-    __publicField(this, "decimation");
-    __publicField(this, "gain");
     this.filter = filter2;
     this.decimation = decimation;
     this.gain = gain;
@@ -46229,10 +46164,6 @@ var Stage = class {
 };
 var AbstractFilterType = class {
   constructor(inputUnits, outputUnits) {
-    __publicField(this, "inputUnits");
-    __publicField(this, "outputUnits");
-    __publicField(this, "name");
-    __publicField(this, "description");
     this.inputUnits = inputUnits;
     this.outputUnits = outputUnits;
     this.description = "";
@@ -46242,11 +46173,6 @@ var AbstractFilterType = class {
 var PolesZeros = class extends AbstractFilterType {
   constructor(inputUnits, outputUnits) {
     super(inputUnits, outputUnits);
-    __publicField(this, "pzTransferFunctionType");
-    __publicField(this, "normalizationFactor");
-    __publicField(this, "normalizationFrequency");
-    __publicField(this, "zeros");
-    __publicField(this, "poles");
     this.pzTransferFunctionType = "";
     this.normalizationFactor = 1;
     this.normalizationFrequency = 0;
@@ -46257,8 +46183,6 @@ var PolesZeros = class extends AbstractFilterType {
 var FIR = class extends AbstractFilterType {
   constructor(inputUnits, outputUnits) {
     super(inputUnits, outputUnits);
-    __publicField(this, "symmetry");
-    __publicField(this, "numerator");
     this.symmetry = "none";
     this.numerator = [1];
   }
@@ -46266,9 +46190,6 @@ var FIR = class extends AbstractFilterType {
 var CoefficientsFilter = class extends AbstractFilterType {
   constructor(inputUnits, outputUnits) {
     super(inputUnits, outputUnits);
-    __publicField(this, "cfTransferFunction");
-    __publicField(this, "numerator");
-    __publicField(this, "denominator");
     this.cfTransferFunction = "";
     this.numerator = [1];
     this.denominator = new Array(0);
@@ -46276,57 +46197,45 @@ var CoefficientsFilter = class extends AbstractFilterType {
 };
 var Decimation = class {
   constructor(inputSampleRate, factor) {
-    __publicField(this, "inputSampleRate");
-    __publicField(this, "factor");
-    __publicField(this, "offset");
-    __publicField(this, "delay");
-    __publicField(this, "correction");
     this.inputSampleRate = inputSampleRate;
     this.factor = factor;
   }
 };
 var Gain = class {
   constructor(value, frequency) {
-    __publicField(this, "value");
-    __publicField(this, "frequency");
     this.value = value;
     this.frequency = frequency;
   }
 };
 var Span = class {
   constructor(interval2) {
-    __publicField(this, "interval");
-    __publicField(this, "numberSegments", 0);
-    __publicField(this, "maximumTimeTear");
+    this.numberSegments = 0;
     this.maximumTimeTear = null;
     this.interval = interval2;
   }
 };
 var DataAvailability = class {
   constructor() {
-    __publicField(this, "extent");
-    __publicField(this, "spanList");
     this.extent = null;
     this.spanList = [];
   }
 };
 var Comment = class {
   constructor(value) {
-    __publicField(this, "id", null);
-    __publicField(this, "subject", null);
-    __publicField(this, "value");
-    __publicField(this, "beginEffectiveTime", null);
-    __publicField(this, "endEffectiveTime", null);
-    __publicField(this, "authorList", []);
+    this.id = null;
+    this.subject = null;
+    this.beginEffectiveTime = null;
+    this.endEffectiveTime = null;
+    this.authorList = [];
     this.value = value;
   }
 };
 var Author = class {
   constructor() {
-    __publicField(this, "name", null);
-    __publicField(this, "agency", null);
-    __publicField(this, "email", null);
-    __publicField(this, "phone", null);
+    this.name = null;
+    this.agency = null;
+    this.email = null;
+    this.phone = null;
   }
 };
 function parseStationXml(rawXml) {
@@ -46857,7 +46766,7 @@ function convertToStage(stageXml) {
     decimation = convertToDecimation(decimationXml);
   }
   const gainXml = _grabFirstEl(stageXml, "StageGain");
-  let gain = null;
+  let gain;
   if (gainXml) {
     gain = convertToGain(gainXml);
   } else {
@@ -46945,19 +46854,19 @@ function* activeChannels(networks, atTime) {
   }
 }
 function* findChannels(networks, netCode = ".*", staCode = ".*", locCode = ".*", chanCode = ".*") {
-  if (netCode.length == 0) {
+  if (netCode.length === 0) {
     netCode = ".*";
   }
   const netRE = new RegExp(`^${netCode}$`);
-  if (staCode.length == 0) {
+  if (staCode.length === 0) {
     staCode = ".*";
   }
   const staRE = new RegExp(`^${staCode}$`);
-  if (locCode.length == 0) {
+  if (locCode.length === 0) {
     locCode = ".*";
   }
   const locRE = new RegExp(`^${locCode}$`);
-  if (chanCode.length == 0) {
+  if (chanCode.length === 0) {
     chanCode = ".*";
   }
   const chanRE = new RegExp(`^${chanCode}$`);
@@ -47125,13 +47034,1821 @@ var parseUtil = {
   _grabAttributeNS
 };
 
-// src/seismogram.ts
+// src/quakeml.mts
+var quakeml_exports = {};
+__export(quakeml_exports, {
+  ANSS_CATALOG_NS: () => ANSS_CATALOG_NS,
+  ANSS_NS: () => ANSS_NS,
+  Amplitude: () => Amplitude,
+  Arrival: () => Arrival,
+  Axis: () => Axis,
+  BED_NS: () => BED_NS,
+  Comment: () => Comment2,
+  CompositeTime: () => CompositeTime,
+  ConfidenceEllipsoid: () => ConfidenceEllipsoid,
+  CreationInfo: () => CreationInfo,
+  DataUsed: () => DataUsed,
+  EventDescription: () => EventDescription,
+  EventParameters: () => EventParameters,
+  FAKE_EMPTY_XML: () => FAKE_EMPTY_XML2,
+  FAKE_ORIGIN_TIME: () => FAKE_ORIGIN_TIME,
+  FocalMechanism: () => FocalMechanism,
+  IRIS_NS: () => IRIS_NS,
+  Magnitude: () => Magnitude,
+  MomentTensor: () => MomentTensor,
+  NodalPlane: () => NodalPlane,
+  NodalPlanes: () => NodalPlanes,
+  Origin: () => Origin,
+  OriginQuality: () => OriginQuality,
+  OriginUncertainty: () => OriginUncertainty,
+  Pick: () => Pick,
+  PrincipalAxes: () => PrincipalAxes,
+  QML_NS: () => QML_NS,
+  QUAKE_CLICK_EVENT: () => QUAKE_CLICK_EVENT,
+  Quake: () => Quake,
+  Quantity: () => Quantity,
+  SourceTimeFunction: () => SourceTimeFunction,
+  StationMagnitude: () => StationMagnitude,
+  StationMagnitudeContribution: () => StationMagnitudeContribution,
+  Tensor: () => Tensor,
+  TimeWindow: () => TimeWindow,
+  UNKNOWN_MAG_TYPE: () => UNKNOWN_MAG_TYPE,
+  UNKNOWN_PUBLIC_ID: () => UNKNOWN_PUBLIC_ID,
+  USGS_HOST: () => USGS_HOST,
+  WaveformID: () => WaveformID,
+  ZERO_MAGNITUDE: () => ZERO_MAGNITUDE,
+  createQuakeClickEvent: () => createQuakeClickEvent,
+  createQuakeFromValues: () => createQuakeFromValues,
+  createUnknownId: () => createUnknownId,
+  fetchQuakeML: () => fetchQuakeML,
+  isQuakeClickCustomEvent: () => isQuakeClickCustomEvent,
+  mightBeQuakeML: () => mightBeQuakeML,
+  parseQuakeML: () => parseQuakeML,
+  parseUtil: () => parseUtil2
+});
+
+// src/textformat.mts
+var lang = typeof navigator !== "undefined" && navigator?.language ? navigator?.language : "en-US";
+var latlonFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "degree",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 2
+});
+var magFormat = new Intl.NumberFormat(lang, {
+  style: "decimal",
+  maximumFractionDigits: 2
+});
+var depthNoUnitFormat = new Intl.NumberFormat(lang, {
+  style: "decimal",
+  maximumFractionDigits: 2
+});
+var depthFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "kilometer",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2
+});
+var depthMeterFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "meter",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1
+});
+
+// src/quakeml.mts
+var QML_NS = "http://quakeml.org/xmlns/quakeml/1.2";
+var BED_NS = "http://quakeml.org/xmlns/bed/1.2";
+var IRIS_NS = "http://service.iris.edu/fdsnws/event/1/";
+var ANSS_NS = "http://anss.org/xmlns/event/0.1";
+var ANSS_CATALOG_NS = "http://anss.org/xmlns/catalog/0.1";
+var USGS_HOST = "earthquake.usgs.gov";
+var UNKNOWN_MAG_TYPE = "unknown";
+var UNKNOWN_PUBLIC_ID = "unknownId";
+var FAKE_ORIGIN_TIME = DateTime.fromISO("1900-01-01T00:00:00Z");
+var FAKE_EMPTY_XML2 = '<?xml version="1.0"?><q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"><eventParameters publicID="quakeml:fake/empty"></eventParameters></q:quakeml>';
+var QUAKE_CLICK_EVENT = "quakeclick";
+function isQuakeClickCustomEvent(event) {
+  if ("detail" in event) {
+    const customEvent = event;
+    return "quake" in customEvent.detail;
+  }
+  return false;
+}
+function createQuakeClickEvent(q, mouseclick) {
+  const detail = {
+    mouseevent: mouseclick,
+    quake: q
+  };
+  return new CustomEvent(
+    QUAKE_CLICK_EVENT,
+    {
+      detail,
+      bubbles: true,
+      cancelable: false,
+      composed: true
+    }
+  );
+}
+var BaseElement = class {
+  constructor() {
+    this.publicId = UNKNOWN_PUBLIC_ID;
+    this.comments = [];
+  }
+  populate(qml) {
+    let pid = _grabAttribute3(qml, "publicID");
+    if (!isNonEmptyStringArg(pid)) {
+      warn(`missing publicID on ${qml.localName}`);
+      pid = `${createUnknownId()}_${qml.localName}`;
+    }
+    this.publicId = pid;
+    this.comments = _grabAllElComment(qml, "comment");
+    this.creationInfo = _grabFirstElCreationInfo(qml, "creationInfo");
+  }
+};
+var EventParameters = class _EventParameters extends BaseElement {
+  constructor() {
+    super(...arguments);
+    this.eventList = [];
+  }
+  /**
+   * Parses a QuakeML event parameters xml element into an EventParameters object.
+   *
+   * @param eventParametersQML the event parameters xml Element
+   * @param host optional source of the xml, helpful for parsing the eventid
+   * @returns EventParameters instance
+   */
+  static createFromXml(eventParametersQML, host) {
+    if (eventParametersQML.localName !== "eventParameters") {
+      throw new Error(
+        `Cannot extract, not a QuakeML event parameters: ${eventParametersQML.localName}`
+      );
+    }
+    const eventEls = Array.from(
+      eventParametersQML.getElementsByTagNameNS(BED_NS, "event")
+    );
+    const events = eventEls.map((e) => Quake.createFromXml(e, host));
+    const description = _grabFirstElText3(eventParametersQML, "description");
+    const out = new _EventParameters();
+    out.populate(eventParametersQML);
+    out.eventList = events;
+    out.description = description;
+    return out;
+  }
+};
+var Quake = class _Quake extends BaseElement {
+  constructor() {
+    super(...arguments);
+    this.descriptionList = [];
+    this.amplitudeList = [];
+    this.stationMagnitudeList = [];
+    this.magnitudeList = [];
+    this.originList = [];
+    this.pickList = [];
+    this.focalMechanismList = [];
+  }
+  /**
+   * Parses a QuakeML event xml element into a Quake object. Pass in
+   * host=seisplotjs.fdsnevent.USGS_HOST for xml from the USGS service
+   * in order to parse the eventid, otherwise this can be left out
+   *
+   * @param qml the event xml Element
+   * @param host optional source of the xml, helpful for parsing the eventid
+   * @returns QuakeML Quake(Event) object
+   */
+  static createFromXml(qml, host) {
+    if (qml.localName !== "event") {
+      throw new Error(`Cannot extract, not a QuakeML Event: ${qml.localName}`);
+    }
+    const out = new _Quake();
+    out.populate(qml);
+    const descriptionEls = Array.from(qml.children).filter(
+      (e) => e.tagName === "description"
+    );
+    out.descriptionList = descriptionEls.map(
+      (d) => EventDescription.createFromXml(d)
+    );
+    const allPickEls = Array.from(qml.getElementsByTagNameNS(BED_NS, "pick"));
+    const allPicks = [];
+    for (const pickEl of allPickEls) {
+      allPicks.push(Pick.createFromXml(pickEl));
+    }
+    const allAmplitudeEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "amplitude")
+    );
+    const allAmplitudes = [];
+    for (const amplitudeEl of allAmplitudeEls) {
+      allAmplitudes.push(Amplitude.createFromXml(amplitudeEl, allPicks));
+    }
+    const allOriginEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "origin")
+    );
+    const allOrigins = [];
+    for (const originEl of allOriginEls) {
+      try {
+        allOrigins.push(Origin.createFromXml(originEl, allPicks));
+      } catch (err) {
+        const pubId = originEl.getAttribute("publicID");
+        console.warn(`Parse error for origin, skipping. Id: ${pubId}  ${err}`);
+      }
+    }
+    const allStationMagEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "stationMagnitude")
+    );
+    const allStationMags = [];
+    for (const stationMagEl of allStationMagEls) {
+      allStationMags.push(
+        StationMagnitude.createFromXml(stationMagEl, allOrigins, allAmplitudes)
+      );
+    }
+    const allMagEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "magnitude")
+    );
+    const allMags = [];
+    for (const magEl of allMagEls) {
+      allMags.push(Magnitude.createFromXml(magEl, allOrigins, allStationMags));
+    }
+    const allFocalMechEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "focalMechanism")
+    );
+    const allFocalMechs = [];
+    for (const focalMechEl of allFocalMechEls) {
+      allFocalMechs.push(
+        FocalMechanism.createFromXml(focalMechEl, allOrigins, allMags)
+      );
+    }
+    out.originList = allOrigins;
+    out.magnitudeList = allMags;
+    out.pickList = allPicks;
+    out.amplitudeList = allAmplitudes;
+    out.stationMagnitudeList = allStationMags;
+    out.focalMechanismList = allFocalMechs;
+    out.eventId = _Quake.extractEventId(qml, host);
+    const preferredOriginId = _grabFirstElText3(qml, "preferredOriginID");
+    const preferredMagnitudeId = _grabFirstElText3(qml, "preferredMagnitudeID");
+    const preferredFocalMechId = _grabFirstElText3(
+      qml,
+      "preferredFocalMechanismID"
+    );
+    if (isNonEmptyStringArg(preferredOriginId)) {
+      out.preferredOrigin = allOrigins.find(
+        (o) => o.publicId === preferredOriginId
+      );
+      if (!out.preferredOrigin) {
+        throw new Error(`no preferredOriginId match: ${preferredOriginId}`);
+      }
+    }
+    if (isNonEmptyStringArg(preferredMagnitudeId)) {
+      out.preferredMagnitude = allMags.find(
+        (m) => m.publicId === preferredMagnitudeId
+      );
+      if (!out.preferredMagnitude) {
+        throw new Error(`no match: ${preferredMagnitudeId}`);
+      }
+    }
+    if (isNonEmptyStringArg(preferredFocalMechId)) {
+      out.preferredFocalMechanism = allFocalMechs.find(
+        (m) => m.publicId === preferredFocalMechId
+      );
+      if (!out.preferredFocalMechanism) {
+        throw new Error(`no match: ${preferredFocalMechId}`);
+      }
+    }
+    out.type = _grabFirstElText3(qml, "type");
+    out.typeCertainty = _grabFirstElText3(qml, "typeCertainty");
+    return out;
+  }
+  /**
+   * Extracts the EventId from a QuakeML element, guessing from one of several
+   * incompatible (grumble grumble) formats.
+   *
+   * @param   qml Quake(Event) to extract from
+   * @param   host optional source of the xml to help determine the event id style
+   * @returns     Extracted Id, or "unknownEventId" if we can't figure it out
+   */
+  static extractEventId(qml, _host) {
+    const dataId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "dataid");
+    if (isNonEmptyStringArg(dataId)) {
+      return dataId;
+    }
+    const eventId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "eventid");
+    const catalogEventSource = _grabAttributeNS2(
+      qml,
+      ANSS_CATALOG_NS,
+      "eventsource"
+    );
+    if (isNonEmptyStringArg(eventId)) {
+      if (isNonEmptyStringArg(catalogEventSource)) {
+        return catalogEventSource + eventId;
+      } else {
+        return eventId;
+      }
+    }
+    const publicid = _grabAttribute3(qml, "publicID");
+    if (isNonEmptyStringArg(publicid)) {
+      let re2 = /eventid=([\w\d]+)/;
+      let parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1];
+      }
+      re2 = /evid=([\w\d]+)/;
+      parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1];
+      }
+      re2 = /quakeml:se.anss.org\/Event\/([\w\d]+)\/([\w\d]+)/;
+      parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1] + parsed[2];
+      }
+      return publicid;
+    }
+    return createUnknownId();
+  }
+  hasPreferredOrigin() {
+    return isDef(this.preferredOrigin);
+  }
+  hasOrigin() {
+    return isDef(this.preferredOrigin) || this.originList.length > 1;
+  }
+  get origin() {
+    if (isDef(this.preferredOrigin)) {
+      return this.preferredOrigin;
+    } else if (this.originList.length > 0) {
+      return this.originList[0];
+    } else {
+      throw new Error("No origins in quake");
+    }
+  }
+  hasPreferredMagnitude() {
+    return isDef(this.preferredMagnitude);
+  }
+  hasMagnitude() {
+    return isDef(this.preferredMagnitude) || this.magnitudeList.length > 1;
+  }
+  get magnitude() {
+    if (isDef(this.preferredMagnitude)) {
+      return this.preferredMagnitude;
+    } else if (this.magnitudeList.length > 0) {
+      return this.magnitudeList[0];
+    } else {
+      return ZERO_MAGNITUDE;
+    }
+  }
+  get time() {
+    return this.origin.time;
+  }
+  get latitude() {
+    return this.origin.latitude;
+  }
+  get longitude() {
+    return this.origin.longitude;
+  }
+  get depth() {
+    return this.origin.depth;
+  }
+  get depthKm() {
+    return this.depth / 1e3;
+  }
+  get description() {
+    return this.descriptionList.length > 0 ? this.descriptionList[0].text : "";
+  }
+  get arrivals() {
+    return this.origin.arrivalList;
+  }
+  get picks() {
+    return this.pickList;
+  }
+  toString() {
+    if (this.hasOrigin()) {
+      const magStr = this.hasMagnitude() ? this.magnitude.toString() : "";
+      const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
+      const depth = depthFormat.format(this.depth / 1e3);
+      return `${this.time.toISO()} ${latlon} ${depth} ${magStr}`;
+    } else if (this.eventId != null) {
+      return `Event: ${this.eventId}`;
+    } else {
+      return `Event: unknown`;
+    }
+  }
+};
+var EventDescription = class _EventDescription {
+  constructor(text) {
+    this.text = text;
+  }
+  /**
+   * Parses a QuakeML description xml element into a EventDescription object.
+   *
+   * @param descriptionQML the description xml Element
+   * @returns EventDescription instance
+   */
+  static createFromXml(descriptionQML) {
+    if (descriptionQML.localName !== "description") {
+      throw new Error(
+        `Cannot extract, not a QuakeML description ID: ${descriptionQML.localName}`
+      );
+    }
+    const text = _grabFirstElText3(descriptionQML, "text");
+    if (!isNonEmptyStringArg(text)) {
+      throw new Error("description missing text");
+    }
+    const out = new _EventDescription(text);
+    out.type = _grabFirstElText3(descriptionQML, "type");
+    return out;
+  }
+  toString() {
+    return this.text;
+  }
+};
+var Amplitude = class _Amplitude extends BaseElement {
+  constructor(genericAmplitude) {
+    super();
+    this.genericAmplitude = genericAmplitude;
+  }
+  /**
+   * Parses a QuakeML amplitude xml element into an Amplitude object.
+   *
+   * @param amplitudeQML the amplitude xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Amplitude instance
+   */
+  static createFromXml(amplitudeQML, allPicks) {
+    if (amplitudeQML.localName !== "amplitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML amplitude: ${amplitudeQML.localName}`
+      );
+    }
+    const genericAmplitude = _grabFirstElRealQuantity(
+      amplitudeQML,
+      "genericAmplitude"
+    );
+    if (!isDef(genericAmplitude)) {
+      throw new Error("amplitude missing genericAmplitude");
+    }
+    const out = new _Amplitude(genericAmplitude);
+    out.populate(amplitudeQML);
+    out.type = _grabFirstElText3(amplitudeQML, "type");
+    out.category = _grabFirstElText3(amplitudeQML, "category");
+    out.unit = _grabFirstElText3(amplitudeQML, "unit");
+    out.methodID = _grabFirstElText3(amplitudeQML, "methodID");
+    out.period = _grabFirstElRealQuantity(amplitudeQML, "period");
+    out.snr = _grabFirstElFloat3(amplitudeQML, "snr");
+    out.timeWindow = _grabFirstElType(
+      TimeWindow.createFromXml.bind(TimeWindow)
+    )(amplitudeQML, "timeWindow");
+    const pickID = _grabFirstElText3(amplitudeQML, "pickID");
+    out.pick = allPicks.find((p) => p.publicId === pickID);
+    if (pickID && !out.pick) {
+      throw new Error("No pick with ID " + pickID);
+    }
+    out.waveformID = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(amplitudeQML, "waveformID");
+    out.filterID = _grabFirstElText3(amplitudeQML, "filterID");
+    out.scalingTime = _grabFirstElTimeQuantity(amplitudeQML, "scalingTime");
+    out.magnitudeHint = _grabFirstElText3(amplitudeQML, "magnitudeHint");
+    out.evaluationMode = _grabFirstElText3(amplitudeQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(amplitudeQML, "evaluationStatus");
+    return out;
+  }
+};
+var StationMagnitude = class _StationMagnitude extends BaseElement {
+  constructor(origin, mag) {
+    super();
+    this.origin = origin;
+    this.mag = mag;
+  }
+  /**
+   * Parses a QuakeML station magnitude xml element into a StationMagnitude object.
+   *
+   * @param stationMagnitudeQML the station magnitude xml Element
+   * @param allOrigins origins already extracted from the xml for linking station magnitudes with origins
+   * @param allAmplitudes amplitudes already extracted from the xml for linking station magnitudes with amplitudes
+   * @returns StationMagnitude instance
+   */
+  static createFromXml(stationMagnitudeQML, allOrigins, allAmplitudes) {
+    if (stationMagnitudeQML.localName !== "stationMagnitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML station magnitude: ${stationMagnitudeQML.localName}`
+      );
+    }
+    const originID = _grabFirstElText3(stationMagnitudeQML, "originID");
+    if (!isNonEmptyStringArg(originID)) {
+      throw new Error("stationMagnitude missing origin ID");
+    }
+    const origin = allOrigins.find((o) => o.publicId === originID);
+    if (!isDef(origin)) {
+      throw new Error("No origin with ID " + originID);
+    }
+    const mag = _grabFirstElRealQuantity(stationMagnitudeQML, "mag");
+    if (!isDef(mag)) {
+      throw new Error("stationMagnitude missing mag");
+    }
+    const out = new _StationMagnitude(origin, mag);
+    out.populate(stationMagnitudeQML);
+    out.type = _grabFirstElText3(stationMagnitudeQML, "type");
+    const amplitudeID = _grabFirstElText3(stationMagnitudeQML, "amplitudeID");
+    out.amplitude = allAmplitudes.find((a) => a.publicId === amplitudeID);
+    if (amplitudeID && !out.amplitude) {
+      throw new Error("No amplitude with ID " + amplitudeID);
+    }
+    out.methodID = _grabFirstElText3(stationMagnitudeQML, "methodID");
+    out.waveformID = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(stationMagnitudeQML, "waveformID");
+    return out;
+  }
+};
+var TimeWindow = class _TimeWindow {
+  constructor(begin, end, reference) {
+    this.begin = begin;
+    this.end = end;
+    this.reference = reference;
+  }
+  /**
+   * Parses a QuakeML time window xml element into a TimeWindow object.
+   *
+   * @param timeWindowQML the time window xml Element
+   * @returns TimeWindow instance
+   */
+  static createFromXml(timeWindowQML) {
+    if (timeWindowQML.localName !== "timeWindow") {
+      throw new Error(
+        `Cannot extract, not a QuakeML time window: ${timeWindowQML.localName}`
+      );
+    }
+    const begin = _grabFirstElFloat3(timeWindowQML, "begin");
+    if (!isDef(begin)) {
+      throw new Error("timeWindow missing begin");
+    }
+    const end = _grabFirstElFloat3(timeWindowQML, "end");
+    if (!isDef(end)) {
+      throw new Error("timeWindow missing end");
+    }
+    const reference = _grabFirstElDateTime(timeWindowQML, "reference");
+    if (!isDef(reference)) {
+      throw new Error("timeWindow missing reference");
+    }
+    const out = new _TimeWindow(begin, end, reference);
+    return out;
+  }
+};
+var Origin = class _Origin extends BaseElement {
+  constructor(time3, latitude, longitude) {
+    super();
+    this.compositeTimes = [];
+    this.arrivalList = [];
+    if (time3 instanceof DateTime) {
+      this.timeQuantity = new Quantity(time3);
+    } else {
+      this.timeQuantity = time3;
+    }
+    if (typeof latitude == "number") {
+      this.latitudeQuantity = new Quantity(latitude);
+    } else {
+      this.latitudeQuantity = latitude;
+    }
+    if (typeof longitude == "number") {
+      this.longitudeQuantity = new Quantity(longitude);
+    } else {
+      this.longitudeQuantity = longitude;
+    }
+  }
+  /**
+   * Parses a QuakeML origin xml element into a Origin object.
+   *
+   * @param qml the origin xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Origin instance
+   */
+  static createFromXml(qml, allPicks) {
+    if (qml.localName !== "origin") {
+      throw new Error(`Cannot extract, not a QuakeML Origin: ${qml.localName}`);
+    }
+    const time3 = _grabFirstElTimeQuantity(qml, "time");
+    if (!isObject(time3)) {
+      throw new Error("origin missing time");
+    }
+    const lat = _grabFirstElRealQuantity(qml, "latitude");
+    if (!isObject(lat)) {
+      throw new Error("origin missing latitude");
+    }
+    const lon = _grabFirstElRealQuantity(qml, "longitude");
+    if (!isObject(lon)) {
+      throw new Error("origin missing longitude");
+    }
+    const out = new _Origin(time3, lat, lon);
+    out.populate(qml);
+    out.originUncertainty = _grabFirstElType(
+      OriginUncertainty.createFromXml.bind(OriginUncertainty)
+    )(qml, "originUncertainty");
+    const allArrivalEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "arrival")
+    );
+    out.arrivalList = allArrivalEls.map(
+      (arrivalEl) => Arrival.createFromXml(arrivalEl, allPicks)
+    );
+    out.depthQuantity = _grabFirstElRealQuantity(qml, "depth");
+    out.depthType = _grabFirstElText3(qml, "depthType");
+    out.timeFixed = _grabFirstElBool(qml, "timeFixed");
+    out.epicenterFixed = _grabFirstElBool(qml, "epicenterFixed");
+    out.referenceSystemID = _grabFirstElText3(qml, "referenceSystemID");
+    out.methodID = _grabFirstElText3(qml, "methodID");
+    out.earthModelID = _grabFirstElText3(qml, "earthModelID");
+    out.quality = _grabFirstElType(
+      OriginQuality.createFromXml.bind(OriginQuality)
+    )(qml, "quality");
+    out.type = _grabFirstElText3(qml, "type");
+    out.region = _grabFirstElText3(qml, "region");
+    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
+    return out;
+  }
+  toString() {
+    const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
+    const depth = depthFormat.format(this.depth / 1e3);
+    return `${this.time.toISO()} ${latlon} ${depth} km`;
+  }
+  get time() {
+    return this.timeQuantity.value;
+  }
+  set time(t) {
+    if (t instanceof DateTime) {
+      this.timeQuantity.value = t;
+    } else {
+      this.timeQuantity = t;
+    }
+  }
+  get latitude() {
+    return this.latitudeQuantity.value;
+  }
+  set latitude(lat) {
+    if (typeof lat == "number") {
+      this.latitudeQuantity.value = lat;
+    } else {
+      this.latitudeQuantity = lat;
+    }
+  }
+  get longitude() {
+    return this.longitudeQuantity.value;
+  }
+  set longitude(lon) {
+    if (typeof lon == "number") {
+      this.longitudeQuantity.value = lon;
+    } else {
+      this.longitudeQuantity = lon;
+    }
+  }
+  get depthKm() {
+    return this.depth / 1e3;
+  }
+  get depth() {
+    return this.depthQuantity?.value ?? NaN;
+  }
+  set depth(depth) {
+    if (typeof depth == "number") {
+      if (!this.depthQuantity) {
+        this.depthQuantity = new Quantity(depth);
+      } else {
+        this.depthQuantity.value = depth;
+      }
+    } else {
+      this.depthQuantity = depth;
+    }
+  }
+  get arrivals() {
+    return this.arrivalList;
+  }
+};
+var CompositeTime = class _CompositeTime {
+  /**
+   * Parses a QuakeML composite time xml element into an CompositeTime object.
+   *
+   * @param qml the composite time xml Element
+   * @returns CompositeTime instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "compositeTime") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Composite Time: ${qml.localName}`
+      );
+    }
+    const out = new _CompositeTime();
+    out.year = _grabFirstElIntegerQuantity(qml, "year");
+    out.month = _grabFirstElIntegerQuantity(qml, "month");
+    out.day = _grabFirstElIntegerQuantity(qml, "day");
+    out.hour = _grabFirstElIntegerQuantity(qml, "hour");
+    out.minute = _grabFirstElIntegerQuantity(qml, "minute");
+    out.second = _grabFirstElIntegerQuantity(qml, "second");
+    return out;
+  }
+};
+var OriginUncertainty = class _OriginUncertainty {
+  /**
+   * Parses a QuakeML origin uncertainty xml element into an OriginUncertainty object.
+   *
+   * @param qml the origin uncertainty xml Element
+   * @returns OriginUncertainty instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "originUncertainty") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Origin Uncertainty: ${qml.localName}`
+      );
+    }
+    const out = new _OriginUncertainty();
+    out.horizontalUncertainty = _grabFirstElFloat3(qml, "horizontalUncertainty");
+    out.minHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "minHorizontalUncertainty"
+    );
+    out.maxHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "maxHorizontalUncertainty"
+    );
+    out.azimuthMaxHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "azimuthMaxHorizontalUncertainty"
+    );
+    out.confidenceEllipsoid = _grabFirstElType(
+      ConfidenceEllipsoid.createFromXml.bind(ConfidenceEllipsoid)
+    )(qml, "confidenceEllipsoid");
+    out.preferredDescription = _grabFirstElText3(qml, "preferredDescription");
+    out.confidenceLevel = _grabFirstElFloat3(qml, "confidenceLevel");
+    return out;
+  }
+};
+var ConfidenceEllipsoid = class _ConfidenceEllipsoid {
+  constructor(semiMajorAxisLength, semiMinorAxisLength, semiIntermediateAxisLength, majorAxisPlunge, majorAxisAzimuth, majorAxisRotation) {
+    this.semiMajorAxisLength = semiMajorAxisLength;
+    this.semiMinorAxisLength = semiMinorAxisLength;
+    this.semiIntermediateAxisLength = semiIntermediateAxisLength;
+    this.majorAxisPlunge = majorAxisPlunge;
+    this.majorAxisAzimuth = majorAxisAzimuth;
+    this.majorAxisRotation = majorAxisRotation;
+  }
+  /**
+   * Parses a QuakeML confidence ellipsoid xml element into an ConfidenceEllipsoid object.
+   *
+   * @param qml the confidence ellipsoid xml Element
+   * @returns ConfidenceEllipsoid instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "confidenceEllipsoid") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Confidence Ellipsoid: ${qml.localName}`
+      );
+    }
+    const semiMajorAxisLength = _grabFirstElFloat3(qml, "semiMajorAxisLength");
+    if (semiMajorAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiMajorAxisLength");
+    }
+    const semiMinorAxisLength = _grabFirstElFloat3(qml, "semiMinorAxisLength");
+    if (semiMinorAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiMinorAxisLength");
+    }
+    const semiIntermediateAxisLength = _grabFirstElFloat3(
+      qml,
+      "semiIntermediateAxisLength"
+    );
+    if (semiIntermediateAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiIntermediateAxisLength");
+    }
+    const majorAxisPlunge = _grabFirstElFloat3(qml, "majorAxisPlunge");
+    if (majorAxisPlunge === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisPlunge");
+    }
+    const majorAxisAzimuth = _grabFirstElFloat3(qml, "majorAxisAzimuth");
+    if (majorAxisAzimuth === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisAzimuth");
+    }
+    const majorAxisRotation = _grabFirstElFloat3(qml, "majorAxisRotation");
+    if (majorAxisRotation === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisRotation");
+    }
+    const out = new _ConfidenceEllipsoid(
+      semiMajorAxisLength,
+      semiMinorAxisLength,
+      semiIntermediateAxisLength,
+      majorAxisPlunge,
+      majorAxisAzimuth,
+      majorAxisRotation
+    );
+    return out;
+  }
+};
+var OriginQuality = class _OriginQuality {
+  /**
+   * Parses a QuakeML origin quality xml element into an OriginQuality object.
+   *
+   * @param qml the origin quality xml Element
+   * @returns OriginQuality instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "quality") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Origin Quality: ${qml.localName}`
+      );
+    }
+    const out = new _OriginQuality();
+    out.associatedPhaseCount = _grabFirstElInt3(qml, "associatedPhaseCount");
+    out.usedPhaseCount = _grabFirstElInt3(qml, "usedPhaseCount");
+    out.associatedStationCount = _grabFirstElInt3(qml, "associatedStationCount");
+    out.usedStationCount = _grabFirstElInt3(qml, "usedStationCount");
+    out.standardError = _grabFirstElFloat3(qml, "standardError");
+    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
+    out.secondaryAzimuthalGap = _grabFirstElFloat3(qml, "secondaryAzimuthalGap");
+    out.groundTruthLevel = _grabFirstElText3(qml, "groundTruthLevel");
+    out.maximumDistance = _grabFirstElFloat3(qml, "maximumDistance");
+    out.minimumDistance = _grabFirstElFloat3(qml, "minimumDistance");
+    out.medianDistance = _grabFirstElFloat3(qml, "medianDistance");
+    return out;
+  }
+};
+var Magnitude = class _Magnitude extends BaseElement {
+  constructor(mag, type) {
+    super();
+    this.stationMagnitudeContributions = [];
+    if (typeof mag === "number") {
+      this.magQuantity = new Quantity(mag);
+    } else {
+      this.magQuantity = mag;
+    }
+    if (type) {
+      this.type = type;
+    }
+  }
+  /**
+   * Parses a QuakeML magnitude xml element into a Magnitude object.
+   *
+   * @param qml the magnitude xml Element
+   * @param allOrigins origins already extracted from the xml for linking magnitudes with origins
+   * @param allStationMagnitudes station magnitudes already extracted from the xml
+   * @returns Magnitude instance
+   */
+  static createFromXml(qml, allOrigins, allStationMagnitudes) {
+    if (qml.localName !== "magnitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Magnitude: ${qml.localName}`
+      );
+    }
+    const mag = _grabFirstElRealQuantity(qml, "mag");
+    if (!mag) {
+      throw new Error("magnitude missing mag");
+    }
+    const out = new _Magnitude(mag);
+    out.populate(qml);
+    const stationMagnitudeContributionEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "stationMagnitudeContribution")
+    );
+    out.stationMagnitudeContributions = stationMagnitudeContributionEls.map(
+      (smc) => StationMagnitudeContribution.createFromXml(smc, allStationMagnitudes)
+    );
+    out.type = _grabFirstElText3(qml, "type");
+    const originID = _grabFirstElText3(qml, "originID");
+    out.origin = allOrigins.find((o) => o.publicId === originID);
+    if (originID && !out.origin) {
+      throw new Error("No origin with ID " + originID);
+    }
+    out.methodID = _grabFirstElText3(qml, "methodID");
+    out.stationCount = _grabFirstElInt3(qml, "stationCount");
+    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
+    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
+    return out;
+  }
+  toString() {
+    return `${magFormat.format(this.mag)} ${this.type ? this.type : ""}`;
+  }
+  get mag() {
+    return this.magQuantity.value;
+  }
+  set mag(value) {
+    if (typeof value === "number") {
+      this.magQuantity.value = value;
+    } else {
+      this.magQuantity = value;
+    }
+  }
+};
+var StationMagnitudeContribution = class _StationMagnitudeContribution {
+  constructor(stationMagnitude) {
+    this.stationMagnitude = stationMagnitude;
+  }
+  /**
+   * Parses a QuakeML station magnitude contribution xml element into a StationMagnitudeContribution object.
+   *
+   * @param qml the station magnitude contribution xml Element
+   * @param allStationMagnitudes station magnitudes already extracted from the xml for linking station magnitudes with station magnitude contributions
+   * @returns StationMagnitudeContribution instance
+   */
+  static createFromXml(qml, allStationMagnitudes) {
+    if (qml.localName !== "stationMagnitudeContribution") {
+      throw new Error(
+        `Cannot extract, not a QuakeML StationMagnitudeContribution: ${qml.localName}`
+      );
+    }
+    const stationMagnitudeID = _grabFirstElText3(qml, "stationMagnitudeID");
+    if (!isNonEmptyStringArg(stationMagnitudeID)) {
+      throw new Error("stationMagnitudeContribution missing stationMagnitude");
+    }
+    const stationMagnitude = allStationMagnitudes.find(
+      (sm) => sm.publicId === stationMagnitudeID
+    );
+    if (!isDef(stationMagnitude)) {
+      throw new Error("No stationMagnitude with ID " + stationMagnitudeID);
+    }
+    const out = new _StationMagnitudeContribution(stationMagnitude);
+    out.residual = _grabFirstElFloat3(qml, "residual");
+    out.weight = _grabFirstElFloat3(qml, "weight");
+    return out;
+  }
+};
+var Arrival = class _Arrival extends BaseElement {
+  constructor(phase, pick3) {
+    super();
+    this.phase = phase;
+    this.pick = pick3;
+  }
+  /**
+   * Parses a QuakeML arrival xml element into a Arrival object.
+   *
+   * @param arrivalQML the arrival xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Arrival instance
+   */
+  static createFromXml(arrivalQML, allPicks) {
+    if (arrivalQML.localName !== "arrival") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Arrival: ${arrivalQML.localName}`
+      );
+    }
+    const pickId = _grabFirstElText3(arrivalQML, "pickID");
+    const phase = _grabFirstElText3(arrivalQML, "phase");
+    if (isNonEmptyStringArg(phase) && isNonEmptyStringArg(pickId)) {
+      const myPick = allPicks.find(function(p) {
+        return p.publicId === pickId;
+      });
+      if (!myPick) {
+        throw new Error("Can't find pick with Id=" + pickId + " for Arrival");
+      }
+      const out = new _Arrival(phase, myPick);
+      out.populate(arrivalQML);
+      out.timeCorrection = _grabFirstElFloat3(arrivalQML, "timeCorrection");
+      out.azimuth = _grabFirstElFloat3(arrivalQML, "azimuth");
+      out.distance = _grabFirstElFloat3(arrivalQML, "distance");
+      out.takeoffAngle = _grabFirstElRealQuantity(arrivalQML, "takeoffAngle");
+      out.timeResidual = _grabFirstElFloat3(arrivalQML, "timeResidual");
+      out.horizontalSlownessResidual = _grabFirstElFloat3(
+        arrivalQML,
+        "horizontalSlownessResidual"
+      );
+      out.backazimuthResidual = _grabFirstElFloat3(
+        arrivalQML,
+        "backazimuthResidual"
+      );
+      out.timeWeight = _grabFirstElFloat3(arrivalQML, "timeWeight");
+      out.horizontalSlownessWeight = _grabFirstElFloat3(
+        arrivalQML,
+        "horizontalSlownessWeight"
+      );
+      out.backazimuthWeight = _grabFirstElFloat3(
+        arrivalQML,
+        "backazimuthWeight"
+      );
+      out.earthModelID = _grabFirstElText3(arrivalQML, "earthModelID");
+      return out;
+    } else {
+      throw new Error(
+        "Arrival does not have phase or pickId: " + stringify(phase) + " " + stringify(pickId)
+      );
+    }
+  }
+};
+var Pick = class _Pick extends BaseElement {
+  constructor(time3, waveformID) {
+    super();
+    if (time3 instanceof DateTime) {
+      this.timeQuantity = new Quantity(time3);
+    } else {
+      this.timeQuantity = time3;
+    }
+    this.waveformID = waveformID;
+  }
+  get time() {
+    return this.timeQuantity.value;
+  }
+  set time(t) {
+    if (t instanceof DateTime) {
+      this.timeQuantity.value = t;
+    } else {
+      this.timeQuantity = t;
+    }
+  }
+  /**
+   * Parses a QuakeML pick xml element into a Pick object.
+   *
+   * @param pickQML the pick xml Element
+   * @returns Pick instance
+   */
+  static createFromXml(pickQML) {
+    if (pickQML.localName !== "pick") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Pick: ${pickQML.localName}`
+      );
+    }
+    const time3 = _grabFirstElTimeQuantity(pickQML, "time");
+    if (!isDef(time3)) {
+      throw new Error("Missing time");
+    }
+    const waveformId = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(pickQML, "waveformID");
+    if (!isObject(waveformId)) {
+      throw new Error("pick missing waveformID");
+    }
+    const out = new _Pick(time3, waveformId);
+    out.populate(pickQML);
+    out.filterID = _grabFirstElText3(pickQML, "filterID");
+    out.methodID = _grabFirstElText3(pickQML, "methodID");
+    out.horizontalSlowness = _grabFirstElRealQuantity(
+      pickQML,
+      "horizontalSlowness"
+    );
+    out.backazimuth = _grabFirstElRealQuantity(pickQML, "backazimuth");
+    out.slownessMethodID = _grabFirstElText3(pickQML, "slownessMethodID");
+    out.onset = _grabFirstElText3(pickQML, "onset");
+    out.phaseHint = _grabFirstElText3(pickQML, "phaseHint");
+    out.polarity = _grabFirstElText3(pickQML, "polarity");
+    out.evaluationMode = _grabFirstElText3(pickQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(pickQML, "evaluationStatus");
+    return out;
+  }
+  get networkCode() {
+    return this.waveformID.networkCode;
+  }
+  get stationCode() {
+    return this.waveformID.stationCode;
+  }
+  get locationCode() {
+    return this.waveformID.locationCode || "--";
+  }
+  get channelCode() {
+    return this.waveformID.channelCode || "---";
+  }
+  isAtStation(station) {
+    return this.networkCode === station.networkCode && this.stationCode === station.stationCode;
+  }
+  isOnChannel(channel) {
+    return this.networkCode === channel.station.networkCode && this.stationCode === channel.station.stationCode && this.locationCode === channel.locationCode && this.channelCode === channel.channelCode;
+  }
+  toString() {
+    return stringify(this.time) + ` ${this.networkCode}.${this.stationCode}.${this.locationCode}.${this.channelCode}`;
+  }
+};
+var FocalMechanism = class _FocalMechanism extends BaseElement {
+  constructor() {
+    super(...arguments);
+    this.waveformIDList = [];
+    this.momentTensorList = [];
+  }
+  /**
+   * Parses a QuakeML focal mechanism xml element into a FocalMechanism object.
+   *
+   * @param focalMechQML the focal mechanism xml Element
+   * @param allOrigins origins already extracted from the xml for linking focal mechanisms with origins
+   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
+   * @returns FocalMechanism instance
+   */
+  static createFromXml(focalMechQML, allOrigins, allMagnitudes) {
+    if (focalMechQML.localName !== "focalMechanism") {
+      throw new Error(
+        `Cannot extract, not a QuakeML focalMechanism: ${focalMechQML.localName}`
+      );
+    }
+    const out = new _FocalMechanism();
+    out.populate(focalMechQML);
+    const waveformIDEls = Array.from(
+      focalMechQML.getElementsByTagNameNS(BED_NS, "waveformID")
+    );
+    out.waveformIDList = waveformIDEls.map(
+      (wid) => WaveformID.createFromXml(wid)
+    );
+    const momentTensorEls = Array.from(
+      focalMechQML.getElementsByTagNameNS(BED_NS, "momentTensor")
+    );
+    out.momentTensorList = momentTensorEls.map(
+      (mt) => MomentTensor.createFromXml(mt, allOrigins, allMagnitudes)
+    );
+    const triggeringOriginID = _grabFirstElText3(
+      focalMechQML,
+      "triggeringOriginID"
+    );
+    out.triggeringOrigin = allOrigins.find(
+      (o) => o.publicId === triggeringOriginID
+    );
+    if (triggeringOriginID && !out.triggeringOrigin) {
+      throw new Error("No origin with ID " + triggeringOriginID);
+    }
+    out.nodalPlanes = _grabFirstElType(
+      NodalPlanes.createFromXml.bind(NodalPlanes)
+    )(focalMechQML, "nodalPlanes");
+    out.principalAxes = _grabFirstElType(
+      PrincipalAxes.createFromXml.bind(PrincipalAxes)
+    )(focalMechQML, "principalAxes");
+    out.azimuthalGap = _grabFirstElFloat3(focalMechQML, "azimuthalGap");
+    out.stationPolarityCount = _grabFirstElInt3(
+      focalMechQML,
+      "stationPolarityCount"
+    );
+    out.misfit = _grabFirstElFloat3(focalMechQML, "misfit");
+    out.stationDistributionRatio = _grabFirstElFloat3(
+      focalMechQML,
+      "stationDistributionRatio"
+    );
+    out.methodID = _grabFirstElText3(focalMechQML, "methodID");
+    out.evaluationMode = _grabFirstElText3(focalMechQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(focalMechQML, "evaluationStatus");
+    return out;
+  }
+};
+var NodalPlanes = class _NodalPlanes {
+  /**
+   * Parses a QuakeML nodal planes xml element into a NodalPlanes object.
+   *
+   * @param nodalPlanesQML the nodal planes xml Element
+   * @returns NodalPlanes instance
+   */
+  static createFromXml(nodalPlanesQML) {
+    const out = new _NodalPlanes();
+    out.nodalPlane1 = _grabFirstElType(
+      NodalPlane.createFromXml.bind(NodalPlane)
+    )(nodalPlanesQML, "nodalPlane1");
+    out.nodalPlane2 = _grabFirstElType(
+      NodalPlane.createFromXml.bind(NodalPlane)
+    )(nodalPlanesQML, "nodalPlane2");
+    const preferredPlaneString = _grabAttribute3(
+      nodalPlanesQML,
+      "preferredPlane"
+    );
+    out.preferredPlane = isNonEmptyStringArg(preferredPlaneString) ? parseInt(preferredPlaneString) : void 0;
+    return out;
+  }
+};
+var NodalPlane = class _NodalPlane {
+  constructor(strike, dip, rake) {
+    this.strike = strike;
+    this.dip = dip;
+    this.rake = rake;
+  }
+  /**
+   * Parses a QuakeML nodal plane xml element into a NodalPlane object.
+   *
+   * @param nodalPlaneQML the nodal plane xml Element
+   * @returns NodalPlane instance
+   */
+  static createFromXml(nodalPlaneQML) {
+    const strike = _grabFirstElRealQuantity(nodalPlaneQML, "strike");
+    if (!isObject(strike)) {
+      throw new Error("nodal plane missing strike");
+    }
+    const dip = _grabFirstElRealQuantity(nodalPlaneQML, "dip");
+    if (!isObject(dip)) {
+      throw new Error("nodal plane missing dip");
+    }
+    const rake = _grabFirstElRealQuantity(nodalPlaneQML, "rake");
+    if (!isObject(rake)) {
+      throw new Error("nodal plane missing rake");
+    }
+    const out = new _NodalPlane(strike, dip, rake);
+    return out;
+  }
+};
+var PrincipalAxes = class _PrincipalAxes {
+  constructor(tAxis, pAxis) {
+    this.tAxis = tAxis;
+    this.pAxis = pAxis;
+  }
+  /**
+   * Parses a QuakeML princpalAxes element into a PrincipalAxes object.
+   *
+   * @param princpalAxesQML the princpalAxes xml Element
+   * @returns PrincipalAxes instance
+   */
+  static createFromXml(princpalAxesQML) {
+    if (princpalAxesQML.localName !== "principalAxes") {
+      throw new Error(
+        `Cannot extract, not a QuakeML princpalAxes: ${princpalAxesQML.localName}`
+      );
+    }
+    const tAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "tAxis"
+    );
+    if (!isObject(tAxis)) {
+      throw new Error("nodal plane missing tAxis");
+    }
+    const pAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "pAxis"
+    );
+    if (!isObject(pAxis)) {
+      throw new Error("nodal plane missing pAxis");
+    }
+    const out = new _PrincipalAxes(tAxis, pAxis);
+    out.nAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "nAxis"
+    );
+    return out;
+  }
+};
+var Axis = class _Axis {
+  constructor(azimuth, plunge, length) {
+    this.azimuth = azimuth;
+    this.plunge = plunge;
+    this.length = length;
+  }
+  /**
+   * Parses a QuakeML axis xml element into a Axis object.
+   *
+   * @param axisQML the axis xml Element
+   * @returns Axis instance
+   */
+  static createFromXml(axisQML) {
+    const azimuth = _grabFirstElRealQuantity(axisQML, "azimuth");
+    if (!isObject(azimuth)) {
+      throw new Error("nodal plane missing azimuth");
+    }
+    const plunge = _grabFirstElRealQuantity(axisQML, "plunge");
+    if (!isObject(plunge)) {
+      throw new Error("nodal plane missing plunge");
+    }
+    const length = _grabFirstElRealQuantity(axisQML, "length");
+    if (!isObject(length)) {
+      throw new Error("nodal plane missing length");
+    }
+    const out = new _Axis(azimuth, plunge, length);
+    return out;
+  }
+};
+var MomentTensor = class _MomentTensor extends BaseElement {
+  constructor(derivedOrigin) {
+    super();
+    this.dataUsedList = [];
+    this.derivedOrigin = derivedOrigin;
+  }
+  /**
+   * Parses a QuakeML momentTensor xml element into a MomentTensor object.
+   *
+   * @param momentTensorQML the momentTensor xml Element
+   * @param allOrigins origins already extracted from the xml for linking moment tensors with origins
+   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
+   * @returns MomentTensor instance
+   */
+  static createFromXml(momentTensorQML, allOrigins, allMagnitudes) {
+    if (momentTensorQML.localName !== "momentTensor") {
+      throw new Error(
+        `Cannot extract, not a QuakeML momentTensor: ${momentTensorQML.localName}`
+      );
+    }
+    const derivedOriginID = _grabFirstElText3(
+      momentTensorQML,
+      "derivedOriginID"
+    );
+    let derivedOrigin;
+    if (!isNonEmptyStringArg(derivedOriginID)) {
+      console.warn("momentTensor missing derivedOriginID");
+    } else {
+      derivedOrigin = allOrigins.find(
+        (o) => o.publicId === derivedOriginID
+      );
+      if (!isDef(derivedOrigin)) {
+        throw new Error("No origin with ID " + derivedOriginID);
+      }
+    }
+    const out = new _MomentTensor(derivedOrigin);
+    out.populate(momentTensorQML);
+    const dataUsedEls = Array.from(
+      momentTensorQML.getElementsByTagNameNS(BED_NS, "dataUsed")
+    );
+    out.dataUsedList = dataUsedEls.map(DataUsed.createFromXml.bind(DataUsed));
+    const momentMagnitudeID = _grabFirstElText3(
+      momentTensorQML,
+      "momentMagnitudeID"
+    );
+    out.momentMagnitude = allMagnitudes.find(
+      (o) => o.publicId === momentMagnitudeID
+    );
+    if (momentMagnitudeID && !out.momentMagnitude) {
+      throw new Error("No magnitude with ID " + momentMagnitudeID);
+    }
+    try {
+      out.scalarMoment = _grabFirstElRealQuantity(
+        momentTensorQML,
+        "scalarMoment"
+      );
+    } catch {
+      const scalMom = _grabFirstElFloat3(momentTensorQML, "scalarMoment");
+      if (scalMom != null) {
+        out.scalarMoment = new Quantity(scalMom);
+      } else {
+        warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
+      }
+      warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
+    }
+    out.tensor = _grabFirstElType(Tensor.createFromXml.bind(Tensor))(
+      momentTensorQML,
+      "tensor"
+    );
+    out.variance = _grabFirstElFloat3(momentTensorQML, "variance");
+    out.varianceReduction = _grabFirstElFloat3(
+      momentTensorQML,
+      "varianceReduction"
+    );
+    out.doubleCouple = _grabFirstElFloat3(momentTensorQML, "doubleCouple");
+    out.clvd = _grabFirstElFloat3(momentTensorQML, "clvd");
+    out.iso = _grabFirstElFloat3(momentTensorQML, "iso");
+    out.greensFunctionID = _grabFirstElText3(
+      momentTensorQML,
+      "greensFunctionID"
+    );
+    out.filterID = _grabFirstElText3(momentTensorQML, "filterID");
+    out.sourceTimeFunction = _grabFirstElType(
+      SourceTimeFunction.createFromXml.bind(SourceTimeFunction)
+    )(momentTensorQML, "sourceTimeFunction");
+    out.methodID = _grabFirstElText3(momentTensorQML, "methodID");
+    out.category = _grabFirstElText3(momentTensorQML, "category");
+    out.inversionType = _grabFirstElText3(momentTensorQML, "inversionType");
+    return out;
+  }
+};
+var Tensor = class _Tensor {
+  constructor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) {
+    this.Mrr = Mrr;
+    this.Mtt = Mtt;
+    this.Mpp = Mpp;
+    this.Mrt = Mrt;
+    this.Mrp = Mrp;
+    this.Mtp = Mtp;
+  }
+  /**
+   * Parses a QuakeML tensor xml element into a Tensor object.
+   *
+   * @param tensorQML the tensor xml Element
+   * @returns Tensor instance
+   */
+  static createFromXml(tensorQML) {
+    if (tensorQML.localName !== "tensor") {
+      throw new Error(
+        `Cannot extract, not a QuakeML tensor: ${tensorQML.localName}`
+      );
+    }
+    const Mrr = _grabFirstElRealQuantity(tensorQML, "Mrr");
+    if (!isObject(Mrr)) {
+      throw new Error("tensor missing Mrr");
+    }
+    const Mtt = _grabFirstElRealQuantity(tensorQML, "Mtt");
+    if (!isObject(Mtt)) {
+      throw new Error("tensor missing Mtt");
+    }
+    const Mpp = _grabFirstElRealQuantity(tensorQML, "Mpp");
+    if (!isObject(Mpp)) {
+      throw new Error("tensor missing Mpp");
+    }
+    const Mrt = _grabFirstElRealQuantity(tensorQML, "Mrt");
+    if (!isObject(Mrt)) {
+      throw new Error("tensor missing Mrt");
+    }
+    const Mrp = _grabFirstElRealQuantity(tensorQML, "Mrp");
+    if (!isObject(Mrp)) {
+      throw new Error("tensor missing Mrp");
+    }
+    const Mtp = _grabFirstElRealQuantity(tensorQML, "Mtp");
+    if (!isObject(Mtp)) {
+      throw new Error("tensor missing Mtp");
+    }
+    const out = new _Tensor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp);
+    return out;
+  }
+};
+var SourceTimeFunction = class _SourceTimeFunction {
+  constructor(type, duration3) {
+    this.type = type;
+    this.duration = duration3;
+  }
+  /**
+   * Parses a QuakeML sourceTimeFunction xml element into a SourceTimeFunction object.
+   *
+   * @param sourceTimeFunctionQML the sourceTimeFunction xml Element
+   * @returns SourceTimeFunction instance
+   */
+  static createFromXml(sourceTimeFunctionQML) {
+    if (sourceTimeFunctionQML.localName !== "sourceTimeFunction") {
+      throw new Error(
+        `Cannot extract, not a QuakeML sourceTimeFunction: ${sourceTimeFunctionQML.localName}`
+      );
+    }
+    const type = _grabFirstElText3(sourceTimeFunctionQML, "type");
+    if (!isNonEmptyStringArg(type)) {
+      throw new Error("sourceTimeFunction missing type");
+    }
+    const duration3 = _grabFirstElFloat3(sourceTimeFunctionQML, "duration");
+    if (!isDef(duration3)) {
+      throw new Error("sourceTimeFunction missing duration");
+    }
+    const out = new _SourceTimeFunction(type, duration3);
+    out.riseTime = _grabFirstElFloat3(sourceTimeFunctionQML, "riseTime");
+    out.decayTime = _grabFirstElFloat3(sourceTimeFunctionQML, "decayTime");
+    return out;
+  }
+};
+var DataUsed = class _DataUsed {
+  constructor(waveType) {
+    this.waveType = waveType;
+  }
+  /**
+   * Parses a QuakeML dataUsed xml element into a DataUsed object.
+   *
+   * @param dataUsedQML the dataUsed xml Element
+   * @returns SourceTimeFunction instance
+   */
+  static createFromXml(dataUsedQML) {
+    if (dataUsedQML.localName !== "dataUsed") {
+      throw new Error(
+        `Cannot extract, not a QuakeML dataUsed: ${dataUsedQML.localName}`
+      );
+    }
+    const waveType = _grabFirstElText3(dataUsedQML, "waveType");
+    if (!isNonEmptyStringArg(waveType)) {
+      throw new Error("dataUsed missing waveType");
+    }
+    const out = new _DataUsed(waveType);
+    out.stationCount = _grabFirstElInt3(dataUsedQML, "stationCount");
+    out.componentCount = _grabFirstElInt3(dataUsedQML, "componentCount");
+    out.shortestPeriod = _grabFirstElFloat3(dataUsedQML, "shortestPeriod");
+    out.longestPeriod = _grabFirstElFloat3(dataUsedQML, "longestPeriod");
+    return out;
+  }
+};
+var WaveformID = class _WaveformID {
+  constructor(networkCode, stationCode) {
+    this.networkCode = networkCode;
+    this.stationCode = stationCode;
+  }
+  /**
+   * Parses a QuakeML waveform ID xml element into a WaveformID object.
+   *
+   * @param waveformQML the waveform ID xml Element
+   * @returns WaveformID instance
+   */
+  static createFromXml(waveformQML) {
+    if (waveformQML.localName !== "waveformID") {
+      throw new Error(
+        `Cannot extract, not a QuakeML waveform ID: ${waveformQML.localName}`
+      );
+    }
+    const networkCode = _grabAttribute3(waveformQML, "networkCode");
+    if (!isNonEmptyStringArg(networkCode)) {
+      throw new Error("waveformID missing networkCode");
+    }
+    const stationCode = _grabAttribute3(waveformQML, "stationCode");
+    if (!isNonEmptyStringArg(stationCode)) {
+      throw new Error("waveformID missing stationCode");
+    }
+    const out = new _WaveformID(networkCode, stationCode);
+    out.channelCode = _grabAttribute3(waveformQML, "channelCode");
+    out.locationCode = _grabAttribute3(waveformQML, "locationCode");
+    return out;
+  }
+  toString() {
+    return `${this.networkCode}.${this.stationCode}.${this.locationCode || "--"}.${this.channelCode || "---"}`;
+  }
+};
+var Quantity = class _Quantity {
+  constructor(value) {
+    this.value = value;
+  }
+  /**
+   * Parses a QuakeML quantity xml element into a Quantity object.
+   *
+   * @param quantityQML the quantity xml Element
+   * @param grab a callback to obtain the value
+   * @param grabUncertainty a callback to obtain the uncertainties
+   * @returns Quantity instance
+   */
+  static _createFromXml(quantityQML, grab, grabUncertainty) {
+    const value = grab(quantityQML, "value");
+    if (value === void 0) {
+      throw new Error("missing value");
+    }
+    const out = new _Quantity(value);
+    out.uncertainty = grabUncertainty(quantityQML, "uncertainty");
+    out.lowerUncertainty = grabUncertainty(quantityQML, "lowerUncertainty");
+    out.upperUncertainty = grabUncertainty(quantityQML, "upperUncertainty");
+    out.confidenceLevel = _grabFirstElFloat3(quantityQML, "confidenceLevel");
+    return out;
+  }
+  /**
+   * Parses a QuakeML real quantity xml element into a RealQuantity object.
+   *
+   * @param realQuantityQML the real quantity xml Element
+   * @returns RealQuantity instance
+   */
+  static createRealQuantityFromXml(realQuantityQML) {
+    return _Quantity._createFromXml(
+      realQuantityQML,
+      _grabFirstElFloat3,
+      _grabFirstElFloat3
+    );
+  }
+  /**
+   * Parses a QuakeML integer quantity xml element into a RealQuantity object.
+   *
+   * @param integerQuantityQML the integer quantity xml Element
+   * @returns IntegerQuantity instance
+   */
+  static createIntegerQuantityFromXml(integerQuantityQML) {
+    return _Quantity._createFromXml(
+      integerQuantityQML,
+      _grabFirstElFloat3,
+      _grabFirstElInt3
+    );
+  }
+  /**
+   * Parses a QuakeML time quantity xml element into a TimeQuantity object.
+   *
+   * @param timeQuantityQML the time quantity xml Element
+   * @returns TimeQuantity instance
+   */
+  static createTimeQuantityFromXml(timeQuantityQML) {
+    return _Quantity._createFromXml(
+      timeQuantityQML,
+      _grabFirstElDateTime,
+      _grabFirstElFloat3
+    );
+  }
+};
+var Comment2 = class _Comment {
+  constructor(text) {
+    this.text = text;
+  }
+  /**
+   * Parses a QuakeML comment xml element into a Comment object.
+   *
+   * @param commentQML the comment xml Element
+   * @returns Comment instance
+   */
+  static createFromXml(commentQML) {
+    const text = _grabFirstElText3(commentQML, "text");
+    if (text === void 0) {
+      throw new Error("missing value");
+    }
+    const out = new _Comment(text);
+    out.creationInfo = _grabFirstElCreationInfo(commentQML, "creationInfo");
+    return out;
+  }
+};
+var CreationInfo = class _CreationInfo {
+  /**
+   * Parses a QuakeML creation info xml element into a CreationInfo object.
+   *
+   * @param creationInfoQML the creation info xml Element
+   * @returns CreationInfo instance
+   */
+  static createFromXml(creationInfoQML) {
+    const out = new _CreationInfo();
+    out.agencyID = _grabFirstElText3(creationInfoQML, "agencyID");
+    out.agencyURI = _grabFirstElText3(creationInfoQML, "agencyURI");
+    out.author = _grabFirstElText3(creationInfoQML, "author");
+    out.authorURI = _grabFirstElText3(creationInfoQML, "authorURI");
+    out.creationTime = _grabFirstElDateTime(creationInfoQML, "creationTime");
+    out.version = _grabFirstElText3(creationInfoQML, "version");
+    return out;
+  }
+};
+function parseQuakeML(rawXml, host) {
+  const top2 = rawXml.documentElement;
+  if (!top2) {
+    throw new Error("Can't get documentElement");
+  }
+  const eventParametersArray = Array.from(
+    top2.getElementsByTagName("eventParameters")
+  );
+  if (eventParametersArray.length !== 1) {
+    throw new Error(
+      `Document has ${eventParametersArray.length} eventParameters elements`
+    );
+  }
+  return EventParameters.createFromXml(eventParametersArray[0], host);
+}
+function createQuakeFromValues(publicId, time3, latitude, longitude, depth_meter) {
+  const origin = new Origin(
+    new Quantity(time3),
+    new Quantity(latitude),
+    new Quantity(longitude)
+  );
+  origin.depth = new Quantity(depth_meter);
+  const quake = new Quake();
+  quake.publicId = publicId;
+  quake.originList.push(origin);
+  quake.preferredOrigin = origin;
+  return quake;
+}
+function fetchQuakeML(url2, timeoutSec2 = 10, nodata = 204) {
+  const fetchInit = defaultFetchInitObj(XML_MIME);
+  const host = new URL(url2).hostname;
+  return doFetchWithTimeout(url2, fetchInit, timeoutSec2 * 1e3).then((response) => {
+    if (response.status === 200) {
+      return response.text();
+    } else if (response.status === 204 || isDef(nodata) && response.status === nodata) {
+      return FAKE_EMPTY_XML2;
+    } else {
+      throw new Error(`Status not successful: ${response.status}`);
+    }
+  }).then(function(rawXmlText) {
+    return new DOMParser().parseFromString(rawXmlText, XML_MIME);
+  }).then((rawXml) => {
+    return parseQuakeML(rawXml, host);
+  });
+}
+function mightBeQuakeML(buf) {
+  if (!mightBeXml(buf)) {
+    return false;
+  }
+  const initialChars = dataViewToString(new DataView(buf.slice(0, 100))).trimStart();
+  if (!initialChars.includes("quakeml")) {
+    return false;
+  }
+  return true;
+}
+function createUnknownId() {
+  const max = 1e6;
+  let s2 = `${Math.floor(Math.random() * max)}`;
+  s2 = s2.padStart(6, "0");
+  return `${UNKNOWN_PUBLIC_ID}_${s2}`;
+}
+var ZERO_MAGNITUDE = new Magnitude(new Quantity(0), "unk");
+var _grabAllElComment = function(xml, tagName) {
+  const out = [];
+  if (isObject(xml)) {
+    const elList = Array.from(xml.children).filter(
+      (e) => e.tagName === tagName
+    );
+    for (const el of elList) {
+      if (isObject(el)) {
+        out.push(Comment2.createFromXml(el));
+      }
+    }
+  }
+  return out;
+};
+var _grabFirstElNS = function(xml, namespace, tagName) {
+  let out = null;
+  if (isObject(xml)) {
+    const elList = xml.getElementsByTagNameNS(namespace, tagName);
+    for (let idx = 0; idx < elList.length; idx++) {
+      const e = elList.item(idx);
+      if (e != null && e.parentElement === xml) {
+        if (e) {
+          out = e;
+          break;
+        }
+      }
+    }
+  }
+  return out;
+};
+var _grabFirstEl2 = function(xml, tagName) {
+  if (isObject(xml)) {
+    const elList = Array.from(xml.children).filter(
+      (e) => e.tagName === tagName
+    );
+    if (elList.length > 0) {
+      const e = elList[0];
+      if (e) {
+        return e;
+      }
+    }
+  }
+  return void 0;
+};
+var _grabFirstElText3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstEl2(xml, tagName);
+  if (isObject(el)) {
+    out = el.textContent;
+    if (out === null) {
+      out = void 0;
+    }
+  }
+  return out;
+};
+var _grabFirstElBool = function(xml, tagName) {
+  const el = _grabFirstElText3(xml, tagName);
+  if (!isStringArg(el)) {
+    return void 0;
+  }
+  switch (el) {
+    case "true":
+    case "1":
+      return true;
+    case "false":
+    case "0":
+      return false;
+  }
+  throw new Error("Invalid boolean: " + el);
+};
+var _grabFirstElInt3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = parseInt(el);
+  }
+  return out;
+};
+var _grabFirstElFloat3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = parseFloat(el);
+  }
+  return out;
+};
+var _grabFirstElDateTime = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = isoToDateTime(el);
+  }
+  return out;
+};
+var _grabFirstElType = function(createFromXml) {
+  return function(xml, tagName) {
+    let out = void 0;
+    const el = _grabFirstEl2(xml, tagName);
+    if (isObject(el)) {
+      out = createFromXml(el);
+    }
+    return out;
+  };
+};
+var _grabFirstElRealQuantity = _grabFirstElType(
+  Quantity.createRealQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElIntegerQuantity = _grabFirstElType(
+  Quantity.createIntegerQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElTimeQuantity = _grabFirstElType(
+  Quantity.createTimeQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElCreationInfo = _grabFirstElType(
+  CreationInfo.createFromXml.bind(CreationInfo)
+);
+var _grabAttribute3 = function(xml, tagName) {
+  let out = void 0;
+  if (isObject(xml)) {
+    const a = xml.getAttribute(tagName);
+    if (isStringArg(a)) {
+      out = a;
+    }
+  }
+  return out;
+};
+var _requireAttribute3 = function _requireAttribute4(xml, tagName) {
+  const out = _grabAttribute3(xml, tagName);
+  if (typeof out !== "string") {
+    throw new Error(`Attribute ${tagName} not found.`);
+  }
+  return out;
+};
+var _grabAttributeNS2 = function(xml, namespace, tagName) {
+  let out = void 0;
+  if (isObject(xml)) {
+    const a = xml.getAttributeNS(namespace, tagName);
+    if (isStringArg(a)) {
+      out = a;
+    }
+  }
+  return out;
+};
+var parseUtil2 = {
+  _grabFirstEl: _grabFirstEl2,
+  _grabFirstElNS,
+  _grabFirstElText: _grabFirstElText3,
+  _grabFirstElFloat: _grabFirstElFloat3,
+  _grabFirstElInt: _grabFirstElInt3,
+  _grabAttribute: _grabAttribute3,
+  _requireAttribute: _requireAttribute3,
+  _grabAttributeNS: _grabAttributeNS2
+};
+
+// src/seismogram.mts
 var COUNT_UNIT2 = "count";
 var Seismogram = class _Seismogram {
   constructor(segmentArray) {
-    __publicField(this, "_segmentArray");
-    __publicField(this, "_interval");
-    __publicField(this, "_y");
     this._y = null;
     if (Array.isArray(segmentArray) && segmentArray[0] instanceof SeismogramSegment) {
       this._segmentArray = segmentArray;
@@ -47483,21 +49200,7 @@ function ensureIsSeismogram(seisSeismogram) {
 }
 var SeismogramDisplayData = class _SeismogramDisplayData {
   constructor(timeRange) {
-    /** @private */
-    __publicField(this, "_seismogram");
-    __publicField(this, "_id");
-    __publicField(this, "_sourceId");
-    __publicField(this, "label");
-    __publicField(this, "markerList");
-    __publicField(this, "traveltimeList");
-    __publicField(this, "channel");
-    __publicField(this, "_instrumentSensitivity");
-    __publicField(this, "quakeList");
-    __publicField(this, "quakeReferenceList", []);
-    __publicField(this, "timeRange");
-    __publicField(this, "alignmentTime");
-    __publicField(this, "doShow");
-    __publicField(this, "_statsCache");
+    this.quakeReferenceList = [];
     if (!timeRange) {
       throw new Error("timeRange must not be missing.");
     }
@@ -48048,10 +49751,6 @@ var SeismogramDisplayData = class _SeismogramDisplayData {
 };
 var SeismogramDisplayStats = class {
   constructor() {
-    __publicField(this, "min");
-    __publicField(this, "max");
-    __publicField(this, "mean");
-    __publicField(this, "trendSlope");
     this.min = 0;
     this.max = 0;
     this.mean = 0;
@@ -48111,7 +49810,7 @@ function findMinMaxOverTimeRange(sddList, timeRange = null, doGain = false, ampl
     if (amplitudeMode === "raw" /* Raw */ || amplitudeMode === "zero" /* Zero */) {
       return p ? v ? p.union(v) : p : v;
     } else {
-      let hw = 0;
+      let hw;
       if (p && v) {
         hw = Math.max(p.halfWidth, v.halfWidth);
       } else if (p) {
@@ -48140,7 +49839,7 @@ function findMinMaxOverRelativeTimeRange(sddList, alignmentOffset, duration3, do
     if (amplitudeMode === "raw" /* Raw */ || amplitudeMode === "zero" /* Zero */) {
       return p ? v ? p.union(v) : p : v;
     } else {
-      let hw = 0;
+      let hw;
       if (p && v) {
         hw = Math.max(p.halfWidth, v.halfWidth);
       } else if (p) {
@@ -48171,8 +49870,8 @@ function calcMinMax(sdd, timeRange = null, doGain = false, amplitudeMode = "minm
       if (doGain && sdd.sensitivity) {
         sens = sdd.sensitivity.sensitivity;
       }
-      let middle = 0;
-      let halfWidth = 0;
+      let middle;
+      let halfWidth;
       if (amplitudeMode === "minmax" /* MinMax */ || amplitudeMode === "raw" /* Raw */) {
         middle = cutSDD.middle;
         halfWidth = Math.max(
@@ -48202,9 +49901,9 @@ function calcMinMax(sdd, timeRange = null, doGain = false, amplitudeMode = "minm
 }
 function findStartEndOfSeismograms(data, accumulator) {
   let out;
-  if (!accumulator && !data) {
+  if (accumulator == null && data == null) {
     throw new Error("data and accumulator are not defined");
-  } else if (!accumulator) {
+  } else if (accumulator == null) {
     if (data.length !== 0) {
       out = data[0].timeRange;
     } else {
@@ -48214,9 +49913,9 @@ function findStartEndOfSeismograms(data, accumulator) {
     out = accumulator;
   }
   if (Array.isArray(data)) {
-    return data.reduce(
+    out = data.reduce(
       (acc, cur) => acc.union(cur.timeRange),
-      data[0].timeRange
+      out
     );
   } else {
     throw new Error(`Expected Array as first arg but was: ${typeof data}`);
@@ -48260,6 +49959,41 @@ function uniqueChannels(seisData) {
   });
   return Array.from(out.values());
 }
+function uniqueLocationCodes(seisData) {
+  const out = /* @__PURE__ */ new Set();
+  seisData.forEach((sdd) => {
+    out.add(sdd.sourceId.locationCode);
+  });
+  return Array.from(out.values());
+}
+function uniqueBandCodes(seisData) {
+  const out = /* @__PURE__ */ new Set();
+  seisData.forEach((sdd) => {
+    out.add(sdd.sourceId.bandCode);
+  });
+  return Array.from(out.values());
+}
+function uniqueSourceCodes(seisData) {
+  const out = /* @__PURE__ */ new Set();
+  seisData.forEach((sdd) => {
+    out.add(sdd.sourceId.sourceCode);
+  });
+  return Array.from(out.values());
+}
+function uniqueSubsourceCodes(seisData) {
+  const out = /* @__PURE__ */ new Set();
+  seisData.forEach((sdd) => {
+    out.add(sdd.sourceId.subsourceCode);
+  });
+  return Array.from(out.values());
+}
+function uniqueSourceIds2(seisData) {
+  const out = /* @__PURE__ */ new Map();
+  seisData.forEach((sdd) => {
+    out.set(sdd.sourceId.toString(), sdd.sourceId);
+  });
+  return Array.from(out.values());
+}
 function uniqueQuakes(seisData) {
   const out = /* @__PURE__ */ new Set();
   seisData.forEach((sdd) => {
@@ -48268,7 +50002,7 @@ function uniqueQuakes(seisData) {
   return Array.from(out.values());
 }
 
-// src/miniseed.ts
+// src/miniseed.mts
 var MINISEED_MIME = "application/vnd.fdsn.mseed";
 var R_TYPECODE = "R".charCodeAt(0);
 var D_TYPECODE = "D".charCodeAt(0);
@@ -48390,8 +50124,6 @@ function parseBlockette(dataView, offset2, length, headerByteSwap) {
 }
 var DataRecord = class {
   constructor(header, data) {
-    __publicField(this, "header");
-    __publicField(this, "data");
     this.header = header;
     this.data = data;
   }
@@ -48427,31 +50159,6 @@ var DataRecord = class {
 };
 var DataHeader = class {
   constructor() {
-    __publicField(this, "seq");
-    __publicField(this, "typeCode");
-    __publicField(this, "continuationCode");
-    __publicField(this, "staCode");
-    __publicField(this, "locCode");
-    __publicField(this, "chanCode");
-    __publicField(this, "netCode");
-    __publicField(this, "startBTime");
-    __publicField(this, "numSamples");
-    __publicField(this, "encoding");
-    __publicField(this, "littleEndian");
-    __publicField(this, "sampRateFac");
-    __publicField(this, "sampRateMul");
-    __publicField(this, "sampleRate");
-    __publicField(this, "activityFlags");
-    __publicField(this, "ioClockFlags");
-    __publicField(this, "dataQualityFlags");
-    __publicField(this, "numBlockettes");
-    __publicField(this, "timeCorrection");
-    __publicField(this, "dataOffset");
-    __publicField(this, "blocketteOffset");
-    __publicField(this, "recordSize");
-    __publicField(this, "blocketteList");
-    __publicField(this, "startTime");
-    __publicField(this, "endTime");
     this.seq = "      ";
     this.typeCode = 68;
     this.continuationCode = 32;
@@ -48511,8 +50218,6 @@ var DataHeader = class {
 };
 var Blockette = class {
   constructor(type, body) {
-    __publicField(this, "type");
-    __publicField(this, "body");
     this.type = type;
     this.body = body;
   }
@@ -48520,9 +50225,6 @@ var Blockette = class {
 var Blockette1000 = class extends Blockette {
   constructor(type, body, encoding, dataRecordLengthByte, wordOrder) {
     super(type, body);
-    __publicField(this, "encoding");
-    __publicField(this, "dataRecordLengthByte");
-    __publicField(this, "wordOrder");
     if (type !== 1e3) {
       throw new Error("Not a blockette1000: " + this.type);
     }
@@ -48534,9 +50236,6 @@ var Blockette1000 = class extends Blockette {
 var Blockette1001 = class extends Blockette {
   constructor(type, body, timeQual, microsecond, frameCount) {
     super(type, body);
-    __publicField(this, "timeQual");
-    __publicField(this, "microsecond");
-    __publicField(this, "frameCount");
     if (type !== 1001) {
       throw new Error("Not a blockette1001: " + this.type);
     }
@@ -48548,8 +50247,6 @@ var Blockette1001 = class extends Blockette {
 var Blockette100 = class extends Blockette {
   constructor(type, body, sampleRate, flags) {
     super(type, body);
-    __publicField(this, "sampleRate");
-    __publicField(this, "flags");
     if (type !== 100) {
       throw new Error("Not a blockette100: " + this.type);
     }
@@ -48581,15 +50278,6 @@ function parseBTime(dataView, offset2, byteSwap) {
 }
 var BTime = class {
   constructor(year, jday, hour, min, sec, tenthMilli) {
-    __publicField(this, "year");
-    __publicField(this, "jday");
-    __publicField(this, "hour");
-    __publicField(this, "min");
-    __publicField(this, "sec");
-    __publicField(this, "tenthMilli");
-    __publicField(this, "microsecond");
-    // -50 to 49, not part of BTime proper, but added in case of B1001
-    __publicField(this, "length");
     this.length = 10;
     this.year = year;
     this.jday = jday;
@@ -48683,7 +50371,6 @@ function mergeSegments(drList) {
   }
   if (contig.length > 0) {
     out.push(createSeismogramSegment(contig));
-    contig = [];
   }
   return out;
 }
@@ -48718,7 +50405,7 @@ function seismogramPerChannel(drList) {
   return out;
 }
 
-// src/mseed3.ts
+// src/mseed3.mts
 var mseed3_exports = {};
 __export(mseed3_exports, {
   BIG_ENDIAN: () => BIG_ENDIAN,
@@ -48750,7 +50437,7 @@ __export(mseed3_exports, {
   toMSeed3: () => toMSeed3
 });
 
-// src/mseed3eh.ts
+// src/mseed3eh.mts
 var mseed3eh_exports = {};
 __export(mseed3eh_exports, {
   STD_EH: () => STD_EH,
@@ -48772,2001 +50459,6 @@ __export(mseed3eh_exports, {
   markerTypeFromEH: () => markerTypeFromEH,
   quakeToEH: () => quakeToEH
 });
-
-// src/quakeml.ts
-var quakeml_exports = {};
-__export(quakeml_exports, {
-  ANSS_CATALOG_NS: () => ANSS_CATALOG_NS,
-  ANSS_NS: () => ANSS_NS,
-  Amplitude: () => Amplitude,
-  Arrival: () => Arrival,
-  Axis: () => Axis,
-  BED_NS: () => BED_NS,
-  Comment: () => Comment2,
-  CompositeTime: () => CompositeTime,
-  ConfidenceEllipsoid: () => ConfidenceEllipsoid,
-  CreationInfo: () => CreationInfo,
-  DataUsed: () => DataUsed,
-  EventDescription: () => EventDescription,
-  EventParameters: () => EventParameters,
-  FAKE_EMPTY_XML: () => FAKE_EMPTY_XML2,
-  FAKE_ORIGIN_TIME: () => FAKE_ORIGIN_TIME,
-  FocalMechanism: () => FocalMechanism,
-  IRIS_NS: () => IRIS_NS,
-  Magnitude: () => Magnitude,
-  MomentTensor: () => MomentTensor,
-  NodalPlane: () => NodalPlane,
-  NodalPlanes: () => NodalPlanes,
-  Origin: () => Origin,
-  OriginQuality: () => OriginQuality,
-  OriginUncertainty: () => OriginUncertainty,
-  Pick: () => Pick,
-  PrincipalAxes: () => PrincipalAxes,
-  QML_NS: () => QML_NS,
-  QUAKE_CLICK_EVENT: () => QUAKE_CLICK_EVENT,
-  Quake: () => Quake,
-  Quantity: () => Quantity,
-  SourceTimeFunction: () => SourceTimeFunction,
-  StationMagnitude: () => StationMagnitude,
-  StationMagnitudeContribution: () => StationMagnitudeContribution,
-  Tensor: () => Tensor,
-  TimeWindow: () => TimeWindow,
-  UNKNOWN_MAG_TYPE: () => UNKNOWN_MAG_TYPE,
-  UNKNOWN_PUBLIC_ID: () => UNKNOWN_PUBLIC_ID,
-  USGS_HOST: () => USGS_HOST,
-  WaveformID: () => WaveformID,
-  createQuakeClickEvent: () => createQuakeClickEvent,
-  createQuakeFromValues: () => createQuakeFromValues,
-  fetchQuakeML: () => fetchQuakeML,
-  isQuakeClickCustomEvent: () => isQuakeClickCustomEvent,
-  mightBeQuakeML: () => mightBeQuakeML,
-  parseQuakeML: () => parseQuakeML,
-  parseUtil: () => parseUtil2
-});
-
-// src/textformat.ts
-var lang = typeof navigator !== "undefined" && navigator?.language ? navigator?.language : "en-US";
-var latlonFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "degree",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 2
-});
-var magFormat = new Intl.NumberFormat(lang, {
-  style: "decimal",
-  maximumFractionDigits: 2
-});
-var depthNoUnitFormat = new Intl.NumberFormat(lang, {
-  style: "decimal",
-  maximumFractionDigits: 2
-});
-var depthFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "kilometer",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2
-});
-var depthMeterFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "meter",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 1,
-  minimumFractionDigits: 1
-});
-
-// src/quakeml.ts
-var QML_NS = "http://quakeml.org/xmlns/quakeml/1.2";
-var BED_NS = "http://quakeml.org/xmlns/bed/1.2";
-var IRIS_NS = "http://service.iris.edu/fdsnws/event/1/";
-var ANSS_NS = "http://anss.org/xmlns/event/0.1";
-var ANSS_CATALOG_NS = "http://anss.org/xmlns/catalog/0.1";
-var USGS_HOST = "earthquake.usgs.gov";
-var UNKNOWN_MAG_TYPE = "unknown";
-var UNKNOWN_PUBLIC_ID = "unknownId";
-var FAKE_ORIGIN_TIME = DateTime.fromISO("1900-01-01T00:00:00Z");
-var FAKE_EMPTY_XML2 = '<?xml version="1.0"?><q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"><eventParameters publicID="quakeml:fake/empty"></eventParameters></q:quakeml>';
-var QUAKE_CLICK_EVENT = "quakeclick";
-function isQuakeClickCustomEvent(event) {
-  if ("detail" in event) {
-    const customEvent = event;
-    return "quake" in customEvent.detail;
-  }
-  return false;
-}
-function createQuakeClickEvent(q, mouseclick) {
-  const detail = {
-    mouseevent: mouseclick,
-    quake: q
-  };
-  return new CustomEvent(
-    QUAKE_CLICK_EVENT,
-    {
-      detail,
-      bubbles: true,
-      cancelable: false,
-      composed: true
-    }
-  );
-}
-var BaseElement = class {
-  constructor() {
-    __publicField(this, "publicId", UNKNOWN_PUBLIC_ID);
-    __publicField(this, "comments", []);
-    __publicField(this, "creationInfo");
-  }
-  populate(qml) {
-    let pid = _grabAttribute3(qml, "publicID");
-    if (!isNonEmptyStringArg(pid)) {
-      warn(`missing publicID on ${qml.localName}`);
-      pid = `${UNKNOWN_PUBLIC_ID}_${qml.localName}`;
-    }
-    this.publicId = pid;
-    this.comments = _grabAllElComment(qml, "comment");
-    this.creationInfo = _grabFirstElCreationInfo(qml, "creationInfo");
-  }
-};
-var EventParameters = class _EventParameters extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "eventList", []);
-    __publicField(this, "description");
-  }
-  /**
-   * Parses a QuakeML event parameters xml element into an EventParameters object.
-   *
-   * @param eventParametersQML the event parameters xml Element
-   * @param host optional source of the xml, helpful for parsing the eventid
-   * @returns EventParameters instance
-   */
-  static createFromXml(eventParametersQML, host) {
-    if (eventParametersQML.localName !== "eventParameters") {
-      throw new Error(
-        `Cannot extract, not a QuakeML event parameters: ${eventParametersQML.localName}`
-      );
-    }
-    const eventEls = Array.from(
-      eventParametersQML.getElementsByTagNameNS(BED_NS, "event")
-    );
-    const events = eventEls.map((e) => Quake.createFromXml(e, host));
-    const description = _grabFirstElText3(eventParametersQML, "description");
-    const out = new _EventParameters();
-    out.populate(eventParametersQML);
-    out.eventList = events;
-    out.description = description;
-    return out;
-  }
-};
-var Quake = class _Quake extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "eventId");
-    __publicField(this, "descriptionList", []);
-    __publicField(this, "amplitudeList", []);
-    __publicField(this, "stationMagnitudeList", []);
-    __publicField(this, "magnitudeList", []);
-    __publicField(this, "originList", []);
-    __publicField(this, "pickList", []);
-    __publicField(this, "focalMechanismList", []);
-    __publicField(this, "preferredOrigin");
-    __publicField(this, "preferredMagnitude");
-    __publicField(this, "preferredFocalMechanism");
-    __publicField(this, "type");
-    __publicField(this, "typeCertainty");
-  }
-  /**
-   * Parses a QuakeML event xml element into a Quake object. Pass in
-   * host=seisplotjs.fdsnevent.USGS_HOST for xml from the USGS service
-   * in order to parse the eventid, otherwise this can be left out
-   *
-   * @param qml the event xml Element
-   * @param host optional source of the xml, helpful for parsing the eventid
-   * @returns QuakeML Quake(Event) object
-   */
-  static createFromXml(qml, host) {
-    if (qml.localName !== "event") {
-      throw new Error(`Cannot extract, not a QuakeML Event: ${qml.localName}`);
-    }
-    const out = new _Quake();
-    out.populate(qml);
-    const descriptionEls = Array.from(qml.children).filter(
-      (e) => e.tagName === "description"
-    );
-    out.descriptionList = descriptionEls.map(
-      (d) => EventDescription.createFromXml(d)
-    );
-    const allPickEls = Array.from(qml.getElementsByTagNameNS(BED_NS, "pick"));
-    const allPicks = [];
-    for (const pickEl of allPickEls) {
-      allPicks.push(Pick.createFromXml(pickEl));
-    }
-    const allAmplitudeEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "amplitude")
-    );
-    const allAmplitudes = [];
-    for (const amplitudeEl of allAmplitudeEls) {
-      allAmplitudes.push(Amplitude.createFromXml(amplitudeEl, allPicks));
-    }
-    const allOriginEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "origin")
-    );
-    const allOrigins = [];
-    for (const originEl of allOriginEls) {
-      allOrigins.push(Origin.createFromXml(originEl, allPicks));
-    }
-    const allStationMagEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "stationMagnitude")
-    );
-    const allStationMags = [];
-    for (const stationMagEl of allStationMagEls) {
-      allStationMags.push(
-        StationMagnitude.createFromXml(stationMagEl, allOrigins, allAmplitudes)
-      );
-    }
-    const allMagEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "magnitude")
-    );
-    const allMags = [];
-    for (const magEl of allMagEls) {
-      allMags.push(Magnitude.createFromXml(magEl, allOrigins, allStationMags));
-    }
-    const allFocalMechEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "focalMechanism")
-    );
-    const allFocalMechs = [];
-    for (const focalMechEl of allFocalMechEls) {
-      allFocalMechs.push(
-        FocalMechanism.createFromXml(focalMechEl, allOrigins, allMags)
-      );
-    }
-    out.originList = allOrigins;
-    out.magnitudeList = allMags;
-    out.pickList = allPicks;
-    out.amplitudeList = allAmplitudes;
-    out.stationMagnitudeList = allStationMags;
-    out.focalMechanismList = allFocalMechs;
-    out.eventId = _Quake.extractEventId(qml, host);
-    const preferredOriginId = _grabFirstElText3(qml, "preferredOriginID");
-    const preferredMagnitudeId = _grabFirstElText3(qml, "preferredMagnitudeID");
-    const preferredFocalMechId = _grabFirstElText3(
-      qml,
-      "preferredFocalMechanismID"
-    );
-    if (isNonEmptyStringArg(preferredOriginId)) {
-      out.preferredOrigin = allOrigins.find(
-        (o) => o.publicId === preferredOriginId
-      );
-      if (!out.preferredOrigin) {
-        throw new Error(`no preferredOriginId match: ${preferredOriginId}`);
-      }
-    }
-    if (isNonEmptyStringArg(preferredMagnitudeId)) {
-      out.preferredMagnitude = allMags.find(
-        (m) => m.publicId === preferredMagnitudeId
-      );
-      if (!out.preferredMagnitude) {
-        throw new Error(`no match: ${preferredMagnitudeId}`);
-      }
-    }
-    if (isNonEmptyStringArg(preferredFocalMechId)) {
-      out.preferredFocalMechanism = allFocalMechs.find(
-        (m) => m.publicId === preferredFocalMechId
-      );
-      if (!out.preferredFocalMechanism) {
-        throw new Error(`no match: ${preferredFocalMechId}`);
-      }
-    }
-    out.type = _grabFirstElText3(qml, "type");
-    out.typeCertainty = _grabFirstElText3(qml, "typeCertainty");
-    return out;
-  }
-  /**
-   * Extracts the EventId from a QuakeML element, guessing from one of several
-   * incompatible (grumble grumble) formats.
-   *
-   * @param   qml Quake(Event) to extract from
-   * @param   host optional source of the xml to help determine the event id style
-   * @returns     Extracted Id, or "unknownEventId" if we can't figure it out
-   */
-  static extractEventId(qml, _host) {
-    const dataId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "dataid");
-    if (isNonEmptyStringArg(dataId)) {
-      return dataId;
-    }
-    const eventId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "eventid");
-    const catalogEventSource = _grabAttributeNS2(
-      qml,
-      ANSS_CATALOG_NS,
-      "eventsource"
-    );
-    if (isNonEmptyStringArg(eventId)) {
-      if (isNonEmptyStringArg(catalogEventSource)) {
-        return catalogEventSource + eventId;
-      } else {
-        return eventId;
-      }
-    }
-    const publicid = _grabAttribute3(qml, "publicID");
-    if (isNonEmptyStringArg(publicid)) {
-      let re2 = /eventid=([\w\d]+)/;
-      let parsed = re2.exec(publicid);
-      if (parsed) {
-        return parsed[1];
-      }
-      re2 = /evid=([\w\d]+)/;
-      parsed = re2.exec(publicid);
-      if (parsed) {
-        return parsed[1];
-      }
-      re2 = /quakeml:se.anss.org\/Event\/([\w\d]+)\/([\w\d]+)/;
-      parsed = re2.exec(publicid);
-      if (parsed) {
-        return parsed[1] + parsed[2];
-      }
-      return publicid;
-    }
-    return UNKNOWN_PUBLIC_ID;
-  }
-  hasPreferredOrigin() {
-    return isDef(this.preferredOrigin);
-  }
-  hasOrigin() {
-    return isDef(this.preferredOrigin) || this.originList.length > 1;
-  }
-  get origin() {
-    if (isDef(this.preferredOrigin)) {
-      return this.preferredOrigin;
-    } else if (this.originList.length > 0) {
-      return this.originList[0];
-    } else {
-      throw new Error("No origins in quake");
-    }
-  }
-  hasPreferredMagnitude() {
-    return isDef(this.preferredMagnitude);
-  }
-  hasMagnitude() {
-    return isDef(this.preferredMagnitude) || this.magnitudeList.length > 1;
-  }
-  get magnitude() {
-    if (isDef(this.preferredMagnitude)) {
-      return this.preferredMagnitude;
-    } else if (this.magnitudeList.length > 0) {
-      return this.magnitudeList[0];
-    } else {
-      throw new Error("No magnitudes in quake");
-    }
-  }
-  get time() {
-    return this.origin.time;
-  }
-  get latitude() {
-    return this.origin.latitude;
-  }
-  get longitude() {
-    return this.origin.longitude;
-  }
-  get depth() {
-    return this.origin.depth;
-  }
-  get depthKm() {
-    return this.depth / 1e3;
-  }
-  get description() {
-    return this.descriptionList.length > 0 ? this.descriptionList[0].text : "";
-  }
-  get arrivals() {
-    return this.origin.arrivalList;
-  }
-  get picks() {
-    return this.pickList;
-  }
-  toString() {
-    if (this.hasOrigin()) {
-      const magStr = this.hasMagnitude() ? this.magnitude.toString() : "";
-      const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
-      const depth = depthFormat.format(this.depth / 1e3);
-      return `${this.time.toISO()} ${latlon} ${depth} ${magStr}`;
-    } else if (this.eventId != null) {
-      return `Event: ${this.eventId}`;
-    } else {
-      return `Event: unknown`;
-    }
-  }
-};
-var EventDescription = class _EventDescription {
-  constructor(text) {
-    __publicField(this, "text");
-    __publicField(this, "type");
-    this.text = text;
-  }
-  /**
-   * Parses a QuakeML description xml element into a EventDescription object.
-   *
-   * @param descriptionQML the description xml Element
-   * @returns EventDescription instance
-   */
-  static createFromXml(descriptionQML) {
-    if (descriptionQML.localName !== "description") {
-      throw new Error(
-        `Cannot extract, not a QuakeML description ID: ${descriptionQML.localName}`
-      );
-    }
-    const text = _grabFirstElText3(descriptionQML, "text");
-    if (!isNonEmptyStringArg(text)) {
-      throw new Error("description missing text");
-    }
-    const out = new _EventDescription(text);
-    out.type = _grabFirstElText3(descriptionQML, "type");
-    return out;
-  }
-  toString() {
-    return this.text;
-  }
-};
-var Amplitude = class _Amplitude extends BaseElement {
-  constructor(genericAmplitude) {
-    super();
-    __publicField(this, "genericAmplitude");
-    __publicField(this, "type");
-    __publicField(this, "category");
-    __publicField(this, "unit");
-    __publicField(this, "methodID");
-    __publicField(this, "period");
-    __publicField(this, "snr");
-    __publicField(this, "timeWindow");
-    __publicField(this, "pick");
-    __publicField(this, "waveformID");
-    __publicField(this, "filterID");
-    __publicField(this, "scalingTime");
-    __publicField(this, "magnitudeHint");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    this.genericAmplitude = genericAmplitude;
-  }
-  /**
-   * Parses a QuakeML amplitude xml element into an Amplitude object.
-   *
-   * @param amplitudeQML the amplitude xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Amplitude instance
-   */
-  static createFromXml(amplitudeQML, allPicks) {
-    if (amplitudeQML.localName !== "amplitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML amplitude: ${amplitudeQML.localName}`
-      );
-    }
-    const genericAmplitude = _grabFirstElRealQuantity(
-      amplitudeQML,
-      "genericAmplitude"
-    );
-    if (!isDef(genericAmplitude)) {
-      throw new Error("amplitude missing genericAmplitude");
-    }
-    const out = new _Amplitude(genericAmplitude);
-    out.populate(amplitudeQML);
-    out.type = _grabFirstElText3(amplitudeQML, "type");
-    out.category = _grabFirstElText3(amplitudeQML, "category");
-    out.unit = _grabFirstElText3(amplitudeQML, "unit");
-    out.methodID = _grabFirstElText3(amplitudeQML, "methodID");
-    out.period = _grabFirstElRealQuantity(amplitudeQML, "period");
-    out.snr = _grabFirstElFloat3(amplitudeQML, "snr");
-    out.timeWindow = _grabFirstElType(
-      TimeWindow.createFromXml.bind(TimeWindow)
-    )(amplitudeQML, "timeWindow");
-    const pickID = _grabFirstElText3(amplitudeQML, "pickID");
-    out.pick = allPicks.find((p) => p.publicId === pickID);
-    if (pickID && !out.pick) {
-      throw new Error("No pick with ID " + pickID);
-    }
-    out.waveformID = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(amplitudeQML, "waveformID");
-    out.filterID = _grabFirstElText3(amplitudeQML, "filterID");
-    out.scalingTime = _grabFirstElTimeQuantity(amplitudeQML, "scalingTime");
-    out.magnitudeHint = _grabFirstElText3(amplitudeQML, "magnitudeHint");
-    out.evaluationMode = _grabFirstElText3(amplitudeQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(amplitudeQML, "evaluationStatus");
-    return out;
-  }
-};
-var StationMagnitude = class _StationMagnitude extends BaseElement {
-  constructor(origin, mag) {
-    super();
-    __publicField(this, "origin");
-    __publicField(this, "mag");
-    __publicField(this, "type");
-    __publicField(this, "amplitude");
-    __publicField(this, "methodID");
-    __publicField(this, "waveformID");
-    this.origin = origin;
-    this.mag = mag;
-  }
-  /**
-   * Parses a QuakeML station magnitude xml element into a StationMagnitude object.
-   *
-   * @param stationMagnitudeQML the station magnitude xml Element
-   * @param allOrigins origins already extracted from the xml for linking station magnitudes with origins
-   * @param allAmplitudes amplitudes already extracted from the xml for linking station magnitudes with amplitudes
-   * @returns StationMagnitude instance
-   */
-  static createFromXml(stationMagnitudeQML, allOrigins, allAmplitudes) {
-    if (stationMagnitudeQML.localName !== "stationMagnitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML station magnitude: ${stationMagnitudeQML.localName}`
-      );
-    }
-    const originID = _grabFirstElText3(stationMagnitudeQML, "originID");
-    if (!isNonEmptyStringArg(originID)) {
-      throw new Error("stationMagnitude missing origin ID");
-    }
-    const origin = allOrigins.find((o) => o.publicId === originID);
-    if (!isDef(origin)) {
-      throw new Error("No origin with ID " + originID);
-    }
-    const mag = _grabFirstElRealQuantity(stationMagnitudeQML, "mag");
-    if (!isDef(mag)) {
-      throw new Error("stationMagnitude missing mag");
-    }
-    const out = new _StationMagnitude(origin, mag);
-    out.populate(stationMagnitudeQML);
-    out.type = _grabFirstElText3(stationMagnitudeQML, "type");
-    const amplitudeID = _grabFirstElText3(stationMagnitudeQML, "amplitudeID");
-    out.amplitude = allAmplitudes.find((a) => a.publicId === amplitudeID);
-    if (amplitudeID && !out.amplitude) {
-      throw new Error("No amplitude with ID " + amplitudeID);
-    }
-    out.methodID = _grabFirstElText3(stationMagnitudeQML, "methodID");
-    out.waveformID = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(stationMagnitudeQML, "waveformID");
-    return out;
-  }
-};
-var TimeWindow = class _TimeWindow {
-  constructor(begin, end, reference) {
-    __publicField(this, "begin");
-    __publicField(this, "end");
-    __publicField(this, "reference");
-    this.begin = begin;
-    this.end = end;
-    this.reference = reference;
-  }
-  /**
-   * Parses a QuakeML time window xml element into a TimeWindow object.
-   *
-   * @param timeWindowQML the time window xml Element
-   * @returns TimeWindow instance
-   */
-  static createFromXml(timeWindowQML) {
-    if (timeWindowQML.localName !== "timeWindow") {
-      throw new Error(
-        `Cannot extract, not a QuakeML time window: ${timeWindowQML.localName}`
-      );
-    }
-    const begin = _grabFirstElFloat3(timeWindowQML, "begin");
-    if (!isDef(begin)) {
-      throw new Error("timeWindow missing begin");
-    }
-    const end = _grabFirstElFloat3(timeWindowQML, "end");
-    if (!isDef(end)) {
-      throw new Error("timeWindow missing end");
-    }
-    const reference = _grabFirstElDateTime(timeWindowQML, "reference");
-    if (!isDef(reference)) {
-      throw new Error("timeWindow missing reference");
-    }
-    const out = new _TimeWindow(begin, end, reference);
-    return out;
-  }
-};
-var Origin = class _Origin extends BaseElement {
-  constructor(time3, latitude, longitude) {
-    super();
-    __publicField(this, "compositeTimes");
-    __publicField(this, "originUncertainty");
-    __publicField(this, "arrivalList");
-    __publicField(this, "timeQuantity");
-    __publicField(this, "latitudeQuantity");
-    __publicField(this, "longitudeQuantity");
-    __publicField(this, "depthQuantity");
-    __publicField(this, "depthType");
-    __publicField(this, "timeFixed");
-    __publicField(this, "epicenterFixed");
-    __publicField(this, "referenceSystemID");
-    __publicField(this, "methodID");
-    __publicField(this, "earthModelID");
-    __publicField(this, "quality");
-    __publicField(this, "type");
-    __publicField(this, "region");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    this.compositeTimes = [];
-    this.arrivalList = [];
-    if (time3 instanceof DateTime) {
-      this.timeQuantity = new Quantity(time3);
-    } else {
-      this.timeQuantity = time3;
-    }
-    if (typeof latitude == "number") {
-      this.latitudeQuantity = new Quantity(latitude);
-    } else {
-      this.latitudeQuantity = latitude;
-    }
-    if (typeof longitude == "number") {
-      this.longitudeQuantity = new Quantity(longitude);
-    } else {
-      this.longitudeQuantity = longitude;
-    }
-  }
-  /**
-   * Parses a QuakeML origin xml element into a Origin object.
-   *
-   * @param qml the origin xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Origin instance
-   */
-  static createFromXml(qml, allPicks) {
-    if (qml.localName !== "origin") {
-      throw new Error(`Cannot extract, not a QuakeML Origin: ${qml.localName}`);
-    }
-    const time3 = _grabFirstElTimeQuantity(qml, "time");
-    if (!isObject(time3)) {
-      throw new Error("origin missing time");
-    }
-    const lat = _grabFirstElRealQuantity(qml, "latitude");
-    if (!isObject(lat)) {
-      throw new Error("origin missing latitude");
-    }
-    const lon = _grabFirstElRealQuantity(qml, "longitude");
-    if (!isObject(lon)) {
-      throw new Error("origin missing longitude");
-    }
-    const out = new _Origin(time3, lat, lon);
-    out.populate(qml);
-    out.originUncertainty = _grabFirstElType(
-      OriginUncertainty.createFromXml.bind(OriginUncertainty)
-    )(qml, "originUncertainty");
-    const allArrivalEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "arrival")
-    );
-    out.arrivalList = allArrivalEls.map(
-      (arrivalEl) => Arrival.createFromXml(arrivalEl, allPicks)
-    );
-    out.depthQuantity = _grabFirstElRealQuantity(qml, "depth");
-    out.depthType = _grabFirstElText3(qml, "depthType");
-    out.timeFixed = _grabFirstElBool(qml, "timeFixed");
-    out.epicenterFixed = _grabFirstElBool(qml, "epicenterFixed");
-    out.referenceSystemID = _grabFirstElText3(qml, "referenceSystemID");
-    out.methodID = _grabFirstElText3(qml, "methodID");
-    out.earthModelID = _grabFirstElText3(qml, "earthModelID");
-    out.quality = _grabFirstElType(
-      OriginQuality.createFromXml.bind(OriginQuality)
-    )(qml, "quality");
-    out.type = _grabFirstElText3(qml, "type");
-    out.region = _grabFirstElText3(qml, "region");
-    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
-    return out;
-  }
-  toString() {
-    const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
-    const depth = depthFormat.format(this.depth / 1e3);
-    return `${this.time.toISO()} ${latlon} ${depth} km`;
-  }
-  get time() {
-    return this.timeQuantity.value;
-  }
-  set time(t) {
-    if (t instanceof DateTime) {
-      this.timeQuantity.value = t;
-    } else {
-      this.timeQuantity = t;
-    }
-  }
-  get latitude() {
-    return this.latitudeQuantity.value;
-  }
-  set latitude(lat) {
-    if (typeof lat == "number") {
-      this.latitudeQuantity.value = lat;
-    } else {
-      this.latitudeQuantity = lat;
-    }
-  }
-  get longitude() {
-    return this.longitudeQuantity.value;
-  }
-  set longitude(lon) {
-    if (typeof lon == "number") {
-      this.longitudeQuantity.value = lon;
-    } else {
-      this.longitudeQuantity = lon;
-    }
-  }
-  get depthKm() {
-    return this.depth / 1e3;
-  }
-  get depth() {
-    return this.depthQuantity?.value ?? NaN;
-  }
-  set depth(depth) {
-    if (typeof depth == "number") {
-      if (!this.depthQuantity) {
-        this.depthQuantity = new Quantity(depth);
-      } else {
-        this.depthQuantity.value = depth;
-      }
-    } else {
-      this.depthQuantity = depth;
-    }
-  }
-  get arrivals() {
-    return this.arrivalList;
-  }
-};
-var CompositeTime = class _CompositeTime {
-  constructor() {
-    __publicField(this, "year");
-    __publicField(this, "month");
-    __publicField(this, "day");
-    __publicField(this, "hour");
-    __publicField(this, "minute");
-    __publicField(this, "second");
-  }
-  /**
-   * Parses a QuakeML composite time xml element into an CompositeTime object.
-   *
-   * @param qml the composite time xml Element
-   * @returns CompositeTime instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "compositeTime") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Composite Time: ${qml.localName}`
-      );
-    }
-    const out = new _CompositeTime();
-    out.year = _grabFirstElIntegerQuantity(qml, "year");
-    out.month = _grabFirstElIntegerQuantity(qml, "month");
-    out.day = _grabFirstElIntegerQuantity(qml, "day");
-    out.hour = _grabFirstElIntegerQuantity(qml, "hour");
-    out.minute = _grabFirstElIntegerQuantity(qml, "minute");
-    out.second = _grabFirstElIntegerQuantity(qml, "second");
-    return out;
-  }
-};
-var OriginUncertainty = class _OriginUncertainty {
-  constructor() {
-    __publicField(this, "horizontalUncertainty");
-    __publicField(this, "minHorizontalUncertainty");
-    __publicField(this, "maxHorizontalUncertainty");
-    __publicField(this, "azimuthMaxHorizontalUncertainty");
-    __publicField(this, "confidenceEllipsoid");
-    __publicField(this, "preferredDescription");
-    __publicField(this, "confidenceLevel");
-  }
-  /**
-   * Parses a QuakeML origin uncertainty xml element into an OriginUncertainty object.
-   *
-   * @param qml the origin uncertainty xml Element
-   * @returns OriginUncertainty instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "originUncertainty") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Origin Uncertainty: ${qml.localName}`
-      );
-    }
-    const out = new _OriginUncertainty();
-    out.horizontalUncertainty = _grabFirstElFloat3(qml, "horizontalUncertainty");
-    out.minHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "minHorizontalUncertainty"
-    );
-    out.maxHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "maxHorizontalUncertainty"
-    );
-    out.azimuthMaxHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "azimuthMaxHorizontalUncertainty"
-    );
-    out.confidenceEllipsoid = _grabFirstElType(
-      ConfidenceEllipsoid.createFromXml.bind(ConfidenceEllipsoid)
-    )(qml, "confidenceEllipsoid");
-    out.preferredDescription = _grabFirstElText3(qml, "preferredDescription");
-    out.confidenceLevel = _grabFirstElFloat3(qml, "confidenceLevel");
-    return out;
-  }
-};
-var ConfidenceEllipsoid = class _ConfidenceEllipsoid {
-  constructor(semiMajorAxisLength, semiMinorAxisLength, semiIntermediateAxisLength, majorAxisPlunge, majorAxisAzimuth, majorAxisRotation) {
-    __publicField(this, "semiMajorAxisLength");
-    __publicField(this, "semiMinorAxisLength");
-    __publicField(this, "semiIntermediateAxisLength");
-    __publicField(this, "majorAxisPlunge");
-    __publicField(this, "majorAxisAzimuth");
-    __publicField(this, "majorAxisRotation");
-    this.semiMajorAxisLength = semiMajorAxisLength;
-    this.semiMinorAxisLength = semiMinorAxisLength;
-    this.semiIntermediateAxisLength = semiIntermediateAxisLength;
-    this.majorAxisPlunge = majorAxisPlunge;
-    this.majorAxisAzimuth = majorAxisAzimuth;
-    this.majorAxisRotation = majorAxisRotation;
-  }
-  /**
-   * Parses a QuakeML confidence ellipsoid xml element into an ConfidenceEllipsoid object.
-   *
-   * @param qml the confidence ellipsoid xml Element
-   * @returns ConfidenceEllipsoid instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "confidenceEllipsoid") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Confidence Ellipsoid: ${qml.localName}`
-      );
-    }
-    const semiMajorAxisLength = _grabFirstElFloat3(qml, "semiMajorAxisLength");
-    if (semiMajorAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiMajorAxisLength");
-    }
-    const semiMinorAxisLength = _grabFirstElFloat3(qml, "semiMinorAxisLength");
-    if (semiMinorAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiMinorAxisLength");
-    }
-    const semiIntermediateAxisLength = _grabFirstElFloat3(
-      qml,
-      "semiIntermediateAxisLength"
-    );
-    if (semiIntermediateAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiIntermediateAxisLength");
-    }
-    const majorAxisPlunge = _grabFirstElFloat3(qml, "majorAxisPlunge");
-    if (majorAxisPlunge === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisPlunge");
-    }
-    const majorAxisAzimuth = _grabFirstElFloat3(qml, "majorAxisAzimuth");
-    if (majorAxisAzimuth === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisAzimuth");
-    }
-    const majorAxisRotation = _grabFirstElFloat3(qml, "majorAxisRotation");
-    if (majorAxisRotation === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisRotation");
-    }
-    const out = new _ConfidenceEllipsoid(
-      semiMajorAxisLength,
-      semiMinorAxisLength,
-      semiIntermediateAxisLength,
-      majorAxisPlunge,
-      majorAxisAzimuth,
-      majorAxisRotation
-    );
-    return out;
-  }
-};
-var OriginQuality = class _OriginQuality {
-  constructor() {
-    __publicField(this, "associatedPhaseCount");
-    __publicField(this, "usedPhaseCount");
-    __publicField(this, "associatedStationCount");
-    __publicField(this, "usedStationCount");
-    __publicField(this, "depthPhaseCount");
-    __publicField(this, "standardError");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "secondaryAzimuthalGap");
-    __publicField(this, "groundTruthLevel");
-    __publicField(this, "maximumDistance");
-    __publicField(this, "minimumDistance");
-    __publicField(this, "medianDistance");
-  }
-  /**
-   * Parses a QuakeML origin quality xml element into an OriginQuality object.
-   *
-   * @param qml the origin quality xml Element
-   * @returns OriginQuality instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "quality") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Origin Quality: ${qml.localName}`
-      );
-    }
-    const out = new _OriginQuality();
-    out.associatedPhaseCount = _grabFirstElInt3(qml, "associatedPhaseCount");
-    out.usedPhaseCount = _grabFirstElInt3(qml, "usedPhaseCount");
-    out.associatedStationCount = _grabFirstElInt3(qml, "associatedStationCount");
-    out.usedStationCount = _grabFirstElInt3(qml, "usedStationCount");
-    out.standardError = _grabFirstElFloat3(qml, "standardError");
-    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
-    out.secondaryAzimuthalGap = _grabFirstElFloat3(qml, "secondaryAzimuthalGap");
-    out.groundTruthLevel = _grabFirstElText3(qml, "groundTruthLevel");
-    out.maximumDistance = _grabFirstElFloat3(qml, "maximumDistance");
-    out.minimumDistance = _grabFirstElFloat3(qml, "minimumDistance");
-    out.medianDistance = _grabFirstElFloat3(qml, "medianDistance");
-    return out;
-  }
-};
-var Magnitude = class _Magnitude extends BaseElement {
-  constructor(mag, type) {
-    super();
-    __publicField(this, "stationMagnitudeContributions", []);
-    __publicField(this, "magQuantity");
-    __publicField(this, "type");
-    __publicField(this, "origin");
-    __publicField(this, "methodID");
-    __publicField(this, "stationCount");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    if (typeof mag === "number") {
-      this.magQuantity = new Quantity(mag);
-    } else {
-      this.magQuantity = mag;
-    }
-    if (type) {
-      this.type = type;
-    }
-  }
-  /**
-   * Parses a QuakeML magnitude xml element into a Magnitude object.
-   *
-   * @param qml the magnitude xml Element
-   * @param allOrigins origins already extracted from the xml for linking magnitudes with origins
-   * @param allStationMagnitudes station magnitudes already extracted from the xml
-   * @returns Magnitude instance
-   */
-  static createFromXml(qml, allOrigins, allStationMagnitudes) {
-    if (qml.localName !== "magnitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Magnitude: ${qml.localName}`
-      );
-    }
-    const mag = _grabFirstElRealQuantity(qml, "mag");
-    if (!mag) {
-      throw new Error("magnitude missing mag");
-    }
-    const out = new _Magnitude(mag);
-    out.populate(qml);
-    const stationMagnitudeContributionEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "stationMagnitudeContribution")
-    );
-    out.stationMagnitudeContributions = stationMagnitudeContributionEls.map(
-      (smc) => StationMagnitudeContribution.createFromXml(smc, allStationMagnitudes)
-    );
-    out.type = _grabFirstElText3(qml, "type");
-    const originID = _grabFirstElText3(qml, "originID");
-    out.origin = allOrigins.find((o) => o.publicId === originID);
-    if (originID && !out.origin) {
-      throw new Error("No origin with ID " + originID);
-    }
-    out.methodID = _grabFirstElText3(qml, "methodID");
-    out.stationCount = _grabFirstElInt3(qml, "stationCount");
-    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
-    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
-    return out;
-  }
-  toString() {
-    return `${magFormat.format(this.mag)} ${this.type ? this.type : ""}`;
-  }
-  get mag() {
-    return this.magQuantity.value;
-  }
-  set mag(value) {
-    if (typeof value === "number") {
-      this.magQuantity.value = value;
-    } else {
-      this.magQuantity = value;
-    }
-  }
-};
-var StationMagnitudeContribution = class _StationMagnitudeContribution {
-  constructor(stationMagnitude) {
-    __publicField(this, "stationMagnitude");
-    __publicField(this, "residual");
-    __publicField(this, "weight");
-    this.stationMagnitude = stationMagnitude;
-  }
-  /**
-   * Parses a QuakeML station magnitude contribution xml element into a StationMagnitudeContribution object.
-   *
-   * @param qml the station magnitude contribution xml Element
-   * @param allStationMagnitudes station magnitudes already extracted from the xml for linking station magnitudes with station magnitude contributions
-   * @returns StationMagnitudeContribution instance
-   */
-  static createFromXml(qml, allStationMagnitudes) {
-    if (qml.localName !== "stationMagnitudeContribution") {
-      throw new Error(
-        `Cannot extract, not a QuakeML StationMagnitudeContribution: ${qml.localName}`
-      );
-    }
-    const stationMagnitudeID = _grabFirstElText3(qml, "stationMagnitudeID");
-    if (!isNonEmptyStringArg(stationMagnitudeID)) {
-      throw new Error("stationMagnitudeContribution missing stationMagnitude");
-    }
-    const stationMagnitude = allStationMagnitudes.find(
-      (sm) => sm.publicId === stationMagnitudeID
-    );
-    if (!isDef(stationMagnitude)) {
-      throw new Error("No stationMagnitude with ID " + stationMagnitudeID);
-    }
-    const out = new _StationMagnitudeContribution(stationMagnitude);
-    out.residual = _grabFirstElFloat3(qml, "residual");
-    out.weight = _grabFirstElFloat3(qml, "weight");
-    return out;
-  }
-};
-var Arrival = class _Arrival extends BaseElement {
-  constructor(phase, pick3) {
-    super();
-    __publicField(this, "phase");
-    __publicField(this, "pick");
-    __publicField(this, "timeCorrection");
-    __publicField(this, "azimuth");
-    __publicField(this, "distance");
-    __publicField(this, "takeoffAngle");
-    __publicField(this, "timeResidual");
-    __publicField(this, "horizontalSlownessResidual");
-    __publicField(this, "backazimuthResidual");
-    __publicField(this, "timeWeight");
-    __publicField(this, "horizontalSlownessWeight");
-    __publicField(this, "backazimuthWeight");
-    __publicField(this, "earthModelID");
-    this.phase = phase;
-    this.pick = pick3;
-  }
-  /**
-   * Parses a QuakeML arrival xml element into a Arrival object.
-   *
-   * @param arrivalQML the arrival xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Arrival instance
-   */
-  static createFromXml(arrivalQML, allPicks) {
-    if (arrivalQML.localName !== "arrival") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Arrival: ${arrivalQML.localName}`
-      );
-    }
-    const pickId = _grabFirstElText3(arrivalQML, "pickID");
-    const phase = _grabFirstElText3(arrivalQML, "phase");
-    if (isNonEmptyStringArg(phase) && isNonEmptyStringArg(pickId)) {
-      const myPick = allPicks.find(function(p) {
-        return p.publicId === pickId;
-      });
-      if (!myPick) {
-        throw new Error("Can't find pick with Id=" + pickId + " for Arrival");
-      }
-      const out = new _Arrival(phase, myPick);
-      out.populate(arrivalQML);
-      out.timeCorrection = _grabFirstElFloat3(arrivalQML, "timeCorrection");
-      out.azimuth = _grabFirstElFloat3(arrivalQML, "azimuth");
-      out.distance = _grabFirstElFloat3(arrivalQML, "distance");
-      out.takeoffAngle = _grabFirstElRealQuantity(arrivalQML, "takeoffAngle");
-      out.timeResidual = _grabFirstElFloat3(arrivalQML, "timeResidual");
-      out.horizontalSlownessResidual = _grabFirstElFloat3(
-        arrivalQML,
-        "horizontalSlownessResidual"
-      );
-      out.backazimuthResidual = _grabFirstElFloat3(
-        arrivalQML,
-        "backazimuthResidual"
-      );
-      out.timeWeight = _grabFirstElFloat3(arrivalQML, "timeWeight");
-      out.horizontalSlownessWeight = _grabFirstElFloat3(
-        arrivalQML,
-        "horizontalSlownessWeight"
-      );
-      out.backazimuthWeight = _grabFirstElFloat3(
-        arrivalQML,
-        "backazimuthWeight"
-      );
-      out.earthModelID = _grabFirstElText3(arrivalQML, "earthModelID");
-      return out;
-    } else {
-      throw new Error(
-        "Arrival does not have phase or pickId: " + stringify(phase) + " " + stringify(pickId)
-      );
-    }
-  }
-};
-var Pick = class _Pick extends BaseElement {
-  constructor(time3, waveformID) {
-    super();
-    __publicField(this, "timeQuantity");
-    __publicField(this, "waveformID");
-    __publicField(this, "filterID");
-    __publicField(this, "methodID");
-    __publicField(this, "horizontalSlowness");
-    __publicField(this, "backazimuth");
-    __publicField(this, "slownessMethodID");
-    __publicField(this, "onset");
-    __publicField(this, "phaseHint");
-    __publicField(this, "polarity");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    if (time3 instanceof DateTime) {
-      this.timeQuantity = new Quantity(time3);
-    } else {
-      this.timeQuantity = time3;
-    }
-    this.waveformID = waveformID;
-  }
-  get time() {
-    return this.timeQuantity.value;
-  }
-  set time(t) {
-    if (t instanceof DateTime) {
-      this.timeQuantity.value = t;
-    } else {
-      this.timeQuantity = t;
-    }
-  }
-  /**
-   * Parses a QuakeML pick xml element into a Pick object.
-   *
-   * @param pickQML the pick xml Element
-   * @returns Pick instance
-   */
-  static createFromXml(pickQML) {
-    if (pickQML.localName !== "pick") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Pick: ${pickQML.localName}`
-      );
-    }
-    const time3 = _grabFirstElTimeQuantity(pickQML, "time");
-    if (!isDef(time3)) {
-      throw new Error("Missing time");
-    }
-    const waveformId = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(pickQML, "waveformID");
-    if (!isObject(waveformId)) {
-      throw new Error("pick missing waveformID");
-    }
-    const out = new _Pick(time3, waveformId);
-    out.populate(pickQML);
-    out.filterID = _grabFirstElText3(pickQML, "filterID");
-    out.methodID = _grabFirstElText3(pickQML, "methodID");
-    out.horizontalSlowness = _grabFirstElRealQuantity(
-      pickQML,
-      "horizontalSlowness"
-    );
-    out.backazimuth = _grabFirstElRealQuantity(pickQML, "backazimuth");
-    out.slownessMethodID = _grabFirstElText3(pickQML, "slownessMethodID");
-    out.onset = _grabFirstElText3(pickQML, "onset");
-    out.phaseHint = _grabFirstElText3(pickQML, "phaseHint");
-    out.polarity = _grabFirstElText3(pickQML, "polarity");
-    out.evaluationMode = _grabFirstElText3(pickQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(pickQML, "evaluationStatus");
-    return out;
-  }
-  get networkCode() {
-    return this.waveformID.networkCode;
-  }
-  get stationCode() {
-    return this.waveformID.stationCode;
-  }
-  get locationCode() {
-    return this.waveformID.locationCode || "--";
-  }
-  get channelCode() {
-    return this.waveformID.channelCode || "---";
-  }
-  isAtStation(station) {
-    return this.networkCode === station.networkCode && this.stationCode === station.stationCode;
-  }
-  isOnChannel(channel) {
-    return this.networkCode === channel.station.networkCode && this.stationCode === channel.station.stationCode && this.locationCode === channel.locationCode && this.channelCode === channel.channelCode;
-  }
-  toString() {
-    return stringify(this.time) + ` ${this.networkCode}.${this.stationCode}.${this.locationCode}.${this.channelCode}`;
-  }
-};
-var FocalMechanism = class _FocalMechanism extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "waveformIDList", []);
-    __publicField(this, "momentTensorList", []);
-    __publicField(this, "triggeringOrigin");
-    __publicField(this, "nodalPlanes");
-    __publicField(this, "principalAxes");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "stationPolarityCount");
-    __publicField(this, "misfit");
-    __publicField(this, "stationDistributionRatio");
-    __publicField(this, "methodID");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-  }
-  /**
-   * Parses a QuakeML focal mechanism xml element into a FocalMechanism object.
-   *
-   * @param focalMechQML the focal mechanism xml Element
-   * @param allOrigins origins already extracted from the xml for linking focal mechanisms with origins
-   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
-   * @returns FocalMechanism instance
-   */
-  static createFromXml(focalMechQML, allOrigins, allMagnitudes) {
-    if (focalMechQML.localName !== "focalMechanism") {
-      throw new Error(
-        `Cannot extract, not a QuakeML focalMechanism: ${focalMechQML.localName}`
-      );
-    }
-    const out = new _FocalMechanism();
-    out.populate(focalMechQML);
-    const waveformIDEls = Array.from(
-      focalMechQML.getElementsByTagNameNS(BED_NS, "waveformID")
-    );
-    out.waveformIDList = waveformIDEls.map(
-      (wid) => WaveformID.createFromXml(wid)
-    );
-    const momentTensorEls = Array.from(
-      focalMechQML.getElementsByTagNameNS(BED_NS, "momentTensor")
-    );
-    out.momentTensorList = momentTensorEls.map(
-      (mt) => MomentTensor.createFromXml(mt, allOrigins, allMagnitudes)
-    );
-    const triggeringOriginID = _grabFirstElText3(
-      focalMechQML,
-      "triggeringOriginID"
-    );
-    out.triggeringOrigin = allOrigins.find(
-      (o) => o.publicId === triggeringOriginID
-    );
-    if (triggeringOriginID && !out.triggeringOrigin) {
-      throw new Error("No origin with ID " + triggeringOriginID);
-    }
-    out.nodalPlanes = _grabFirstElType(
-      NodalPlanes.createFromXml.bind(NodalPlanes)
-    )(focalMechQML, "nodalPlanes");
-    out.principalAxes = _grabFirstElType(
-      PrincipalAxes.createFromXml.bind(PrincipalAxes)
-    )(focalMechQML, "principalAxes");
-    out.azimuthalGap = _grabFirstElFloat3(focalMechQML, "azimuthalGap");
-    out.stationPolarityCount = _grabFirstElInt3(
-      focalMechQML,
-      "stationPolarityCount"
-    );
-    out.misfit = _grabFirstElFloat3(focalMechQML, "misfit");
-    out.stationDistributionRatio = _grabFirstElFloat3(
-      focalMechQML,
-      "stationDistributionRatio"
-    );
-    out.methodID = _grabFirstElText3(focalMechQML, "methodID");
-    out.evaluationMode = _grabFirstElText3(focalMechQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(focalMechQML, "evaluationStatus");
-    return out;
-  }
-};
-var NodalPlanes = class _NodalPlanes {
-  constructor() {
-    __publicField(this, "nodalPlane1");
-    __publicField(this, "nodalPlane2");
-    __publicField(this, "preferredPlane");
-  }
-  /**
-   * Parses a QuakeML nodal planes xml element into a NodalPlanes object.
-   *
-   * @param nodalPlanesQML the nodal planes xml Element
-   * @returns NodalPlanes instance
-   */
-  static createFromXml(nodalPlanesQML) {
-    const out = new _NodalPlanes();
-    out.nodalPlane1 = _grabFirstElType(
-      NodalPlane.createFromXml.bind(NodalPlane)
-    )(nodalPlanesQML, "nodalPlane1");
-    out.nodalPlane2 = _grabFirstElType(
-      NodalPlane.createFromXml.bind(NodalPlane)
-    )(nodalPlanesQML, "nodalPlane2");
-    const preferredPlaneString = _grabAttribute3(
-      nodalPlanesQML,
-      "preferredPlane"
-    );
-    out.preferredPlane = isNonEmptyStringArg(preferredPlaneString) ? parseInt(preferredPlaneString) : void 0;
-    return out;
-  }
-};
-var NodalPlane = class _NodalPlane {
-  constructor(strike, dip, rake) {
-    __publicField(this, "strike");
-    __publicField(this, "dip");
-    __publicField(this, "rake");
-    this.strike = strike;
-    this.dip = dip;
-    this.rake = rake;
-  }
-  /**
-   * Parses a QuakeML nodal plane xml element into a NodalPlane object.
-   *
-   * @param nodalPlaneQML the nodal plane xml Element
-   * @returns NodalPlane instance
-   */
-  static createFromXml(nodalPlaneQML) {
-    const strike = _grabFirstElRealQuantity(nodalPlaneQML, "strike");
-    if (!isObject(strike)) {
-      throw new Error("nodal plane missing strike");
-    }
-    const dip = _grabFirstElRealQuantity(nodalPlaneQML, "dip");
-    if (!isObject(dip)) {
-      throw new Error("nodal plane missing dip");
-    }
-    const rake = _grabFirstElRealQuantity(nodalPlaneQML, "rake");
-    if (!isObject(rake)) {
-      throw new Error("nodal plane missing rake");
-    }
-    const out = new _NodalPlane(strike, dip, rake);
-    return out;
-  }
-};
-var PrincipalAxes = class _PrincipalAxes {
-  constructor(tAxis, pAxis) {
-    __publicField(this, "tAxis");
-    __publicField(this, "pAxis");
-    __publicField(this, "nAxis");
-    this.tAxis = tAxis;
-    this.pAxis = pAxis;
-  }
-  /**
-   * Parses a QuakeML princpalAxes element into a PrincipalAxes object.
-   *
-   * @param princpalAxesQML the princpalAxes xml Element
-   * @returns PrincipalAxes instance
-   */
-  static createFromXml(princpalAxesQML) {
-    if (princpalAxesQML.localName !== "principalAxes") {
-      throw new Error(
-        `Cannot extract, not a QuakeML princpalAxes: ${princpalAxesQML.localName}`
-      );
-    }
-    const tAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "tAxis"
-    );
-    if (!isObject(tAxis)) {
-      throw new Error("nodal plane missing tAxis");
-    }
-    const pAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "pAxis"
-    );
-    if (!isObject(pAxis)) {
-      throw new Error("nodal plane missing pAxis");
-    }
-    const out = new _PrincipalAxes(tAxis, pAxis);
-    out.nAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "nAxis"
-    );
-    return out;
-  }
-};
-var Axis = class _Axis {
-  constructor(azimuth, plunge, length) {
-    __publicField(this, "azimuth");
-    __publicField(this, "plunge");
-    __publicField(this, "length");
-    this.azimuth = azimuth;
-    this.plunge = plunge;
-    this.length = length;
-  }
-  /**
-   * Parses a QuakeML axis xml element into a Axis object.
-   *
-   * @param axisQML the axis xml Element
-   * @returns Axis instance
-   */
-  static createFromXml(axisQML) {
-    const azimuth = _grabFirstElRealQuantity(axisQML, "azimuth");
-    if (!isObject(azimuth)) {
-      throw new Error("nodal plane missing azimuth");
-    }
-    const plunge = _grabFirstElRealQuantity(axisQML, "plunge");
-    if (!isObject(plunge)) {
-      throw new Error("nodal plane missing plunge");
-    }
-    const length = _grabFirstElRealQuantity(axisQML, "length");
-    if (!isObject(length)) {
-      throw new Error("nodal plane missing length");
-    }
-    const out = new _Axis(azimuth, plunge, length);
-    return out;
-  }
-};
-var MomentTensor = class _MomentTensor extends BaseElement {
-  constructor(derivedOrigin) {
-    super();
-    __publicField(this, "dataUsedList", []);
-    __publicField(this, "derivedOrigin");
-    __publicField(this, "momentMagnitude");
-    __publicField(this, "scalarMoment");
-    __publicField(this, "tensor");
-    __publicField(this, "variance");
-    __publicField(this, "varianceReduction");
-    __publicField(this, "doubleCouple");
-    __publicField(this, "clvd");
-    __publicField(this, "iso");
-    __publicField(this, "greensFunctionID");
-    __publicField(this, "filterID");
-    __publicField(this, "sourceTimeFunction");
-    __publicField(this, "methodID");
-    __publicField(this, "category");
-    __publicField(this, "inversionType");
-    this.derivedOrigin = derivedOrigin;
-  }
-  /**
-   * Parses a QuakeML momentTensor xml element into a MomentTensor object.
-   *
-   * @param momentTensorQML the momentTensor xml Element
-   * @param allOrigins origins already extracted from the xml for linking moment tensors with origins
-   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
-   * @returns MomentTensor instance
-   */
-  static createFromXml(momentTensorQML, allOrigins, allMagnitudes) {
-    if (momentTensorQML.localName !== "momentTensor") {
-      throw new Error(
-        `Cannot extract, not a QuakeML momentTensor: ${momentTensorQML.localName}`
-      );
-    }
-    const derivedOriginID = _grabFirstElText3(
-      momentTensorQML,
-      "derivedOriginID"
-    );
-    if (!isNonEmptyStringArg(derivedOriginID)) {
-      throw new Error("momentTensor missing derivedOriginID");
-    }
-    const derivedOrigin = allOrigins.find(
-      (o) => o.publicId === derivedOriginID
-    );
-    if (!isDef(derivedOrigin)) {
-      throw new Error("No origin with ID " + derivedOriginID);
-    }
-    const out = new _MomentTensor(derivedOrigin);
-    out.populate(momentTensorQML);
-    const dataUsedEls = Array.from(
-      momentTensorQML.getElementsByTagNameNS(BED_NS, "dataUsed")
-    );
-    out.dataUsedList = dataUsedEls.map(DataUsed.createFromXml.bind(DataUsed));
-    const momentMagnitudeID = _grabFirstElText3(
-      momentTensorQML,
-      "momentMagnitudeID"
-    );
-    out.momentMagnitude = allMagnitudes.find(
-      (o) => o.publicId === momentMagnitudeID
-    );
-    if (momentMagnitudeID && !out.momentMagnitude) {
-      throw new Error("No magnitude with ID " + momentMagnitudeID);
-    }
-    try {
-      out.scalarMoment = _grabFirstElRealQuantity(
-        momentTensorQML,
-        "scalarMoment"
-      );
-    } catch (err) {
-      const scalMom = _grabFirstElFloat3(momentTensorQML, "scalarMoment");
-      if (scalMom != null) {
-        out.scalarMoment = new Quantity(scalMom);
-      } else {
-        warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
-      }
-      warn(`scalarMoment in momentTensor is invalid: ${_grabFirstEl2(momentTensorQML, "scalarMoment")}`);
-    }
-    out.tensor = _grabFirstElType(Tensor.createFromXml.bind(Tensor))(
-      momentTensorQML,
-      "tensor"
-    );
-    out.variance = _grabFirstElFloat3(momentTensorQML, "variance");
-    out.varianceReduction = _grabFirstElFloat3(
-      momentTensorQML,
-      "varianceReduction"
-    );
-    out.doubleCouple = _grabFirstElFloat3(momentTensorQML, "doubleCouple");
-    out.clvd = _grabFirstElFloat3(momentTensorQML, "clvd");
-    out.iso = _grabFirstElFloat3(momentTensorQML, "iso");
-    out.greensFunctionID = _grabFirstElText3(
-      momentTensorQML,
-      "greensFunctionID"
-    );
-    out.filterID = _grabFirstElText3(momentTensorQML, "filterID");
-    out.sourceTimeFunction = _grabFirstElType(
-      SourceTimeFunction.createFromXml.bind(SourceTimeFunction)
-    )(momentTensorQML, "sourceTimeFunction");
-    out.methodID = _grabFirstElText3(momentTensorQML, "methodID");
-    out.category = _grabFirstElText3(momentTensorQML, "category");
-    out.inversionType = _grabFirstElText3(momentTensorQML, "inversionType");
-    return out;
-  }
-};
-var Tensor = class _Tensor {
-  constructor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) {
-    __publicField(this, "Mrr");
-    __publicField(this, "Mtt");
-    __publicField(this, "Mpp");
-    __publicField(this, "Mrt");
-    __publicField(this, "Mrp");
-    __publicField(this, "Mtp");
-    this.Mrr = Mrr;
-    this.Mtt = Mtt;
-    this.Mpp = Mpp;
-    this.Mrt = Mrt;
-    this.Mrp = Mrp;
-    this.Mtp = Mtp;
-  }
-  /**
-   * Parses a QuakeML tensor xml element into a Tensor object.
-   *
-   * @param tensorQML the tensor xml Element
-   * @returns Tensor instance
-   */
-  static createFromXml(tensorQML) {
-    if (tensorQML.localName !== "tensor") {
-      throw new Error(
-        `Cannot extract, not a QuakeML tensor: ${tensorQML.localName}`
-      );
-    }
-    const Mrr = _grabFirstElRealQuantity(tensorQML, "Mrr");
-    if (!isObject(Mrr)) {
-      throw new Error("tensor missing Mrr");
-    }
-    const Mtt = _grabFirstElRealQuantity(tensorQML, "Mtt");
-    if (!isObject(Mtt)) {
-      throw new Error("tensor missing Mtt");
-    }
-    const Mpp = _grabFirstElRealQuantity(tensorQML, "Mpp");
-    if (!isObject(Mpp)) {
-      throw new Error("tensor missing Mpp");
-    }
-    const Mrt = _grabFirstElRealQuantity(tensorQML, "Mrt");
-    if (!isObject(Mrt)) {
-      throw new Error("tensor missing Mrt");
-    }
-    const Mrp = _grabFirstElRealQuantity(tensorQML, "Mrp");
-    if (!isObject(Mrp)) {
-      throw new Error("tensor missing Mrp");
-    }
-    const Mtp = _grabFirstElRealQuantity(tensorQML, "Mtp");
-    if (!isObject(Mtp)) {
-      throw new Error("tensor missing Mtp");
-    }
-    const out = new _Tensor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp);
-    return out;
-  }
-};
-var SourceTimeFunction = class _SourceTimeFunction {
-  constructor(type, duration3) {
-    __publicField(this, "type");
-    __publicField(this, "duration");
-    __publicField(this, "riseTime");
-    __publicField(this, "decayTime");
-    this.type = type;
-    this.duration = duration3;
-  }
-  /**
-   * Parses a QuakeML sourceTimeFunction xml element into a SourceTimeFunction object.
-   *
-   * @param sourceTimeFunctionQML the sourceTimeFunction xml Element
-   * @returns SourceTimeFunction instance
-   */
-  static createFromXml(sourceTimeFunctionQML) {
-    if (sourceTimeFunctionQML.localName !== "sourceTimeFunction") {
-      throw new Error(
-        `Cannot extract, not a QuakeML sourceTimeFunction: ${sourceTimeFunctionQML.localName}`
-      );
-    }
-    const type = _grabFirstElText3(sourceTimeFunctionQML, "type");
-    if (!isNonEmptyStringArg(type)) {
-      throw new Error("sourceTimeFunction missing type");
-    }
-    const duration3 = _grabFirstElFloat3(sourceTimeFunctionQML, "duration");
-    if (!isDef(duration3)) {
-      throw new Error("sourceTimeFunction missing duration");
-    }
-    const out = new _SourceTimeFunction(type, duration3);
-    out.riseTime = _grabFirstElFloat3(sourceTimeFunctionQML, "riseTime");
-    out.decayTime = _grabFirstElFloat3(sourceTimeFunctionQML, "decayTime");
-    return out;
-  }
-};
-var DataUsed = class _DataUsed {
-  constructor(waveType) {
-    __publicField(this, "waveType");
-    __publicField(this, "stationCount");
-    __publicField(this, "componentCount");
-    __publicField(this, "shortestPeriod");
-    __publicField(this, "longestPeriod");
-    this.waveType = waveType;
-  }
-  /**
-   * Parses a QuakeML dataUsed xml element into a DataUsed object.
-   *
-   * @param dataUsedQML the dataUsed xml Element
-   * @returns SourceTimeFunction instance
-   */
-  static createFromXml(dataUsedQML) {
-    if (dataUsedQML.localName !== "dataUsed") {
-      throw new Error(
-        `Cannot extract, not a QuakeML dataUsed: ${dataUsedQML.localName}`
-      );
-    }
-    const waveType = _grabFirstElText3(dataUsedQML, "waveType");
-    if (!isNonEmptyStringArg(waveType)) {
-      throw new Error("dataUsed missing waveType");
-    }
-    const out = new _DataUsed(waveType);
-    out.stationCount = _grabFirstElInt3(dataUsedQML, "stationCount");
-    out.componentCount = _grabFirstElInt3(dataUsedQML, "componentCount");
-    out.shortestPeriod = _grabFirstElFloat3(dataUsedQML, "shortestPeriod");
-    out.longestPeriod = _grabFirstElFloat3(dataUsedQML, "longestPeriod");
-    return out;
-  }
-};
-var WaveformID = class _WaveformID {
-  constructor(networkCode, stationCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
-    __publicField(this, "channelCode");
-    __publicField(this, "locationCode");
-    this.networkCode = networkCode;
-    this.stationCode = stationCode;
-  }
-  /**
-   * Parses a QuakeML waveform ID xml element into a WaveformID object.
-   *
-   * @param waveformQML the waveform ID xml Element
-   * @returns WaveformID instance
-   */
-  static createFromXml(waveformQML) {
-    if (waveformQML.localName !== "waveformID") {
-      throw new Error(
-        `Cannot extract, not a QuakeML waveform ID: ${waveformQML.localName}`
-      );
-    }
-    const networkCode = _grabAttribute3(waveformQML, "networkCode");
-    if (!isNonEmptyStringArg(networkCode)) {
-      throw new Error("waveformID missing networkCode");
-    }
-    const stationCode = _grabAttribute3(waveformQML, "stationCode");
-    if (!isNonEmptyStringArg(stationCode)) {
-      throw new Error("waveformID missing stationCode");
-    }
-    const out = new _WaveformID(networkCode, stationCode);
-    out.channelCode = _grabAttribute3(waveformQML, "channelCode");
-    out.locationCode = _grabAttribute3(waveformQML, "locationCode");
-    return out;
-  }
-  toString() {
-    return `${this.networkCode}.${this.stationCode}.${this.locationCode || "--"}.${this.channelCode || "---"}`;
-  }
-};
-var Quantity = class _Quantity {
-  constructor(value) {
-    __publicField(this, "value");
-    __publicField(this, "uncertainty");
-    __publicField(this, "lowerUncertainty");
-    __publicField(this, "upperUncertainty");
-    __publicField(this, "confidenceLevel");
-    this.value = value;
-  }
-  /**
-   * Parses a QuakeML quantity xml element into a Quantity object.
-   *
-   * @param quantityQML the quantity xml Element
-   * @param grab a callback to obtain the value
-   * @param grabUncertainty a callback to obtain the uncertainties
-   * @returns Quantity instance
-   */
-  static _createFromXml(quantityQML, grab, grabUncertainty) {
-    const value = grab(quantityQML, "value");
-    if (value === void 0) {
-      throw new Error("missing value");
-    }
-    const out = new _Quantity(value);
-    out.uncertainty = grabUncertainty(quantityQML, "uncertainty");
-    out.lowerUncertainty = grabUncertainty(quantityQML, "lowerUncertainty");
-    out.upperUncertainty = grabUncertainty(quantityQML, "upperUncertainty");
-    out.confidenceLevel = _grabFirstElFloat3(quantityQML, "confidenceLevel");
-    return out;
-  }
-  /**
-   * Parses a QuakeML real quantity xml element into a RealQuantity object.
-   *
-   * @param realQuantityQML the real quantity xml Element
-   * @returns RealQuantity instance
-   */
-  static createRealQuantityFromXml(realQuantityQML) {
-    return _Quantity._createFromXml(
-      realQuantityQML,
-      _grabFirstElFloat3,
-      _grabFirstElFloat3
-    );
-  }
-  /**
-   * Parses a QuakeML integer quantity xml element into a RealQuantity object.
-   *
-   * @param integerQuantityQML the integer quantity xml Element
-   * @returns IntegerQuantity instance
-   */
-  static createIntegerQuantityFromXml(integerQuantityQML) {
-    return _Quantity._createFromXml(
-      integerQuantityQML,
-      _grabFirstElFloat3,
-      _grabFirstElInt3
-    );
-  }
-  /**
-   * Parses a QuakeML time quantity xml element into a TimeQuantity object.
-   *
-   * @param timeQuantityQML the time quantity xml Element
-   * @returns TimeQuantity instance
-   */
-  static createTimeQuantityFromXml(timeQuantityQML) {
-    return _Quantity._createFromXml(
-      timeQuantityQML,
-      _grabFirstElDateTime,
-      _grabFirstElFloat3
-    );
-  }
-};
-var Comment2 = class _Comment {
-  constructor(text) {
-    __publicField(this, "text");
-    __publicField(this, "creationInfo");
-    this.text = text;
-  }
-  /**
-   * Parses a QuakeML comment xml element into a Comment object.
-   *
-   * @param commentQML the comment xml Element
-   * @returns Comment instance
-   */
-  static createFromXml(commentQML) {
-    const text = _grabFirstElText3(commentQML, "text");
-    if (text === void 0) {
-      throw new Error("missing value");
-    }
-    const out = new _Comment(text);
-    out.creationInfo = _grabFirstElCreationInfo(commentQML, "creationInfo");
-    return out;
-  }
-};
-var CreationInfo = class _CreationInfo {
-  constructor() {
-    __publicField(this, "agencyID");
-    __publicField(this, "agencyURI");
-    __publicField(this, "author");
-    __publicField(this, "authorURI");
-    __publicField(this, "creationTime");
-    __publicField(this, "version");
-  }
-  /**
-   * Parses a QuakeML creation info xml element into a CreationInfo object.
-   *
-   * @param creationInfoQML the creation info xml Element
-   * @returns CreationInfo instance
-   */
-  static createFromXml(creationInfoQML) {
-    const out = new _CreationInfo();
-    out.agencyID = _grabFirstElText3(creationInfoQML, "agencyID");
-    out.agencyURI = _grabFirstElText3(creationInfoQML, "agencyURI");
-    out.author = _grabFirstElText3(creationInfoQML, "author");
-    out.authorURI = _grabFirstElText3(creationInfoQML, "authorURI");
-    out.creationTime = _grabFirstElDateTime(creationInfoQML, "creationTime");
-    out.version = _grabFirstElText3(creationInfoQML, "version");
-    return out;
-  }
-};
-function parseQuakeML(rawXml, host) {
-  const top2 = rawXml.documentElement;
-  if (!top2) {
-    throw new Error("Can't get documentElement");
-  }
-  const eventParametersArray = Array.from(
-    top2.getElementsByTagName("eventParameters")
-  );
-  if (eventParametersArray.length !== 1) {
-    throw new Error(
-      `Document has ${eventParametersArray.length} eventParameters elements`
-    );
-  }
-  return EventParameters.createFromXml(eventParametersArray[0], host);
-}
-function createQuakeFromValues(publicId, time3, latitude, longitude, depth_meter) {
-  const origin = new Origin(
-    new Quantity(time3),
-    new Quantity(latitude),
-    new Quantity(longitude)
-  );
-  origin.depth = new Quantity(depth_meter);
-  const quake = new Quake();
-  quake.publicId = publicId;
-  quake.originList.push(origin);
-  quake.preferredOrigin = origin;
-  return quake;
-}
-function fetchQuakeML(url2, timeoutSec2 = 10, nodata = 204) {
-  const fetchInit = defaultFetchInitObj(XML_MIME);
-  const host = new URL(url2).hostname;
-  return doFetchWithTimeout(url2, fetchInit, timeoutSec2 * 1e3).then((response) => {
-    if (response.status === 200) {
-      return response.text();
-    } else if (response.status === 204 || isDef(nodata) && response.status === nodata) {
-      return FAKE_EMPTY_XML2;
-    } else {
-      throw new Error(`Status not successful: ${response.status}`);
-    }
-  }).then(function(rawXmlText) {
-    return new DOMParser().parseFromString(rawXmlText, XML_MIME);
-  }).then((rawXml) => {
-    return parseQuakeML(rawXml, host);
-  });
-}
-function mightBeQuakeML(buf) {
-  if (!mightBeXml(buf)) {
-    return false;
-  }
-  const initialChars = dataViewToString(new DataView(buf.slice(0, 100))).trimStart();
-  if (!initialChars.includes("quakeml")) {
-    return false;
-  }
-  return true;
-}
-var _grabAllElComment = function(xml, tagName) {
-  const out = [];
-  if (isObject(xml)) {
-    const elList = Array.from(xml.children).filter(
-      (e) => e.tagName === tagName
-    );
-    for (const el of elList) {
-      if (isObject(el)) {
-        out.push(Comment2.createFromXml(el));
-      }
-    }
-  }
-  return out;
-};
-var _grabFirstElNS = function(xml, namespace, tagName) {
-  let out = null;
-  if (isObject(xml)) {
-    const elList = xml.getElementsByTagNameNS(namespace, tagName);
-    for (let idx = 0; idx < elList.length; idx++) {
-      const e = elList.item(idx);
-      if (e != null && e.parentElement === xml) {
-        if (e) {
-          out = e;
-          break;
-        }
-      }
-    }
-  }
-  return out;
-};
-var _grabFirstEl2 = function(xml, tagName) {
-  if (isObject(xml)) {
-    const elList = Array.from(xml.children).filter(
-      (e) => e.tagName === tagName
-    );
-    if (elList.length > 0) {
-      const e = elList[0];
-      if (e) {
-        return e;
-      }
-    }
-  }
-  return void 0;
-};
-var _grabFirstElText3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstEl2(xml, tagName);
-  if (isObject(el)) {
-    out = el.textContent;
-    if (out === null) {
-      out = void 0;
-    }
-  }
-  return out;
-};
-var _grabFirstElBool = function(xml, tagName) {
-  const el = _grabFirstElText3(xml, tagName);
-  if (!isStringArg(el)) {
-    return void 0;
-  }
-  switch (el) {
-    case "true":
-    case "1":
-      return true;
-    case "false":
-    case "0":
-      return false;
-  }
-  throw new Error("Invalid boolean: " + el);
-};
-var _grabFirstElInt3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = parseInt(el);
-  }
-  return out;
-};
-var _grabFirstElFloat3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = parseFloat(el);
-  }
-  return out;
-};
-var _grabFirstElDateTime = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = isoToDateTime(el);
-  }
-  return out;
-};
-var _grabFirstElType = function(createFromXml) {
-  return function(xml, tagName) {
-    let out = void 0;
-    const el = _grabFirstEl2(xml, tagName);
-    if (isObject(el)) {
-      out = createFromXml(el);
-    }
-    return out;
-  };
-};
-var _grabFirstElRealQuantity = _grabFirstElType(
-  Quantity.createRealQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElIntegerQuantity = _grabFirstElType(
-  Quantity.createIntegerQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElTimeQuantity = _grabFirstElType(
-  Quantity.createTimeQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElCreationInfo = _grabFirstElType(
-  CreationInfo.createFromXml.bind(CreationInfo)
-);
-var _grabAttribute3 = function(xml, tagName) {
-  let out = void 0;
-  if (isObject(xml)) {
-    const a = xml.getAttribute(tagName);
-    if (isStringArg(a)) {
-      out = a;
-    }
-  }
-  return out;
-};
-var _requireAttribute3 = function _requireAttribute4(xml, tagName) {
-  const out = _grabAttribute3(xml, tagName);
-  if (typeof out !== "string") {
-    throw new Error(`Attribute ${tagName} not found.`);
-  }
-  return out;
-};
-var _grabAttributeNS2 = function(xml, namespace, tagName) {
-  let out = void 0;
-  if (isObject(xml)) {
-    const a = xml.getAttributeNS(namespace, tagName);
-    if (isStringArg(a)) {
-      out = a;
-    }
-  }
-  return out;
-};
-var parseUtil2 = {
-  _grabFirstEl: _grabFirstEl2,
-  _grabFirstElNS,
-  _grabFirstElText: _grabFirstElText3,
-  _grabFirstElFloat: _grabFirstElFloat3,
-  _grabFirstElInt: _grabFirstElInt3,
-  _grabAttribute: _grabAttribute3,
-  _requireAttribute: _requireAttribute3,
-  _grabAttributeNS: _grabAttributeNS2
-};
-
-// src/mseed3eh.ts
 var STD_EH = "bag";
 function ehToQuake(exHead) {
   const bag = extractBagEH(exHead);
@@ -50980,7 +50672,7 @@ function isValidBagJsonEHType(v) {
   return true;
 }
 
-// src/mseed3.ts
+// src/mseed3.mts
 var MINISEED_THREE_MIME = "application/vnd.fdsn.mseed3";
 var UNKNOWN_DATA_VERSION = 0;
 var CRC_OFFSET = 28;
@@ -50996,7 +50688,7 @@ function toMSeed3(seis, extraHeaders) {
   for (const seg of seis.segments) {
     const header = new MSeed3Header();
     let rawData;
-    let encoding = 0;
+    let encoding;
     if (seg.isEncoded()) {
       const encoded = seg.getEncoded();
       if (encoded.length === 1) {
@@ -51128,9 +50820,6 @@ function mightBeMSeed3Records(arrayBuffer) {
 }
 var MSeed3Record = class _MSeed3Record {
   constructor(header, extraHeaders, rawData) {
-    __publicField(this, "header");
-    __publicField(this, "extraHeaders");
-    __publicField(this, "rawData");
     this.header = header;
     this.rawData = rawData;
     this.extraHeaders = extraHeaders;
@@ -51290,25 +50979,6 @@ var MSeed3Record = class _MSeed3Record {
 };
 var MSeed3Header = class _MSeed3Header {
   constructor() {
-    __publicField(this, "recordIndicator");
-    __publicField(this, "formatVersion");
-    __publicField(this, "flags");
-    __publicField(this, "nanosecond");
-    __publicField(this, "year");
-    __publicField(this, "dayOfYear");
-    __publicField(this, "hour");
-    __publicField(this, "minute");
-    __publicField(this, "second");
-    __publicField(this, "encoding");
-    __publicField(this, "sampleRateOrPeriod");
-    __publicField(this, "numSamples");
-    __publicField(this, "crc");
-    __publicField(this, "publicationVersion");
-    __publicField(this, "identifierLength");
-    __publicField(this, "extraHeadersLength");
-    __publicField(this, "identifier");
-    __publicField(this, "extraHeaders");
-    __publicField(this, "dataLength");
     this.recordIndicator = "MS";
     this.formatVersion = 3;
     this.flags = 0;
@@ -51490,7 +51160,7 @@ var MSeed3Header = class _MSeed3Header {
    */
   getStartFieldsAsISO(trimMicroNano = true) {
     const d = this.startAsDateTime().set({ millisecond: 0 }).toISO({ includeOffset: false, suppressMilliseconds: true });
-    let fracSec = "";
+    let fracSec;
     if (trimMicroNano && this.nanosecond % 1e3 === 0) {
       fracSec = padZeros(this.nanosecond / 1e3, 6);
     } else {
@@ -51685,7 +51355,6 @@ function mergeSegments2(drList) {
   }
   if (contig.length > 0) {
     out.push(createSeismogramSegment2(contig));
-    contig = [];
   }
   return out;
 }
@@ -52088,11 +51757,6 @@ function calculateCRC32C(buf, initial = 0) {
   let crc = (initial | 0) ^ -1;
   for (let i = 0; i < ubuf.length; i++) {
     crc = kCRCTable[(crc ^ ubuf[i]) & 255] ^ crc >>> 8;
-    let tmp = crc;
-    tmp = (tmp ^ -1) >>> 0;
-    if (tmp < 0) {
-      tmp = 4294967295 + tmp + 1;
-    }
   }
   return (crc ^ -1) >>> 0;
 }
@@ -52104,8 +51768,8 @@ function crcToHexString(crc) {
   return "0x" + s2;
 }
 
-// src/datalink.ts
-var WS_DATALINK_SUBPROTOCOL = "DataLink1.0";
+// src/datalink.mts
+var WS_DATALINK_SUBPROTOCOL = "DataLink1.1";
 var MODE = /* @__PURE__ */ ((MODE2) => {
   MODE2["Query"] = "QUERY";
   MODE2["Stream"] = "STREAM";
@@ -52127,7 +51791,8 @@ var ENDSTREAM = "ENDSTREAM";
 var MSEED_TYPE = "/MSEED";
 var MSEED3_TYPE = "/MSEED3";
 var JSON_TYPE = "/JSON";
-var IRIS_RINGSERVER_URL = "wss://rtserve.iris.washington.edu/datalink";
+var EARTHSCOPE_RINGSERVER_URL = "wss://rtserve.earthscope.org/datalink";
+var IRIS_RINGSERVER_URL = EARTHSCOPE_RINGSERVER_URL;
 function extractDLProto(lines) {
   for (let line of lines) {
     line = line.trim();
@@ -52145,31 +51810,15 @@ var defaultHandleResponse = function(dlResponse) {
 };
 var DataLinkConnection = class _DataLinkConnection {
   constructor(url2, packetHandler, errorHandler) {
-    __publicField(this, "url");
-    /** @private */
-    __publicField(this, "_mode");
-    __publicField(this, "packetHandler");
-    __publicField(this, "errorHandler");
-    __publicField(this, "closeHandler");
-    __publicField(this, "serverId");
-    __publicField(this, "clientIdNum");
-    __publicField(this, "programname");
-    __publicField(this, "username");
-    __publicField(this, "architecture");
-    /** @private */
-    __publicField(this, "_responseResolve");
-    /** @private */
-    __publicField(this, "_responseReject");
-    __publicField(this, "webSocket");
-    __publicField(this, "subprotocol");
-    __publicField(this, "dlproto");
     this.dlproto = "1.0";
     this.webSocket = null;
     this.subprotocol = WS_DATALINK_SUBPROTOCOL;
-    this.url = url2 ? url2 : IRIS_RINGSERVER_URL;
+    this.url = url2 ? url2 : EARTHSCOPE_RINGSERVER_URL;
     this._mode = "QUERY" /* Query */;
     this.packetHandler = packetHandler;
     this.errorHandler = errorHandler;
+    this.logCommandFn = (msg) => {
+    };
     this.closeHandler = null;
     this.serverId = null;
     this.clientIdNum = Math.floor(Math.random() * MAX_PROC_NUM) + 1;
@@ -52194,13 +51843,12 @@ var DataLinkConnection = class _DataLinkConnection {
    */
   connect() {
     if (this.webSocket) {
+      this.webSocket.onclose = (closeEvent) => {
+      };
       this.webSocket.close();
       this.webSocket = null;
     }
     return new Promise((resolve, reject) => {
-      if (this.webSocket) {
-        this.webSocket.close();
-      }
       const webSocket = new WebSocket(this.url, this.subprotocol);
       this.webSocket = webSocket;
       webSocket.binaryType = "arraybuffer";
@@ -52225,7 +51873,8 @@ var DataLinkConnection = class _DataLinkConnection {
     }).then((datalink) => {
       return datalink.sendId();
     }).catch((e) => {
-      if (!this.webSocket?.protocol || this.webSocket.protocol.length === 0) {
+      console.error(e);
+      if (this.webSocket && (!this.webSocket?.protocol || this.webSocket.protocol.length === 0)) {
         throw new Error(`fail to create websocket, possible due to subprotocol: sent subprotocol=${this.subprotocol} received empty`);
       }
       throw e;
@@ -52255,7 +51904,12 @@ var DataLinkConnection = class _DataLinkConnection {
     this._mode = "STREAM" /* Stream */;
     return this.awaitDLCommand(STREAM, "").then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Switches back to query mode to enable commands to be sent to the ringserver.
@@ -52294,7 +51948,12 @@ var DataLinkConnection = class _DataLinkConnection {
       this.architecture
     ).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    ).then((dlResponse) => {
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    }).then((dlResponse) => {
       if (dlResponse.type === "ID") {
         this.serverId = "" + dlResponse.message;
         const lines = this.serverId.split(/\r?\n/g);
@@ -52357,7 +52016,7 @@ var DataLinkConnection = class _DataLinkConnection {
    */
   sendDLBinary(header, data) {
     const rawPacket = this.encodeDL(header, data);
-    if (this.webSocket) {
+    if (this.webSocket != null) {
       this.webSocket.send(rawPacket);
     } else {
       throw new Error("WebSocket has been closed.");
@@ -52392,10 +52051,10 @@ var DataLinkConnection = class _DataLinkConnection {
       this._responseResolve = null;
       this._responseReject = null;
       return response;
-    }).catch((error48) => {
+    }).catch((error51) => {
       this._responseResolve = null;
       this._responseReject = null;
-      throw error48;
+      throw error51;
     });
     return promise2;
   }
@@ -52408,6 +52067,9 @@ var DataLinkConnection = class _DataLinkConnection {
    * @returns promise to server's response
    */
   awaitDLCommand(command, dataString) {
+    if (this.logCommandFn) {
+      this.logCommandFn(`${command} ${dataString != null ? dataString : ""}`);
+    }
     return this.awaitDLBinary(command, stringToUint8Array(dataString));
   }
   /**
@@ -52466,7 +52128,12 @@ var DataLinkConnection = class _DataLinkConnection {
     const command = `ID ${programname}:${username}:${processid}:${architecture}`;
     return this.awaitDLCommand(command).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Send info command for infoType.
@@ -52478,7 +52145,12 @@ var DataLinkConnection = class _DataLinkConnection {
     const command = `INFO ${infoType}`;
     return this.awaitDLCommand(command).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   infoStatus() {
     return this.info("STATUS").then((daResp) => {
@@ -52504,7 +52176,12 @@ var DataLinkConnection = class _DataLinkConnection {
   positionAfter(time3) {
     return this.positionAfterHPTime(dateTimeToHPTime(time3)).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Send position after command.
@@ -52516,7 +52193,12 @@ var DataLinkConnection = class _DataLinkConnection {
     const command = `POSITION AFTER ${hpTime}`;
     return this.awaitDLCommand(command).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Send match command.
@@ -52528,7 +52210,12 @@ var DataLinkConnection = class _DataLinkConnection {
     const command = `MATCH`;
     return this.awaitDLCommand(command, pattern).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Send reject command.
@@ -52540,7 +52227,12 @@ var DataLinkConnection = class _DataLinkConnection {
     const command = `REJECT ${pattern}`;
     return this.awaitDLCommand(command).then(
       (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
+    ).then((dlResp) => {
+      if (this.logCommandFn) {
+        this.logCommandFn(dlResp.message);
+      }
+      return dlResp;
+    });
   }
   /**
    * Read a single packet for the given id.
@@ -52611,22 +52303,19 @@ var DataLinkConnection = class _DataLinkConnection {
    * @private
    * @param   error the error
    */
-  handleError(error48) {
+  handleError(error51) {
     if (this._responseReject) {
-      this._responseReject(error48);
+      this._responseReject(error51);
     }
     if (this.errorHandler) {
-      this.errorHandler(error48);
+      this.errorHandler(error51);
     } else {
-      log("datalink handleError: " + error48.message);
+      log("datalink handleError: " + error51.message);
     }
   }
 };
 var DataLinkResponse = class _DataLinkResponse {
   constructor(type, value, message) {
-    __publicField(this, "type");
-    __publicField(this, "value");
-    __publicField(this, "message");
     this.type = type;
     this.value = value;
     this.message = message;
@@ -52660,17 +52349,6 @@ var DataLinkResponse = class _DataLinkResponse {
 };
 var DataLinkPacket = class {
   constructor(header, dataview) {
-    __publicField(this, "header");
-    __publicField(this, "data");
-    __publicField(this, "streamId");
-    __publicField(this, "pktid");
-    __publicField(this, "hppackettime");
-    __publicField(this, "hppacketstart");
-    __publicField(this, "hppacketend");
-    __publicField(this, "dataSize");
-    __publicField(this, "_miniseed");
-    __publicField(this, "_mseed3");
-    __publicField(this, "_json");
     this._miniseed = null;
     this._mseed3 = null;
     this._json = null;
@@ -52791,9 +52469,6 @@ var DataLinkPacket = class {
 };
 var DataLinkIdStats = class _DataLinkIdStats {
   constructor(version3, serverId, capabilities) {
-    __publicField(this, "version");
-    __publicField(this, "serverId");
-    __publicField(this, "capabilities");
     this.version = version3;
     this.serverId = serverId;
     this.capabilities = capabilities;
@@ -52822,28 +52497,6 @@ Capabilities="${this.capabilities.join(" ")}"`;
 };
 var DataLinkStats = class _DataLinkStats {
   constructor(startTime, ringVersion, ringSize, packetSize, maximumPacketID, maximumPackets, memoryMappedRing, volatileRing, totalConnections, totalStreams, txPacketRate, txByteRate, rxPacketRate, rxByteRate, earliestPacketID, earliestPacketCreationTime, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketCreationTime, latestPacketDataStartTime, latestPacketDataEndTime) {
-    __publicField(this, "startTime");
-    __publicField(this, "ringVersion");
-    __publicField(this, "ringSize");
-    __publicField(this, "packetSize");
-    __publicField(this, "maximumPacketID");
-    __publicField(this, "maximumPackets");
-    __publicField(this, "memoryMappedRing");
-    __publicField(this, "volatileRing");
-    __publicField(this, "totalConnections");
-    __publicField(this, "totalStreams");
-    __publicField(this, "txPacketRate");
-    __publicField(this, "txByteRate");
-    __publicField(this, "rxPacketRate");
-    __publicField(this, "rxByteRate");
-    __publicField(this, "earliestPacketID");
-    __publicField(this, "earliestPacketCreationTime");
-    __publicField(this, "earliestPacketDataStartTime");
-    __publicField(this, "earliestPacketDataEndTime");
-    __publicField(this, "latestPacketID");
-    __publicField(this, "latestPacketCreationTime");
-    __publicField(this, "latestPacketDataStartTime");
-    __publicField(this, "latestPacketDataEndTime");
     this.startTime = startTime;
     this.ringVersion = ringVersion;
     this.ringSize = ringSize;
@@ -52947,9 +52600,6 @@ LatestPacketDataEndTime="${this.latestPacketDataEndTime.toISO()}"
 };
 var ThreadStat = class _ThreadStat {
   constructor(flags, type, port) {
-    __publicField(this, "flags");
-    __publicField(this, "type");
-    __publicField(this, "port");
     this.flags = flags;
     this.type = type;
     this.port = port;
@@ -52974,10 +52624,7 @@ var ThreadStat = class _ThreadStat {
 };
 var StatusResponse = class _StatusResponse {
   constructor(idStats, datalinkStats, threadStats) {
-    __publicField(this, "idStats");
-    __publicField(this, "datalinkStats");
-    __publicField(this, "threadStats");
-    __publicField(this, "rawXml", "");
+    this.rawXml = "";
     this.idStats = idStats;
     this.datalinkStats = datalinkStats;
     this.threadStats = threadStats;
@@ -53018,14 +52665,6 @@ ${this.threadStats.join("\n")}`;
 };
 var StreamStat = class _StreamStat {
   constructor(name, earliestPacketID, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketDataStartTime, latestPacketDataEndTime, dataLatency) {
-    __publicField(this, "name");
-    __publicField(this, "earliestPacketID");
-    __publicField(this, "earliestPacketDataStartTime");
-    __publicField(this, "earliestPacketDataEndTime");
-    __publicField(this, "latestPacketID");
-    __publicField(this, "latestPacketDataStartTime");
-    __publicField(this, "latestPacketDataEndTime");
-    __publicField(this, "dataLatency");
     this.name = name;
     this.earliestPacketID = earliestPacketID;
     this.earliestPacketDataStartTime = earliestPacketDataStartTime;
@@ -53076,8 +52715,6 @@ var StreamStat = class _StreamStat {
 };
 var StreamsResponse = class _StreamsResponse {
   constructor(datalinkStats, streams) {
-    __publicField(this, "datalinkStats");
-    __publicField(this, "streams");
     this.datalinkStats = datalinkStats;
     this.streams = streams;
   }
@@ -53145,7 +52782,6 @@ var StreamsResponse = class _StreamsResponse {
 };
 var ConnectionsResponse = class _ConnectionsResponse {
   constructor(daliXML) {
-    __publicField(this, "daliXML");
     this.daliXML = daliXML;
   }
   static fromDatalinkResponse(daliResp) {
@@ -53186,7 +52822,7 @@ function stringToUint8Array(dataString) {
   return binaryData;
 }
 
-// src/seedlink4.ts
+// src/seedlink4.mts
 var seedlink4_exports = {};
 __export(seedlink4_exports, {
   AUTH_COMMAND: () => AUTH_COMMAND,
@@ -53232,15 +52868,6 @@ var SL_OK = "OK";
 var useLittleEndian = true;
 var SEPacket = class _SEPacket {
   constructor(dataFormat, dataSubformat, payloadLength, sequence, stationId) {
-    __publicField(this, "dataFormat");
-    __publicField(this, "dataSubformat");
-    __publicField(this, "payloadLength");
-    __publicField(this, "sequence");
-    __publicField(this, "stationId");
-    __publicField(this, "_miniseed");
-    __publicField(this, "_mseed3");
-    __publicField(this, "_json");
-    __publicField(this, "_rawPayload");
     this.dataFormat = dataFormat;
     this.dataSubformat = dataSubformat;
     this.payloadLength = payloadLength;
@@ -53367,21 +52994,13 @@ function createDataTimeCommand(startTime, endTime) {
 }
 var SeedlinkConnection = class {
   constructor(url2, requestConfig, receivePacketFn, errorHandler) {
-    __publicField(this, "url");
-    __publicField(this, "requestConfig");
-    __publicField(this, "receivePacketFn");
-    __publicField(this, "errorHandler");
-    __publicField(this, "closeFn");
-    __publicField(this, "webSocket");
-    __publicField(this, "subprotocol");
-    __publicField(this, "endCommand");
-    __publicField(this, "agent");
-    __publicField(this, "agentVersion");
     this.webSocket = null;
     this.url = url2;
     this.requestConfig = requestConfig;
     this.receivePacketFn = receivePacketFn;
     this.errorHandler = errorHandler;
+    this.logCommandFn = (msg) => {
+    };
     this.closeFn = null;
     this.endCommand = END_COMMAND;
     this.agent = "seisplotjs";
@@ -53421,8 +53040,12 @@ var SeedlinkConnection = class {
       this.webSocket.onmessage = (event) => {
         this.handle(event);
       };
-      this.webSocket.send(`${this.endCommand}\r
-`);
+      const cmd = `${this.endCommand}\r
+`;
+      if (this.logCommandFn) {
+        this.logCommandFn(cmd);
+      }
+      this.webSocket.send(cmd);
       return val;
     }).catch((err) => {
       this.close();
@@ -53436,6 +53059,8 @@ var SeedlinkConnection = class {
   }
   interactiveConnect() {
     if (this.webSocket) {
+      this.webSocket.onclose = (closeEvent) => {
+      };
       this.webSocket.close();
       this.webSocket = null;
     }
@@ -53540,6 +53165,9 @@ var SeedlinkConnection = class {
           if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data));
+            if (this.logCommandFn) {
+              this.logCommandFn(replyMsg);
+            }
             const lines = replyMsg.trim().split("\r");
             if (lines.length === 2) {
               resolve(lines);
@@ -53551,7 +53179,11 @@ var SeedlinkConnection = class {
             this.errorHandler(new Error("event.data is not ArrayBufferLike"));
           }
         };
-        webSocket.send(`${HELLO_COMMAND}\r`);
+        const cmd = `${HELLO_COMMAND}\r`;
+        if (this.logCommandFn) {
+          this.logCommandFn(cmd);
+        }
+        webSocket.send(cmd);
       } else {
         reject(new Error("webSocket has been closed"));
       }
@@ -53591,6 +53223,9 @@ var SeedlinkConnection = class {
           if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data)).trim();
+            if (mythis.logCommandFn) {
+              mythis.logCommandFn(replyMsg);
+            }
             if (replyMsg === SL_OK) {
               resolve(replyMsg);
             } else {
@@ -53601,6 +53236,9 @@ var SeedlinkConnection = class {
             mythis.errorHandler(new Error("event.data is not ArrayBufferLike"));
           }
         };
+        if (mythis.logCommandFn) {
+          mythis.logCommandFn(mycmd);
+        }
         webSocket.send(mycmd + "\r\n");
       } else {
         reject(new Error("webSocket has been closed"));
@@ -53614,16 +53252,16 @@ var SeedlinkConnection = class {
    * @private
    * @param   error the error
    */
-  handleError(error48) {
+  handleError(error51) {
     if (this.errorHandler) {
-      this.errorHandler(error48);
+      this.errorHandler(error51);
     } else {
-      log("seedlink4 handleError: " + error48.message);
+      log("seedlink4 handleError: " + error51.message);
     }
   }
 };
 
-// src/filter.ts
+// src/filter.mts
 var filter_exports = {};
 __export(filter_exports, {
   BAND_PASS: () => BAND_PASS,
@@ -53952,15 +53590,15 @@ function integrate(seis, integrationConst = 0) {
   }
 }
 
-// src/organizeddisplay.ts
+// src/organizeddisplay.mts
 var organizeddisplay_exports = {};
 __export(organizeddisplay_exports, {
   DEFAULT_WITH_INFO: () => DEFAULT_WITH_INFO,
   DEFAULT_WITH_MAP: () => DEFAULT_WITH_MAP,
   DEFAULT_WITH_TOOLS: () => DEFAULT_WITH_TOOLS,
-  INFO: () => INFO2,
   MAP: () => MAP,
   ORG_DISPLAY: () => ORG_DISPLAY,
+  ORG_DISPLAY_CSS_ID: () => ORG_DISPLAY_CSS_ID,
   ORG_DISP_ITEM: () => ORG_DISP_ITEM,
   ORG_DISP_TOOLS_ELEMENT: () => ORG_DISP_TOOLS_ELEMENT,
   ORG_TYPE: () => ORG_TYPE,
@@ -53976,19 +53614,12 @@ __export(organizeddisplay_exports, {
   OrganizedDisplay: () => OrganizedDisplay,
   OrganizedDisplayItem: () => OrganizedDisplayItem,
   OrganizedDisplayTools: () => OrganizedDisplayTools,
-  PARTICLE_MOTION: () => PARTICLE_MOTION,
-  PLOT_TYPE: () => PLOT_TYPE,
-  QUAKE_TABLE: () => QUAKE_TABLE,
   SEISMOGRAPH: () => SEISMOGRAPH,
-  SPECTRA: () => SPECTRA,
-  STATION_TABLE: () => STATION_TABLE,
-  TOOLS_HTML: () => TOOLS_HTML,
   WITH_INFO: () => WITH_INFO,
   WITH_MAP: () => WITH_MAP,
   WITH_TOOLS: () => WITH_TOOLS,
   createAttribute: () => createAttribute,
   createPlots: () => createPlots,
-  getFromQueryParams: () => getFromQueryParams,
   groupComponentOfMotion: () => groupComponentOfMotion,
   individualDisplay: () => individualDisplay,
   mapAndIndividualDisplay: () => mapAndIndividualDisplay,
@@ -53999,1390 +53630,295 @@ __export(organizeddisplay_exports, {
   overlayByStationComponent: () => overlayByStationComponent
 });
 
-// src/fft.ts
-var fft_exports = {};
-__export(fft_exports, {
-  FFTResult: () => FFTResult,
-  calcDFT: () => calcDFT,
-  fftForward: () => fftForward,
-  findPowerTwo: () => findPowerTwo,
-  inverseDFT: () => inverseDFT
-});
-function fftForward(seis) {
-  let sdd;
-  if (seis instanceof Seismogram) {
-    sdd = SeismogramDisplayData.fromSeismogram(seis);
-  } else {
-    sdd = seis;
-  }
-  if (isDef(sdd.seismogram)) {
-    const seismogram = sdd.seismogram;
-    if (seismogram.isContiguous()) {
-      const result = FFTResult.createFromPackedFreq(
-        calcDFT(seismogram.y),
-        seismogram.numPoints,
-        seismogram.sampleRate
-      );
-      result.seismogramDisplayData = sdd;
-      return result;
-    } else {
-      throw new Error("Can only take FFT is seismogram is contiguous.");
-    }
-  } else {
-    throw new Error("Can not take FFT is seismogram is null.");
-  }
-}
-function calcDFT(timeseries) {
-  let [N, log2N] = findPowerTwo(timeseries.length);
-  if (N < 16) {
-    log2N = 4;
-    N = 16;
-  }
-  const dft = new RDFT(log2N);
-  const inArray = new Float32Array(N);
-  inArray.fill(0);
-  for (let i = 0; i < timeseries.length; i++) {
-    inArray[i] = timeseries[i];
-  }
-  const out = new Float32Array(N).fill(0);
-  dft.evaluate(inArray, out);
-  return out;
-}
-function inverseDFT(packedFreq, numPoints) {
-  if (numPoints > packedFreq.length) {
-    throw new Error(
-      `Not enough points in packed freq array for ${numPoints}, only ${packedFreq.length}`
-    );
-  }
-  let [N, log2N] = findPowerTwo(packedFreq.length);
-  if (N < 16) {
-    log2N = 4;
-    N = 16;
-  }
-  if (N !== packedFreq.length) {
-    throw new Error(`power of two check fails: ${N} ${packedFreq.length}`);
-  }
-  const dft = new RDFT(log2N);
-  const out = new Float32Array(N).fill(0);
-  dft.evaluateInverse(packedFreq, out);
-  return out.slice(0, numPoints);
-}
-function findPowerTwo(fftlength) {
-  let log2N = 1;
-  let N = 2;
-  while (N < fftlength) {
-    log2N += 1;
-    N = 2 * N;
-  }
-  return [N, log2N];
-}
-var FFTResult = class _FFTResult {
-  constructor(origLength, sampleRate) {
-    /** number of points in the original timeseries, may be less than fft size. */
-    __publicField(this, "origLength");
-    __publicField(this, "packedFreq");
-    /** number of points in the fft, usually power of 2 larger than origLength. */
-    __publicField(this, "numPoints");
-    /** sample rate of the original time series, maybe be null. */
-    __publicField(this, "sampleRate");
-    /** optional units of the original data for display purposes. */
-    __publicField(this, "inputUnits");
-    /**
-     * optional reference to SeismogramDisplayData when calculated from a seismogram.
-     *  Useful for creating title, etc.
-     */
-    __publicField(this, "seismogramDisplayData");
-    this.origLength = origLength;
-    this.sampleRate = sampleRate;
-    this.packedFreq = new Float32Array(0);
-    this.numPoints = 0;
-  }
-  /**
-   * Factory method to create FFTResult from packed array.
-   *
-   * @param   packedFreq real and imag values in packed format
-   * @param   origLength length of the original timeseries before padding.
-   * @param   sampleRate sample rate of original data
-   * @returns            FFTResult
-   */
-  static createFromPackedFreq(packedFreq, origLength, sampleRate) {
-    const fftResult = new _FFTResult(origLength, sampleRate);
-    fftResult.packedFreq = packedFreq;
-    fftResult.numPoints = packedFreq.length;
-    const [N, log2N] = findPowerTwo(packedFreq.length);
-    if (N < origLength) {
-      throw new Error(
-        `Not enough freq points, ${packedFreq.length}, for orig length of ${origLength}, must be > and power two, (${N}, ${log2N})`
-      );
-    }
-    return fftResult;
-  }
-  /**
-   * Factory method to create from array of complex numbers.
-   *
-   * @param   complexArray real and imag values as array of Complex objects.
-   * @param   origLength   length of the original timeseries before padding.
-   * @param   sampleRate sample rate of original data
-   * @returns               FFTResult
-   */
-  static createFromComplex(complexArray, origLength, sampleRate) {
-    const N = 2 * (complexArray.length - 1);
-    const modFreq = new Float32Array(N).fill(0);
-    modFreq[0] = complexArray[0].real();
-    for (let i = 1; i < complexArray.length - 1; i++) {
-      modFreq[i] = complexArray[i].real();
-      modFreq[N - i] = complexArray[i].imag();
-    }
-    modFreq[N / 2] = complexArray[complexArray.length - 1].real();
-    return _FFTResult.createFromPackedFreq(modFreq, origLength, sampleRate);
-  }
-  /**
-   * Factory method to create from amp and phase arrays
-   *
-   * @param   amp        amplitude values
-   * @param   phase      phase values
-   * @param   origLength length of the original timeseries before padding.
-   * @param   sampleRate sample rate of original data
-   * @returns             FFTResult
-   */
-  static createFromAmpPhase(amp, phase, origLength, sampleRate) {
-    if (amp.length !== phase.length) {
-      throw new Error(
-        `amp and phase must be same length: ${amp.length} ${phase.length}`
-      );
-    }
-    const modComplex = new Array(amp.length);
-    for (let i = 0; i < amp.length; i++) {
-      modComplex[i] = complexFromPolar(amp[i], phase[i]);
-    }
-    return _FFTResult.createFromComplex(modComplex, origLength, sampleRate);
-  }
-  /**
-   * The minimum non-zero frequency in the fft
-   *
-   * @returns fundamental frequency
-   */
-  get fundamentalFrequency() {
-    if (this.sampleRate) {
-      return this.sampleRate / this.numPoints;
-    } else {
-      throw new Error(
-        "sample rate not set on FFTResult, needed to calc min frequency"
-      );
-    }
-  }
-  asComplex() {
-    const complexArray = [];
-    const L3 = this.packedFreq.length;
-    complexArray.push(new Complex(this.packedFreq[0], 0));
-    for (let i = 1; i < this.packedFreq.length / 2; i++) {
-      const c = new Complex(this.packedFreq[i], this.packedFreq[L3 - i]);
-      complexArray.push(c);
-    }
-    complexArray.push(new Complex(this.packedFreq[L3 / 2], 0));
-    return complexArray;
-  }
-  asAmpPhase() {
-    const amp = new Float32Array(1 + this.packedFreq.length / 2);
-    const phase = new Float32Array(1 + this.packedFreq.length / 2);
-    let c = new Complex(this.packedFreq[0], 0);
-    amp[0] = c.abs();
-    phase[0] = c.angle();
-    const L3 = this.packedFreq.length;
-    for (let i = 1; i < this.packedFreq.length / 2; i++) {
-      c = new Complex(this.packedFreq[i], this.packedFreq[L3 - i]);
-      amp[i] = c.abs();
-      phase[i] = c.angle();
-    }
-    c = new Complex(this.packedFreq[L3 / 2], 0);
-    amp[this.packedFreq.length / 2] = c.abs();
-    phase[this.packedFreq.length / 2] = c.angle();
-    return [amp, phase];
-  }
-  /**
-   * calculates the inverse fft of this.packedFreq
-   *
-   * @returns time domain representation
-   */
-  fftInverse() {
-    return inverseDFT(this.packedFreq, this.origLength);
-  }
-  frequencies() {
-    const out = new Float32Array(this.numPoints / 2 + 1).fill(0);
-    for (let i = 0; i < out.length; i++) {
-      out[i] = i * this.fundamentalFrequency;
-    }
-    return out;
-  }
-  get numFrequencies() {
-    return this.numPoints / 2 + 1;
-  }
-  get minFrequency() {
-    return this.fundamentalFrequency;
-  }
-  get maxFrequency() {
-    return this.sampleRate / 2;
-  }
-  amplitudes() {
-    const [amp] = this.asAmpPhase();
-    return amp;
-  }
-  phases() {
-    const [, phase] = this.asAmpPhase();
-    return phase;
-  }
-  clone() {
-    const out = _FFTResult.createFromPackedFreq(
-      this.packedFreq.slice(),
-      this.origLength,
-      this.sampleRate
-    );
-    out.seismogramDisplayData = this.seismogramDisplayData;
-    return out;
-  }
-};
-
-// src/spectraplot.ts
-var spectraplot_exports = {};
-__export(spectraplot_exports, {
-  AMPLITUDE: () => AMPLITUDE,
-  FreqAmp: () => FreqAmp,
-  KIND: () => KIND,
-  LOGFREQ: () => LOGFREQ,
-  PHASE: () => PHASE,
-  SPECTRA_ELEMENT: () => SPECTRA_ELEMENT,
-  SpectraPlot: () => SpectraPlot,
-  spectra_plot_css: () => spectra_plot_css
+// src/infotable.mts
+var infotable_exports = {};
+__export(infotable_exports, {
+  CHANNEL_COLUMN: () => CHANNEL_COLUMN,
+  CHANNEL_INFO_ELEMENT: () => CHANNEL_INFO_ELEMENT,
+  ChannelTable: () => ChannelTable,
+  DEFAULT_TEMPLATE: () => DEFAULT_TEMPLATE,
+  INFO_ELEMENT: () => INFO_ELEMENT,
+  QUAKE_COLUMN: () => QUAKE_COLUMN,
+  QUAKE_INFO_ELEMENT: () => QUAKE_INFO_ELEMENT,
+  QuakeStationTable: () => QuakeStationTable,
+  QuakeTable: () => QuakeTable,
+  SDD_INFO_ELEMENT: () => SDD_INFO_ELEMENT,
+  SEISMOGRAM_COLUMN: () => SEISMOGRAM_COLUMN,
+  STATION_COLUMN: () => STATION_COLUMN,
+  STATION_INFO_ELEMENT: () => STATION_INFO_ELEMENT,
+  SeismogramTable: () => SeismogramTable,
+  StationTable: () => StationTable,
+  TABLE_CSS: () => TABLE_CSS,
+  depthFormat: () => depthFormat2,
+  depthMeterFormat: () => depthMeterFormat2,
+  depthNoUnitFormat: () => depthNoUnitFormat2,
+  latlonFormat: () => latlonFormat2,
+  magFormat: () => magFormat2
 });
 
-// src/seismograph.ts
-var seismograph_exports = {};
-__export(seismograph_exports, {
-  COLOR_CSS_ID: () => COLOR_CSS_ID,
-  SEISMOGRAPH_ELEMENT: () => SEISMOGRAPH_ELEMENT,
-  SEIS_CLICK_EVENT: () => SEIS_CLICK_EVENT,
-  SEIS_MOVE_EVENT: () => SEIS_MOVE_EVENT,
-  Seismograph: () => Seismograph,
-  SeismographAmplitudeScalable: () => SeismographAmplitudeScalable,
-  SeismographTimeScalable: () => SeismographTimeScalable,
-  ZERO_DURATION: () => ZERO_DURATION,
-  createDateFormatWrapper: () => createDateFormatWrapper,
-  createFullMarkersForQuakeAtChannel: () => createFullMarkersForQuakeAtChannel,
-  createFullMarkersForQuakeAtStation: () => createFullMarkersForQuakeAtStation,
-  createMarkerForOriginTime: () => createMarkerForOriginTime,
-  createMarkerForPicks: () => createMarkerForPicks,
-  createMarkerForQuakePicks: () => createMarkerForQuakePicks,
-  createMarkersForTravelTimes: () => createMarkersForTravelTimes,
-  createNumberFormatWrapper: () => createNumberFormatWrapper,
-  seismograph_css: () => seismograph_css
+// src/spelement.mts
+var spelement_exports = {};
+__export(spelement_exports, {
+  SORT_BY: () => SORT_BY,
+  SeisPlotElement: () => SeisPlotElement,
+  addStyleToElement: () => addStyleToElement
 });
 
-// node_modules/d3-selection/src/namespaces.js
-var xhtml = "http://www.w3.org/1999/xhtml";
-var namespaces_default = {
-  svg: "http://www.w3.org/2000/svg",
-  xhtml,
-  xlink: "http://www.w3.org/1999/xlink",
-  xml: "http://www.w3.org/XML/1998/namespace",
-  xmlns: "http://www.w3.org/2000/xmlns/"
-};
+// src/seismographconfig.mts
+var seismographconfig_exports = {};
+__export(seismographconfig_exports, {
+  DEFAULT_TITLE: () => DEFAULT_TITLE,
+  SeismographConfig: () => SeismographConfig,
+  SeismographConfigCache: () => SeismographConfigCache,
+  createTimeFormatterForZone: () => createTimeFormatterForZone,
+  formatCount: () => formatCount,
+  formatCountOrAmp: () => formatCountOrAmp,
+  formatExp: () => formatExp,
+  numberFormatWrapper: () => numberFormatWrapper
+});
 
-// node_modules/d3-selection/src/namespace.js
-function namespace_default(name) {
-  var prefix = name += "", i = prefix.indexOf(":");
-  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
-  return namespaces_default.hasOwnProperty(prefix) ? { space: namespaces_default[prefix], local: name } : name;
-}
-
-// node_modules/d3-selection/src/creator.js
-function creatorInherit(name) {
-  return function() {
-    var document2 = this.ownerDocument, uri = this.namespaceURI;
-    return uri === xhtml && document2.documentElement.namespaceURI === xhtml ? document2.createElement(name) : document2.createElementNS(uri, name);
-  };
-}
-function creatorFixed(fullname) {
-  return function() {
-    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
-  };
-}
-function creator_default(name) {
-  var fullname = namespace_default(name);
-  return (fullname.local ? creatorFixed : creatorInherit)(fullname);
-}
-
-// node_modules/d3-selection/src/selector.js
-function none() {
-}
-function selector_default(selector) {
-  return selector == null ? none : function() {
-    return this.querySelector(selector);
-  };
-}
-
-// node_modules/d3-selection/src/selection/select.js
-function select_default(select) {
-  if (typeof select !== "function") select = selector_default(select);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = new Array(n2), node, subnode, i = 0; i < n2; ++i) {
-      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node) subnode.__data__ = node.__data__;
-        subgroup[i] = subnode;
+// src/cssutil.mts
+var cssutil_exports = {};
+__export(cssutil_exports, {
+  AUTO_CLASSED: () => AUTO_CLASSED,
+  AUTO_COLOR_SELECTOR: () => AUTO_COLOR_SELECTOR,
+  G_DATA_SELECTOR: () => G_DATA_SELECTOR,
+  insertCSS: () => insertCSS,
+  isCSSInserted: () => isCSSInserted,
+  isIdStyleElement: () => isIdStyleElement
+});
+var AUTO_CLASSED = "autoseisplotjs";
+var AUTO_COLOR_SELECTOR = "seisplotjsautocolor";
+var G_DATA_SELECTOR = "seisplotjsdata";
+function insertCSS(cssText, id2) {
+  const head = document.head;
+  if (head === null) {
+    throw new Error("document.head is null");
+  }
+  if (id2) {
+    for (const c of Array.from(head.children)) {
+      if (isIdStyleElement(c, id2)) {
+        document.head.removeChild(c);
       }
     }
   }
-  return new Selection(subgroups, this._parents);
+  const styleElement = document.createElement("style");
+  if (id2) {
+    styleElement.id = id2;
+  }
+  styleElement.type = "text/css";
+  styleElement.appendChild(document.createTextNode(cssText));
+  head.insertBefore(styleElement, head.firstChild);
+  return styleElement;
 }
-
-// node_modules/d3-selection/src/array.js
-function array(x2) {
-  return x2 == null ? [] : Array.isArray(x2) ? x2 : Array.from(x2);
-}
-
-// node_modules/d3-selection/src/selectorAll.js
-function empty() {
-  return [];
-}
-function selectorAll_default(selector) {
-  return selector == null ? empty : function() {
-    return this.querySelectorAll(selector);
-  };
-}
-
-// node_modules/d3-selection/src/selection/selectAll.js
-function arrayAll(select) {
-  return function() {
-    return array(select.apply(this, arguments));
-  };
-}
-function selectAll_default(select) {
-  if (typeof select === "function") select = arrayAll(select);
-  else select = selectorAll_default(select);
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
-      if (node = group[i]) {
-        subgroups.push(select.call(node, node.__data__, i, group));
-        parents.push(node);
-      }
+function isCSSInserted(id2) {
+  const head = document.head;
+  if (head === null) {
+    throw new Error("document.head is null");
+  }
+  for (const c of Array.from(head.children)) {
+    if (isIdStyleElement(c, id2)) {
+      return true;
     }
   }
-  return new Selection(subgroups, parents);
+  return false;
+}
+function isIdStyleElement(c, id2) {
+  return c.localName === "style" && c.id === id2;
 }
 
-// node_modules/d3-selection/src/matcher.js
-function matcher_default(selector) {
-  return function() {
-    return this.matches(selector);
-  };
-}
-function childMatcher(selector) {
-  return function(node) {
-    return node.matches(selector);
-  };
-}
+// src/seismographutil.mts
+var seismographutil_exports = {};
+__export(seismographutil_exports, {
+  DEFAULT_GRID_LINE_COLOR: () => DEFAULT_GRID_LINE_COLOR,
+  DEFAULT_MAX_SAMPLE_PER_PIXEL: () => DEFAULT_MAX_SAMPLE_PER_PIXEL,
+  clearCanvas: () => clearCanvas,
+  drawAllOnCanvas: () => drawAllOnCanvas,
+  drawSeismogramAsLine: () => drawSeismogramAsLine,
+  drawXScaleGridLines: () => drawXScaleGridLines,
+  drawYScaleGridLines: () => drawYScaleGridLines,
+  pushPoint: () => pushPoint,
+  rgbaForColorName: () => rgbaForColorName,
+  seismogramSegmentAsLine: () => seismogramSegmentAsLine
+});
 
-// node_modules/d3-selection/src/selection/selectChild.js
-var find = Array.prototype.find;
-function childFind(match2) {
-  return function() {
-    return find.call(this.children, match2);
-  };
-}
-function childFirst() {
-  return this.firstElementChild;
-}
-function selectChild_default(match2) {
-  return this.select(match2 == null ? childFirst : childFind(typeof match2 === "function" ? match2 : childMatcher(match2)));
-}
+// src/axisutil.mts
+var axisutil_exports = {};
+__export(axisutil_exports, {
+  LuxonTimeScale: () => LuxonTimeScale,
+  drawAxisLabels: () => drawAxisLabels,
+  drawTitle: () => drawTitle,
+  drawXLabel: () => drawXLabel,
+  drawXSublabel: () => drawXSublabel,
+  drawYLabel: () => drawYLabel,
+  drawYSublabel: () => drawYSublabel,
+  removeTitle: () => removeTitle,
+  removeXLabel: () => removeXLabel,
+  removeXSublabel: () => removeXSublabel,
+  removeYLabel: () => removeYLabel,
+  removeYSublabel: () => removeYSublabel
+});
 
-// node_modules/d3-selection/src/selection/selectChildren.js
-var filter = Array.prototype.filter;
-function children() {
-  return Array.from(this.children);
-}
-function childrenFilter(match2) {
-  return function() {
-    return filter.call(this.children, match2);
-  };
-}
-function selectChildren_default(match2) {
-  return this.selectAll(match2 == null ? children : childrenFilter(typeof match2 === "function" ? match2 : childMatcher(match2)));
-}
-
-// node_modules/d3-selection/src/selection/filter.js
-function filter_default(match2) {
-  if (typeof match2 !== "function") match2 = matcher_default(match2);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n2; ++i) {
-      if ((node = group[i]) && match2.call(node, node.__data__, i, group)) {
-        subgroup.push(node);
-      }
-    }
-  }
-  return new Selection(subgroups, this._parents);
-}
-
-// node_modules/d3-selection/src/selection/sparse.js
-function sparse_default(update) {
-  return new Array(update.length);
-}
-
-// node_modules/d3-selection/src/selection/enter.js
-function enter_default() {
-  return new Selection(this._enter || this._groups.map(sparse_default), this._parents);
-}
-function EnterNode(parent, datum2) {
-  this.ownerDocument = parent.ownerDocument;
-  this.namespaceURI = parent.namespaceURI;
-  this._next = null;
-  this._parent = parent;
-  this.__data__ = datum2;
-}
-EnterNode.prototype = {
-  constructor: EnterNode,
-  appendChild: function(child) {
-    return this._parent.insertBefore(child, this._next);
-  },
-  insertBefore: function(child, next) {
-    return this._parent.insertBefore(child, next);
-  },
-  querySelector: function(selector) {
-    return this._parent.querySelector(selector);
-  },
-  querySelectorAll: function(selector) {
-    return this._parent.querySelectorAll(selector);
-  }
-};
-
-// node_modules/d3-selection/src/constant.js
-function constant_default(x2) {
-  return function() {
-    return x2;
-  };
-}
-
-// node_modules/d3-selection/src/selection/data.js
-function bindIndex(parent, group, enter, update, exit, data) {
-  var i = 0, node, groupLength = group.length, dataLength = data.length;
-  for (; i < dataLength; ++i) {
-    if (node = group[i]) {
-      node.__data__ = data[i];
-      update[i] = node;
-    } else {
-      enter[i] = new EnterNode(parent, data[i]);
-    }
-  }
-  for (; i < groupLength; ++i) {
-    if (node = group[i]) {
-      exit[i] = node;
-    }
-  }
-}
-function bindKey(parent, group, enter, update, exit, data, key) {
-  var i, node, nodeByKeyValue = /* @__PURE__ */ new Map(), groupLength = group.length, dataLength = data.length, keyValues = new Array(groupLength), keyValue;
-  for (i = 0; i < groupLength; ++i) {
-    if (node = group[i]) {
-      keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
-      if (nodeByKeyValue.has(keyValue)) {
-        exit[i] = node;
-      } else {
-        nodeByKeyValue.set(keyValue, node);
-      }
-    }
-  }
-  for (i = 0; i < dataLength; ++i) {
-    keyValue = key.call(parent, data[i], i, data) + "";
-    if (node = nodeByKeyValue.get(keyValue)) {
-      update[i] = node;
-      node.__data__ = data[i];
-      nodeByKeyValue.delete(keyValue);
-    } else {
-      enter[i] = new EnterNode(parent, data[i]);
-    }
-  }
-  for (i = 0; i < groupLength; ++i) {
-    if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
-      exit[i] = node;
-    }
-  }
-}
-function datum(node) {
-  return node.__data__;
-}
-function data_default(value, key) {
-  if (!arguments.length) return Array.from(this, datum);
-  var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
-  if (typeof value !== "function") value = constant_default(value);
-  for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
-    var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-    for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
-      if (previous = enterGroup[i0]) {
-        if (i0 >= i1) i1 = i0 + 1;
-        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
-        previous._next = next || null;
-      }
-    }
-  }
-  update = new Selection(update, parents);
-  update._enter = enter;
-  update._exit = exit;
-  return update;
-}
-function arraylike(data) {
-  return typeof data === "object" && "length" in data ? data : Array.from(data);
-}
-
-// node_modules/d3-selection/src/selection/exit.js
-function exit_default() {
-  return new Selection(this._exit || this._groups.map(sparse_default), this._parents);
-}
-
-// node_modules/d3-selection/src/selection/join.js
-function join_default(onenter, onupdate, onexit) {
-  var enter = this.enter(), update = this, exit = this.exit();
-  if (typeof onenter === "function") {
-    enter = onenter(enter);
-    if (enter) enter = enter.selection();
-  } else {
-    enter = enter.append(onenter + "");
-  }
-  if (onupdate != null) {
-    update = onupdate(update);
-    if (update) update = update.selection();
-  }
-  if (onexit == null) exit.remove();
-  else onexit(exit);
-  return enter && update ? enter.merge(update).order() : update;
-}
-
-// node_modules/d3-selection/src/selection/merge.js
-function merge_default(context) {
-  var selection2 = context.selection ? context.selection() : context;
-  for (var groups0 = this._groups, groups1 = selection2._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
-    for (var group0 = groups0[j], group1 = groups1[j], n2 = group0.length, merge4 = merges[j] = new Array(n2), node, i = 0; i < n2; ++i) {
-      if (node = group0[i] || group1[i]) {
-        merge4[i] = node;
-      }
-    }
-  }
-  for (; j < m0; ++j) {
-    merges[j] = groups0[j];
-  }
-  return new Selection(merges, this._parents);
-}
-
-// node_modules/d3-selection/src/selection/order.js
-function order_default() {
-  for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
-    for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
-      if (node = group[i]) {
-        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
-        next = node;
-      }
-    }
-  }
-  return this;
-}
-
-// node_modules/d3-selection/src/selection/sort.js
-function sort_default(compare) {
-  if (!compare) compare = ascending;
-  function compareNode(a, b) {
-    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
-  }
-  for (var groups = this._groups, m = groups.length, sortgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, sortgroup = sortgroups[j] = new Array(n2), node, i = 0; i < n2; ++i) {
-      if (node = group[i]) {
-        sortgroup[i] = node;
-      }
-    }
-    sortgroup.sort(compareNode);
-  }
-  return new Selection(sortgroups, this._parents).order();
-}
+// node_modules/d3-array/src/ascending.js
 function ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 
-// node_modules/d3-selection/src/selection/call.js
-function call_default() {
-  var callback = arguments[0];
-  arguments[0] = this;
-  callback.apply(null, arguments);
-  return this;
+// node_modules/d3-array/src/descending.js
+function descending(a, b) {
+  return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 }
 
-// node_modules/d3-selection/src/selection/nodes.js
-function nodes_default() {
-  return Array.from(this);
-}
-
-// node_modules/d3-selection/src/selection/node.js
-function node_default() {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n2 = group.length; i < n2; ++i) {
-      var node = group[i];
-      if (node) return node;
-    }
+// node_modules/d3-array/src/bisector.js
+function bisector(f) {
+  let compare1, compare2, delta;
+  if (f.length !== 2) {
+    compare1 = ascending;
+    compare2 = (d, x2) => ascending(f(d), x2);
+    delta = (d, x2) => f(d) - x2;
+  } else {
+    compare1 = f === ascending || f === descending ? f : zero;
+    compare2 = f;
+    delta = f;
   }
-  return null;
-}
-
-// node_modules/d3-selection/src/selection/size.js
-function size_default() {
-  let size = 0;
-  for (const node of this) ++size;
-  return size;
-}
-
-// node_modules/d3-selection/src/selection/empty.js
-function empty_default() {
-  return !this.node();
-}
-
-// node_modules/d3-selection/src/selection/each.js
-function each_default(callback) {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n2 = group.length, node; i < n2; ++i) {
-      if (node = group[i]) callback.call(node, node.__data__, i, group);
+  function left2(a, x2, lo = 0, hi = a.length) {
+    if (lo < hi) {
+      if (compare1(x2, x2) !== 0) return hi;
+      do {
+        const mid = lo + hi >>> 1;
+        if (compare2(a[mid], x2) < 0) lo = mid + 1;
+        else hi = mid;
+      } while (lo < hi);
     }
+    return lo;
   }
-  return this;
-}
-
-// node_modules/d3-selection/src/selection/attr.js
-function attrRemove(name) {
-  return function() {
-    this.removeAttribute(name);
-  };
-}
-function attrRemoveNS(fullname) {
-  return function() {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-function attrConstant(name, value) {
-  return function() {
-    this.setAttribute(name, value);
-  };
-}
-function attrConstantNS(fullname, value) {
-  return function() {
-    this.setAttributeNS(fullname.space, fullname.local, value);
-  };
-}
-function attrFunction(name, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttribute(name);
-    else this.setAttribute(name, v);
-  };
-}
-function attrFunctionNS(fullname, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
-    else this.setAttributeNS(fullname.space, fullname.local, v);
-  };
-}
-function attr_default(name, value) {
-  var fullname = namespace_default(name);
-  if (arguments.length < 2) {
-    var node = this.node();
-    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
+  function right2(a, x2, lo = 0, hi = a.length) {
+    if (lo < hi) {
+      if (compare1(x2, x2) !== 0) return hi;
+      do {
+        const mid = lo + hi >>> 1;
+        if (compare2(a[mid], x2) <= 0) lo = mid + 1;
+        else hi = mid;
+      } while (lo < hi);
+    }
+    return lo;
   }
-  return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
-}
-
-// node_modules/d3-selection/src/window.js
-function window_default(node) {
-  return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
-}
-
-// node_modules/d3-selection/src/selection/style.js
-function styleRemove(name) {
-  return function() {
-    this.style.removeProperty(name);
-  };
-}
-function styleConstant(name, value, priority) {
-  return function() {
-    this.style.setProperty(name, value, priority);
-  };
-}
-function styleFunction(name, value, priority) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) this.style.removeProperty(name);
-    else this.style.setProperty(name, v, priority);
-  };
-}
-function style_default(name, value, priority) {
-  return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
-}
-function styleValue(node, name) {
-  return node.style.getPropertyValue(name) || window_default(node).getComputedStyle(node, null).getPropertyValue(name);
-}
-
-// node_modules/d3-selection/src/selection/property.js
-function propertyRemove(name) {
-  return function() {
-    delete this[name];
-  };
-}
-function propertyConstant(name, value) {
-  return function() {
-    this[name] = value;
-  };
-}
-function propertyFunction(name, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (v == null) delete this[name];
-    else this[name] = v;
-  };
-}
-function property_default(name, value) {
-  return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
-}
-
-// node_modules/d3-selection/src/selection/classed.js
-function classArray(string4) {
-  return string4.trim().split(/^|\s+/);
-}
-function classList(node) {
-  return node.classList || new ClassList(node);
-}
-function ClassList(node) {
-  this._node = node;
-  this._names = classArray(node.getAttribute("class") || "");
-}
-ClassList.prototype = {
-  add: function(name) {
-    var i = this._names.indexOf(name);
-    if (i < 0) {
-      this._names.push(name);
-      this._node.setAttribute("class", this._names.join(" "));
-    }
-  },
-  remove: function(name) {
-    var i = this._names.indexOf(name);
-    if (i >= 0) {
-      this._names.splice(i, 1);
-      this._node.setAttribute("class", this._names.join(" "));
-    }
-  },
-  contains: function(name) {
-    return this._names.indexOf(name) >= 0;
+  function center2(a, x2, lo = 0, hi = a.length) {
+    const i = left2(a, x2, lo, hi - 1);
+    return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
   }
-};
-function classedAdd(node, names) {
-  var list = classList(node), i = -1, n2 = names.length;
-  while (++i < n2) list.add(names[i]);
+  return { left: left2, center: center2, right: right2 };
 }
-function classedRemove(node, names) {
-  var list = classList(node), i = -1, n2 = names.length;
-  while (++i < n2) list.remove(names[i]);
-}
-function classedTrue(names) {
-  return function() {
-    classedAdd(this, names);
-  };
-}
-function classedFalse(names) {
-  return function() {
-    classedRemove(this, names);
-  };
-}
-function classedFunction(names, value) {
-  return function() {
-    (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
-  };
-}
-function classed_default(name, value) {
-  var names = classArray(name + "");
-  if (arguments.length < 2) {
-    var list = classList(this.node()), i = -1, n2 = names.length;
-    while (++i < n2) if (!list.contains(names[i])) return false;
-    return true;
-  }
-  return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
+function zero() {
+  return 0;
 }
 
-// node_modules/d3-selection/src/selection/text.js
-function textRemove() {
-  this.textContent = "";
-}
-function textConstant(value) {
-  return function() {
-    this.textContent = value;
-  };
-}
-function textFunction(value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    this.textContent = v == null ? "" : v;
-  };
-}
-function text_default(value) {
-  return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
+// node_modules/d3-array/src/number.js
+function number(x2) {
+  return x2 === null ? NaN : +x2;
 }
 
-// node_modules/d3-selection/src/selection/html.js
-function htmlRemove() {
-  this.innerHTML = "";
-}
-function htmlConstant(value) {
-  return function() {
-    this.innerHTML = value;
-  };
-}
-function htmlFunction(value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    this.innerHTML = v == null ? "" : v;
-  };
-}
-function html_default(value) {
-  return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
-}
+// node_modules/d3-array/src/bisect.js
+var ascendingBisect = bisector(ascending);
+var bisectRight = ascendingBisect.right;
+var bisectLeft = ascendingBisect.left;
+var bisectCenter = bisector(number).center;
+var bisect_default = bisectRight;
 
-// node_modules/d3-selection/src/selection/raise.js
-function raise() {
-  if (this.nextSibling) this.parentNode.appendChild(this);
-}
-function raise_default() {
-  return this.each(raise);
-}
-
-// node_modules/d3-selection/src/selection/lower.js
-function lower() {
-  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
-}
-function lower_default() {
-  return this.each(lower);
-}
-
-// node_modules/d3-selection/src/selection/append.js
-function append_default(name) {
-  var create2 = typeof name === "function" ? name : creator_default(name);
-  return this.select(function() {
-    return this.appendChild(create2.apply(this, arguments));
-  });
-}
-
-// node_modules/d3-selection/src/selection/insert.js
-function constantNull() {
-  return null;
-}
-function insert_default(name, before) {
-  var create2 = typeof name === "function" ? name : creator_default(name), select = before == null ? constantNull : typeof before === "function" ? before : selector_default(before);
-  return this.select(function() {
-    return this.insertBefore(create2.apply(this, arguments), select.apply(this, arguments) || null);
-  });
-}
-
-// node_modules/d3-selection/src/selection/remove.js
-function remove() {
-  var parent = this.parentNode;
-  if (parent) parent.removeChild(this);
-}
-function remove_default() {
-  return this.each(remove);
-}
-
-// node_modules/d3-selection/src/selection/clone.js
-function selection_cloneShallow() {
-  var clone3 = this.cloneNode(false), parent = this.parentNode;
-  return parent ? parent.insertBefore(clone3, this.nextSibling) : clone3;
-}
-function selection_cloneDeep() {
-  var clone3 = this.cloneNode(true), parent = this.parentNode;
-  return parent ? parent.insertBefore(clone3, this.nextSibling) : clone3;
-}
-function clone_default(deep) {
-  return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
-}
-
-// node_modules/d3-selection/src/selection/datum.js
-function datum_default(value) {
-  return arguments.length ? this.property("__data__", value) : this.node().__data__;
-}
-
-// node_modules/d3-selection/src/selection/on.js
-function contextListener(listener) {
-  return function(event) {
-    listener.call(this, event, this.__data__);
-  };
-}
-function parseTypenames(typenames) {
-  return typenames.trim().split(/^|\s+/).map(function(t) {
-    var name = "", i = t.indexOf(".");
-    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
-    return { type: t, name };
-  });
-}
-function onRemove(typename) {
-  return function() {
-    var on = this.__on;
-    if (!on) return;
-    for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
-      if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
-        this.removeEventListener(o.type, o.listener, o.options);
-      } else {
-        on[++i] = o;
-      }
-    }
-    if (++i) on.length = i;
-    else delete this.__on;
-  };
-}
-function onAdd(typename, value, options) {
-  return function() {
-    var on = this.__on, o, listener = contextListener(value);
-    if (on) for (var j = 0, m = on.length; j < m; ++j) {
-      if ((o = on[j]).type === typename.type && o.name === typename.name) {
-        this.removeEventListener(o.type, o.listener, o.options);
-        this.addEventListener(o.type, o.listener = listener, o.options = options);
-        o.value = value;
-        return;
-      }
-    }
-    this.addEventListener(typename.type, listener, options);
-    o = { type: typename.type, name: typename.name, value, listener, options };
-    if (!on) this.__on = [o];
-    else on.push(o);
-  };
-}
-function on_default(typename, value, options) {
-  var typenames = parseTypenames(typename + ""), i, n2 = typenames.length, t;
-  if (arguments.length < 2) {
-    var on = this.node().__on;
-    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
-      for (i = 0, o = on[j]; i < n2; ++i) {
-        if ((t = typenames[i]).type === o.type && t.name === o.name) {
-          return o.value;
+// node_modules/d3-array/src/extent.js
+function extent(values, valueof) {
+  let min;
+  let max;
+  if (valueof === void 0) {
+    for (const value of values) {
+      if (value != null) {
+        if (min === void 0) {
+          if (value >= value) min = max = value;
+        } else {
+          if (min > value) min = value;
+          if (max < value) max = value;
         }
       }
     }
-    return;
-  }
-  on = value ? onAdd : onRemove;
-  for (i = 0; i < n2; ++i) this.each(on(typenames[i], value, options));
-  return this;
-}
-
-// node_modules/d3-selection/src/selection/dispatch.js
-function dispatchEvent(node, type, params) {
-  var window2 = window_default(node), event = window2.CustomEvent;
-  if (typeof event === "function") {
-    event = new event(type, params);
   } else {
-    event = window2.document.createEvent("Event");
-    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
-    else event.initEvent(type, false, false);
-  }
-  node.dispatchEvent(event);
-}
-function dispatchConstant(type, params) {
-  return function() {
-    return dispatchEvent(this, type, params);
-  };
-}
-function dispatchFunction(type, params) {
-  return function() {
-    return dispatchEvent(this, type, params.apply(this, arguments));
-  };
-}
-function dispatch_default(type, params) {
-  return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
-}
-
-// node_modules/d3-selection/src/selection/iterator.js
-function* iterator_default() {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
-    for (var group = groups[j], i = 0, n2 = group.length, node; i < n2; ++i) {
-      if (node = group[i]) yield node;
+    let index = -1;
+    for (let value of values) {
+      if ((value = valueof(value, ++index, values)) != null) {
+        if (min === void 0) {
+          if (value >= value) min = max = value;
+        } else {
+          if (min > value) min = value;
+          if (max < value) max = value;
+        }
+      }
     }
   }
+  return [min, max];
 }
 
-// node_modules/d3-selection/src/selection/index.js
-var root = [null];
-function Selection(groups, parents) {
-  this._groups = groups;
-  this._parents = parents;
+// node_modules/d3-array/src/ticks.js
+var e10 = Math.sqrt(50);
+var e5 = Math.sqrt(10);
+var e2 = Math.sqrt(2);
+function tickSpec(start2, stop, count) {
+  const step = (stop - start2) / Math.max(0, count), power = Math.floor(Math.log10(step)), error51 = step / Math.pow(10, power), factor = error51 >= e10 ? 10 : error51 >= e5 ? 5 : error51 >= e2 ? 2 : 1;
+  let i1, i2, inc;
+  if (power < 0) {
+    inc = Math.pow(10, -power) / factor;
+    i1 = Math.round(start2 * inc);
+    i2 = Math.round(stop * inc);
+    if (i1 / inc < start2) ++i1;
+    if (i2 / inc > stop) --i2;
+    inc = -inc;
+  } else {
+    inc = Math.pow(10, power) * factor;
+    i1 = Math.round(start2 / inc);
+    i2 = Math.round(stop / inc);
+    if (i1 * inc < start2) ++i1;
+    if (i2 * inc > stop) --i2;
+  }
+  if (i2 < i1 && 0.5 <= count && count < 2) return tickSpec(start2, stop, count * 2);
+  return [i1, i2, inc];
 }
-function selection() {
-  return new Selection([[document.documentElement]], root);
+function ticks(start2, stop, count) {
+  stop = +stop, start2 = +start2, count = +count;
+  if (!(count > 0)) return [];
+  if (start2 === stop) return [start2];
+  const reverse = stop < start2, [i1, i2, inc] = reverse ? tickSpec(stop, start2, count) : tickSpec(start2, stop, count);
+  if (!(i2 >= i1)) return [];
+  const n2 = i2 - i1 + 1, ticks2 = new Array(n2);
+  if (reverse) {
+    if (inc < 0) for (let i = 0; i < n2; ++i) ticks2[i] = (i2 - i) / -inc;
+    else for (let i = 0; i < n2; ++i) ticks2[i] = (i2 - i) * inc;
+  } else {
+    if (inc < 0) for (let i = 0; i < n2; ++i) ticks2[i] = (i1 + i) / -inc;
+    else for (let i = 0; i < n2; ++i) ticks2[i] = (i1 + i) * inc;
+  }
+  return ticks2;
 }
-function selection_selection() {
-  return this;
+function tickIncrement(start2, stop, count) {
+  stop = +stop, start2 = +start2, count = +count;
+  return tickSpec(start2, stop, count)[2];
 }
-Selection.prototype = selection.prototype = {
-  constructor: Selection,
-  select: select_default,
-  selectAll: selectAll_default,
-  selectChild: selectChild_default,
-  selectChildren: selectChildren_default,
-  filter: filter_default,
-  data: data_default,
-  enter: enter_default,
-  exit: exit_default,
-  join: join_default,
-  merge: merge_default,
-  selection: selection_selection,
-  order: order_default,
-  sort: sort_default,
-  call: call_default,
-  nodes: nodes_default,
-  node: node_default,
-  size: size_default,
-  empty: empty_default,
-  each: each_default,
-  attr: attr_default,
-  style: style_default,
-  property: property_default,
-  classed: classed_default,
-  text: text_default,
-  html: html_default,
-  raise: raise_default,
-  lower: lower_default,
-  append: append_default,
-  insert: insert_default,
-  remove: remove_default,
-  clone: clone_default,
-  datum: datum_default,
-  on: on_default,
-  dispatch: dispatch_default,
-  [Symbol.iterator]: iterator_default
-};
-var selection_default = selection;
-
-// node_modules/d3-selection/src/select.js
-function select_default2(selector) {
-  return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
+function tickStep(start2, stop, count) {
+  stop = +stop, start2 = +start2, count = +count;
+  const reverse = stop < start2, inc = reverse ? tickIncrement(stop, start2, count) : tickIncrement(start2, stop, count);
+  return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
 }
 
-// node_modules/d3-dispatch/src/dispatch.js
-var noop = { value: () => {
-} };
-function dispatch() {
-  for (var i = 0, n2 = arguments.length, _ = {}, t; i < n2; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
-    _[t] = [];
-  }
-  return new Dispatch(_);
-}
-function Dispatch(_) {
-  this._ = _;
-}
-function parseTypenames2(typenames, types) {
-  return typenames.trim().split(/^|\s+/).map(function(t) {
-    var name = "", i = t.indexOf(".");
-    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
-    if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
-    return { type: t, name };
-  });
-}
-Dispatch.prototype = dispatch.prototype = {
-  constructor: Dispatch,
-  on: function(typename, callback) {
-    var _ = this._, T = parseTypenames2(typename + "", _), t, i = -1, n2 = T.length;
-    if (arguments.length < 2) {
-      while (++i < n2) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
-      return;
-    }
-    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
-    while (++i < n2) {
-      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);
-      else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
-    }
-    return this;
-  },
-  copy: function() {
-    var copy2 = {}, _ = this._;
-    for (var t in _) copy2[t] = _[t].slice();
-    return new Dispatch(copy2);
-  },
-  call: function(type, that) {
-    if ((n2 = arguments.length - 2) > 0) for (var args = new Array(n2), i = 0, n2, t; i < n2; ++i) args[i] = arguments[i + 2];
-    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-    for (t = this._[type], i = 0, n2 = t.length; i < n2; ++i) t[i].value.apply(that, args);
-  },
-  apply: function(type, that, args) {
-    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-    for (var t = this._[type], i = 0, n2 = t.length; i < n2; ++i) t[i].value.apply(that, args);
-  }
-};
-function get(type, name) {
-  for (var i = 0, n2 = type.length, c; i < n2; ++i) {
-    if ((c = type[i]).name === name) {
-      return c.value;
-    }
-  }
-}
-function set(type, name, callback) {
-  for (var i = 0, n2 = type.length; i < n2; ++i) {
-    if (type[i].name === name) {
-      type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
+// node_modules/d3-scale/src/init.js
+function initRange(domain2, range) {
+  switch (arguments.length) {
+    case 0:
       break;
-    }
+    case 1:
+      this.range(domain2);
+      break;
+    default:
+      this.range(range).domain(domain2);
+      break;
   }
-  if (callback != null) type.push({ name, value: callback });
-  return type;
-}
-var dispatch_default2 = dispatch;
-
-// node_modules/d3-timer/src/timer.js
-var frame = 0;
-var timeout = 0;
-var interval = 0;
-var pokeDelay = 1e3;
-var taskHead;
-var taskTail;
-var clockLast = 0;
-var clockNow = 0;
-var clockSkew = 0;
-var clock = typeof performance === "object" && performance.now ? performance : Date;
-var setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) {
-  setTimeout(f, 17);
-};
-function now2() {
-  return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
-}
-function clearNow() {
-  clockNow = 0;
-}
-function Timer() {
-  this._call = this._time = this._next = null;
-}
-Timer.prototype = timer.prototype = {
-  constructor: Timer,
-  restart: function(callback, delay, time3) {
-    if (typeof callback !== "function") throw new TypeError("callback is not a function");
-    time3 = (time3 == null ? now2() : +time3) + (delay == null ? 0 : +delay);
-    if (!this._next && taskTail !== this) {
-      if (taskTail) taskTail._next = this;
-      else taskHead = this;
-      taskTail = this;
-    }
-    this._call = callback;
-    this._time = time3;
-    sleep();
-  },
-  stop: function() {
-    if (this._call) {
-      this._call = null;
-      this._time = Infinity;
-      sleep();
-    }
-  }
-};
-function timer(callback, delay, time3) {
-  var t = new Timer();
-  t.restart(callback, delay, time3);
-  return t;
-}
-function timerFlush() {
-  now2();
-  ++frame;
-  var t = taskHead, e;
-  while (t) {
-    if ((e = clockNow - t._time) >= 0) t._call.call(void 0, e);
-    t = t._next;
-  }
-  --frame;
-}
-function wake() {
-  clockNow = (clockLast = clock.now()) + clockSkew;
-  frame = timeout = 0;
-  try {
-    timerFlush();
-  } finally {
-    frame = 0;
-    nap();
-    clockNow = 0;
-  }
-}
-function poke() {
-  var now3 = clock.now(), delay = now3 - clockLast;
-  if (delay > pokeDelay) clockSkew -= delay, clockLast = now3;
-}
-function nap() {
-  var t02, t12 = taskHead, t2, time3 = Infinity;
-  while (t12) {
-    if (t12._call) {
-      if (time3 > t12._time) time3 = t12._time;
-      t02 = t12, t12 = t12._next;
-    } else {
-      t2 = t12._next, t12._next = null;
-      t12 = t02 ? t02._next = t2 : taskHead = t2;
-    }
-  }
-  taskTail = t02;
-  sleep(time3);
-}
-function sleep(time3) {
-  if (frame) return;
-  if (timeout) timeout = clearTimeout(timeout);
-  var delay = time3 - clockNow;
-  if (delay > 24) {
-    if (time3 < Infinity) timeout = setTimeout(wake, time3 - clock.now() - clockSkew);
-    if (interval) interval = clearInterval(interval);
-  } else {
-    if (!interval) clockLast = clock.now(), interval = setInterval(poke, pokeDelay);
-    frame = 1, setFrame(wake);
-  }
-}
-
-// node_modules/d3-timer/src/timeout.js
-function timeout_default(callback, delay, time3) {
-  var t = new Timer();
-  delay = delay == null ? 0 : +delay;
-  t.restart((elapsed) => {
-    t.stop();
-    callback(elapsed + delay);
-  }, delay, time3);
-  return t;
-}
-
-// node_modules/d3-transition/src/transition/schedule.js
-var emptyOn = dispatch_default2("start", "end", "cancel", "interrupt");
-var emptyTween = [];
-var CREATED = 0;
-var SCHEDULED = 1;
-var STARTING = 2;
-var STARTED = 3;
-var RUNNING = 4;
-var ENDING = 5;
-var ENDED = 6;
-function schedule_default(node, name, id2, index, group, timing) {
-  var schedules = node.__transition;
-  if (!schedules) node.__transition = {};
-  else if (id2 in schedules) return;
-  create(node, id2, {
-    name,
-    index,
-    // For context during callback.
-    group,
-    // For context during callback.
-    on: emptyOn,
-    tween: emptyTween,
-    time: timing.time,
-    delay: timing.delay,
-    duration: timing.duration,
-    ease: timing.ease,
-    timer: null,
-    state: CREATED
-  });
-}
-function init(node, id2) {
-  var schedule = get2(node, id2);
-  if (schedule.state > CREATED) throw new Error("too late; already scheduled");
-  return schedule;
-}
-function set2(node, id2) {
-  var schedule = get2(node, id2);
-  if (schedule.state > STARTED) throw new Error("too late; already running");
-  return schedule;
-}
-function get2(node, id2) {
-  var schedule = node.__transition;
-  if (!schedule || !(schedule = schedule[id2])) throw new Error("transition not found");
-  return schedule;
-}
-function create(node, id2, self2) {
-  var schedules = node.__transition, tween;
-  schedules[id2] = self2;
-  self2.timer = timer(schedule, 0, self2.time);
-  function schedule(elapsed) {
-    self2.state = SCHEDULED;
-    self2.timer.restart(start2, self2.delay, self2.time);
-    if (self2.delay <= elapsed) start2(elapsed - self2.delay);
-  }
-  function start2(elapsed) {
-    var i, j, n2, o;
-    if (self2.state !== SCHEDULED) return stop();
-    for (i in schedules) {
-      o = schedules[i];
-      if (o.name !== self2.name) continue;
-      if (o.state === STARTED) return timeout_default(start2);
-      if (o.state === RUNNING) {
-        o.state = ENDED;
-        o.timer.stop();
-        o.on.call("interrupt", node, node.__data__, o.index, o.group);
-        delete schedules[i];
-      } else if (+i < id2) {
-        o.state = ENDED;
-        o.timer.stop();
-        o.on.call("cancel", node, node.__data__, o.index, o.group);
-        delete schedules[i];
-      }
-    }
-    timeout_default(function() {
-      if (self2.state === STARTED) {
-        self2.state = RUNNING;
-        self2.timer.restart(tick, self2.delay, self2.time);
-        tick(elapsed);
-      }
-    });
-    self2.state = STARTING;
-    self2.on.call("start", node, node.__data__, self2.index, self2.group);
-    if (self2.state !== STARTING) return;
-    self2.state = STARTED;
-    tween = new Array(n2 = self2.tween.length);
-    for (i = 0, j = -1; i < n2; ++i) {
-      if (o = self2.tween[i].value.call(node, node.__data__, self2.index, self2.group)) {
-        tween[++j] = o;
-      }
-    }
-    tween.length = j + 1;
-  }
-  function tick(elapsed) {
-    var t = elapsed < self2.duration ? self2.ease.call(null, elapsed / self2.duration) : (self2.timer.restart(stop), self2.state = ENDING, 1), i = -1, n2 = tween.length;
-    while (++i < n2) {
-      tween[i].call(node, t);
-    }
-    if (self2.state === ENDING) {
-      self2.on.call("end", node, node.__data__, self2.index, self2.group);
-      stop();
-    }
-  }
-  function stop() {
-    self2.state = ENDED;
-    self2.timer.stop();
-    delete schedules[id2];
-    for (var i in schedules) return;
-    delete node.__transition;
-  }
-}
-
-// node_modules/d3-transition/src/interrupt.js
-function interrupt_default(node, name) {
-  var schedules = node.__transition, schedule, active, empty2 = true, i;
-  if (!schedules) return;
-  name = name == null ? null : name + "";
-  for (i in schedules) {
-    if ((schedule = schedules[i]).name !== name) {
-      empty2 = false;
-      continue;
-    }
-    active = schedule.state > STARTING && schedule.state < ENDING;
-    schedule.state = ENDED;
-    schedule.timer.stop();
-    schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group);
-    delete schedules[i];
-  }
-  if (empty2) delete node.__transition;
-}
-
-// node_modules/d3-transition/src/selection/interrupt.js
-function interrupt_default2(name) {
-  return this.each(function() {
-    interrupt_default(this, name);
-  });
+  return this;
 }
 
 // node_modules/d3-color/src/define.js
@@ -55756,7 +54292,7 @@ function basisClosed_default(values) {
 }
 
 // node_modules/d3-interpolate/src/constant.js
-var constant_default2 = (x2) => () => x2;
+var constant_default = (x2) => () => x2;
 
 // node_modules/d3-interpolate/src/color.js
 function linear(a, d) {
@@ -55771,12 +54307,12 @@ function exponential(a, b, y2) {
 }
 function gamma(y2) {
   return (y2 = +y2) === 1 ? nogamma : function(a, b) {
-    return b - a ? exponential(a, b, y2) : constant_default2(isNaN(a) ? b : a);
+    return b - a ? exponential(a, b, y2) : constant_default(isNaN(a) ? b : a);
   };
 }
 function nogamma(a, b) {
   var d = b - a;
-  return d ? linear(a, d) : constant_default2(isNaN(a) ? b : a);
+  return d ? linear(a, d) : constant_default(isNaN(a) ? b : a);
 }
 
 // node_modules/d3-interpolate/src/rgb.js
@@ -55879,7 +54415,7 @@ function object_default(a, b) {
 // node_modules/d3-interpolate/src/string.js
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g;
 var reB = new RegExp(reA.source, "g");
-function zero(b) {
+function zero2(b) {
   return function() {
     return b;
   };
@@ -55912,7 +54448,7 @@ function string_default(a, b) {
     if (s2[i]) s2[i] += bs;
     else s2[++i] = bs;
   }
-  return s2.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function(t) {
+  return s2.length < 2 ? q[0] ? one(q[0].x) : zero2(b) : (b = q.length, function(t) {
     for (var i2 = 0, o; i2 < b; ++i2) s2[(o = q[i2]).i] = o.x(t);
     return s2.join("");
   });
@@ -55921,7 +54457,7 @@ function string_default(a, b) {
 // node_modules/d3-interpolate/src/value.js
 function value_default(a, b) {
   var t = typeof b, c;
-  return b == null || t === "boolean" ? constant_default2(b) : (t === "number" ? number_default : t === "string" ? (c = color(b)) ? (b = c, rgb_default) : string_default : b instanceof color ? rgb_default : b instanceof Date ? date_default : isNumberArray(b) ? numberArray_default : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object_default : number_default)(a, b);
+  return b == null || t === "boolean" ? constant_default(b) : (t === "number" ? number_default : t === "string" ? (c = color(b)) ? (b = c, rgb_default) : string_default : b instanceof color ? rgb_default : b instanceof Date ? date_default : isNumberArray(b) ? numberArray_default : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object_default : number_default)(a, b);
 }
 
 // node_modules/d3-interpolate/src/round.js
@@ -56026,722 +54562,6 @@ function interpolateTransform(parse5, pxComma, pxParen, degParen) {
 }
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
-
-// node_modules/d3-transition/src/transition/tween.js
-function tweenRemove(id2, name) {
-  var tween0, tween1;
-  return function() {
-    var schedule = set2(this, id2), tween = schedule.tween;
-    if (tween !== tween0) {
-      tween1 = tween0 = tween;
-      for (var i = 0, n2 = tween1.length; i < n2; ++i) {
-        if (tween1[i].name === name) {
-          tween1 = tween1.slice();
-          tween1.splice(i, 1);
-          break;
-        }
-      }
-    }
-    schedule.tween = tween1;
-  };
-}
-function tweenFunction(id2, name, value) {
-  var tween0, tween1;
-  if (typeof value !== "function") throw new Error();
-  return function() {
-    var schedule = set2(this, id2), tween = schedule.tween;
-    if (tween !== tween0) {
-      tween1 = (tween0 = tween).slice();
-      for (var t = { name, value }, i = 0, n2 = tween1.length; i < n2; ++i) {
-        if (tween1[i].name === name) {
-          tween1[i] = t;
-          break;
-        }
-      }
-      if (i === n2) tween1.push(t);
-    }
-    schedule.tween = tween1;
-  };
-}
-function tween_default(name, value) {
-  var id2 = this._id;
-  name += "";
-  if (arguments.length < 2) {
-    var tween = get2(this.node(), id2).tween;
-    for (var i = 0, n2 = tween.length, t; i < n2; ++i) {
-      if ((t = tween[i]).name === name) {
-        return t.value;
-      }
-    }
-    return null;
-  }
-  return this.each((value == null ? tweenRemove : tweenFunction)(id2, name, value));
-}
-function tweenValue(transition3, name, value) {
-  var id2 = transition3._id;
-  transition3.each(function() {
-    var schedule = set2(this, id2);
-    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
-  });
-  return function(node) {
-    return get2(node, id2).value[name];
-  };
-}
-
-// node_modules/d3-transition/src/transition/interpolate.js
-function interpolate_default(a, b) {
-  var c;
-  return (typeof b === "number" ? number_default : b instanceof color ? rgb_default : (c = color(b)) ? (b = c, rgb_default) : string_default)(a, b);
-}
-
-// node_modules/d3-transition/src/transition/attr.js
-function attrRemove2(name) {
-  return function() {
-    this.removeAttribute(name);
-  };
-}
-function attrRemoveNS2(fullname) {
-  return function() {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-function attrConstant2(name, interpolate, value1) {
-  var string00, string1 = value1 + "", interpolate0;
-  return function() {
-    var string0 = this.getAttribute(name);
-    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-function attrConstantNS2(fullname, interpolate, value1) {
-  var string00, string1 = value1 + "", interpolate0;
-  return function() {
-    var string0 = this.getAttributeNS(fullname.space, fullname.local);
-    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-function attrFunction2(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function() {
-    var string0, value1 = value(this), string1;
-    if (value1 == null) return void this.removeAttribute(name);
-    string0 = this.getAttribute(name);
-    string1 = value1 + "";
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-function attrFunctionNS2(fullname, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function() {
-    var string0, value1 = value(this), string1;
-    if (value1 == null) return void this.removeAttributeNS(fullname.space, fullname.local);
-    string0 = this.getAttributeNS(fullname.space, fullname.local);
-    string1 = value1 + "";
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-function attr_default2(name, value) {
-  var fullname = namespace_default(name), i = fullname === "transform" ? interpolateTransformSvg : interpolate_default;
-  return this.attrTween(name, typeof value === "function" ? (fullname.local ? attrFunctionNS2 : attrFunction2)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attrRemoveNS2 : attrRemove2)(fullname) : (fullname.local ? attrConstantNS2 : attrConstant2)(fullname, i, value));
-}
-
-// node_modules/d3-transition/src/transition/attrTween.js
-function attrInterpolate(name, i) {
-  return function(t) {
-    this.setAttribute(name, i.call(this, t));
-  };
-}
-function attrInterpolateNS(fullname, i) {
-  return function(t) {
-    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
-  };
-}
-function attrTweenNS(fullname, value) {
-  var t02, i0;
-  function tween() {
-    var i = value.apply(this, arguments);
-    if (i !== i0) t02 = (i0 = i) && attrInterpolateNS(fullname, i);
-    return t02;
-  }
-  tween._value = value;
-  return tween;
-}
-function attrTween(name, value) {
-  var t02, i0;
-  function tween() {
-    var i = value.apply(this, arguments);
-    if (i !== i0) t02 = (i0 = i) && attrInterpolate(name, i);
-    return t02;
-  }
-  tween._value = value;
-  return tween;
-}
-function attrTween_default(name, value) {
-  var key = "attr." + name;
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  var fullname = namespace_default(name);
-  return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
-}
-
-// node_modules/d3-transition/src/transition/delay.js
-function delayFunction(id2, value) {
-  return function() {
-    init(this, id2).delay = +value.apply(this, arguments);
-  };
-}
-function delayConstant(id2, value) {
-  return value = +value, function() {
-    init(this, id2).delay = value;
-  };
-}
-function delay_default(value) {
-  var id2 = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id2, value)) : get2(this.node(), id2).delay;
-}
-
-// node_modules/d3-transition/src/transition/duration.js
-function durationFunction(id2, value) {
-  return function() {
-    set2(this, id2).duration = +value.apply(this, arguments);
-  };
-}
-function durationConstant(id2, value) {
-  return value = +value, function() {
-    set2(this, id2).duration = value;
-  };
-}
-function duration_default(value) {
-  var id2 = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id2, value)) : get2(this.node(), id2).duration;
-}
-
-// node_modules/d3-transition/src/transition/ease.js
-function easeConstant(id2, value) {
-  if (typeof value !== "function") throw new Error();
-  return function() {
-    set2(this, id2).ease = value;
-  };
-}
-function ease_default(value) {
-  var id2 = this._id;
-  return arguments.length ? this.each(easeConstant(id2, value)) : get2(this.node(), id2).ease;
-}
-
-// node_modules/d3-transition/src/transition/easeVarying.js
-function easeVarying(id2, value) {
-  return function() {
-    var v = value.apply(this, arguments);
-    if (typeof v !== "function") throw new Error();
-    set2(this, id2).ease = v;
-  };
-}
-function easeVarying_default(value) {
-  if (typeof value !== "function") throw new Error();
-  return this.each(easeVarying(this._id, value));
-}
-
-// node_modules/d3-transition/src/transition/filter.js
-function filter_default2(match2) {
-  if (typeof match2 !== "function") match2 = matcher_default(match2);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n2; ++i) {
-      if ((node = group[i]) && match2.call(node, node.__data__, i, group)) {
-        subgroup.push(node);
-      }
-    }
-  }
-  return new Transition(subgroups, this._parents, this._name, this._id);
-}
-
-// node_modules/d3-transition/src/transition/merge.js
-function merge_default2(transition3) {
-  if (transition3._id !== this._id) throw new Error();
-  for (var groups0 = this._groups, groups1 = transition3._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
-    for (var group0 = groups0[j], group1 = groups1[j], n2 = group0.length, merge4 = merges[j] = new Array(n2), node, i = 0; i < n2; ++i) {
-      if (node = group0[i] || group1[i]) {
-        merge4[i] = node;
-      }
-    }
-  }
-  for (; j < m0; ++j) {
-    merges[j] = groups0[j];
-  }
-  return new Transition(merges, this._parents, this._name, this._id);
-}
-
-// node_modules/d3-transition/src/transition/on.js
-function start(name) {
-  return (name + "").trim().split(/^|\s+/).every(function(t) {
-    var i = t.indexOf(".");
-    if (i >= 0) t = t.slice(0, i);
-    return !t || t === "start";
-  });
-}
-function onFunction(id2, name, listener) {
-  var on0, on1, sit = start(name) ? init : set2;
-  return function() {
-    var schedule = sit(this, id2), on = schedule.on;
-    if (on !== on0) (on1 = (on0 = on).copy()).on(name, listener);
-    schedule.on = on1;
-  };
-}
-function on_default2(name, listener) {
-  var id2 = this._id;
-  return arguments.length < 2 ? get2(this.node(), id2).on.on(name) : this.each(onFunction(id2, name, listener));
-}
-
-// node_modules/d3-transition/src/transition/remove.js
-function removeFunction(id2) {
-  return function() {
-    var parent = this.parentNode;
-    for (var i in this.__transition) if (+i !== id2) return;
-    if (parent) parent.removeChild(this);
-  };
-}
-function remove_default2() {
-  return this.on("end.remove", removeFunction(this._id));
-}
-
-// node_modules/d3-transition/src/transition/select.js
-function select_default3(select) {
-  var name = this._name, id2 = this._id;
-  if (typeof select !== "function") select = selector_default(select);
-  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = new Array(n2), node, subnode, i = 0; i < n2; ++i) {
-      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
-        if ("__data__" in node) subnode.__data__ = node.__data__;
-        subgroup[i] = subnode;
-        schedule_default(subgroup[i], name, id2, i, subgroup, get2(node, id2));
-      }
-    }
-  }
-  return new Transition(subgroups, this._parents, name, id2);
-}
-
-// node_modules/d3-transition/src/transition/selectAll.js
-function selectAll_default2(select) {
-  var name = this._name, id2 = this._id;
-  if (typeof select !== "function") select = selectorAll_default(select);
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
-      if (node = group[i]) {
-        for (var children2 = select.call(node, node.__data__, i, group), child, inherit2 = get2(node, id2), k = 0, l2 = children2.length; k < l2; ++k) {
-          if (child = children2[k]) {
-            schedule_default(child, name, id2, k, children2, inherit2);
-          }
-        }
-        subgroups.push(children2);
-        parents.push(node);
-      }
-    }
-  }
-  return new Transition(subgroups, parents, name, id2);
-}
-
-// node_modules/d3-transition/src/transition/selection.js
-var Selection2 = selection_default.prototype.constructor;
-function selection_default2() {
-  return new Selection2(this._groups, this._parents);
-}
-
-// node_modules/d3-transition/src/transition/style.js
-function styleNull(name, interpolate) {
-  var string00, string10, interpolate0;
-  return function() {
-    var string0 = styleValue(this, name), string1 = (this.style.removeProperty(name), styleValue(this, name));
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
-  };
-}
-function styleRemove2(name) {
-  return function() {
-    this.style.removeProperty(name);
-  };
-}
-function styleConstant2(name, interpolate, value1) {
-  var string00, string1 = value1 + "", interpolate0;
-  return function() {
-    var string0 = styleValue(this, name);
-    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-function styleFunction2(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function() {
-    var string0 = styleValue(this, name), value1 = value(this), string1 = value1 + "";
-    if (value1 == null) string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-function styleMaybeRemove(id2, name) {
-  var on0, on1, listener0, key = "style." + name, event = "end." + key, remove2;
-  return function() {
-    var schedule = set2(this, id2), on = schedule.on, listener = schedule.value[key] == null ? remove2 || (remove2 = styleRemove2(name)) : void 0;
-    if (on !== on0 || listener0 !== listener) (on1 = (on0 = on).copy()).on(event, listener0 = listener);
-    schedule.on = on1;
-  };
-}
-function style_default2(name, value, priority) {
-  var i = (name += "") === "transform" ? interpolateTransformCss : interpolate_default;
-  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, styleRemove2(name)) : typeof value === "function" ? this.styleTween(name, styleFunction2(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, styleConstant2(name, i, value), priority).on("end.style." + name, null);
-}
-
-// node_modules/d3-transition/src/transition/styleTween.js
-function styleInterpolate(name, i, priority) {
-  return function(t) {
-    this.style.setProperty(name, i.call(this, t), priority);
-  };
-}
-function styleTween(name, value, priority) {
-  var t, i0;
-  function tween() {
-    var i = value.apply(this, arguments);
-    if (i !== i0) t = (i0 = i) && styleInterpolate(name, i, priority);
-    return t;
-  }
-  tween._value = value;
-  return tween;
-}
-function styleTween_default(name, value, priority) {
-  var key = "style." + (name += "");
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
-}
-
-// node_modules/d3-transition/src/transition/text.js
-function textConstant2(value) {
-  return function() {
-    this.textContent = value;
-  };
-}
-function textFunction2(value) {
-  return function() {
-    var value1 = value(this);
-    this.textContent = value1 == null ? "" : value1;
-  };
-}
-function text_default2(value) {
-  return this.tween("text", typeof value === "function" ? textFunction2(tweenValue(this, "text", value)) : textConstant2(value == null ? "" : value + ""));
-}
-
-// node_modules/d3-transition/src/transition/textTween.js
-function textInterpolate(i) {
-  return function(t) {
-    this.textContent = i.call(this, t);
-  };
-}
-function textTween(value) {
-  var t02, i0;
-  function tween() {
-    var i = value.apply(this, arguments);
-    if (i !== i0) t02 = (i0 = i) && textInterpolate(i);
-    return t02;
-  }
-  tween._value = value;
-  return tween;
-}
-function textTween_default(value) {
-  var key = "text";
-  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, textTween(value));
-}
-
-// node_modules/d3-transition/src/transition/transition.js
-function transition_default() {
-  var name = this._name, id0 = this._id, id1 = newId();
-  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
-      if (node = group[i]) {
-        var inherit2 = get2(node, id0);
-        schedule_default(node, name, id1, i, group, {
-          time: inherit2.time + inherit2.delay + inherit2.duration,
-          delay: 0,
-          duration: inherit2.duration,
-          ease: inherit2.ease
-        });
-      }
-    }
-  }
-  return new Transition(groups, this._parents, name, id1);
-}
-
-// node_modules/d3-transition/src/transition/end.js
-function end_default() {
-  var on0, on1, that = this, id2 = that._id, size = that.size();
-  return new Promise(function(resolve, reject) {
-    var cancel = { value: reject }, end = { value: function() {
-      if (--size === 0) resolve();
-    } };
-    that.each(function() {
-      var schedule = set2(this, id2), on = schedule.on;
-      if (on !== on0) {
-        on1 = (on0 = on).copy();
-        on1._.cancel.push(cancel);
-        on1._.interrupt.push(cancel);
-        on1._.end.push(end);
-      }
-      schedule.on = on1;
-    });
-    if (size === 0) resolve();
-  });
-}
-
-// node_modules/d3-transition/src/transition/index.js
-var id = 0;
-function Transition(groups, parents, name, id2) {
-  this._groups = groups;
-  this._parents = parents;
-  this._name = name;
-  this._id = id2;
-}
-function transition2(name) {
-  return selection_default().transition(name);
-}
-function newId() {
-  return ++id;
-}
-var selection_prototype = selection_default.prototype;
-Transition.prototype = transition2.prototype = {
-  constructor: Transition,
-  select: select_default3,
-  selectAll: selectAll_default2,
-  selectChild: selection_prototype.selectChild,
-  selectChildren: selection_prototype.selectChildren,
-  filter: filter_default2,
-  merge: merge_default2,
-  selection: selection_default2,
-  transition: transition_default,
-  call: selection_prototype.call,
-  nodes: selection_prototype.nodes,
-  node: selection_prototype.node,
-  size: selection_prototype.size,
-  empty: selection_prototype.empty,
-  each: selection_prototype.each,
-  on: on_default2,
-  attr: attr_default2,
-  attrTween: attrTween_default,
-  style: style_default2,
-  styleTween: styleTween_default,
-  text: text_default2,
-  textTween: textTween_default,
-  remove: remove_default2,
-  tween: tween_default,
-  delay: delay_default,
-  duration: duration_default,
-  ease: ease_default,
-  easeVarying: easeVarying_default,
-  end: end_default,
-  [Symbol.iterator]: selection_prototype[Symbol.iterator]
-};
-
-// node_modules/d3-ease/src/cubic.js
-function cubicInOut(t) {
-  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
-}
-
-// node_modules/d3-transition/src/selection/transition.js
-var defaultTiming = {
-  time: null,
-  // Set on use.
-  delay: 0,
-  duration: 250,
-  ease: cubicInOut
-};
-function inherit(node, id2) {
-  var timing;
-  while (!(timing = node.__transition) || !(timing = timing[id2])) {
-    if (!(node = node.parentNode)) {
-      throw new Error(`transition ${id2} not found`);
-    }
-  }
-  return timing;
-}
-function transition_default2(name) {
-  var id2, timing;
-  if (name instanceof Transition) {
-    id2 = name._id, name = name._name;
-  } else {
-    id2 = newId(), (timing = defaultTiming).time = now2(), name = name == null ? null : name + "";
-  }
-  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) {
-    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
-      if (node = group[i]) {
-        schedule_default(node, name, id2, i, group, timing || inherit(node, id2));
-      }
-    }
-  }
-  return new Transition(groups, this._parents, name, id2);
-}
-
-// node_modules/d3-transition/src/selection/index.js
-selection_default.prototype.interrupt = interrupt_default2;
-selection_default.prototype.transition = transition_default2;
-
-// node_modules/d3-array/src/ascending.js
-function ascending2(a, b) {
-  return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-// node_modules/d3-array/src/descending.js
-function descending(a, b) {
-  return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-}
-
-// node_modules/d3-array/src/bisector.js
-function bisector(f) {
-  let compare1, compare2, delta;
-  if (f.length !== 2) {
-    compare1 = ascending2;
-    compare2 = (d, x2) => ascending2(f(d), x2);
-    delta = (d, x2) => f(d) - x2;
-  } else {
-    compare1 = f === ascending2 || f === descending ? f : zero2;
-    compare2 = f;
-    delta = f;
-  }
-  function left2(a, x2, lo = 0, hi = a.length) {
-    if (lo < hi) {
-      if (compare1(x2, x2) !== 0) return hi;
-      do {
-        const mid = lo + hi >>> 1;
-        if (compare2(a[mid], x2) < 0) lo = mid + 1;
-        else hi = mid;
-      } while (lo < hi);
-    }
-    return lo;
-  }
-  function right2(a, x2, lo = 0, hi = a.length) {
-    if (lo < hi) {
-      if (compare1(x2, x2) !== 0) return hi;
-      do {
-        const mid = lo + hi >>> 1;
-        if (compare2(a[mid], x2) <= 0) lo = mid + 1;
-        else hi = mid;
-      } while (lo < hi);
-    }
-    return lo;
-  }
-  function center2(a, x2, lo = 0, hi = a.length) {
-    const i = left2(a, x2, lo, hi - 1);
-    return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
-  }
-  return { left: left2, center: center2, right: right2 };
-}
-function zero2() {
-  return 0;
-}
-
-// node_modules/d3-array/src/number.js
-function number(x2) {
-  return x2 === null ? NaN : +x2;
-}
-
-// node_modules/d3-array/src/bisect.js
-var ascendingBisect = bisector(ascending2);
-var bisectRight = ascendingBisect.right;
-var bisectLeft = ascendingBisect.left;
-var bisectCenter = bisector(number).center;
-var bisect_default = bisectRight;
-
-// node_modules/d3-array/src/extent.js
-function extent(values, valueof) {
-  let min;
-  let max;
-  if (valueof === void 0) {
-    for (const value of values) {
-      if (value != null) {
-        if (min === void 0) {
-          if (value >= value) min = max = value;
-        } else {
-          if (min > value) min = value;
-          if (max < value) max = value;
-        }
-      }
-    }
-  } else {
-    let index = -1;
-    for (let value of values) {
-      if ((value = valueof(value, ++index, values)) != null) {
-        if (min === void 0) {
-          if (value >= value) min = max = value;
-        } else {
-          if (min > value) min = value;
-          if (max < value) max = value;
-        }
-      }
-    }
-  }
-  return [min, max];
-}
-
-// node_modules/d3-array/src/ticks.js
-var e10 = Math.sqrt(50);
-var e5 = Math.sqrt(10);
-var e2 = Math.sqrt(2);
-function tickSpec(start2, stop, count) {
-  const step = (stop - start2) / Math.max(0, count), power = Math.floor(Math.log10(step)), error48 = step / Math.pow(10, power), factor = error48 >= e10 ? 10 : error48 >= e5 ? 5 : error48 >= e2 ? 2 : 1;
-  let i1, i2, inc;
-  if (power < 0) {
-    inc = Math.pow(10, -power) / factor;
-    i1 = Math.round(start2 * inc);
-    i2 = Math.round(stop * inc);
-    if (i1 / inc < start2) ++i1;
-    if (i2 / inc > stop) --i2;
-    inc = -inc;
-  } else {
-    inc = Math.pow(10, power) * factor;
-    i1 = Math.round(start2 / inc);
-    i2 = Math.round(stop / inc);
-    if (i1 * inc < start2) ++i1;
-    if (i2 * inc > stop) --i2;
-  }
-  if (i2 < i1 && 0.5 <= count && count < 2) return tickSpec(start2, stop, count * 2);
-  return [i1, i2, inc];
-}
-function ticks(start2, stop, count) {
-  stop = +stop, start2 = +start2, count = +count;
-  if (!(count > 0)) return [];
-  if (start2 === stop) return [start2];
-  const reverse = stop < start2, [i1, i2, inc] = reverse ? tickSpec(stop, start2, count) : tickSpec(start2, stop, count);
-  if (!(i2 >= i1)) return [];
-  const n2 = i2 - i1 + 1, ticks2 = new Array(n2);
-  if (reverse) {
-    if (inc < 0) for (let i = 0; i < n2; ++i) ticks2[i] = (i2 - i) / -inc;
-    else for (let i = 0; i < n2; ++i) ticks2[i] = (i2 - i) * inc;
-  } else {
-    if (inc < 0) for (let i = 0; i < n2; ++i) ticks2[i] = (i1 + i) / -inc;
-    else for (let i = 0; i < n2; ++i) ticks2[i] = (i1 + i) * inc;
-  }
-  return ticks2;
-}
-function tickIncrement(start2, stop, count) {
-  stop = +stop, start2 = +start2, count = +count;
-  return tickSpec(start2, stop, count)[2];
-}
-function tickStep(start2, stop, count) {
-  stop = +stop, start2 = +start2, count = +count;
-  const reverse = stop < start2, inc = reverse ? tickIncrement(stop, start2, count) : tickIncrement(start2, stop, count);
-  return (reverse ? -1 : 1) * (inc < 0 ? 1 / -inc : inc);
-}
-
-// node_modules/d3-scale/src/init.js
-function initRange(domain2, range) {
-  switch (arguments.length) {
-    case 0:
-      break;
-    case 1:
-      this.range(domain2);
-      break;
-    default:
-      this.range(range).domain(domain2);
-      break;
-  }
-  return this;
-}
 
 // node_modules/d3-scale/src/constant.js
 function constants(x2) {
@@ -58231,210 +56051,1671 @@ function utcTime() {
   return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
 }
 
-// node_modules/d3-axis/src/identity.js
-function identity_default2(x2) {
-  return x2;
+// node_modules/d3-selection/src/namespaces.js
+var xhtml = "http://www.w3.org/1999/xhtml";
+var namespaces_default = {
+  svg: "http://www.w3.org/2000/svg",
+  xhtml,
+  xlink: "http://www.w3.org/1999/xlink",
+  xml: "http://www.w3.org/XML/1998/namespace",
+  xmlns: "http://www.w3.org/2000/xmlns/"
+};
+
+// node_modules/d3-selection/src/namespace.js
+function namespace_default(name) {
+  var prefix = name += "", i = prefix.indexOf(":");
+  if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
+  return namespaces_default.hasOwnProperty(prefix) ? { space: namespaces_default[prefix], local: name } : name;
 }
 
-// node_modules/d3-axis/src/axis.js
-var top = 1;
-var right = 2;
-var bottom = 3;
-var left = 4;
-var epsilon = 1e-6;
-function translateX(x2) {
-  return "translate(" + x2 + ",0)";
+// node_modules/d3-selection/src/creator.js
+function creatorInherit(name) {
+  return function() {
+    var document2 = this.ownerDocument, uri = this.namespaceURI;
+    return uri === xhtml && document2.documentElement.namespaceURI === xhtml ? document2.createElement(name) : document2.createElementNS(uri, name);
+  };
 }
-function translateY(y2) {
-  return "translate(0," + y2 + ")";
+function creatorFixed(fullname) {
+  return function() {
+    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
+  };
 }
-function number4(scale) {
-  return (d) => +scale(d);
-}
-function center(scale, offset2) {
-  offset2 = Math.max(0, scale.bandwidth() - offset2 * 2) / 2;
-  if (scale.round()) offset2 = Math.round(offset2);
-  return (d) => +scale(d) + offset2;
-}
-function entering() {
-  return !this.__axis;
-}
-function axis(orient, scale) {
-  var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset2 = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === top || orient === left ? -1 : 1, x2 = orient === left || orient === right ? "x" : "y", transform2 = orient === top || orient === bottom ? translateX : translateY;
-  function axis2(context) {
-    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format2 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default2 : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset2, range1 = +range[range.length - 1] + offset2, position = (scale.bandwidth ? center : number4)(scale.copy(), offset2), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
-    path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-    tick = tick.merge(tickEnter);
-    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x2 + "2", k * tickSizeInner));
-    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x2, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-    if (context !== selection2) {
-      path2 = path2.transition(context);
-      tick = tick.transition(context);
-      line = line.transition(context);
-      text = text.transition(context);
-      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
-        return isFinite(d = position(d)) ? transform2(d + offset2) : this.getAttribute("transform");
-      });
-      tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
-        var p = this.parentNode.__axis;
-        return transform2((p && isFinite(p = p(d)) ? p : position(d)) + offset2);
-      });
-    }
-    tickExit.remove();
-    path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset2 + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset2 + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset2 + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset2 + "H" + range1);
-    tick.attr("opacity", 1).attr("transform", function(d) {
-      return transform2(position(d) + offset2);
-    });
-    line.attr(x2 + "2", k * tickSizeInner);
-    text.attr(x2, k * spacing).text(format2);
-    selection2.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-    selection2.each(function() {
-      this.__axis = position;
-    });
-  }
-  axis2.scale = function(_) {
-    return arguments.length ? (scale = _, axis2) : scale;
-  };
-  axis2.ticks = function() {
-    return tickArguments = Array.from(arguments), axis2;
-  };
-  axis2.tickArguments = function(_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
-  };
-  axis2.tickValues = function(_) {
-    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
-  };
-  axis2.tickFormat = function(_) {
-    return arguments.length ? (tickFormat2 = _, axis2) : tickFormat2;
-  };
-  axis2.tickSize = function(_) {
-    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeInner = function(_) {
-    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeOuter = function(_) {
-    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
-  };
-  axis2.tickPadding = function(_) {
-    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
-  };
-  axis2.offset = function(_) {
-    return arguments.length ? (offset2 = +_, axis2) : offset2;
-  };
-  return axis2;
-}
-function axisTop(scale) {
-  return axis(top, scale);
-}
-function axisRight(scale) {
-  return axis(right, scale);
-}
-function axisBottom(scale) {
-  return axis(bottom, scale);
-}
-function axisLeft(scale) {
-  return axis(left, scale);
+function creator_default(name) {
+  var fullname = namespace_default(name);
+  return (fullname.local ? creatorFixed : creatorInherit)(fullname);
 }
 
-// src/cssutil.ts
-var cssutil_exports = {};
-__export(cssutil_exports, {
-  AUTO_CLASSED: () => AUTO_CLASSED,
-  AUTO_COLOR_SELECTOR: () => AUTO_COLOR_SELECTOR,
-  G_DATA_SELECTOR: () => G_DATA_SELECTOR,
-  insertCSS: () => insertCSS,
-  isCSSInserted: () => isCSSInserted,
-  isIdStyleElement: () => isIdStyleElement
-});
-var AUTO_CLASSED = "autoseisplotjs";
-var AUTO_COLOR_SELECTOR = "seisplotjsautocolor";
-var G_DATA_SELECTOR = "seisplotjsdata";
-function insertCSS(cssText, id2) {
-  const head = document.head;
-  if (head === null) {
-    throw new Error("document.head is null");
-  }
-  if (id2) {
-    for (const c of Array.from(head.children)) {
-      if (isIdStyleElement(c, id2)) {
-        document.head.removeChild(c);
+// node_modules/d3-selection/src/selector.js
+function none() {
+}
+function selector_default(selector) {
+  return selector == null ? none : function() {
+    return this.querySelector(selector);
+  };
+}
+
+// node_modules/d3-selection/src/selection/select.js
+function select_default(select) {
+  if (typeof select !== "function") select = selector_default(select);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = new Array(n2), node, subnode, i = 0; i < n2; ++i) {
+      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
+        if ("__data__" in node) subnode.__data__ = node.__data__;
+        subgroup[i] = subnode;
       }
     }
   }
-  const styleElement = document.createElement("style");
-  if (id2) {
-    styleElement.id = id2;
-  }
-  styleElement.type = "text/css";
-  styleElement.appendChild(document.createTextNode(cssText));
-  head.insertBefore(styleElement, head.firstChild);
-  return styleElement;
+  return new Selection(subgroups, this._parents);
 }
-function isCSSInserted(id2) {
-  const head = document.head;
-  if (head === null) {
-    throw new Error("document.head is null");
-  }
-  for (const c of Array.from(head.children)) {
-    if (isIdStyleElement(c, id2)) {
-      return true;
+
+// node_modules/d3-selection/src/array.js
+function array(x2) {
+  return x2 == null ? [] : Array.isArray(x2) ? x2 : Array.from(x2);
+}
+
+// node_modules/d3-selection/src/selectorAll.js
+function empty() {
+  return [];
+}
+function selectorAll_default(selector) {
+  return selector == null ? empty : function() {
+    return this.querySelectorAll(selector);
+  };
+}
+
+// node_modules/d3-selection/src/selection/selectAll.js
+function arrayAll(select) {
+  return function() {
+    return array(select.apply(this, arguments));
+  };
+}
+function selectAll_default(select) {
+  if (typeof select === "function") select = arrayAll(select);
+  else select = selectorAll_default(select);
+  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
+      if (node = group[i]) {
+        subgroups.push(select.call(node, node.__data__, i, group));
+        parents.push(node);
+      }
     }
   }
-  return false;
-}
-function isIdStyleElement(c, id2) {
-  return c.localName === "style" && c.id === id2;
+  return new Selection(subgroups, parents);
 }
 
-// src/seismographconfig.ts
-var seismographconfig_exports = {};
-__export(seismographconfig_exports, {
-  DEFAULT_TITLE: () => DEFAULT_TITLE,
-  SeismographConfig: () => SeismographConfig,
-  SeismographConfigCache: () => SeismographConfigCache,
-  createTimeFormatterForZone: () => createTimeFormatterForZone,
-  formatCount: () => formatCount,
-  formatCountOrAmp: () => formatCountOrAmp,
-  formatExp: () => formatExp,
-  numberFormatWrapper: () => numberFormatWrapper
-});
+// node_modules/d3-selection/src/matcher.js
+function matcher_default(selector) {
+  return function() {
+    return this.matches(selector);
+  };
+}
+function childMatcher(selector) {
+  return function(node) {
+    return node.matches(selector);
+  };
+}
 
-// src/seismographutil.ts
-var seismographutil_exports = {};
-__export(seismographutil_exports, {
-  DEFAULT_GRID_LINE_COLOR: () => DEFAULT_GRID_LINE_COLOR,
-  DEFAULT_MAX_SAMPLE_PER_PIXEL: () => DEFAULT_MAX_SAMPLE_PER_PIXEL,
-  clearCanvas: () => clearCanvas,
-  drawAllOnCanvas: () => drawAllOnCanvas,
-  drawSeismogramAsLine: () => drawSeismogramAsLine,
-  drawXScaleGridLines: () => drawXScaleGridLines,
-  drawYScaleGridLines: () => drawYScaleGridLines,
-  pushPoint: () => pushPoint,
-  rgbaForColorName: () => rgbaForColorName,
-  seismogramSegmentAsLine: () => seismogramSegmentAsLine
-});
+// node_modules/d3-selection/src/selection/selectChild.js
+var find = Array.prototype.find;
+function childFind(match2) {
+  return function() {
+    return find.call(this.children, match2);
+  };
+}
+function childFirst() {
+  return this.firstElementChild;
+}
+function selectChild_default(match2) {
+  return this.select(match2 == null ? childFirst : childFind(typeof match2 === "function" ? match2 : childMatcher(match2)));
+}
 
-// src/axisutil.ts
-var axisutil_exports = {};
-__export(axisutil_exports, {
-  LuxonTimeScale: () => LuxonTimeScale,
-  drawAxisLabels: () => drawAxisLabels,
-  drawTitle: () => drawTitle,
-  drawXLabel: () => drawXLabel,
-  drawXSublabel: () => drawXSublabel,
-  drawYLabel: () => drawYLabel,
-  drawYSublabel: () => drawYSublabel,
-  removeTitle: () => removeTitle,
-  removeXLabel: () => removeXLabel,
-  removeXSublabel: () => removeXSublabel,
-  removeYLabel: () => removeYLabel,
-  removeYSublabel: () => removeYSublabel
-});
+// node_modules/d3-selection/src/selection/selectChildren.js
+var filter = Array.prototype.filter;
+function children() {
+  return Array.from(this.children);
+}
+function childrenFilter(match2) {
+  return function() {
+    return filter.call(this.children, match2);
+  };
+}
+function selectChildren_default(match2) {
+  return this.selectAll(match2 == null ? children : childrenFilter(typeof match2 === "function" ? match2 : childMatcher(match2)));
+}
+
+// node_modules/d3-selection/src/selection/filter.js
+function filter_default(match2) {
+  if (typeof match2 !== "function") match2 = matcher_default(match2);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n2; ++i) {
+      if ((node = group[i]) && match2.call(node, node.__data__, i, group)) {
+        subgroup.push(node);
+      }
+    }
+  }
+  return new Selection(subgroups, this._parents);
+}
+
+// node_modules/d3-selection/src/selection/sparse.js
+function sparse_default(update) {
+  return new Array(update.length);
+}
+
+// node_modules/d3-selection/src/selection/enter.js
+function enter_default() {
+  return new Selection(this._enter || this._groups.map(sparse_default), this._parents);
+}
+function EnterNode(parent, datum2) {
+  this.ownerDocument = parent.ownerDocument;
+  this.namespaceURI = parent.namespaceURI;
+  this._next = null;
+  this._parent = parent;
+  this.__data__ = datum2;
+}
+EnterNode.prototype = {
+  constructor: EnterNode,
+  appendChild: function(child) {
+    return this._parent.insertBefore(child, this._next);
+  },
+  insertBefore: function(child, next) {
+    return this._parent.insertBefore(child, next);
+  },
+  querySelector: function(selector) {
+    return this._parent.querySelector(selector);
+  },
+  querySelectorAll: function(selector) {
+    return this._parent.querySelectorAll(selector);
+  }
+};
+
+// node_modules/d3-selection/src/constant.js
+function constant_default2(x2) {
+  return function() {
+    return x2;
+  };
+}
+
+// node_modules/d3-selection/src/selection/data.js
+function bindIndex(parent, group, enter, update, exit, data) {
+  var i = 0, node, groupLength = group.length, dataLength = data.length;
+  for (; i < dataLength; ++i) {
+    if (node = group[i]) {
+      node.__data__ = data[i];
+      update[i] = node;
+    } else {
+      enter[i] = new EnterNode(parent, data[i]);
+    }
+  }
+  for (; i < groupLength; ++i) {
+    if (node = group[i]) {
+      exit[i] = node;
+    }
+  }
+}
+function bindKey(parent, group, enter, update, exit, data, key) {
+  var i, node, nodeByKeyValue = /* @__PURE__ */ new Map(), groupLength = group.length, dataLength = data.length, keyValues = new Array(groupLength), keyValue;
+  for (i = 0; i < groupLength; ++i) {
+    if (node = group[i]) {
+      keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
+      if (nodeByKeyValue.has(keyValue)) {
+        exit[i] = node;
+      } else {
+        nodeByKeyValue.set(keyValue, node);
+      }
+    }
+  }
+  for (i = 0; i < dataLength; ++i) {
+    keyValue = key.call(parent, data[i], i, data) + "";
+    if (node = nodeByKeyValue.get(keyValue)) {
+      update[i] = node;
+      node.__data__ = data[i];
+      nodeByKeyValue.delete(keyValue);
+    } else {
+      enter[i] = new EnterNode(parent, data[i]);
+    }
+  }
+  for (i = 0; i < groupLength; ++i) {
+    if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
+      exit[i] = node;
+    }
+  }
+}
+function datum(node) {
+  return node.__data__;
+}
+function data_default(value, key) {
+  if (!arguments.length) return Array.from(this, datum);
+  var bind = key ? bindKey : bindIndex, parents = this._parents, groups = this._groups;
+  if (typeof value !== "function") value = constant_default2(value);
+  for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
+    var parent = parents[j], group = groups[j], groupLength = group.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
+    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
+    for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
+      if (previous = enterGroup[i0]) {
+        if (i0 >= i1) i1 = i0 + 1;
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength) ;
+        previous._next = next || null;
+      }
+    }
+  }
+  update = new Selection(update, parents);
+  update._enter = enter;
+  update._exit = exit;
+  return update;
+}
+function arraylike(data) {
+  return typeof data === "object" && "length" in data ? data : Array.from(data);
+}
+
+// node_modules/d3-selection/src/selection/exit.js
+function exit_default() {
+  return new Selection(this._exit || this._groups.map(sparse_default), this._parents);
+}
+
+// node_modules/d3-selection/src/selection/join.js
+function join_default(onenter, onupdate, onexit) {
+  var enter = this.enter(), update = this, exit = this.exit();
+  if (typeof onenter === "function") {
+    enter = onenter(enter);
+    if (enter) enter = enter.selection();
+  } else {
+    enter = enter.append(onenter + "");
+  }
+  if (onupdate != null) {
+    update = onupdate(update);
+    if (update) update = update.selection();
+  }
+  if (onexit == null) exit.remove();
+  else onexit(exit);
+  return enter && update ? enter.merge(update).order() : update;
+}
+
+// node_modules/d3-selection/src/selection/merge.js
+function merge_default(context) {
+  var selection2 = context.selection ? context.selection() : context;
+  for (var groups0 = this._groups, groups1 = selection2._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+    for (var group0 = groups0[j], group1 = groups1[j], n2 = group0.length, merge4 = merges[j] = new Array(n2), node, i = 0; i < n2; ++i) {
+      if (node = group0[i] || group1[i]) {
+        merge4[i] = node;
+      }
+    }
+  }
+  for (; j < m0; ++j) {
+    merges[j] = groups0[j];
+  }
+  return new Selection(merges, this._parents);
+}
+
+// node_modules/d3-selection/src/selection/order.js
+function order_default() {
+  for (var groups = this._groups, j = -1, m = groups.length; ++j < m; ) {
+    for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
+      if (node = group[i]) {
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
+        next = node;
+      }
+    }
+  }
+  return this;
+}
+
+// node_modules/d3-selection/src/selection/sort.js
+function sort_default(compare) {
+  if (!compare) compare = ascending2;
+  function compareNode(a, b) {
+    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
+  }
+  for (var groups = this._groups, m = groups.length, sortgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, sortgroup = sortgroups[j] = new Array(n2), node, i = 0; i < n2; ++i) {
+      if (node = group[i]) {
+        sortgroup[i] = node;
+      }
+    }
+    sortgroup.sort(compareNode);
+  }
+  return new Selection(sortgroups, this._parents).order();
+}
+function ascending2(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+
+// node_modules/d3-selection/src/selection/call.js
+function call_default() {
+  var callback = arguments[0];
+  arguments[0] = this;
+  callback.apply(null, arguments);
+  return this;
+}
+
+// node_modules/d3-selection/src/selection/nodes.js
+function nodes_default() {
+  return Array.from(this);
+}
+
+// node_modules/d3-selection/src/selection/node.js
+function node_default() {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n2 = group.length; i < n2; ++i) {
+      var node = group[i];
+      if (node) return node;
+    }
+  }
+  return null;
+}
+
+// node_modules/d3-selection/src/selection/size.js
+function size_default() {
+  let size = 0;
+  for (const node of this) ++size;
+  return size;
+}
+
+// node_modules/d3-selection/src/selection/empty.js
+function empty_default() {
+  return !this.node();
+}
+
+// node_modules/d3-selection/src/selection/each.js
+function each_default(callback) {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n2 = group.length, node; i < n2; ++i) {
+      if (node = group[i]) callback.call(node, node.__data__, i, group);
+    }
+  }
+  return this;
+}
+
+// node_modules/d3-selection/src/selection/attr.js
+function attrRemove(name) {
+  return function() {
+    this.removeAttribute(name);
+  };
+}
+function attrRemoveNS(fullname) {
+  return function() {
+    this.removeAttributeNS(fullname.space, fullname.local);
+  };
+}
+function attrConstant(name, value) {
+  return function() {
+    this.setAttribute(name, value);
+  };
+}
+function attrConstantNS(fullname, value) {
+  return function() {
+    this.setAttributeNS(fullname.space, fullname.local, value);
+  };
+}
+function attrFunction(name, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttribute(name);
+    else this.setAttribute(name, v);
+  };
+}
+function attrFunctionNS(fullname, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.removeAttributeNS(fullname.space, fullname.local);
+    else this.setAttributeNS(fullname.space, fullname.local, v);
+  };
+}
+function attr_default(name, value) {
+  var fullname = namespace_default(name);
+  if (arguments.length < 2) {
+    var node = this.node();
+    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
+  }
+  return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
+}
+
+// node_modules/d3-selection/src/window.js
+function window_default(node) {
+  return node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView;
+}
+
+// node_modules/d3-selection/src/selection/style.js
+function styleRemove(name) {
+  return function() {
+    this.style.removeProperty(name);
+  };
+}
+function styleConstant(name, value, priority) {
+  return function() {
+    this.style.setProperty(name, value, priority);
+  };
+}
+function styleFunction(name, value, priority) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) this.style.removeProperty(name);
+    else this.style.setProperty(name, v, priority);
+  };
+}
+function style_default(name, value, priority) {
+  return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
+}
+function styleValue(node, name) {
+  return node.style.getPropertyValue(name) || window_default(node).getComputedStyle(node, null).getPropertyValue(name);
+}
+
+// node_modules/d3-selection/src/selection/property.js
+function propertyRemove(name) {
+  return function() {
+    delete this[name];
+  };
+}
+function propertyConstant(name, value) {
+  return function() {
+    this[name] = value;
+  };
+}
+function propertyFunction(name, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (v == null) delete this[name];
+    else this[name] = v;
+  };
+}
+function property_default(name, value) {
+  return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
+}
+
+// node_modules/d3-selection/src/selection/classed.js
+function classArray(string4) {
+  return string4.trim().split(/^|\s+/);
+}
+function classList(node) {
+  return node.classList || new ClassList(node);
+}
+function ClassList(node) {
+  this._node = node;
+  this._names = classArray(node.getAttribute("class") || "");
+}
+ClassList.prototype = {
+  add: function(name) {
+    var i = this._names.indexOf(name);
+    if (i < 0) {
+      this._names.push(name);
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  remove: function(name) {
+    var i = this._names.indexOf(name);
+    if (i >= 0) {
+      this._names.splice(i, 1);
+      this._node.setAttribute("class", this._names.join(" "));
+    }
+  },
+  contains: function(name) {
+    return this._names.indexOf(name) >= 0;
+  }
+};
+function classedAdd(node, names) {
+  var list = classList(node), i = -1, n2 = names.length;
+  while (++i < n2) list.add(names[i]);
+}
+function classedRemove(node, names) {
+  var list = classList(node), i = -1, n2 = names.length;
+  while (++i < n2) list.remove(names[i]);
+}
+function classedTrue(names) {
+  return function() {
+    classedAdd(this, names);
+  };
+}
+function classedFalse(names) {
+  return function() {
+    classedRemove(this, names);
+  };
+}
+function classedFunction(names, value) {
+  return function() {
+    (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
+  };
+}
+function classed_default(name, value) {
+  var names = classArray(name + "");
+  if (arguments.length < 2) {
+    var list = classList(this.node()), i = -1, n2 = names.length;
+    while (++i < n2) if (!list.contains(names[i])) return false;
+    return true;
+  }
+  return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
+}
+
+// node_modules/d3-selection/src/selection/text.js
+function textRemove() {
+  this.textContent = "";
+}
+function textConstant(value) {
+  return function() {
+    this.textContent = value;
+  };
+}
+function textFunction(value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    this.textContent = v == null ? "" : v;
+  };
+}
+function text_default(value) {
+  return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
+}
+
+// node_modules/d3-selection/src/selection/html.js
+function htmlRemove() {
+  this.innerHTML = "";
+}
+function htmlConstant(value) {
+  return function() {
+    this.innerHTML = value;
+  };
+}
+function htmlFunction(value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    this.innerHTML = v == null ? "" : v;
+  };
+}
+function html_default(value) {
+  return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
+}
+
+// node_modules/d3-selection/src/selection/raise.js
+function raise() {
+  if (this.nextSibling) this.parentNode.appendChild(this);
+}
+function raise_default() {
+  return this.each(raise);
+}
+
+// node_modules/d3-selection/src/selection/lower.js
+function lower() {
+  if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
+}
+function lower_default() {
+  return this.each(lower);
+}
+
+// node_modules/d3-selection/src/selection/append.js
+function append_default(name) {
+  var create2 = typeof name === "function" ? name : creator_default(name);
+  return this.select(function() {
+    return this.appendChild(create2.apply(this, arguments));
+  });
+}
+
+// node_modules/d3-selection/src/selection/insert.js
+function constantNull() {
+  return null;
+}
+function insert_default(name, before) {
+  var create2 = typeof name === "function" ? name : creator_default(name), select = before == null ? constantNull : typeof before === "function" ? before : selector_default(before);
+  return this.select(function() {
+    return this.insertBefore(create2.apply(this, arguments), select.apply(this, arguments) || null);
+  });
+}
+
+// node_modules/d3-selection/src/selection/remove.js
+function remove() {
+  var parent = this.parentNode;
+  if (parent) parent.removeChild(this);
+}
+function remove_default() {
+  return this.each(remove);
+}
+
+// node_modules/d3-selection/src/selection/clone.js
+function selection_cloneShallow() {
+  var clone3 = this.cloneNode(false), parent = this.parentNode;
+  return parent ? parent.insertBefore(clone3, this.nextSibling) : clone3;
+}
+function selection_cloneDeep() {
+  var clone3 = this.cloneNode(true), parent = this.parentNode;
+  return parent ? parent.insertBefore(clone3, this.nextSibling) : clone3;
+}
+function clone_default(deep) {
+  return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
+}
+
+// node_modules/d3-selection/src/selection/datum.js
+function datum_default(value) {
+  return arguments.length ? this.property("__data__", value) : this.node().__data__;
+}
+
+// node_modules/d3-selection/src/selection/on.js
+function contextListener(listener) {
+  return function(event) {
+    listener.call(this, event, this.__data__);
+  };
+}
+function parseTypenames(typenames) {
+  return typenames.trim().split(/^|\s+/).map(function(t) {
+    var name = "", i = t.indexOf(".");
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    return { type: t, name };
+  });
+}
+function onRemove(typename) {
+  return function() {
+    var on = this.__on;
+    if (!on) return;
+    for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
+      if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+      } else {
+        on[++i] = o;
+      }
+    }
+    if (++i) on.length = i;
+    else delete this.__on;
+  };
+}
+function onAdd(typename, value, options) {
+  return function() {
+    var on = this.__on, o, listener = contextListener(value);
+    if (on) for (var j = 0, m = on.length; j < m; ++j) {
+      if ((o = on[j]).type === typename.type && o.name === typename.name) {
+        this.removeEventListener(o.type, o.listener, o.options);
+        this.addEventListener(o.type, o.listener = listener, o.options = options);
+        o.value = value;
+        return;
+      }
+    }
+    this.addEventListener(typename.type, listener, options);
+    o = { type: typename.type, name: typename.name, value, listener, options };
+    if (!on) this.__on = [o];
+    else on.push(o);
+  };
+}
+function on_default(typename, value, options) {
+  var typenames = parseTypenames(typename + ""), i, n2 = typenames.length, t;
+  if (arguments.length < 2) {
+    var on = this.node().__on;
+    if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
+      for (i = 0, o = on[j]; i < n2; ++i) {
+        if ((t = typenames[i]).type === o.type && t.name === o.name) {
+          return o.value;
+        }
+      }
+    }
+    return;
+  }
+  on = value ? onAdd : onRemove;
+  for (i = 0; i < n2; ++i) this.each(on(typenames[i], value, options));
+  return this;
+}
+
+// node_modules/d3-selection/src/selection/dispatch.js
+function dispatchEvent(node, type, params) {
+  var window2 = window_default(node), event = window2.CustomEvent;
+  if (typeof event === "function") {
+    event = new event(type, params);
+  } else {
+    event = window2.document.createEvent("Event");
+    if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;
+    else event.initEvent(type, false, false);
+  }
+  node.dispatchEvent(event);
+}
+function dispatchConstant(type, params) {
+  return function() {
+    return dispatchEvent(this, type, params);
+  };
+}
+function dispatchFunction(type, params) {
+  return function() {
+    return dispatchEvent(this, type, params.apply(this, arguments));
+  };
+}
+function dispatch_default(type, params) {
+  return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
+}
+
+// node_modules/d3-selection/src/selection/iterator.js
+function* iterator_default() {
+  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) {
+    for (var group = groups[j], i = 0, n2 = group.length, node; i < n2; ++i) {
+      if (node = group[i]) yield node;
+    }
+  }
+}
+
+// node_modules/d3-selection/src/selection/index.js
+var root = [null];
+function Selection(groups, parents) {
+  this._groups = groups;
+  this._parents = parents;
+}
+function selection() {
+  return new Selection([[document.documentElement]], root);
+}
+function selection_selection() {
+  return this;
+}
+Selection.prototype = selection.prototype = {
+  constructor: Selection,
+  select: select_default,
+  selectAll: selectAll_default,
+  selectChild: selectChild_default,
+  selectChildren: selectChildren_default,
+  filter: filter_default,
+  data: data_default,
+  enter: enter_default,
+  exit: exit_default,
+  join: join_default,
+  merge: merge_default,
+  selection: selection_selection,
+  order: order_default,
+  sort: sort_default,
+  call: call_default,
+  nodes: nodes_default,
+  node: node_default,
+  size: size_default,
+  empty: empty_default,
+  each: each_default,
+  attr: attr_default,
+  style: style_default,
+  property: property_default,
+  classed: classed_default,
+  text: text_default,
+  html: html_default,
+  raise: raise_default,
+  lower: lower_default,
+  append: append_default,
+  insert: insert_default,
+  remove: remove_default,
+  clone: clone_default,
+  datum: datum_default,
+  on: on_default,
+  dispatch: dispatch_default,
+  [Symbol.iterator]: iterator_default
+};
+var selection_default = selection;
+
+// node_modules/d3-selection/src/select.js
+function select_default2(selector) {
+  return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
+}
+
+// node_modules/d3-dispatch/src/dispatch.js
+var noop = { value: () => {
+} };
+function dispatch() {
+  for (var i = 0, n2 = arguments.length, _ = {}, t; i < n2; ++i) {
+    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    _[t] = [];
+  }
+  return new Dispatch(_);
+}
+function Dispatch(_) {
+  this._ = _;
+}
+function parseTypenames2(typenames, types) {
+  return typenames.trim().split(/^|\s+/).map(function(t) {
+    var name = "", i = t.indexOf(".");
+    if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
+    if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
+    return { type: t, name };
+  });
+}
+Dispatch.prototype = dispatch.prototype = {
+  constructor: Dispatch,
+  on: function(typename, callback) {
+    var _ = this._, T = parseTypenames2(typename + "", _), t, i = -1, n2 = T.length;
+    if (arguments.length < 2) {
+      while (++i < n2) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
+      return;
+    }
+    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
+    while (++i < n2) {
+      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);
+      else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
+    }
+    return this;
+  },
+  copy: function() {
+    var copy2 = {}, _ = this._;
+    for (var t in _) copy2[t] = _[t].slice();
+    return new Dispatch(copy2);
+  },
+  call: function(type, that) {
+    if ((n2 = arguments.length - 2) > 0) for (var args = new Array(n2), i = 0, n2, t; i < n2; ++i) args[i] = arguments[i + 2];
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+    for (t = this._[type], i = 0, n2 = t.length; i < n2; ++i) t[i].value.apply(that, args);
+  },
+  apply: function(type, that, args) {
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+    for (var t = this._[type], i = 0, n2 = t.length; i < n2; ++i) t[i].value.apply(that, args);
+  }
+};
+function get(type, name) {
+  for (var i = 0, n2 = type.length, c; i < n2; ++i) {
+    if ((c = type[i]).name === name) {
+      return c.value;
+    }
+  }
+}
+function set(type, name, callback) {
+  for (var i = 0, n2 = type.length; i < n2; ++i) {
+    if (type[i].name === name) {
+      type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
+      break;
+    }
+  }
+  if (callback != null) type.push({ name, value: callback });
+  return type;
+}
+var dispatch_default2 = dispatch;
+
+// node_modules/d3-timer/src/timer.js
+var frame = 0;
+var timeout = 0;
+var interval = 0;
+var pokeDelay = 1e3;
+var taskHead;
+var taskTail;
+var clockLast = 0;
+var clockNow = 0;
+var clockSkew = 0;
+var clock = typeof performance === "object" && performance.now ? performance : Date;
+var setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) {
+  setTimeout(f, 17);
+};
+function now2() {
+  return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
+}
+function clearNow() {
+  clockNow = 0;
+}
+function Timer() {
+  this._call = this._time = this._next = null;
+}
+Timer.prototype = timer.prototype = {
+  constructor: Timer,
+  restart: function(callback, delay, time3) {
+    if (typeof callback !== "function") throw new TypeError("callback is not a function");
+    time3 = (time3 == null ? now2() : +time3) + (delay == null ? 0 : +delay);
+    if (!this._next && taskTail !== this) {
+      if (taskTail) taskTail._next = this;
+      else taskHead = this;
+      taskTail = this;
+    }
+    this._call = callback;
+    this._time = time3;
+    sleep();
+  },
+  stop: function() {
+    if (this._call) {
+      this._call = null;
+      this._time = Infinity;
+      sleep();
+    }
+  }
+};
+function timer(callback, delay, time3) {
+  var t = new Timer();
+  t.restart(callback, delay, time3);
+  return t;
+}
+function timerFlush() {
+  now2();
+  ++frame;
+  var t = taskHead, e;
+  while (t) {
+    if ((e = clockNow - t._time) >= 0) t._call.call(void 0, e);
+    t = t._next;
+  }
+  --frame;
+}
+function wake() {
+  clockNow = (clockLast = clock.now()) + clockSkew;
+  frame = timeout = 0;
+  try {
+    timerFlush();
+  } finally {
+    frame = 0;
+    nap();
+    clockNow = 0;
+  }
+}
+function poke() {
+  var now3 = clock.now(), delay = now3 - clockLast;
+  if (delay > pokeDelay) clockSkew -= delay, clockLast = now3;
+}
+function nap() {
+  var t02, t12 = taskHead, t2, time3 = Infinity;
+  while (t12) {
+    if (t12._call) {
+      if (time3 > t12._time) time3 = t12._time;
+      t02 = t12, t12 = t12._next;
+    } else {
+      t2 = t12._next, t12._next = null;
+      t12 = t02 ? t02._next = t2 : taskHead = t2;
+    }
+  }
+  taskTail = t02;
+  sleep(time3);
+}
+function sleep(time3) {
+  if (frame) return;
+  if (timeout) timeout = clearTimeout(timeout);
+  var delay = time3 - clockNow;
+  if (delay > 24) {
+    if (time3 < Infinity) timeout = setTimeout(wake, time3 - clock.now() - clockSkew);
+    if (interval) interval = clearInterval(interval);
+  } else {
+    if (!interval) clockLast = clock.now(), interval = setInterval(poke, pokeDelay);
+    frame = 1, setFrame(wake);
+  }
+}
+
+// node_modules/d3-timer/src/timeout.js
+function timeout_default(callback, delay, time3) {
+  var t = new Timer();
+  delay = delay == null ? 0 : +delay;
+  t.restart((elapsed) => {
+    t.stop();
+    callback(elapsed + delay);
+  }, delay, time3);
+  return t;
+}
+
+// node_modules/d3-transition/src/transition/schedule.js
+var emptyOn = dispatch_default2("start", "end", "cancel", "interrupt");
+var emptyTween = [];
+var CREATED = 0;
+var SCHEDULED = 1;
+var STARTING = 2;
+var STARTED = 3;
+var RUNNING = 4;
+var ENDING = 5;
+var ENDED = 6;
+function schedule_default(node, name, id2, index, group, timing) {
+  var schedules = node.__transition;
+  if (!schedules) node.__transition = {};
+  else if (id2 in schedules) return;
+  create(node, id2, {
+    name,
+    index,
+    // For context during callback.
+    group,
+    // For context during callback.
+    on: emptyOn,
+    tween: emptyTween,
+    time: timing.time,
+    delay: timing.delay,
+    duration: timing.duration,
+    ease: timing.ease,
+    timer: null,
+    state: CREATED
+  });
+}
+function init(node, id2) {
+  var schedule = get2(node, id2);
+  if (schedule.state > CREATED) throw new Error("too late; already scheduled");
+  return schedule;
+}
+function set2(node, id2) {
+  var schedule = get2(node, id2);
+  if (schedule.state > STARTED) throw new Error("too late; already running");
+  return schedule;
+}
+function get2(node, id2) {
+  var schedule = node.__transition;
+  if (!schedule || !(schedule = schedule[id2])) throw new Error("transition not found");
+  return schedule;
+}
+function create(node, id2, self2) {
+  var schedules = node.__transition, tween;
+  schedules[id2] = self2;
+  self2.timer = timer(schedule, 0, self2.time);
+  function schedule(elapsed) {
+    self2.state = SCHEDULED;
+    self2.timer.restart(start2, self2.delay, self2.time);
+    if (self2.delay <= elapsed) start2(elapsed - self2.delay);
+  }
+  function start2(elapsed) {
+    var i, j, n2, o;
+    if (self2.state !== SCHEDULED) return stop();
+    for (i in schedules) {
+      o = schedules[i];
+      if (o.name !== self2.name) continue;
+      if (o.state === STARTED) return timeout_default(start2);
+      if (o.state === RUNNING) {
+        o.state = ENDED;
+        o.timer.stop();
+        o.on.call("interrupt", node, node.__data__, o.index, o.group);
+        delete schedules[i];
+      } else if (+i < id2) {
+        o.state = ENDED;
+        o.timer.stop();
+        o.on.call("cancel", node, node.__data__, o.index, o.group);
+        delete schedules[i];
+      }
+    }
+    timeout_default(function() {
+      if (self2.state === STARTED) {
+        self2.state = RUNNING;
+        self2.timer.restart(tick, self2.delay, self2.time);
+        tick(elapsed);
+      }
+    });
+    self2.state = STARTING;
+    self2.on.call("start", node, node.__data__, self2.index, self2.group);
+    if (self2.state !== STARTING) return;
+    self2.state = STARTED;
+    tween = new Array(n2 = self2.tween.length);
+    for (i = 0, j = -1; i < n2; ++i) {
+      if (o = self2.tween[i].value.call(node, node.__data__, self2.index, self2.group)) {
+        tween[++j] = o;
+      }
+    }
+    tween.length = j + 1;
+  }
+  function tick(elapsed) {
+    var t = elapsed < self2.duration ? self2.ease.call(null, elapsed / self2.duration) : (self2.timer.restart(stop), self2.state = ENDING, 1), i = -1, n2 = tween.length;
+    while (++i < n2) {
+      tween[i].call(node, t);
+    }
+    if (self2.state === ENDING) {
+      self2.on.call("end", node, node.__data__, self2.index, self2.group);
+      stop();
+    }
+  }
+  function stop() {
+    self2.state = ENDED;
+    self2.timer.stop();
+    delete schedules[id2];
+    for (var i in schedules) return;
+    delete node.__transition;
+  }
+}
+
+// node_modules/d3-transition/src/interrupt.js
+function interrupt_default(node, name) {
+  var schedules = node.__transition, schedule, active, empty2 = true, i;
+  if (!schedules) return;
+  name = name == null ? null : name + "";
+  for (i in schedules) {
+    if ((schedule = schedules[i]).name !== name) {
+      empty2 = false;
+      continue;
+    }
+    active = schedule.state > STARTING && schedule.state < ENDING;
+    schedule.state = ENDED;
+    schedule.timer.stop();
+    schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group);
+    delete schedules[i];
+  }
+  if (empty2) delete node.__transition;
+}
+
+// node_modules/d3-transition/src/selection/interrupt.js
+function interrupt_default2(name) {
+  return this.each(function() {
+    interrupt_default(this, name);
+  });
+}
+
+// node_modules/d3-transition/src/transition/tween.js
+function tweenRemove(id2, name) {
+  var tween0, tween1;
+  return function() {
+    var schedule = set2(this, id2), tween = schedule.tween;
+    if (tween !== tween0) {
+      tween1 = tween0 = tween;
+      for (var i = 0, n2 = tween1.length; i < n2; ++i) {
+        if (tween1[i].name === name) {
+          tween1 = tween1.slice();
+          tween1.splice(i, 1);
+          break;
+        }
+      }
+    }
+    schedule.tween = tween1;
+  };
+}
+function tweenFunction(id2, name, value) {
+  var tween0, tween1;
+  if (typeof value !== "function") throw new Error();
+  return function() {
+    var schedule = set2(this, id2), tween = schedule.tween;
+    if (tween !== tween0) {
+      tween1 = (tween0 = tween).slice();
+      for (var t = { name, value }, i = 0, n2 = tween1.length; i < n2; ++i) {
+        if (tween1[i].name === name) {
+          tween1[i] = t;
+          break;
+        }
+      }
+      if (i === n2) tween1.push(t);
+    }
+    schedule.tween = tween1;
+  };
+}
+function tween_default(name, value) {
+  var id2 = this._id;
+  name += "";
+  if (arguments.length < 2) {
+    var tween = get2(this.node(), id2).tween;
+    for (var i = 0, n2 = tween.length, t; i < n2; ++i) {
+      if ((t = tween[i]).name === name) {
+        return t.value;
+      }
+    }
+    return null;
+  }
+  return this.each((value == null ? tweenRemove : tweenFunction)(id2, name, value));
+}
+function tweenValue(transition3, name, value) {
+  var id2 = transition3._id;
+  transition3.each(function() {
+    var schedule = set2(this, id2);
+    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
+  });
+  return function(node) {
+    return get2(node, id2).value[name];
+  };
+}
+
+// node_modules/d3-transition/src/transition/interpolate.js
+function interpolate_default(a, b) {
+  var c;
+  return (typeof b === "number" ? number_default : b instanceof color ? rgb_default : (c = color(b)) ? (b = c, rgb_default) : string_default)(a, b);
+}
+
+// node_modules/d3-transition/src/transition/attr.js
+function attrRemove2(name) {
+  return function() {
+    this.removeAttribute(name);
+  };
+}
+function attrRemoveNS2(fullname) {
+  return function() {
+    this.removeAttributeNS(fullname.space, fullname.local);
+  };
+}
+function attrConstant2(name, interpolate, value1) {
+  var string00, string1 = value1 + "", interpolate0;
+  return function() {
+    var string0 = this.getAttribute(name);
+    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+function attrConstantNS2(fullname, interpolate, value1) {
+  var string00, string1 = value1 + "", interpolate0;
+  return function() {
+    var string0 = this.getAttributeNS(fullname.space, fullname.local);
+    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+function attrFunction2(name, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function() {
+    var string0, value1 = value(this), string1;
+    if (value1 == null) return void this.removeAttribute(name);
+    string0 = this.getAttribute(name);
+    string1 = value1 + "";
+    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+  };
+}
+function attrFunctionNS2(fullname, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function() {
+    var string0, value1 = value(this), string1;
+    if (value1 == null) return void this.removeAttributeNS(fullname.space, fullname.local);
+    string0 = this.getAttributeNS(fullname.space, fullname.local);
+    string1 = value1 + "";
+    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+  };
+}
+function attr_default2(name, value) {
+  var fullname = namespace_default(name), i = fullname === "transform" ? interpolateTransformSvg : interpolate_default;
+  return this.attrTween(name, typeof value === "function" ? (fullname.local ? attrFunctionNS2 : attrFunction2)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attrRemoveNS2 : attrRemove2)(fullname) : (fullname.local ? attrConstantNS2 : attrConstant2)(fullname, i, value));
+}
+
+// node_modules/d3-transition/src/transition/attrTween.js
+function attrInterpolate(name, i) {
+  return function(t) {
+    this.setAttribute(name, i.call(this, t));
+  };
+}
+function attrInterpolateNS(fullname, i) {
+  return function(t) {
+    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
+  };
+}
+function attrTweenNS(fullname, value) {
+  var t02, i0;
+  function tween() {
+    var i = value.apply(this, arguments);
+    if (i !== i0) t02 = (i0 = i) && attrInterpolateNS(fullname, i);
+    return t02;
+  }
+  tween._value = value;
+  return tween;
+}
+function attrTween(name, value) {
+  var t02, i0;
+  function tween() {
+    var i = value.apply(this, arguments);
+    if (i !== i0) t02 = (i0 = i) && attrInterpolate(name, i);
+    return t02;
+  }
+  tween._value = value;
+  return tween;
+}
+function attrTween_default(name, value) {
+  var key = "attr." + name;
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  var fullname = namespace_default(name);
+  return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
+}
+
+// node_modules/d3-transition/src/transition/delay.js
+function delayFunction(id2, value) {
+  return function() {
+    init(this, id2).delay = +value.apply(this, arguments);
+  };
+}
+function delayConstant(id2, value) {
+  return value = +value, function() {
+    init(this, id2).delay = value;
+  };
+}
+function delay_default(value) {
+  var id2 = this._id;
+  return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id2, value)) : get2(this.node(), id2).delay;
+}
+
+// node_modules/d3-transition/src/transition/duration.js
+function durationFunction(id2, value) {
+  return function() {
+    set2(this, id2).duration = +value.apply(this, arguments);
+  };
+}
+function durationConstant(id2, value) {
+  return value = +value, function() {
+    set2(this, id2).duration = value;
+  };
+}
+function duration_default(value) {
+  var id2 = this._id;
+  return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id2, value)) : get2(this.node(), id2).duration;
+}
+
+// node_modules/d3-transition/src/transition/ease.js
+function easeConstant(id2, value) {
+  if (typeof value !== "function") throw new Error();
+  return function() {
+    set2(this, id2).ease = value;
+  };
+}
+function ease_default(value) {
+  var id2 = this._id;
+  return arguments.length ? this.each(easeConstant(id2, value)) : get2(this.node(), id2).ease;
+}
+
+// node_modules/d3-transition/src/transition/easeVarying.js
+function easeVarying(id2, value) {
+  return function() {
+    var v = value.apply(this, arguments);
+    if (typeof v !== "function") throw new Error();
+    set2(this, id2).ease = v;
+  };
+}
+function easeVarying_default(value) {
+  if (typeof value !== "function") throw new Error();
+  return this.each(easeVarying(this._id, value));
+}
+
+// node_modules/d3-transition/src/transition/filter.js
+function filter_default2(match2) {
+  if (typeof match2 !== "function") match2 = matcher_default(match2);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n2; ++i) {
+      if ((node = group[i]) && match2.call(node, node.__data__, i, group)) {
+        subgroup.push(node);
+      }
+    }
+  }
+  return new Transition(subgroups, this._parents, this._name, this._id);
+}
+
+// node_modules/d3-transition/src/transition/merge.js
+function merge_default2(transition3) {
+  if (transition3._id !== this._id) throw new Error();
+  for (var groups0 = this._groups, groups1 = transition3._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+    for (var group0 = groups0[j], group1 = groups1[j], n2 = group0.length, merge4 = merges[j] = new Array(n2), node, i = 0; i < n2; ++i) {
+      if (node = group0[i] || group1[i]) {
+        merge4[i] = node;
+      }
+    }
+  }
+  for (; j < m0; ++j) {
+    merges[j] = groups0[j];
+  }
+  return new Transition(merges, this._parents, this._name, this._id);
+}
+
+// node_modules/d3-transition/src/transition/on.js
+function start(name) {
+  return (name + "").trim().split(/^|\s+/).every(function(t) {
+    var i = t.indexOf(".");
+    if (i >= 0) t = t.slice(0, i);
+    return !t || t === "start";
+  });
+}
+function onFunction(id2, name, listener) {
+  var on0, on1, sit = start(name) ? init : set2;
+  return function() {
+    var schedule = sit(this, id2), on = schedule.on;
+    if (on !== on0) (on1 = (on0 = on).copy()).on(name, listener);
+    schedule.on = on1;
+  };
+}
+function on_default2(name, listener) {
+  var id2 = this._id;
+  return arguments.length < 2 ? get2(this.node(), id2).on.on(name) : this.each(onFunction(id2, name, listener));
+}
+
+// node_modules/d3-transition/src/transition/remove.js
+function removeFunction(id2) {
+  return function() {
+    var parent = this.parentNode;
+    for (var i in this.__transition) if (+i !== id2) return;
+    if (parent) parent.removeChild(this);
+  };
+}
+function remove_default2() {
+  return this.on("end.remove", removeFunction(this._id));
+}
+
+// node_modules/d3-transition/src/transition/select.js
+function select_default3(select) {
+  var name = this._name, id2 = this._id;
+  if (typeof select !== "function") select = selector_default(select);
+  for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, subgroup = subgroups[j] = new Array(n2), node, subnode, i = 0; i < n2; ++i) {
+      if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
+        if ("__data__" in node) subnode.__data__ = node.__data__;
+        subgroup[i] = subnode;
+        schedule_default(subgroup[i], name, id2, i, subgroup, get2(node, id2));
+      }
+    }
+  }
+  return new Transition(subgroups, this._parents, name, id2);
+}
+
+// node_modules/d3-transition/src/transition/selectAll.js
+function selectAll_default2(select) {
+  var name = this._name, id2 = this._id;
+  if (typeof select !== "function") select = selectorAll_default(select);
+  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
+      if (node = group[i]) {
+        for (var children2 = select.call(node, node.__data__, i, group), child, inherit2 = get2(node, id2), k = 0, l2 = children2.length; k < l2; ++k) {
+          if (child = children2[k]) {
+            schedule_default(child, name, id2, k, children2, inherit2);
+          }
+        }
+        subgroups.push(children2);
+        parents.push(node);
+      }
+    }
+  }
+  return new Transition(subgroups, parents, name, id2);
+}
+
+// node_modules/d3-transition/src/transition/selection.js
+var Selection2 = selection_default.prototype.constructor;
+function selection_default2() {
+  return new Selection2(this._groups, this._parents);
+}
+
+// node_modules/d3-transition/src/transition/style.js
+function styleNull(name, interpolate) {
+  var string00, string10, interpolate0;
+  return function() {
+    var string0 = styleValue(this, name), string1 = (this.style.removeProperty(name), styleValue(this, name));
+    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
+  };
+}
+function styleRemove2(name) {
+  return function() {
+    this.style.removeProperty(name);
+  };
+}
+function styleConstant2(name, interpolate, value1) {
+  var string00, string1 = value1 + "", interpolate0;
+  return function() {
+    var string0 = styleValue(this, name);
+    return string0 === string1 ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+function styleFunction2(name, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function() {
+    var string0 = styleValue(this, name), value1 = value(this), string1 = value1 + "";
+    if (value1 == null) string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
+    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+  };
+}
+function styleMaybeRemove(id2, name) {
+  var on0, on1, listener0, key = "style." + name, event = "end." + key, remove2;
+  return function() {
+    var schedule = set2(this, id2), on = schedule.on, listener = schedule.value[key] == null ? remove2 || (remove2 = styleRemove2(name)) : void 0;
+    if (on !== on0 || listener0 !== listener) (on1 = (on0 = on).copy()).on(event, listener0 = listener);
+    schedule.on = on1;
+  };
+}
+function style_default2(name, value, priority) {
+  var i = (name += "") === "transform" ? interpolateTransformCss : interpolate_default;
+  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, styleRemove2(name)) : typeof value === "function" ? this.styleTween(name, styleFunction2(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, styleConstant2(name, i, value), priority).on("end.style." + name, null);
+}
+
+// node_modules/d3-transition/src/transition/styleTween.js
+function styleInterpolate(name, i, priority) {
+  return function(t) {
+    this.style.setProperty(name, i.call(this, t), priority);
+  };
+}
+function styleTween(name, value, priority) {
+  var t, i0;
+  function tween() {
+    var i = value.apply(this, arguments);
+    if (i !== i0) t = (i0 = i) && styleInterpolate(name, i, priority);
+    return t;
+  }
+  tween._value = value;
+  return tween;
+}
+function styleTween_default(name, value, priority) {
+  var key = "style." + (name += "");
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
+}
+
+// node_modules/d3-transition/src/transition/text.js
+function textConstant2(value) {
+  return function() {
+    this.textContent = value;
+  };
+}
+function textFunction2(value) {
+  return function() {
+    var value1 = value(this);
+    this.textContent = value1 == null ? "" : value1;
+  };
+}
+function text_default2(value) {
+  return this.tween("text", typeof value === "function" ? textFunction2(tweenValue(this, "text", value)) : textConstant2(value == null ? "" : value + ""));
+}
+
+// node_modules/d3-transition/src/transition/textTween.js
+function textInterpolate(i) {
+  return function(t) {
+    this.textContent = i.call(this, t);
+  };
+}
+function textTween(value) {
+  var t02, i0;
+  function tween() {
+    var i = value.apply(this, arguments);
+    if (i !== i0) t02 = (i0 = i) && textInterpolate(i);
+    return t02;
+  }
+  tween._value = value;
+  return tween;
+}
+function textTween_default(value) {
+  var key = "text";
+  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  return this.tween(key, textTween(value));
+}
+
+// node_modules/d3-transition/src/transition/transition.js
+function transition_default() {
+  var name = this._name, id0 = this._id, id1 = newId();
+  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
+      if (node = group[i]) {
+        var inherit2 = get2(node, id0);
+        schedule_default(node, name, id1, i, group, {
+          time: inherit2.time + inherit2.delay + inherit2.duration,
+          delay: 0,
+          duration: inherit2.duration,
+          ease: inherit2.ease
+        });
+      }
+    }
+  }
+  return new Transition(groups, this._parents, name, id1);
+}
+
+// node_modules/d3-transition/src/transition/end.js
+function end_default() {
+  var on0, on1, that = this, id2 = that._id, size = that.size();
+  return new Promise(function(resolve, reject) {
+    var cancel = { value: reject }, end = { value: function() {
+      if (--size === 0) resolve();
+    } };
+    that.each(function() {
+      var schedule = set2(this, id2), on = schedule.on;
+      if (on !== on0) {
+        on1 = (on0 = on).copy();
+        on1._.cancel.push(cancel);
+        on1._.interrupt.push(cancel);
+        on1._.end.push(end);
+      }
+      schedule.on = on1;
+    });
+    if (size === 0) resolve();
+  });
+}
+
+// node_modules/d3-transition/src/transition/index.js
+var id = 0;
+function Transition(groups, parents, name, id2) {
+  this._groups = groups;
+  this._parents = parents;
+  this._name = name;
+  this._id = id2;
+}
+function transition2(name) {
+  return selection_default().transition(name);
+}
+function newId() {
+  return ++id;
+}
+var selection_prototype = selection_default.prototype;
+Transition.prototype = transition2.prototype = {
+  constructor: Transition,
+  select: select_default3,
+  selectAll: selectAll_default2,
+  selectChild: selection_prototype.selectChild,
+  selectChildren: selection_prototype.selectChildren,
+  filter: filter_default2,
+  merge: merge_default2,
+  selection: selection_default2,
+  transition: transition_default,
+  call: selection_prototype.call,
+  nodes: selection_prototype.nodes,
+  node: selection_prototype.node,
+  size: selection_prototype.size,
+  empty: selection_prototype.empty,
+  each: selection_prototype.each,
+  on: on_default2,
+  attr: attr_default2,
+  attrTween: attrTween_default,
+  style: style_default2,
+  styleTween: styleTween_default,
+  text: text_default2,
+  textTween: textTween_default,
+  remove: remove_default2,
+  tween: tween_default,
+  delay: delay_default,
+  duration: duration_default,
+  ease: ease_default,
+  easeVarying: easeVarying_default,
+  end: end_default,
+  [Symbol.iterator]: selection_prototype[Symbol.iterator]
+};
+
+// node_modules/d3-ease/src/cubic.js
+function cubicInOut(t) {
+  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
+}
+
+// node_modules/d3-transition/src/selection/transition.js
+var defaultTiming = {
+  time: null,
+  // Set on use.
+  delay: 0,
+  duration: 250,
+  ease: cubicInOut
+};
+function inherit(node, id2) {
+  var timing;
+  while (!(timing = node.__transition) || !(timing = timing[id2])) {
+    if (!(node = node.parentNode)) {
+      throw new Error(`transition ${id2} not found`);
+    }
+  }
+  return timing;
+}
+function transition_default2(name) {
+  var id2, timing;
+  if (name instanceof Transition) {
+    id2 = name._id, name = name._name;
+  } else {
+    id2 = newId(), (timing = defaultTiming).time = now2(), name = name == null ? null : name + "";
+  }
+  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) {
+    for (var group = groups[j], n2 = group.length, node, i = 0; i < n2; ++i) {
+      if (node = group[i]) {
+        schedule_default(node, name, id2, i, group, timing || inherit(node, id2));
+      }
+    }
+  }
+  return new Transition(groups, this._parents, name, id2);
+}
+
+// node_modules/d3-transition/src/selection/index.js
+selection_default.prototype.interrupt = interrupt_default2;
+selection_default.prototype.transition = transition_default2;
+
+// src/axisutil.mts
 var LuxonTimeScale = class {
   constructor(interval2, range) {
-    __publicField(this, "interval");
-    __publicField(this, "range");
     checkLuxonValid(interval2);
     this.interval = interval2;
     this.range = range.slice();
@@ -58640,7 +57921,7 @@ function drawAxisLabels(svgEl, seismographConfig, height, width, handlebarsInput
   );
 }
 
-// src/seismographutil.ts
+// src/seismographutil.mts
 var DEFAULT_MAX_SAMPLE_PER_PIXEL = 3;
 var DEFAULT_GRID_LINE_COLOR = "gainsboro";
 function clearCanvas(canvas) {
@@ -58807,7 +58088,7 @@ function seismogramSegmentAsLine(segment, width, xScale, yScale, maxSamplePerPix
     }
   } else {
     let prevLastYPixel = Math.round(yScale(segment.y[leftVisibleSample]));
-    let lastYPixel = prevLastYPixel;
+    let lastYPixel;
     pushPoint(out, leftVisiblePixel, prevLastYPixel);
     let i = leftVisibleSample;
     let inHorizontalLine = false;
@@ -58902,18 +58183,18 @@ function rgbaForColorName(name) {
   return out;
 }
 
-// src/handlebarshelpers.ts
+// src/handlebarshelpers.mts
 var handlebarshelpers_exports = {};
 __export(handlebarshelpers_exports, {
-  Handlebars: () => Handlebars,
+  Handlebars: () => import_handlebars.default,
   registerHelpers: () => registerHelpers
 });
-var Handlebars = __toESM(require_handlebars(), 1);
+var import_handlebars = __toESM(require_handlebars(), 1);
 function registerHelpers() {
-  Handlebars.registerHelper(
+  import_handlebars.default.registerHelper(
     "onlyChangesChannel",
     function(sddDataList, index) {
-      let out = "";
+      let out;
       const curr = sddDataList[index];
       if (typeof curr === "undefined" || curr === null) {
         return "unknown";
@@ -58935,7 +58216,7 @@ function registerHelpers() {
       return out;
     }
   );
-  Handlebars.registerHelper("distdeg", function(sdd) {
+  import_handlebars.default.registerHelper("distdeg", function(sdd) {
     const distaz2 = sdd.distaz;
     if (distaz2) {
       return distaz2.distanceDeg;
@@ -58943,7 +58224,7 @@ function registerHelpers() {
       return "";
     }
   });
-  Handlebars.registerHelper("distkm", function(sdd) {
+  import_handlebars.default.registerHelper("distkm", function(sdd) {
     const distaz2 = sdd.distaz;
     if (distaz2) {
       return distaz2.distanceKm;
@@ -58951,7 +58232,7 @@ function registerHelpers() {
       return "";
     }
   });
-  Handlebars.registerHelper("formatNumber", function(val, digits = 2) {
+  import_handlebars.default.registerHelper("formatNumber", function(val, digits = 2) {
     if (typeof val === "undefined" || val === null) {
       return "";
     }
@@ -58963,7 +58244,7 @@ function registerHelpers() {
     }
     return val;
   });
-  Handlebars.registerHelper(
+  import_handlebars.default.registerHelper(
     "formatIsoDate",
     function(param, hash2) {
       if (typeof param === "undefined" || param === null) return "no time";
@@ -58978,7 +58259,7 @@ function registerHelpers() {
       }
     }
   );
-  Handlebars.registerHelper(
+  import_handlebars.default.registerHelper(
     "formatDuration",
     function(param) {
       if (typeof param === "undefined" || param === null) return "no time";
@@ -58993,17 +58274,11 @@ function registerHelpers() {
   );
 }
 
-// src/seismographconfig.ts
+// src/seismographconfig.mts
 registerHelpers();
 var DEFAULT_TITLE = "{{#each seisDataList}}<tspan>{{onlyChangesChannel ../seisDataList @index}}</tspan> {{else}}No Data{{/each}}";
 var SeismographConfigCache = class {
   constructor() {
-    __publicField(this, "titleHandlebarsCompiled");
-    __publicField(this, "xLabelHandlebarsCompiled");
-    __publicField(this, "xSublabelHandlebarsCompiled");
-    __publicField(this, "yLabelHandlebarsCompiled");
-    __publicField(this, "yLabelRightHandlebarsCompiled");
-    __publicField(this, "ySublabelHandlebarsCompiled");
     this.titleHandlebarsCompiled = null;
     this.xLabelHandlebarsCompiled = null;
     this.xSublabelHandlebarsCompiled = null;
@@ -59012,82 +58287,8 @@ var SeismographConfigCache = class {
     this.ySublabelHandlebarsCompiled = null;
   }
 };
-var _SeismographConfig = class _SeismographConfig {
+var SeismographConfig = class _SeismographConfig {
   constructor() {
-    __publicField(this, "configId");
-    /** @private */
-    __publicField(this, "__cache__");
-    __publicField(this, "_timeFormat");
-    __publicField(this, "relativeTimeFormat");
-    __publicField(this, "amplitudeFormat");
-    __publicField(this, "showTitle");
-    /** @private */
-    __publicField(this, "_title");
-    /** @private */
-    __publicField(this, "isXAxis");
-    __publicField(this, "xAxisTimeZone");
-    __publicField(this, "isXAxisTop");
-    /** @private */
-    __publicField(this, "_xLabel");
-    __publicField(this, "xLabelOrientation");
-    /** @private */
-    __publicField(this, "_xSublabel");
-    __publicField(this, "xSublabelIsUnits");
-    /**
-     * Should grid lines be drawn for each tick on the x axis.
-     */
-    __publicField(this, "xGridLines");
-    __publicField(this, "isYAxis");
-    __publicField(this, "isYAxisRight");
-    __publicField(this, "isYAxisNice");
-    /**
-     * hint for number of ticks to show on y axis. Note this is not exact as
-     * trying to put ticks on "even" numbers may result in slightly more or less.
-     */
-    __publicField(this, "yAxisNumTickHint");
-    /** @private */
-    __publicField(this, "_yLabel");
-    /** @private */
-    __publicField(this, "_yLabelRight");
-    __publicField(this, "yLabelOrientation");
-    /** @private */
-    __publicField(this, "_ySublabel");
-    __publicField(this, "ySublabelTrans");
-    __publicField(this, "ySublabelIsUnits");
-    __publicField(this, "yGridLines");
-    __publicField(this, "doMarkers");
-    __publicField(this, "markerTextOffset");
-    __publicField(this, "markerTextAngle");
-    __publicField(this, "markerFlagpoleBase");
-    __publicField(this, "minHeight");
-    __publicField(this, "maxHeight");
-    __publicField(this, "minWidth");
-    __publicField(this, "maxWidth");
-    __publicField(this, "margin");
-    __publicField(this, "segmentDrawCompressedCutoff");
-    //below this draw all points, above draw minmax
-    __publicField(this, "maxZoomPixelPerSample");
-    // no zoom in past point of sample
-    // separated by pixels
-    __publicField(this, "connectSegments");
-    __publicField(this, "lineColors");
-    __publicField(this, "lineWidth");
-    __publicField(this, "gridLineColor");
-    __publicField(this, "allowZoom");
-    __publicField(this, "wheelZoom");
-    __publicField(this, "amplitudeMode");
-    __publicField(this, "doGain");
-    __publicField(this, "windowAmp");
-    __publicField(this, "resolutionScale");
-    /** @private */
-    __publicField(this, "_fixedAmplitudeScale");
-    /** @private */
-    __publicField(this, "_fixedTimeScale");
-    /** @private */
-    __publicField(this, "_linkedAmplitudeScale");
-    /** @private */
-    __publicField(this, "_linkedTimeScale");
-    __publicField(this, "isRelativeTime");
     this.configId = ++_SeismographConfig._lastID;
     this.__cache__ = new SeismographConfigCache();
     this.isXAxis = true;
@@ -59403,11 +58604,11 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._title) || this._title.length === 0 || !isDef(this._title[0])) {
         return "";
       } else if (this._title.length === 1) {
-        this.__cache__.titleHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.titleHandlebarsCompiled = import_handlebars.default.compile(
           this._title[0]
         );
       } else {
-        this.__cache__.titleHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.titleHandlebarsCompiled = import_handlebars.default.compile(
           "" + this._title.join(" ")
         );
       }
@@ -59468,7 +58669,7 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._xLabel) || this._xLabel.length === 0) {
         return "";
       } else {
-        this.__cache__.xLabelHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.xLabelHandlebarsCompiled = import_handlebars.default.compile(
           this._xLabel
         );
       }
@@ -59485,7 +58686,7 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._xSublabel) || this._xSublabel.length === 0) {
         return "";
       } else {
-        this.__cache__.xSublabelHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.xSublabelHandlebarsCompiled = import_handlebars.default.compile(
           this._xSublabel
         );
       }
@@ -59547,7 +58748,7 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._yLabel) || this._yLabel.length === 0) {
         return "";
       } else {
-        this.__cache__.yLabelHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.yLabelHandlebarsCompiled = import_handlebars.default.compile(
           this._yLabel
         );
       }
@@ -59564,7 +58765,7 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._ySublabel) || this._ySublabel.length === 0) {
         return "";
       } else {
-        this.__cache__.ySublabelHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.ySublabelHandlebarsCompiled = import_handlebars.default.compile(
           this._ySublabel
         );
       }
@@ -59603,7 +58804,7 @@ var _SeismographConfig = class _SeismographConfig {
       if (!isDef(this._yLabelRight) || this._yLabelRight.length === 0) {
         return "";
       } else {
-        this.__cache__.yLabelRightHandlebarsCompiled = Handlebars.compile(
+        this.__cache__.yLabelRightHandlebarsCompiled = import_handlebars.default.compile(
           this._yLabelRight
         );
       }
@@ -59720,9 +58921,6 @@ var _SeismographConfig = class _SeismographConfig {
     return outS;
   }
 };
-/** @private */
-__publicField(_SeismographConfig, "_lastID");
-var SeismographConfig = _SeismographConfig;
 function numberFormatWrapper(formater) {
   return function(domainValue) {
     if (typeof domainValue === "number") {
@@ -59762,127 +58960,7 @@ function createTimeFormatterForZone(timezone) {
 }
 SeismographConfig._lastID = 0;
 
-// src/seismographmarker.ts
-var seismographmarker_exports = {};
-__export(seismographmarker_exports, {
-  MARKERTYPE_PICK: () => MARKERTYPE_PICK,
-  MARKERTYPE_PREDICTED: () => MARKERTYPE_PREDICTED,
-  createFullMarkersForQuakeAtChannel: () => createFullMarkersForQuakeAtChannel,
-  createFullMarkersForQuakeAtStation: () => createFullMarkersForQuakeAtStation,
-  createMarkerForOriginTime: () => createMarkerForOriginTime,
-  createMarkerForPicks: () => createMarkerForPicks,
-  createMarkerForQuakePicks: () => createMarkerForQuakePicks,
-  createMarkersForTravelTimes: () => createMarkersForTravelTimes,
-  isValidMarker: () => isValidMarker
-});
-var MARKERTYPE_PICK = "pick";
-var MARKERTYPE_PREDICTED = "predicted";
-function isValidMarker(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const m = v;
-  return typeof m.time === "string" && typeof m.name === "string" && typeof m.markertype === "string" && typeof m.description === "string" && (!("link" in m) || typeof m.link === "string");
-}
-function createMarkersForTravelTimes(quake, ttime) {
-  return ttime.arrivals.map((a) => {
-    return {
-      markertype: MARKERTYPE_PREDICTED,
-      name: a.phase,
-      time: quake.time.plus(Duration.fromMillis(1e3 * a.time)),
-      description: ""
-    };
-  });
-}
-function createMarkerForOriginTime(quake) {
-  return {
-    markertype: MARKERTYPE_PREDICTED,
-    name: "origin",
-    time: quake.time,
-    description: ""
-  };
-}
-function createFullMarkersForQuakeAtStation(quake, station) {
-  const markers = [];
-  if (quake.hasOrigin()) {
-    const daz = distaz(
-      station.latitude,
-      station.longitude,
-      quake.latitude,
-      quake.longitude
-    );
-    let magVal = "";
-    let magStr = "";
-    if (quake.hasPreferredMagnitude()) {
-      magVal = quake.preferredMagnitude ? `${quake.preferredMagnitude.mag}` : "";
-      magStr = quake.preferredMagnitude ? quake.preferredMagnitude.toString() : "";
-    }
-    markers.push({
-      markertype: MARKERTYPE_PREDICTED,
-      name: `M${magVal} ${quake.time.toFormat("HH:mm")}`,
-      time: quake.time,
-      link: `https://earthquake.usgs.gov/earthquakes/eventpage/${quake.eventId}/executive`,
-      description: `${quake.time.toISO()}
-${quake.latitude.toFixed(2)}/${quake.longitude.toFixed(2)} ${(quake.depth / 1e3).toFixed(2)} km
-${quake.description}
-${magStr}
-${daz.delta.toFixed(2)} deg to ${station.stationCode} (${daz.distanceKm} km)
-`
-    });
-  }
-  return markers;
-}
-function createFullMarkersForQuakeAtChannel(quake, channel) {
-  let markers = createFullMarkersForQuakeAtStation(quake, channel.station);
-  if (quake.preferredOrigin) {
-    markers = markers.concat(
-      createMarkerForPicks(quake.preferredOrigin, channel)
-    );
-  }
-  return markers;
-}
-function createMarkerForQuakePicks(quake, channel) {
-  const markers = [];
-  if (quake.pickList) {
-    quake.pickList.forEach((pick3) => {
-      if (pick3 && pick3.isOnChannel(channel)) {
-        markers.push({
-          markertype: MARKERTYPE_PICK,
-          name: "pick",
-          time: pick3.time,
-          description: ""
-        });
-      }
-    });
-  }
-  return markers;
-}
-function createMarkerForPicks(origin, channel) {
-  const markers = [];
-  if (origin.arrivals) {
-    origin.arrivals.forEach((arrival) => {
-      if (arrival && arrival.pick.isOnChannel(channel)) {
-        markers.push({
-          markertype: MARKERTYPE_PICK,
-          name: arrival.phase,
-          time: arrival.pick.time,
-          description: ""
-        });
-      }
-    });
-  }
-  return markers;
-}
-
-// src/spelement.ts
-var spelement_exports = {};
-__export(spelement_exports, {
-  SORT_BY: () => SORT_BY,
-  SeisPlotElement: () => SeisPlotElement,
-  addStyleToElement: () => addStyleToElement
-});
-
-// src/sorting.ts
+// src/sorting.mts
 var sorting_exports = {};
 __export(sorting_exports, {
   SORT_ALPHABETICAL: () => SORT_ALPHABETICAL,
@@ -60019,16 +59097,11 @@ function reorderXYZ(sddList) {
   return sddList.slice().sort(xyzCompareFun);
 }
 
-// src/spelement.ts
+// src/spelement.mts
 var SORT_BY = "sort";
 var SeisPlotElement = class extends HTMLElement {
   constructor(seisData, seisConfig) {
     super();
-    __publicField(this, "_seisDataList");
-    __publicField(this, "_seismographConfig");
-    __publicField(this, "onRedraw");
-    __publicField(this, "_throttleRedraw");
-    __publicField(this, "_sorting");
     this.onRedraw = (_el) => {
     };
     this._throttleRedraw = null;
@@ -60063,6 +59136,10 @@ var SeisPlotElement = class extends HTMLElement {
   set seisData(seisData) {
     this._seisDataList = [];
     this.appendSeisData(seisData);
+  }
+  removeAllSeisData() {
+    this._seisDataList = [];
+    this.seisDataUpdated();
   }
   /**
    * appends the seismogram(s) or SeismogramDisplayData as separate time series.
@@ -60224,1829 +59301,6 @@ function addStyleToElement(element, css, id2) {
   return styleEl;
 }
 
-// src/seismograph.ts
-registerHelpers();
-var CLIP_PREFIX = "seismographclip";
-var SEIS_CLICK_EVENT = "seisclick";
-var SEIS_MOVE_EVENT = "seismousemove";
-var SEISMOGRAPH_ELEMENT = "sp-seismograph";
-var seismograph_css = `
-
-:host {
-  display: block;
-  min-height: 50px;
-  height: 100%;
-}
-
-div.wrapper {
-  min-height: 50px;
-  height: 100%;
-}
-
-@property --sp-seismograph-is-xlabel {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --sp-seismograph-is-xsublabel {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --sp-seismograph-is-ylabel {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --sp-seismograph-is-ysublabel {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --sp-seismograph-display-title {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-.marker {
-  opacity: 0.4;
-}
-
-.marker .markerpath {
-  fill: none;
-  stroke: black;
-  stroke-width: 1px;
-}
-
-.marker polygon {
-  fill: rgba(150,220,150,.4);
-}
-
-.marker.predicted polygon {
-  fill: rgba(220,220,220,.4);
-}
-
-.marker.pick polygon {
-  fill: rgba(255,100,100,.4);
-}
-
-path.seispath {
-  stroke: skyblue;
-  fill: none;
-  stroke-width: 1px;
-}
-
-path.orientZ {
-  stroke: seagreen;
-}
-
-path.orientN {
-  stroke: cornflowerblue;
-}
-
-path.orientE {
-  stroke: orange;
-}
-
-path.alignment {
-  stroke-dasharray: 8;
-  stroke-width: 2px;
-}
-
-svg.seismograph {
-  height: 100%;
-  width: 100%;
-  min-height: 25px;
-  min-width: 25px;
-}
-
-svg.seismograph g.ySublabel text {
-  font-size: smaller;
-}
-
-svg.seismograph g.xSublabel text {
-  font-size: smaller;
-}
-
-svg.seismograph text.title {
-  font-size: larger;
-  font-weight: bold;
-  fill: black;
-  color: black;
-}
-
-svg.realtimePlot g.allseismograms path.seispath {
-  stroke: skyblue;
-}
-
-/* links in svg */
-svg.seismograph text a {
-  fill: #0000EE;
-  text-decoration: underline;
-}
-
-
-`;
-var COLOR_CSS_ID = "seismographcolors";
-var _Seismograph = class _Seismograph extends SeisPlotElement {
-  constructor(seisData, seisConfig) {
-    super(seisData, seisConfig);
-    __publicField(this, "plotId");
-    __publicField(this, "beforeFirstDraw");
-    /** @private */
-    __publicField(this, "_debugAlignmentSeisData");
-    __publicField(this, "width");
-    __publicField(this, "height");
-    __publicField(this, "outerWidth");
-    __publicField(this, "outerHeight");
-    __publicField(this, "svg");
-    __publicField(this, "canvasHolder");
-    __publicField(this, "canvas");
-    __publicField(this, "g");
-    __publicField(this, "throttleRescale");
-    __publicField(this, "throttleRedraw");
-    __publicField(this, "time_scalable");
-    __publicField(this, "amp_scalable");
-    __publicField(this, "panZoomer");
-    __publicField(this, "_resizeObserver");
-    __publicField(this, "minmax_sample_pixels", DEFAULT_MAX_SAMPLE_PER_PIXEL);
-    this.outerWidth = -1;
-    this.outerHeight = -1;
-    this.throttleRescale = null;
-    this.throttleRedraw = null;
-    this.plotId = ++_Seismograph._lastID;
-    this.beforeFirstDraw = true;
-    this._debugAlignmentSeisData = [];
-    this.width = 200;
-    this.height = 100;
-    const wrapper = document.createElement("div");
-    wrapper.setAttribute("class", "wrapper");
-    this.addStyle(seismograph_css);
-    const lineColorsCSS = this.seismographConfig.createCSSForLineColors();
-    this.addStyle(lineColorsCSS, COLOR_CSS_ID);
-    this.getShadowRoot().appendChild(wrapper);
-    this.canvas = null;
-    this.canvasHolder = null;
-    this.svg = select_default2(wrapper).append("svg").style("z-index", 100);
-    const svgNode2 = this.svg.node();
-    if (svgNode2 != null) {
-      wrapper.appendChild(svgNode2);
-    }
-    if (isDef(this.seismographConfig.minHeight) && isNumArg(this.seismographConfig.minHeight) && this.seismographConfig.minHeight > 0) {
-      const minHeight = this.seismographConfig.minHeight;
-      this.svg.style("min-height", minHeight + "px");
-    }
-    if (isNumArg(this.seismographConfig.maxHeight) && this.seismographConfig.maxHeight > 0) {
-      this.svg.style("max-height", this.seismographConfig.maxHeight + "px");
-    }
-    if (isNumArg(this.seismographConfig.minWidth) && this.seismographConfig.minWidth > 0) {
-      const minWidth = this.seismographConfig.minWidth;
-      this.svg.style("min-width", minWidth + "px");
-    }
-    if (isNumArg(this.seismographConfig.maxWidth) && this.seismographConfig.maxWidth > 0) {
-      this.svg.style("max-width", this.seismographConfig.maxWidth + "px");
-    }
-    this.svg.classed("seismograph", true);
-    this.svg.classed(AUTO_COLOR_SELECTOR, true);
-    this.svg.attr("plotId", this.plotId);
-    const alignmentTimeOffset = Duration.fromMillis(0);
-    let maxDuration = Duration.fromMillis(0);
-    maxDuration = findMaxDuration(this.seisData);
-    this.time_scalable = new SeismographTimeScalable(
-      this,
-      alignmentTimeOffset,
-      maxDuration
-    );
-    if (isDef(this.seismographConfig.linkedTimeScale)) {
-      this.seismographConfig.linkedTimeScale.link(this.time_scalable);
-    }
-    this.calcTimeScaleDomain();
-    this.amp_scalable = new SeismographAmplitudeScalable(this);
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      this.seismographConfig.linkedAmplitudeScale.link(this.amp_scalable);
-    }
-    this.redoDisplayYScale();
-    this.g = this.svg.append("g").classed("marginTransform", true).attr(
-      "transform",
-      "translate(" + this.seismographConfig.margin.left + "," + this.seismographConfig.margin.top + ")"
-    );
-    this.g.append("g").classed("allseismograms", true).classed(AUTO_COLOR_SELECTOR, true);
-    this.g.append("g").attr("class", "allmarkers").attr("style", "clip-path: url(#" + CLIP_PREFIX + this.plotId + ")");
-    this._resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target instanceof _Seismograph) {
-          const graph = entry.target;
-          const rect = entry.contentRect;
-          if (!graph.beforeFirstDraw && (rect.width !== graph.outerWidth || rect.height !== graph.outerHeight)) {
-            graph.redraw();
-          }
-        }
-      }
-    });
-    this._resizeObserver.observe(this);
-    this.addEventListener("click", (evt) => {
-      const detail = this.calcDetailForEvent(evt, "click");
-      const event = new CustomEvent(
-        SEIS_CLICK_EVENT,
-        {
-          detail,
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        }
-      );
-      this.dispatchEvent(event);
-    });
-    this.addEventListener("mousemove", (evt) => {
-      const detail = this.calcDetailForEvent(evt, "mousemove");
-      const event = new CustomEvent(
-        SEIS_MOVE_EVENT,
-        {
-          detail,
-          bubbles: true,
-          cancelable: false,
-          composed: true
-        }
-      );
-      this.dispatchEvent(event);
-    });
-  }
-  get seismographConfig() {
-    return super.seismographConfig;
-  }
-  set seismographConfig(seismographConfig) {
-    if (isDef(this.seismographConfig.linkedTimeScale)) {
-      this.seismographConfig.linkedTimeScale.unlink(this.time_scalable);
-    }
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      this.seismographConfig.linkedAmplitudeScale.unlink(this.amp_scalable);
-    }
-    super.seismographConfig = seismographConfig;
-    if (isDef(this.seismographConfig.linkedTimeScale)) {
-      this.seismographConfig.linkedTimeScale.link(this.time_scalable);
-    }
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      this.seismographConfig.linkedAmplitudeScale.link(this.amp_scalable);
-    }
-    this.redraw();
-  }
-  connectedCallback() {
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      this.beforeFirstDraw = false;
-      this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
-    } else {
-      this.redraw();
-    }
-  }
-  disconnectedCallback() {
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      this.seismographConfig.linkedAmplitudeScale.unlink(this.amp_scalable);
-    }
-    if (this.seismographConfig.linkedTimeScale) {
-      this.seismographConfig.linkedTimeScale.unlink(this.time_scalable);
-    }
-  }
-  attributeChangedCallback(_name, _oldValue, _newValue) {
-    this.redraw();
-  }
-  checkResize() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const svgEl = wrapper.querySelector("svg");
-    const rect = svgEl.getBoundingClientRect();
-    if (rect.width !== this.outerWidth || rect.height !== this.outerHeight) {
-      return true;
-    }
-    return false;
-  }
-  draw() {
-    if (!this.isConnected) {
-      return;
-    }
-    if (this.panZoomer && this.seismographConfig.linkedTimeScale) {
-      this.panZoomer.linkedTimeScale = this.seismographConfig.linkedTimeScale;
-      this.panZoomer.wheelZoom = this.seismographConfig.wheelZoom;
-    }
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const svgEl = wrapper.querySelector("svg");
-    const rect = svgEl.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) {
-      log(
-        `Attempt draw seismograph, but width/height too small: ${rect.width} ${rect.height}`
-      );
-      return;
-    }
-    let calcHeight = rect.height;
-    if (rect.width !== this.outerWidth || rect.height !== this.outerHeight) {
-      if (isNumArg(this.seismographConfig.minHeight) && calcHeight < this.seismographConfig.minHeight) {
-        calcHeight = this.seismographConfig.minHeight;
-      }
-      if (isNumArg(this.seismographConfig.maxHeight) && calcHeight > this.seismographConfig.maxHeight) {
-        calcHeight = this.seismographConfig.maxHeight;
-      }
-    }
-    this.calcWidthHeight(rect.width, calcHeight);
-    this.g.attr(
-      "transform",
-      `translate(${this.seismographConfig.margin.left}, ${this.seismographConfig.margin.top} )`
-    );
-    if (this.canvas && this.canvasHolder) {
-      this.canvasHolder.attr("width", this.width).attr("height", this.height);
-      this.canvasHolder.attr("x", this.seismographConfig.margin.left);
-      this.canvasHolder.attr("y", this.seismographConfig.margin.top);
-      this.canvas.attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height);
-      this.canvas.attr("style", `width: ${this.width}px; height: ${this.height}px;`);
-    } else {
-      const svg = select_default2(svgEl);
-      this.canvasHolder = svg.insert("foreignObject", ":first-child").classed("seismograph", true).attr("x", this.seismographConfig.margin.left).attr("y", this.seismographConfig.margin.top).attr("width", this.width).attr("height", this.height);
-      if (this.canvasHolder == null) {
-        throw new Error("canvasHolder is null");
-      }
-      const c = this.canvasHolder.append("xhtml:canvas").classed("seismograph", true).attr("xmlns", XHTML_NS).attr("x", 0).attr("y", 0).attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height).attr("style", `width: ${this.width}px; height: ${this.height}px;`);
-      this.canvas = c;
-      if (this.seismographConfig.linkedTimeScale) {
-        const canvasHolderNode = this.canvasHolder.node();
-        if (!this.panZoomer && canvasHolderNode) {
-          this.panZoomer = new PanZoomer(canvasHolderNode, this.seismographConfig.linkedTimeScale, this.seismographConfig.wheelZoom);
-        } else if (this.panZoomer && canvasHolderNode) {
-          this.panZoomer.target = canvasHolderNode;
-        }
-      }
-    }
-    this.drawSeismograms();
-    this.drawAxis();
-    const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
-    drawAxisLabels(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput(),
-      unitsLabel
-    );
-    if (this.seismographConfig.doMarkers) {
-      this.drawMarkers();
-    }
-    this.beforeFirstDraw = false;
-  }
-  printSizes() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const svgEl = wrapper.querySelector("svg");
-    let out = "";
-    const rect = svgEl.getBoundingClientRect();
-    out += "svg rect.height " + rect.height + "\n";
-    out += "svg rect.width " + rect.width + "\n";
-    const grect = this.getBoundingClientRect();
-    out += "parent rect.height " + grect.height + "\n";
-    out += "parent rect.width " + grect.width + "\n";
-    const cnode = this.canvas?.node();
-    const crect = cnode?.getBoundingClientRect();
-    if (this.canvas && cnode && crect) {
-      out += "c rect.height " + crect.height + "\n";
-      out += "c rect.width " + crect.width + "\n";
-      out += "c style.height " + this.canvas.style("height") + "\n";
-      out += "c style.width " + this.canvas.style("width") + "\n";
-      out += "this.height " + this.height + "\n";
-      out += "this.width " + this.width + "\n";
-      out += "canvas.height " + cnode.height + "\n";
-      out += "canvas.width " + cnode.width + "\n";
-      out += "this.outerHeight " + this.outerHeight + "\n";
-      out += "this.outerWidth " + this.outerWidth + "\n";
-      const m = this.seismographConfig.margin;
-      out += m ? `this.margin ${String(m)}
-` : `this.margin null
-`;
-    } else {
-      out += "crect bounding rect is null\n";
-    }
-    log(out);
-  }
-  calcDetailForEvent(evt, _type) {
-    const margin = this.seismographConfig.margin;
-    const mouseTimeVal = this.timeScaleForAxis().invert(
-      evt.offsetX - margin.left
-    );
-    const mouseAmp = this.ampScaleForAxis().invert(evt.offsetY - margin.top);
-    const out = {
-      mouseevent: evt,
-      time: null,
-      relative_time: null,
-      amplitude: mouseAmp,
-      seismograph: this
-    };
-    if (mouseTimeVal instanceof DateTime) {
-      out.time = mouseTimeVal;
-    } else {
-      out.relative_time = Duration.fromMillis(mouseTimeVal * 1e3);
-    }
-    return out;
-  }
-  isVisible() {
-    const elem = this.canvas?.node();
-    if (!elem) {
-      return false;
-    }
-    return !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
-  }
-  drawSeismograms() {
-    if (!this.isVisible()) {
-      return;
-    }
-    const canvas = this.canvas?.node();
-    if (!canvas) {
-      return;
-    }
-    clearCanvas(canvas);
-    if (this.seismographConfig.xGridLines) {
-      drawXScaleGridLines(
-        canvas,
-        this.timeScaleForAxis(),
-        this.seismographConfig.gridLineColor
-      );
-    }
-    if (this.seismographConfig.yGridLines) {
-      drawYScaleGridLines(
-        canvas,
-        this.ampScaleForAxis(),
-        this.seismographConfig.gridLineColor
-      );
-    }
-    drawAllOnCanvas(
-      canvas,
-      this._seisDataList,
-      this._seisDataList.map((sdd) => this.timeScaleForSeisDisplayData(sdd, true)),
-      // Set resolution scaling to true
-      this._seisDataList.map((sdd) => this.ampScaleForSeisDisplayData(sdd)),
-      this._seisDataList.map(
-        (_sdd, ti) => this.seismographConfig.getColorForIndex(ti)
-      ),
-      this.seismographConfig.lineWidth * this.seismographConfig.resolutionScale,
-      this.seismographConfig.connectSegments,
-      this.minmax_sample_pixels
-    );
-  }
-  calcScaleAndZoom() {
-    this.rescaleYAxis();
-    const container = this.svg.select("defs").select("#" + CLIP_PREFIX + this.plotId);
-    if (container.empty()) {
-      this.svg.append("defs").append("clipPath").attr("id", CLIP_PREFIX + this.plotId);
-    }
-    const clip = this.svg.select("defs").select("#" + CLIP_PREFIX + this.plotId);
-    clip.selectAll("rect").remove();
-    clip.append("rect").attr("width", this.width).attr("height", this.height);
-  }
-  ampScaleForSeisDisplayData(sdd) {
-    const ampScale = this.__initAmpScale(true);
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      const drawHalfWidth = this.amp_scalable.drawHalfWidth;
-      let sensitivityVal = 1;
-      if (this.seismographConfig.doGain && sdd.seismogram?.isYUnitCount() && sdd.sensitivity?.sensitivity) {
-        sensitivityVal = sdd.sensitivity.sensitivity;
-      }
-      if (!this.seismographConfig.isCenteredAmp()) {
-        return ampScale.domain([
-          (this.amp_scalable.drawMiddle - drawHalfWidth) * sensitivityVal,
-          (this.amp_scalable.drawMiddle + drawHalfWidth) * sensitivityVal
-        ]);
-      }
-      const sddInterval = this.displayTimeRangeForSeisDisplayData(sdd);
-      const minMax = calcMinMax(
-        sdd,
-        sddInterval,
-        false,
-        this.seismographConfig.amplitudeMode
-      );
-      if (minMax) {
-        const myMin = minMax.middle - drawHalfWidth * sensitivityVal;
-        const myMax = minMax.middle + drawHalfWidth * sensitivityVal;
-        ampScale.domain([myMin, myMax]);
-      } else {
-        ampScale.domain([-1, 1]);
-      }
-    } else if (this.seismographConfig.fixedAmplitudeScale) {
-      ampScale.domain(this.seismographConfig.fixedAmplitudeScale);
-    } else {
-      throw new Error(
-        "ampScaleForSeisDisplayData Must be either linked or fixed amp scale"
-      );
-    }
-    return ampScale;
-  }
-  displayTimeRangeForSeisDisplayData(sdd) {
-    let plotInterval;
-    if (this.seismographConfig.linkedTimeScale) {
-      if (this.time_scalable.drawDuration.equals(ZERO_DURATION)) {
-        this.seismographConfig.linkedTimeScale.recalculate().catch((m) => {
-          console.warn(
-            `problem recalc displayTimeRangeForSeisDisplayData: ${m}`
-          );
-        });
-      }
-      const startOffset = this.time_scalable.drawAlignmentTimeOffset;
-      const duration3 = this.time_scalable.drawDuration;
-      plotInterval = sdd.relativeTimeWindow(startOffset, duration3);
-    } else if (this.seismographConfig.fixedTimeScale) {
-      plotInterval = this.seismographConfig.fixedTimeScale;
-    } else {
-      throw new Error("Must be either fixed or linked time scale");
-    }
-    return plotInterval;
-  }
-  timeScaleForSeisDisplayData(sdd, scaleForResolution = false) {
-    let plotInterval;
-    if (sdd) {
-      if (sdd instanceof SeismogramDisplayData) {
-        plotInterval = this.displayTimeRangeForSeisDisplayData(sdd);
-      } else {
-        plotInterval = sdd;
-      }
-    } else {
-      if (this.seismographConfig.linkedTimeScale) {
-        plotInterval = durationEnd(
-          this.seismographConfig.linkedTimeScale.duration,
-          DateTime.utc()
-        );
-      } else if (this.seismographConfig.fixedTimeScale) {
-        plotInterval = this.seismographConfig.fixedTimeScale;
-      } else {
-        plotInterval = durationEnd(1, DateTime.utc());
-      }
-    }
-    return new LuxonTimeScale(
-      plotInterval,
-      [0, scaleForResolution ? this.seismographConfig.resolutionScale * this.width : this.width]
-    );
-  }
-  /**
-   * Draws the top, bottom, (time) axis and the left and right (amplitude) axis if configured.
-   */
-  drawAxis() {
-    this.drawTopBottomAxis();
-    this.drawLeftRightAxis();
-  }
-  /**
-   * Creates amp scale, set range based on height.
-   * @private
-   * @returns amp scale with range set
-   */
-  __initAmpScale(scaleForResolution = false) {
-    const ampAxisScale = linear2();
-    const height = (scaleForResolution ? this.seismographConfig.resolutionScale * this.height : this.height) - 1;
-    ampAxisScale.range([height, 1]);
-    return ampAxisScale;
-  }
-  ampScaleForAxis() {
-    const ampAxisScale = this.__initAmpScale();
-    if (this.seismographConfig.fixedAmplitudeScale) {
-      ampAxisScale.domain(this.seismographConfig.fixedAmplitudeScale);
-    } else if (this.seismographConfig.linkedAmplitudeScale) {
-      let middle = this.amp_scalable.drawMiddle;
-      if (this.seismographConfig.isCenteredAmp()) {
-        middle = 0;
-      } else {
-        middle = this.amp_scalable.drawMiddle;
-      }
-      ampAxisScale.domain([
-        middle - this.amp_scalable.drawHalfWidth,
-        middle + this.amp_scalable.drawHalfWidth
-      ]);
-    } else {
-      throw new Error(
-        "ampScaleForAxis Must be either linked or fixed amp scale"
-      );
-    }
-    return ampAxisScale;
-  }
-  timeScaleForAxis() {
-    let xScaleToDraw;
-    if (this.seismographConfig.isRelativeTime) {
-      xScaleToDraw = linear2();
-      xScaleToDraw.range([0, this.width]);
-      if (this.seismographConfig.linkedTimeScale) {
-        const startOffset = this.time_scalable.drawAlignmentTimeOffset.toMillis() / 1e3;
-        const duration3 = this.time_scalable.drawDuration.toMillis() / 1e3;
-        if (duration3 > 0) {
-          xScaleToDraw.domain([startOffset, startOffset + duration3]);
-        } else {
-          xScaleToDraw.domain([startOffset + duration3, startOffset]);
-        }
-      } else if (this.seismographConfig.fixedTimeScale) {
-        const psed = this.seismographConfig.fixedTimeScale;
-        const s2 = validStartTime(psed);
-        const e = validEndTime(psed);
-        xScaleToDraw.domain([s2.toMillis() / 1e3, e.toMillis() / 1e3]);
-      } else {
-        throw new Error("neither fixed nor linked time scale");
-      }
-    } else {
-      if (this.seismographConfig.linkedTimeScale) {
-        if (this.seisData.length > 0) {
-          xScaleToDraw = this.timeScaleForSeisDisplayData(this.seisData[0]);
-        } else {
-          xScaleToDraw = this.timeScaleForSeisDisplayData();
-        }
-      } else if (this.seismographConfig.fixedTimeScale) {
-        const psed = this.seismographConfig.fixedTimeScale;
-        xScaleToDraw = this.timeScaleForSeisDisplayData(psed);
-      } else {
-        throw new Error("neither fixed nor linked time scale");
-      }
-    }
-    return xScaleToDraw;
-  }
-  /**
-   * Draws the left and right (amplitude) axis if configured.
-   *
-   */
-  drawTopBottomAxis() {
-    this.g.selectAll("g.axis--x").remove();
-    this.g.selectAll("g.axis--x-top").remove();
-    let xScaleToDraw = this.timeScaleForAxis();
-    if (this.seismographConfig.isRelativeTime) {
-      xScaleToDraw = xScaleToDraw;
-      if (this.seismographConfig.isXAxis) {
-        const xAxis = axisBottom(xScaleToDraw);
-        xAxis.tickFormat(
-          createNumberFormatWrapper(this.seismographConfig.relativeTimeFormat)
-        );
-        this.g.append("g").attr("class", "axis axis--x").attr("transform", "translate(0," + this.height + ")").call(xAxis);
-      }
-      if (this.seismographConfig.isXAxisTop) {
-        const xAxisTop = axisTop(xScaleToDraw);
-        xAxisTop.tickFormat(
-          createNumberFormatWrapper(this.seismographConfig.relativeTimeFormat)
-        );
-        this.g.append("g").attr("class", "axis axis--x-top").call(xAxisTop);
-      }
-    } else {
-      xScaleToDraw = xScaleToDraw;
-      if (this.seismographConfig.isXAxis) {
-        const xAxis = axisBottom(xScaleToDraw.d3scale);
-        xAxis.tickFormat(
-          createDateFormatWrapper(this.seismographConfig.timeFormat)
-        );
-        this.g.append("g").attr("class", "axis axis--x").attr("transform", "translate(0," + this.height + ")").call(xAxis);
-      }
-      if (this.seismographConfig.isXAxisTop) {
-        const xAxisTop = axisTop(xScaleToDraw.d3scale);
-        xAxisTop.tickFormat(
-          createDateFormatWrapper(this.seismographConfig.timeFormat)
-        );
-        this.g.append("g").attr("class", "axis axis--x-top").call(xAxisTop);
-      }
-    }
-  }
-  /**
-   * Draws the left and right (amplitude) axis if configured.
-   */
-  drawLeftRightAxis() {
-    this.g.selectAll("g.axis--y").remove();
-    this.g.selectAll("g.axis--y-right").remove();
-    const [yAxis, yAxisRight] = this.createLeftRightAxis();
-    if (isDef(yAxis)) {
-      this.g.append("g").attr("class", "axis axis--y").call(yAxis);
-    }
-    if (isDef(yAxisRight)) {
-      this.g.append("g").attr("class", "axis axis--y-right").attr("transform", "translate(" + this.width + ",0)").call(yAxisRight);
-    }
-  }
-  createLeftRightAxis() {
-    let yAxis = null;
-    let yAxisRight = null;
-    const axisScale = this.ampScaleForAxis();
-    if (this.seismographConfig.isYAxis) {
-      yAxis = axisLeft(axisScale).tickFormat(
-        numberFormatWrapper(this.seismographConfig.amplitudeFormat)
-      );
-      yAxis.scale(axisScale);
-      yAxis.ticks(
-        this.seismographConfig.yAxisNumTickHint,
-        this.seismographConfig.amplitudeFormat
-      );
-    }
-    if (this.seismographConfig.isYAxisRight) {
-      yAxisRight = axisRight(axisScale).tickFormat(
-        numberFormatWrapper(this.seismographConfig.amplitudeFormat)
-      );
-      yAxisRight.scale(axisScale);
-      yAxisRight.ticks(this.seismographConfig.yAxisNumTickHint, this.seismographConfig.amplitudeFormat);
-    }
-    return [yAxis, yAxisRight];
-  }
-  rescaleYAxis() {
-    if (!this.beforeFirstDraw) {
-      const delay = 500;
-      if (this.throttleRescale) {
-        clearTimeout(this.throttleRescale);
-      }
-      this.throttleRescale = setTimeout(() => {
-        const [yAxis, yAxisRight] = this.createLeftRightAxis();
-        if (yAxis) {
-          this.g.select(".axis--y").transition().duration(delay / 2).call(yAxis);
-        }
-        if (yAxisRight) {
-          this.g.select(".axis--y-right").transition().duration(delay / 2).call(yAxisRight);
-        }
-        this.throttleRescale = null;
-      }, delay);
-    }
-  }
-  createHandlebarsInput() {
-    return {
-      seisDataList: this._seisDataList,
-      seisConfig: this._seismographConfig
-    };
-  }
-  drawAxisLabels() {
-    this.drawTitle();
-    this.drawXLabel();
-    this.drawXSublabel();
-    this.drawYLabel();
-    this.drawYSublabel();
-  }
-  resetZoom() {
-    if (this.seismographConfig.linkedTimeScale) {
-      this.seismographConfig.linkedTimeScale.unzoom();
-    } else {
-      throw new Error("can't reset zoom for fixedTimeScale");
-    }
-  }
-  redrawWithXScale() {
-    const mythis = this;
-    if (!this.beforeFirstDraw) {
-      this.g.select("g.allseismograms").selectAll("g.seismogram").remove();
-      if (this.seismographConfig.windowAmp) {
-        this.recheckAmpScaleDomain();
-      }
-      this.drawSeismograms();
-      this.g.select("g.allmarkers").selectAll("g.marker").attr("transform", function(v) {
-        const mh = v;
-        mh.xscale = mythis.timeScaleForSeisDisplayData(mh.sdd);
-        const textx = mh.xscale.for(mh.marker.time);
-        return "translate(" + textx + ",0)";
-      });
-      this.g.select("g.allmarkers").selectAll("g.markertext").attr("transform", function() {
-        const axisScale = mythis.ampScaleForAxis();
-        const maxY = axisScale.range()[0];
-        const deltaY = axisScale.range()[0] - axisScale.range()[1];
-        const texty = maxY - mythis.seismographConfig.markerTextOffset * deltaY;
-        return "translate(0," + texty + ") rotate(" + mythis.seismographConfig.markerTextAngle + ")";
-      });
-      const undrawnMarkers = this._seisDataList.reduce((acc, sdd) => {
-        const sddXScale = this.timeScaleForSeisDisplayData(sdd);
-        sdd.markerList.forEach(
-          (m) => acc.push({
-            // use marker holder to also hold xscale in case relative plot
-            marker: m,
-            sdd,
-            xscale: sddXScale
-          })
-        );
-        return acc;
-      }, new Array(0)).filter((mh) => {
-        const xpixel = mh.xscale.for(mh.marker.time);
-        return xpixel >= mh.xscale.range[0] && xpixel <= mh.xscale.range[1];
-      });
-      if (this.seismographConfig.doMarkers && undrawnMarkers.length !== 0) {
-        this.drawMarkers();
-      }
-      this.drawTopBottomAxis();
-    }
-  }
-  drawMarkers() {
-    const axisScale = this.ampScaleForAxis();
-    const allMarkers = this._seisDataList.reduce((acc, sdd) => {
-      const sddXScale = this.timeScaleForSeisDisplayData(sdd);
-      sdd.markerList.forEach(
-        (m) => acc.push({
-          // use marker holder to also hold xscale in case relative plot
-          marker: m,
-          sdd,
-          xscale: sddXScale
-        })
-      );
-      return acc;
-    }, []).filter((mh) => {
-      const xpixel = mh.xscale.for(mh.marker.time);
-      return xpixel >= mh.xscale.range[0] && xpixel <= mh.xscale.range[1];
-    });
-    const mythis = this;
-    const markerG = this.g.select("g.allmarkers");
-    markerG.selectAll("g.marker").remove();
-    const labelSelection = markerG.selectAll("g.marker").data(allMarkers, function(v) {
-      const mh = v;
-      return `${mh.marker.name}_${mh.marker.time.toISO()}`;
-    });
-    labelSelection.exit().remove();
-    const radianTextAngle = this.seismographConfig.markerTextAngle * Math.PI / 180;
-    labelSelection.enter().append("g").classed("marker", true).attr("transform", function(v) {
-      const mh = v;
-      const textx = mh.xscale.for(mh.marker.time);
-      return "translate(" + textx + ",0)";
-    }).each(function(mh) {
-      const drawG = select_default2(this);
-      drawG.classed(mh.marker.name, true).classed(mh.marker.markertype, true);
-      const innerTextG = drawG.append("g").attr("class", "markertext").attr("transform", () => {
-        const maxY = axisScale.range()[0];
-        const deltaY = axisScale.range()[0] - axisScale.range()[1];
-        const texty = maxY - mythis.seismographConfig.markerTextOffset * deltaY;
-        return "translate(0," + texty + ") rotate(" + mythis.seismographConfig.markerTextAngle + ")";
-      });
-      innerTextG.append("title").text(() => {
-        if (mh.marker.description) {
-          return mh.marker.description;
-        } else {
-          return mh.marker.markertype + " " + mh.marker.name + " " + mh.marker.time.toISO();
-        }
-      });
-      const textSel = innerTextG.append("text");
-      if (mh.marker.link && mh.marker.link.length > 0) {
-        textSel.append("svg:a").attr("xlink:href", () => "" + mh.marker.link).text(function(datum2) {
-          const mh2 = datum2;
-          return mh2.marker.name;
-        });
-      } else {
-        textSel.text(function(datum2) {
-          const mh2 = datum2;
-          return mh2.marker.name;
-        });
-      }
-      textSel.attr("dy", "-0.35em").call(function(selection2) {
-        selection2.each(function(datum2) {
-          const mh2 = datum2;
-          mh2.bbox = {
-            height: 15,
-            width: 20
-          };
-          try {
-            mh2.bbox = this.getBBox();
-          } catch (error48) {
-            console.warn(error48);
-          }
-        });
-      });
-      innerTextG.insert("polygon", "text").attr("points", function(datum2) {
-        const mh2 = datum2;
-        let bboxH = 10 + 5;
-        let bboxW = 10;
-        if (mh2.bbox) {
-          bboxH = mh2.bbox.height + 5;
-          bboxW = mh2.bbox.width;
-        }
-        return "0,0 " + -1 * bboxH * Math.tan(radianTextAngle) + ",-" + bboxH + " " + bboxW + ",-" + bboxH + " " + bboxW + ",0";
-      });
-      let markerPoleY = 0;
-      if (mythis.seismographConfig.markerFlagpoleBase === "none") {
-        markerPoleY = 0;
-      } else if (mythis.seismographConfig.markerFlagpoleBase === "short") {
-        markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 4;
-      } else if (mythis.seismographConfig.markerFlagpoleBase === "center") {
-        markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 2;
-      } else {
-        markerPoleY = axisScale.range()[0];
-      }
-      const markerPole = `M0,0l0,${markerPoleY}`;
-      drawG.append("path").classed("markerpath", true).attr("d", markerPole);
-    });
-  }
-  calcWidthHeight(nOuterWidth, nOuterHeight) {
-    if (nOuterWidth < this.seismographConfig.margin.left + this.seismographConfig.margin.right) {
-      throw new Error(
-        `width too small for margin: ${nOuterWidth} < ${this.seismographConfig.margin.left} + ${this.seismographConfig.margin.right}`
-      );
-    }
-    if (nOuterHeight < this.seismographConfig.margin.top + this.seismographConfig.margin.bottom) {
-      throw new Error(
-        `height too small for margin: ${nOuterHeight} < ${this.seismographConfig.margin.top} + ${this.seismographConfig.margin.bottom}`
-      );
-    }
-    this.outerWidth = nOuterWidth;
-    this.outerHeight = nOuterHeight;
-    this.height = this.outerHeight - this.seismographConfig.margin.top - this.seismographConfig.margin.bottom;
-    this.width = this.outerWidth - this.seismographConfig.margin.left - this.seismographConfig.margin.right;
-    this.calcScaleAndZoom();
-    if (this.canvasHolder) {
-      this.canvasHolder.attr("width", this.width).attr("height", this.height + 1);
-    }
-    if (this.canvas) {
-      this.canvas.attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height + 1);
-    }
-    if (this.panZoomer) {
-      this.panZoomer.width = this.width;
-    }
-  }
-  drawTitle() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const isTitleCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-title");
-    const svgEl = wrapper.querySelector("svg");
-    if (isTitleCSS === "0") {
-      removeTitle(svgEl);
-    } else {
-      drawTitle(
-        svgEl,
-        this.seismographConfig,
-        this.height,
-        this.width,
-        this.createHandlebarsInput()
-      );
-    }
-  }
-  drawXLabel() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const isXLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xlabel");
-    const svgEl = wrapper.querySelector("svg");
-    if (isXLabelCSS === "0") {
-      removeXLabel(svgEl);
-    } else {
-      drawXLabel(
-        svgEl,
-        this.seismographConfig,
-        this.height,
-        this.width,
-        this.createHandlebarsInput()
-      );
-    }
-  }
-  drawXSublabel() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const isXSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xsublabel");
-    const svgEl = wrapper.querySelector("svg");
-    if (isXSublabelCSS === "0") {
-      removeXSublabel(svgEl);
-    } else {
-      drawXSublabel(
-        svgEl,
-        this.seismographConfig,
-        this.height,
-        this.width,
-        this.createHandlebarsInput()
-      );
-    }
-  }
-  drawYLabel() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const isYLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ylabel");
-    const svgEl = wrapper.querySelector("svg");
-    if (isYLabelCSS === "0") {
-      removeYLabel(svgEl);
-    } else {
-      drawYLabel(
-        svgEl,
-        this.seismographConfig,
-        this.height,
-        this.width,
-        this.createHandlebarsInput()
-      );
-    }
-  }
-  drawYSublabel() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    const isYSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ysublabel");
-    const svgEl = wrapper.querySelector("svg");
-    if (isYSublabelCSS === "0") {
-      removeYSublabel(svgEl);
-    } else {
-      const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
-      drawYSublabel(
-        svgEl,
-        this.seismographConfig,
-        this.height,
-        this.width,
-        this.createHandlebarsInput(),
-        unitsLabel
-      );
-    }
-  }
-  /**
-   * Update the duration if not already set. This only matters for
-   * linedTimeScale currently.
-   */
-  calcTimeScaleDomain() {
-    if (isDef(this.seismographConfig.linkedTimeScale)) {
-      const linkedTimeScale = this.seismographConfig.linkedTimeScale;
-      if (this._seisDataList.length !== 0 && linkedTimeScale.duration.toMillis() === 0) {
-        this.seismographConfig.linkedTimeScale.duration = findMaxDuration(
-          this._seisDataList
-        );
-      }
-    }
-  }
-  /**
-   * Calculate the amplitude range over the current time range, depending
-   * on amplitude style.
-   *
-   * @returns min max over the time range
-   */
-  calcAmpScaleDomain() {
-    let minMax;
-    if (this.seismographConfig.fixedAmplitudeScale) {
-      minMax = MinMaxable.fromArray(this.seismographConfig.fixedAmplitudeScale);
-    } else {
-      if (this.seismographConfig.windowAmp) {
-        if (isDef(this.seismographConfig.linkedTimeScale)) {
-          minMax = findMinMaxOverRelativeTimeRange(
-            this._seisDataList,
-            this.seismographConfig.linkedTimeScale.offset,
-            this.seismographConfig.linkedTimeScale.duration,
-            this.seismographConfig.doGain,
-            this.seismographConfig.amplitudeMode
-          );
-        } else if (isDef(this.seismographConfig.fixedTimeScale)) {
-          minMax = findMinMaxOverTimeRange(
-            this._seisDataList,
-            this.seismographConfig.fixedTimeScale,
-            this.seismographConfig.doGain,
-            this.seismographConfig.amplitudeMode
-          );
-        } else {
-          throw new Error("neither fixed nor linked time scale");
-        }
-      } else {
-        minMax = findMinMax(
-          this._seisDataList,
-          this.seismographConfig.doGain,
-          this.seismographConfig.amplitudeMode
-        );
-      }
-      if (minMax.halfWidth === 0) {
-      }
-      if (this.seismographConfig.isYAxisNice) {
-        let scale = linear2();
-        scale.domain(minMax.asArray());
-        scale = scale.nice();
-        minMax = MinMaxable.fromArray(scale.domain());
-      }
-    }
-    return minMax;
-  }
-  recheckAmpScaleDomain() {
-    const calcMidHW = this.calcAmpScaleDomain();
-    const oldMiddle = this.amp_scalable.middle;
-    const oldHalfWidth = this.amp_scalable.halfWidth;
-    this.amp_scalable.minMax = calcMidHW;
-    if (this.seismographConfig.linkedAmplitudeScale) {
-      if (this.amp_scalable.middle !== oldMiddle || this.amp_scalable.halfWidth !== oldHalfWidth) {
-        this.seismographConfig.linkedAmplitudeScale.recalculate().catch((m) => {
-          console.warn(`problem recalc amp scale: ${m}`);
-        });
-      }
-    } else {
-      this.redoDisplayYScale();
-    }
-  }
-  redoDisplayYScale() {
-    this.rescaleYAxis();
-    if (this.seismographConfig.ySublabelIsUnits) {
-      this.drawYSublabel();
-    }
-  }
-  createUnitsLabel() {
-    let ySublabel = "";
-    if (this.seismographConfig.doGain && this._seisDataList.length > 0 && this._seisDataList.every((sdd) => sdd.hasSensitivity()) && this._seisDataList.every(
-      (sdd) => isDef(sdd.seismogram) && sdd.seismogram.yUnit === COUNT_UNIT2
-    )) {
-      const firstSensitivity = this._seisDataList[0].sensitivity;
-      const allSameUnits = firstSensitivity && this._seisDataList.every(
-        (sdd) => isDef(firstSensitivity) && sdd.sensitivity && firstSensitivity.inputUnits === sdd.sensitivity.inputUnits
-      );
-      if (this.seismographConfig.ySublabelIsUnits) {
-        const unitList = this._seisDataList.map(
-          (sdd) => sdd.sensitivity ? sdd.sensitivity.inputUnits : "uknown"
-        ).join(",");
-        if (!allSameUnits) {
-          ySublabel = unitList;
-        } else {
-          ySublabel = firstSensitivity.inputUnits;
-        }
-      }
-    } else {
-      if (this.seismographConfig.ySublabelIsUnits) {
-        ySublabel = "";
-        const allUnits = [];
-        for (const t of this._seisDataList) {
-          if (t.seismogram) {
-            const u = t.seismogram.yUnit;
-            allUnits.push(u);
-          }
-        }
-        if (allUnits.length === 0) {
-          allUnits.push("Count");
-        }
-        ySublabel = allUnits.join(" ");
-      }
-    }
-    if (this.seismographConfig.ySublabelIsUnits && this.seismographConfig.isCenteredAmp()) {
-      ySublabel = `centered ${ySublabel}`;
-    }
-    return ySublabel;
-  }
-  getSeismogramData() {
-    return this._seisDataList;
-  }
-  /**
-   * Notification to the element that something about the current seismogram
-   * data has changed. This could be that the actual waveform data has been updated
-   * or that auxillary data like quake or channel has been added. This should
-   * trigger a redraw.
-   */
-  seisDataUpdated() {
-    this.calcTimeScaleDomain();
-    this.recheckAmpScaleDomain();
-    if (!this.beforeFirstDraw) {
-      if (this.seismographConfig.linkedAmplitudeScale) {
-        this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
-      } else {
-        this.redraw();
-      }
-    }
-  }
-  /**
-   * Finds the SeismogramDisplayData within the display containing the given
-   * Seismogram.
-   *
-   * @param   seis seismogram to search for
-   * @returns       SeismogramDisplayData if found or null if not
-   */
-  getDisplayDataForSeismogram(seis) {
-    const out = this._seisDataList.find((sd) => sd.seismogram === seis);
-    if (out) {
-      return out;
-    } else {
-      return null;
-    }
-  }
-  /**
-   * Removes a seismogram from the display.
-   *
-   * @param   seisData seis data to remove
-   */
-  removeSeisData(seisData) {
-    this._seisDataList = this._seisDataList.filter((sd) => sd !== seisData);
-  }
-  /**
-   * Removes seismograms that do not overlap the window.
-   *
-   * @param   timeRange overlap data to keep
-   */
-  trim(timeRange) {
-    if (this._seisDataList) {
-      this._seisDataList = this._seisDataList.filter(function(d) {
-        return d.timeRange.overlaps(timeRange);
-      });
-      if (this._seisDataList.length > 0) {
-        this.recheckAmpScaleDomain();
-        this.drawSeismograms();
-      }
-    }
-  }
-};
-/** @private */
-__publicField(_Seismograph, "_lastID");
-var Seismograph = _Seismograph;
-var SeismographAmplitudeScalable = class extends AmplitudeScalable {
-  constructor(graph) {
-    const calcMidHW = graph.calcAmpScaleDomain();
-    super(calcMidHW);
-    __publicField(this, "graph");
-    __publicField(this, "drawHalfWidth");
-    __publicField(this, "drawMiddle");
-    this.graph = graph;
-    this.drawHalfWidth = super.halfWidth;
-    this.drawMiddle = super.middle;
-  }
-  notifyAmplitudeChange(middle, halfWidth) {
-    if (middle !== this.drawMiddle || halfWidth !== this.drawHalfWidth) {
-      this.drawMiddle = middle;
-      this.drawHalfWidth = halfWidth;
-      this.graph.redoDisplayYScale();
-      if (!this.graph.beforeFirstDraw) {
-        this.graph.redraw();
-      }
-    }
-  }
-};
-var ZERO_DURATION = Duration.fromMillis(0);
-var SeismographTimeScalable = class extends TimeScalable {
-  constructor(graph, alignmentTimeOffset, duration3) {
-    super(alignmentTimeOffset, duration3);
-    __publicField(this, "graph");
-    __publicField(this, "drawAlignmentTimeOffset");
-    __publicField(this, "drawDuration");
-    this.graph = graph;
-    this.drawAlignmentTimeOffset = ZERO_DURATION;
-    this.drawDuration = ZERO_DURATION;
-  }
-  notifyTimeRangeChange(offset2, duration3) {
-    if (!this.drawAlignmentTimeOffset.equals(offset2) || !this.drawDuration.equals(duration3)) {
-      this.drawAlignmentTimeOffset = offset2;
-      this.drawDuration = duration3;
-      if (isDef(this.graph) && !this.graph.beforeFirstDraw) {
-        window.requestAnimationFrame(() => {
-          this.graph.redrawWithXScale();
-        });
-      }
-    }
-  }
-};
-Seismograph._lastID = 0;
-function createNumberFormatWrapper(formatter) {
-  return (nValue) => {
-    if (typeof nValue === "number") {
-      return formatter(nValue);
-    } else {
-      return formatter(nValue.valueOf());
-    }
-  };
-}
-function createDateFormatWrapper(formatter) {
-  return (nValue) => {
-    if (nValue instanceof Date) {
-      return formatter(nValue);
-    } else if (typeof nValue === "number") {
-      return formatter(new Date(nValue));
-    } else {
-      return formatter(new Date(nValue.valueOf()));
-    }
-  };
-}
-customElements.define(SEISMOGRAPH_ELEMENT, Seismograph);
-
-// node_modules/d3-shape/src/constant.js
-function constant_default3(x2) {
-  return function constant() {
-    return x2;
-  };
-}
-
-// node_modules/d3-path/src/path.js
-var pi = Math.PI;
-var tau = 2 * pi;
-var epsilon2 = 1e-6;
-var tauEpsilon = tau - epsilon2;
-function append(strings) {
-  this._ += strings[0];
-  for (let i = 1, n2 = strings.length; i < n2; ++i) {
-    this._ += arguments[i] + strings[i];
-  }
-}
-function appendRound(digits) {
-  let d = Math.floor(digits);
-  if (!(d >= 0)) throw new Error(`invalid digits: ${digits}`);
-  if (d > 15) return append;
-  const k = 10 ** d;
-  return function(strings) {
-    this._ += strings[0];
-    for (let i = 1, n2 = strings.length; i < n2; ++i) {
-      this._ += Math.round(arguments[i] * k) / k + strings[i];
-    }
-  };
-}
-var Path = class {
-  constructor(digits) {
-    this._x0 = this._y0 = // start of current subpath
-    this._x1 = this._y1 = null;
-    this._ = "";
-    this._append = digits == null ? append : appendRound(digits);
-  }
-  moveTo(x2, y2) {
-    this._append`M${this._x0 = this._x1 = +x2},${this._y0 = this._y1 = +y2}`;
-  }
-  closePath() {
-    if (this._x1 !== null) {
-      this._x1 = this._x0, this._y1 = this._y0;
-      this._append`Z`;
-    }
-  }
-  lineTo(x2, y2) {
-    this._append`L${this._x1 = +x2},${this._y1 = +y2}`;
-  }
-  quadraticCurveTo(x1, y1, x2, y2) {
-    this._append`Q${+x1},${+y1},${this._x1 = +x2},${this._y1 = +y2}`;
-  }
-  bezierCurveTo(x1, y1, x2, y2, x3, y3) {
-    this._append`C${+x1},${+y1},${+x2},${+y2},${this._x1 = +x3},${this._y1 = +y3}`;
-  }
-  arcTo(x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    if (r < 0) throw new Error(`negative radius: ${r}`);
-    let x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
-    if (this._x1 === null) {
-      this._append`M${this._x1 = x1},${this._y1 = y1}`;
-    } else if (!(l01_2 > epsilon2)) ;
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon2) || !r) {
-      this._append`L${this._x1 = x1},${this._y1 = y1}`;
-    } else {
-      let x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l2 = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l2 / l01, t21 = l2 / l21;
-      if (Math.abs(t01 - 1) > epsilon2) {
-        this._append`L${x1 + t01 * x01},${y1 + t01 * y01}`;
-      }
-      this._append`A${r},${r},0,0,${+(y01 * x20 > x01 * y20)},${this._x1 = x1 + t21 * x21},${this._y1 = y1 + t21 * y21}`;
-    }
-  }
-  arc(x2, y2, r, a0, a1, ccw) {
-    x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
-    if (r < 0) throw new Error(`negative radius: ${r}`);
-    let dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
-    if (this._x1 === null) {
-      this._append`M${x0},${y0}`;
-    } else if (Math.abs(this._x1 - x0) > epsilon2 || Math.abs(this._y1 - y0) > epsilon2) {
-      this._append`L${x0},${y0}`;
-    }
-    if (!r) return;
-    if (da < 0) da = da % tau + tau;
-    if (da > tauEpsilon) {
-      this._append`A${r},${r},0,1,${cw},${x2 - dx},${y2 - dy}A${r},${r},0,1,${cw},${this._x1 = x0},${this._y1 = y0}`;
-    } else if (da > epsilon2) {
-      this._append`A${r},${r},0,${+(da >= pi)},${cw},${this._x1 = x2 + r * Math.cos(a1)},${this._y1 = y2 + r * Math.sin(a1)}`;
-    }
-  }
-  rect(x2, y2, w, h) {
-    this._append`M${this._x0 = this._x1 = +x2},${this._y0 = this._y1 = +y2}h${w = +w}v${+h}h${-w}Z`;
-  }
-  toString() {
-    return this._;
-  }
-};
-function path() {
-  return new Path();
-}
-path.prototype = Path.prototype;
-
-// node_modules/d3-shape/src/path.js
-function withPath(shape) {
-  let digits = 3;
-  shape.digits = function(_) {
-    if (!arguments.length) return digits;
-    if (_ == null) {
-      digits = null;
-    } else {
-      const d = Math.floor(_);
-      if (!(d >= 0)) throw new RangeError(`invalid digits: ${_}`);
-      digits = d;
-    }
-    return shape;
-  };
-  return () => new Path(digits);
-}
-
-// node_modules/d3-shape/src/array.js
-var slice = Array.prototype.slice;
-function array_default(x2) {
-  return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
-}
-
-// node_modules/d3-shape/src/curve/linear.js
-function Linear(context) {
-  this._context = context;
-}
-Linear.prototype = {
-  areaStart: function() {
-    this._line = 0;
-  },
-  areaEnd: function() {
-    this._line = NaN;
-  },
-  lineStart: function() {
-    this._point = 0;
-  },
-  lineEnd: function() {
-    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
-    this._line = 1 - this._line;
-  },
-  point: function(x2, y2) {
-    x2 = +x2, y2 = +y2;
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
-        break;
-      case 1:
-        this._point = 2;
-      // falls through
-      default:
-        this._context.lineTo(x2, y2);
-        break;
-    }
-  }
-};
-function linear_default(context) {
-  return new Linear(context);
-}
-
-// node_modules/d3-shape/src/point.js
-function x(p) {
-  return p[0];
-}
-function y(p) {
-  return p[1];
-}
-
-// node_modules/d3-shape/src/line.js
-function line_default(x2, y2) {
-  var defined = constant_default3(true), context = null, curve = linear_default, output = null, path2 = withPath(line);
-  x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default3(x2);
-  y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default3(y2);
-  function line(data) {
-    var i, n2 = (data = array_default(data)).length, d, defined0 = false, buffer;
-    if (context == null) output = curve(buffer = path2());
-    for (i = 0; i <= n2; ++i) {
-      if (!(i < n2 && defined(d = data[i], i, data)) === defined0) {
-        if (defined0 = !defined0) output.lineStart();
-        else output.lineEnd();
-      }
-      if (defined0) output.point(+x2(d, i, data), +y2(d, i, data));
-    }
-    if (buffer) return output = null, buffer + "" || null;
-  }
-  line.x = function(_) {
-    return arguments.length ? (x2 = typeof _ === "function" ? _ : constant_default3(+_), line) : x2;
-  };
-  line.y = function(_) {
-    return arguments.length ? (y2 = typeof _ === "function" ? _ : constant_default3(+_), line) : y2;
-  };
-  line.defined = function(_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : constant_default3(!!_), line) : defined;
-  };
-  line.curve = function(_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
-  };
-  line.context = function(_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
-  };
-  return line;
-}
-
-// src/spectraplot.ts
-var SPECTRA_ELEMENT = "sp-spectra";
-var FreqAmp = class {
-  constructor(freq, values) {
-    __publicField(this, "freq");
-    __publicField(this, "values");
-    /** optional units of the original data for display purposes. */
-    __publicField(this, "inputUnits");
-    __publicField(this, "seismogramDisplayData");
-    this.freq = freq;
-    this.values = values;
-    this.inputUnits = "";
-    this.seismogramDisplayData = null;
-    if (freq.length !== values.length) {
-      throw new Error(
-        `Frequencies and complex values must have same length: ${freq.length} ${values.length}`
-      );
-    }
-  }
-  frequencies() {
-    return this.freq;
-  }
-  amplitudes() {
-    const out = new Float32Array(this.values.length);
-    this.values.forEach((c, i) => out[i] = c.abs());
-    return out;
-  }
-  phases() {
-    const out = new Float32Array(this.values.length);
-    this.values.forEach((c, i) => out[i] = c.angle());
-    return out;
-  }
-  get numFrequencies() {
-    return this.freq.length;
-  }
-  get minFrequency() {
-    return this.fundamentalFrequency;
-  }
-  get maxFrequency() {
-    return this.freq[this.freq.length - 1];
-  }
-  // for compatibility with FFTResult
-  get fundamentalFrequency() {
-    return this.freq[0];
-  }
-};
-var spectra_plot_css = `
-:host {
-  display: block
-}
-
-div.wrapper {
-  height: 100%;
-  min-height: 100px;
-}
-path.fftpath {
-  stroke: skyblue;
-  fill: none;
-  stroke-width: 1px;
-}
-
-svg.spectra_plot {
-  height: 100%;
-  width: 100%;
-  min-height: 100px;
-  display: block;
-}
-svg.spectra_plot text.title {
-  font-size: larger;
-  font-weight: bold;
-  fill: black;
-  color: black;
-}
-
-svg.spectra_plot text.sublabel {
-  font-size: smaller;
-}
-
-/* links in svg */
-svg.spectra_plot text a {
-  fill: #0000EE;
-  text-decoration: underline;
-}
-
-`;
-var AMPLITUDE = "amplitude";
-var PHASE = "phase";
-var LOGFREQ = "logfreq";
-var KIND = "kind";
-var SpectraPlot = class extends HTMLElement {
-  constructor(fftResults, seismographConfig) {
-    super();
-    __publicField(this, "_seismographConfig");
-    __publicField(this, "_fftResults");
-    if (seismographConfig) {
-      this._seismographConfig = seismographConfig;
-    } else {
-      this._seismographConfig = new SeismographConfig();
-    }
-    if (fftResults) {
-      this._fftResults = fftResults;
-    } else {
-      this._fftResults = [];
-    }
-    const wrapper = document.createElement("div");
-    wrapper.setAttribute("class", "wrapper");
-    addStyleToElement(this, spectra_plot_css);
-    const lineColorsCSS = this.seismographConfig.createCSSForLineColors();
-    addStyleToElement(this, lineColorsCSS, COLOR_CSS_ID);
-    this.shadowRoot?.appendChild(wrapper);
-  }
-  get fftResults() {
-    return this._fftResults;
-  }
-  set fftResults(fftResults) {
-    this._fftResults = fftResults;
-    this.draw();
-  }
-  get seismographConfig() {
-    return this._seismographConfig;
-  }
-  set seismographConfig(seismographConfig) {
-    this._seismographConfig = seismographConfig;
-    this.draw();
-  }
-  get kind() {
-    let k = this.hasAttribute(KIND) ? this.getAttribute(KIND) : AMPLITUDE;
-    if (!k) {
-      k = AMPLITUDE;
-    }
-    return k;
-  }
-  set kind(val) {
-    this.setAttribute(KIND, val);
-  }
-  get logfreq() {
-    if (!this.hasAttribute(LOGFREQ)) {
-      return true;
-    }
-    const b = this.getAttribute(LOGFREQ);
-    if (b && b.toLowerCase() === "true") {
-      return true;
-    }
-    return false;
-  }
-  set logfreq(val) {
-    this.setAttribute(LOGFREQ, `${val}`);
-  }
-  connectedCallback() {
-    this.draw();
-  }
-  static get observedAttributes() {
-    return [LOGFREQ, KIND];
-  }
-  attributeChangedCallback(_name, _oldValue, _newValue) {
-    this.draw();
-  }
-  draw() {
-    if (!this.isConnected) {
-      return;
-    }
-    const ampPhaseList = [];
-    let maxFFTAmpLen = 0;
-    const extentFFTData = [];
-    const freqMinMax = [];
-    if (this.kind === PHASE) {
-      extentFFTData.push(-Math.PI);
-      extentFFTData.push(Math.PI);
-      if (this.seismographConfig.ySublabelIsUnits) {
-        this.seismographConfig.ySublabelIsUnits = false;
-        this.seismographConfig.ySublabel = "Radian";
-      }
-    } else {
-      if (this.seismographConfig.ySublabelIsUnits) {
-        this.seismographConfig.ySublabelIsUnits = false;
-        this.seismographConfig.ySublabel = "";
-      }
-    }
-    for (const fftA of this.fftResults) {
-      if (this.logfreq === true) {
-        freqMinMax.push(fftA.fundamentalFrequency);
-      } else {
-        freqMinMax.push(0);
-      }
-      freqMinMax.push(fftA.maxFrequency);
-      let ap;
-      if (fftA instanceof FFTResult || fftA instanceof FreqAmp) {
-        ap = fftA;
-      } else {
-        throw new Error("fftResults must be array of FFTResult");
-      }
-      ampPhaseList.push(ap);
-      if (maxFFTAmpLen < ap.numFrequencies) {
-        maxFFTAmpLen = ap.numFrequencies;
-      }
-      let ampSlice;
-      if (this.kind === AMPLITUDE) {
-        ampSlice = ap.amplitudes();
-      } else if (this.kind === PHASE) {
-        ampSlice = ap.phases();
-      } else {
-        throw new Error(`Unknown plot kind=${this.kind}`);
-      }
-      if (this.kind === AMPLITUDE) {
-        ampSlice = ampSlice.slice(1);
-      }
-      const currExtent = extent(ampSlice);
-      if (this.kind === AMPLITUDE && currExtent[0] === 0) {
-        currExtent[0] = 0.1 * ampSlice.reduce(function(acc, curr) {
-          if (curr > 0 && curr < acc) {
-            return curr;
-          } else {
-            return acc;
-          }
-        }, 1e-9);
-      }
-      if (currExtent[0]) {
-        extentFFTData.push(currExtent[0]);
-      }
-      if (currExtent[1]) {
-        extentFFTData.push(currExtent[1]);
-      }
-    }
-    if (freqMinMax.length < 2) {
-      freqMinMax.push(0.1);
-      freqMinMax.push(10);
-    }
-    if (extentFFTData.length < 2) {
-      extentFFTData.push(0.1);
-      extentFFTData.push(1);
-    }
-    const wrapper = this.shadowRoot?.querySelector("div");
-    while (wrapper.lastChild) {
-      wrapper.removeChild(wrapper.lastChild);
-    }
-    const svg_element = document.createElementNS(SVG_NS, "svg");
-    wrapper.appendChild(svg_element);
-    const svg = select_default2(svg_element);
-    svg.classed("spectra_plot", true).classed(AUTO_COLOR_SELECTOR, true);
-    const rect = svg_element.getBoundingClientRect();
-    const width = +rect.width - this.seismographConfig.margin.left - this.seismographConfig.margin.right;
-    const height = +rect.height - this.seismographConfig.margin.top - this.seismographConfig.margin.bottom;
-    const g = svg.append("g").attr(
-      "transform",
-      "translate(" + this.seismographConfig.margin.left + "," + this.seismographConfig.margin.top + ")"
-    );
-    let xScale;
-    if (this.logfreq) {
-      xScale = log2().rangeRound([0, width]);
-    } else {
-      xScale = linear2().rangeRound([0, width]);
-    }
-    const freqMin = freqMinMax.reduce((acc, cur) => Math.min(acc, cur));
-    const freqMax = freqMinMax.reduce((acc, cur) => Math.max(acc, cur));
-    xScale.domain([freqMin, freqMax]);
-    let fftMin = extentFFTData.reduce(
-      (acc, cur) => Math.min(acc, cur),
-      Number.MAX_VALUE
-    );
-    let fftMax = extentFFTData.reduce((acc, cur) => Math.max(acc, cur), -1);
-    if ((fftMax - fftMin) / fftMax < 0.1) {
-      fftMin = fftMin * 0.1;
-      fftMax = fftMax * 2;
-    }
-    let yScale;
-    if (this.kind === AMPLITUDE) {
-      yScale = log2().rangeRound([height, 0]);
-      yScale.domain([fftMin, fftMax]);
-      if (yScale.domain()[0] === yScale.domain()[1]) {
-        yScale.domain([yScale.domain()[0] / 2, yScale.domain()[1] * 2]);
-      }
-    } else {
-      yScale = linear2().rangeRound([height, 0]);
-      yScale.domain([fftMin, fftMax]);
-      if (yScale.domain()[0] === yScale.domain()[1]) {
-        yScale.domain([yScale.domain()[0] - 1, yScale.domain()[1] + 1]);
-      }
-    }
-    const xAxis = axisBottom(xScale);
-    g.append("g").attr("transform", "translate(0," + height + ")").call(xAxis);
-    const yAxis = axisLeft(yScale);
-    g.append("g").call(yAxis);
-    this.seismographConfig.yLabel = "Amplitude";
-    if (this.kind === PHASE) {
-      this.seismographConfig.yLabel = "Phase";
-    }
-    this.seismographConfig.xLabel = "Frequency";
-    this.seismographConfig.xSublabel = "Hz";
-    if (this.seismographConfig.ySublabelIsUnits) {
-      if (this.kind === PHASE) {
-        this.seismographConfig.ySublabel = "radian";
-      } else {
-        this.seismographConfig.ySublabel = "";
-        for (const ap of ampPhaseList) {
-          this.seismographConfig.ySublabel += ap.inputUnits;
-        }
-      }
-    }
-    const pathg = g.append("g").classed(G_DATA_SELECTOR, true);
-    for (const ap of ampPhaseList) {
-      let ampSlice;
-      if (this.kind === AMPLITUDE) {
-        ampSlice = ap.amplitudes();
-      } else if (this.kind === PHASE) {
-        ampSlice = ap.phases();
-      } else {
-        throw new Error(`Unknown plot kind=${this.kind}`);
-      }
-      let freqSlice = ap.frequencies();
-      if (this.logfreq) {
-        freqSlice = freqSlice.slice(1);
-        ampSlice = ampSlice.slice(1);
-      }
-      const line = line_default();
-      line.x(function(d, i) {
-        return xScale(freqSlice[i]);
-      });
-      line.y(function(d) {
-        if (d !== 0 && !isNaN(d)) {
-          return yScale(d);
-        } else {
-          return yScale.range()[0];
-        }
-      });
-      pathg.append("g").append("path").classed("fftpath", true).datum(ampSlice).attr("d", line);
-    }
-    const handlebarInput = {
-      seisDataList: this.fftResults.map((f) => f.seismogramDisplayData),
-      seisConfig: this.seismographConfig
-    };
-    drawAxisLabels(
-      svg_element,
-      this.seismographConfig,
-      height,
-      width,
-      handlebarInput
-    );
-  }
-};
-customElements.define(SPECTRA_ELEMENT, SpectraPlot);
-
-// src/infotable.ts
-var infotable_exports = {};
-__export(infotable_exports, {
-  CHANNEL_COLUMN: () => CHANNEL_COLUMN,
-  CHANNEL_INFO_ELEMENT: () => CHANNEL_INFO_ELEMENT,
-  ChannelTable: () => ChannelTable,
-  DEFAULT_TEMPLATE: () => DEFAULT_TEMPLATE,
-  INFO_ELEMENT: () => INFO_ELEMENT,
-  QUAKE_COLUMN: () => QUAKE_COLUMN,
-  QUAKE_INFO_ELEMENT: () => QUAKE_INFO_ELEMENT,
-  QuakeStationTable: () => QuakeStationTable,
-  QuakeTable: () => QuakeTable,
-  SDD_INFO_ELEMENT: () => SDD_INFO_ELEMENT,
-  SEISMOGRAM_COLUMN: () => SEISMOGRAM_COLUMN,
-  STATION_COLUMN: () => STATION_COLUMN,
-  STATION_INFO_ELEMENT: () => STATION_INFO_ELEMENT,
-  SeismogramTable: () => SeismogramTable,
-  StationTable: () => StationTable,
-  TABLE_CSS: () => TABLE_CSS,
-  depthFormat: () => depthFormat2,
-  depthMeterFormat: () => depthMeterFormat2,
-  depthNoUnitFormat: () => depthNoUnitFormat2,
-  latlonFormat: () => latlonFormat2,
-  magFormat: () => magFormat2
-});
-
 // node_modules/d3-dsv/src/dsv.js
 var EOL = {};
 var EOF = {};
@@ -62177,7 +59431,7 @@ var csvFormatRows = csv.formatRows;
 var csvFormatRow = csv.formatRow;
 var csvFormatValue = csv.formatValue;
 
-// src/infotable.ts
+// src/infotable.mts
 var INFO_ELEMENT = "sp-station-quake-table";
 var QUAKE_INFO_ELEMENT = "sp-quake-table";
 var QUAKE_COLUMN = /* @__PURE__ */ ((QUAKE_COLUMN2) => {
@@ -62345,7 +59599,6 @@ caption {
 var QuakeStationTable = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
-    __publicField(this, "_template");
     this._template = DEFAULT_TEMPLATE;
     this.addStyle(TABLE_CSS);
     const wrapper = document.createElement("div");
@@ -62369,7 +59622,7 @@ var QuakeStationTable = class extends SeisPlotElement {
         wrapper.removeChild(wrapper.lastChild);
       }
     }
-    const handlebarsCompiled = Handlebars.compile(this.template);
+    const handlebarsCompiled = import_handlebars.default.compile(this.template);
     wrapper.innerHTML = handlebarsCompiled(
       {
         seisDataList: this.seisData,
@@ -62386,15 +59639,7 @@ customElements.define(INFO_ELEMENT, QuakeStationTable);
 var QuakeTable = class _QuakeTable extends HTMLElement {
   constructor(quakeList, columnLabels, columnValues) {
     super();
-    __publicField(this, "_columnLabels");
-    __publicField(this, "_quakeList");
-    __publicField(this, "_rowToQuake");
-    __publicField(this, "_timezone");
-    __publicField(this, "_timeFormat");
-    __publicField(this, "lastSortAsc", true);
-    __publicField(this, "lastSortCol");
-    __publicField(this, "_columnValues");
-    __publicField(this, "_caption");
+    this.lastSortAsc = true;
     if (!quakeList) {
       quakeList = [];
     }
@@ -62462,7 +59707,7 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
     this._caption = cap;
     const table = this.shadowRoot?.querySelector("table");
     if (table && this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -62541,7 +59786,7 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
     }
     const table = this.shadowRoot?.querySelector("table");
     if (this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -62693,13 +59938,7 @@ customElements.define(QUAKE_INFO_ELEMENT, QuakeTable);
 var ChannelTable = class _ChannelTable extends HTMLElement {
   constructor(channelList, columnLabels, columnValues) {
     super();
-    __publicField(this, "_columnLabels");
-    __publicField(this, "_columnValues");
-    __publicField(this, "_channelList");
-    __publicField(this, "_rowToChannel");
-    __publicField(this, "lastSortAsc", true);
-    __publicField(this, "lastSortCol");
-    __publicField(this, "_caption");
+    this.lastSortAsc = true;
     if (!channelList) {
       channelList = [];
     }
@@ -62774,7 +60013,7 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
     this._caption = cap;
     const table = this.shadowRoot?.querySelector("table");
     if (table && this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -62794,7 +60033,7 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
     }
     const table = this.shadowRoot?.querySelector("table");
     if (this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -62995,13 +60234,8 @@ customElements.define(CHANNEL_INFO_ELEMENT, ChannelTable);
 var StationTable = class _StationTable extends HTMLElement {
   constructor(stationList, columnLabels, columnValues) {
     super();
-    __publicField(this, "_columnLabels", /* @__PURE__ */ new Map());
-    __publicField(this, "_stationList");
-    __publicField(this, "_rowToStation");
-    __publicField(this, "lastSortAsc", true);
-    __publicField(this, "lastSortCol");
-    __publicField(this, "_columnValues");
-    __publicField(this, "_caption");
+    this._columnLabels = /* @__PURE__ */ new Map();
+    this.lastSortAsc = true;
     if (!stationList) {
       stationList = [];
     }
@@ -63066,7 +60300,7 @@ var StationTable = class _StationTable extends HTMLElement {
     this._caption = cap;
     const table = this.shadowRoot?.querySelector("table");
     if (table && this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -63086,7 +60320,7 @@ var StationTable = class _StationTable extends HTMLElement {
     }
     const table = this.shadowRoot?.querySelector("table");
     if (this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -63277,13 +60511,7 @@ customElements.define(STATION_INFO_ELEMENT, StationTable);
 var SeismogramTable = class _SeismogramTable extends HTMLElement {
   constructor(sddList, columnLabels, columnValues) {
     super();
-    __publicField(this, "_columnLabels");
-    __publicField(this, "_columnValues");
-    __publicField(this, "_sddList");
-    __publicField(this, "_rowToSDD");
-    __publicField(this, "lastSortAsc", true);
-    __publicField(this, "lastSortCol");
-    __publicField(this, "_caption");
+    this.lastSortAsc = true;
     if (!sddList) {
       sddList = [];
     }
@@ -63357,7 +60585,7 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
     this._caption = cap;
     const table = this.shadowRoot?.querySelector("table");
     if (table && this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -63377,7 +60605,7 @@ var SeismogramTable = class _SeismogramTable extends HTMLElement {
     }
     const table = this.shadowRoot?.querySelector("table");
     if (this._caption) {
-      let captionEl = table.createCaption();
+      const captionEl = table.createCaption();
       if (this._caption instanceof HTMLElement) {
         captionEl.innerHTML = "";
         captionEl.appendChild(this._caption);
@@ -63560,11 +60788,12 @@ var depthFormat2 = depthFormat;
 var depthNoUnitFormat2 = depthNoUnitFormat;
 var depthMeterFormat2 = depthMeterFormat;
 
-// src/leafletutil.ts
+// src/leafletutil.mts
 var leafletutil_exports = {};
 __export(leafletutil_exports, {
   CENTER_LAT: () => CENTER_LAT,
   CENTER_LON: () => CENTER_LON,
+  CIRCLE: () => CIRCLE,
   CROSS: () => CROSS,
   DEFAULT_CENTER_LAT: () => DEFAULT_CENTER_LAT,
   DEFAULT_CENTER_LON: () => DEFAULT_CENTER_LON,
@@ -63593,6 +60822,7 @@ __export(leafletutil_exports, {
   TILE_ATTRIBUTION: () => TILE_ATTRIBUTION,
   TILE_TEMPLATE: () => TILE_TEMPLATE,
   TRIANGLE: () => TRIANGLE,
+  UNSELECTED: () => UNSELECTED,
   ZOOM_LEVEL: () => ZOOM_LEVEL,
   createQuakeMarker: () => createQuakeMarker,
   createStationMarker: () => createStationMarker,
@@ -63609,7 +60839,7 @@ __export(leafletutil_exports, {
   stationMarker_css: () => stationMarker_css
 });
 
-// src/leaflet_css.ts
+// src/leaflet_css.mts
 var leaflet_css = `
 /* required styles */
 
@@ -64275,12 +61505,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 `;
 
-// src/fdsncommon.ts
+// src/fdsncommon.mts
 var fdsncommon_exports = {};
 __export(fdsncommon_exports, {
   EARTHSCOPE_HOST: () => EARTHSCOPE_HOST,
   FDSNCommon: () => FDSNCommon,
   FDSNWS_PATH_BASE: () => FDSNWS_PATH_BASE,
+  FDSN_HOST: () => FDSN_HOST,
   IRISWS_PATH_BASE: () => IRISWS_PATH_BASE,
   IRIS_HOST: () => IRIS_HOST,
   LOCALWS_PATH_BASE: () => LOCALWS_PATH_BASE,
@@ -64288,31 +61519,17 @@ __export(fdsncommon_exports, {
   LatLonRadius: () => LatLonRadius,
   LatLonRegion: () => LatLonRegion,
   appendToPath: () => appendToPath,
-  defaultPortStringForProtocol: () => defaultPortStringForProtocol
+  defaultPortStringForProtocol: () => defaultPortStringForProtocol,
+  protocolForKnownHost: () => protocolForKnownHost
 });
-var IRIS_HOST = "service.iris.edu";
 var EARTHSCOPE_HOST = "service.earthscope.org";
+var IRIS_HOST = EARTHSCOPE_HOST;
+var FDSN_HOST = "www.fdsn.org";
 var FDSNWS_PATH_BASE = "fdsnws";
 var IRISWS_PATH_BASE = "irisws";
 var LOCALWS_PATH_BASE = "localws";
 var FDSNCommon = class {
   constructor(service, host) {
-    /** @private */
-    __publicField(this, "_specVersion");
-    /** @private */
-    __publicField(this, "_protocol");
-    /** @private */
-    __publicField(this, "_host");
-    /** @private */
-    __publicField(this, "_path_base");
-    /** @private */
-    __publicField(this, "_service");
-    /** @private */
-    __publicField(this, "_port");
-    /** @private */
-    __publicField(this, "_nodata");
-    /** @private */
-    __publicField(this, "_timeoutSec");
     this._specVersion = "1";
     this._host = EARTHSCOPE_HOST;
     this._protocol = checkProtocol();
@@ -64328,6 +61545,16 @@ var FDSNCommon = class {
     return defaultPortStringForProtocol(protocol, this._port);
   }
 };
+function protocolForKnownHost(host, defaultProtocol) {
+  switch (host.toLowerCase()) {
+    case EARTHSCOPE_HOST:
+    case USGS_HOST:
+    case FDSN_HOST:
+      return "https";
+    default:
+      return defaultProtocol;
+  }
+}
 function defaultPortStringForProtocol(protocol, port) {
   return (protocol === "http" || protocol === "http:" || protocol === "https" || protocol === "https:") && (port === 80 || port === 443) ? "" : ":" + String(port);
 }
@@ -64345,10 +61572,6 @@ var LatLonRegion = class {
 var LatLonBox = class extends LatLonRegion {
   constructor(west, east, south, north) {
     super();
-    __publicField(this, "west");
-    __publicField(this, "east");
-    __publicField(this, "south");
-    __publicField(this, "north");
     this.west = west;
     this.east = east;
     this.south = south;
@@ -64364,10 +61587,6 @@ var LatLonBox = class extends LatLonRegion {
 var LatLonRadius = class extends LatLonRegion {
   constructor(latitude, longitude, minRadius, maxRadius) {
     super();
-    __publicField(this, "latitude");
-    __publicField(this, "longitude");
-    __publicField(this, "minRadius");
-    __publicField(this, "maxRadius");
     this.latitude = latitude;
     this.longitude = longitude;
     this.minRadius = minRadius;
@@ -64375,11 +61594,13 @@ var LatLonRadius = class extends LatLonRegion {
   }
 };
 
-// src/leafletutil.ts
+// src/leafletutil.mts
 var L2 = __toESM(require_leaflet_src(), 1);
 var HIGHLIGHT = "highlight";
+var UNSELECTED = "unselected";
 var MAP_ELEMENT = "sp-station-quake-map";
 var TRIANGLE = "triangle";
+var CIRCLE = "circle";
 var DOWNTRIANGLE = "downtriangle";
 var SQUARE = "square";
 var CROSS = "cross";
@@ -64437,6 +61658,12 @@ var defaultMarker_css = `
 .${QuakeMarkerClassName}.${HIGHLIGHT} {
   stroke: white;
 }
+.${StationMarkerClassName}.${UNSELECTED} {
+  fill: lightgrey;
+}
+.${QuakeMarkerClassName}.${UNSELECTED} {
+  stroke: tomato;
+}
 `;
 var stationMarker_css = defaultMarker_css;
 function cssClassForStationCodes(station) {
@@ -64460,6 +61687,8 @@ function createStationSVG(iconSize = STATION_ICON_SIZE, symbol2 = TRIANGLE) {
   } else if (symbol2 === CROSS) {
     out += `<line x1="${xCent - shift}" y1="${yCent}" x2="${xCent + shift}" y2="${yCent}" stroke-width="${strokeWidth}"/>
     <line x1="${xCent}" y1="${yCent - shift}" x2="${xCent}" y2="${yCent + shift}"  stroke-width="${strokeWidth}"/>`;
+  } else if (symbol2 === CIRCLE) {
+    out += `<circle cx="${xCent}" cy="${yCent}" r="${shift}" stroke-width="${strokeWidth}"/>`;
   } else {
     out += `
     <polygon points="${xCent},${yCent - shift} ${xCent + shift},${yCent + shift} ${xCent - shift},${yCent + shift}" stroke-width="${strokeWidth}""/>
@@ -64490,8 +61719,8 @@ function createStationMarker(station, classList2, isactive = true, centerLon = 0
 }
 function getRadiusForMag(magnitude, magScaleFactor) {
   let radius = magnitude ? magnitude * magScaleFactor : 1;
-  if (radius < 1) {
-    radius = 1;
+  if (radius < 2) {
+    radius = 2;
   }
   return radius;
 }
@@ -64502,14 +61731,20 @@ function createQuakeMarker(quake, magScaleFactor = 5, classList2, centerLon = 0,
   const qLon = quake.longitude - centerLon <= 180 ? quake.longitude : quake.longitude - 360;
   const magnitude = quake.magnitude ? quake.magnitude.mag : 1;
   const radius = magToRadius(magnitude, magScaleFactor);
-  const circle2 = L2.circleMarker([quake.latitude, qLon], {
-    color: "currentColor",
-    radius,
-    className: allClassList.join(" ")
+  const iconSize = 2 * radius + 2;
+  const iconSymbol = CIRCLE;
+  const icon = L2.divIcon({
+    html: createStationSVG(iconSize, iconSymbol),
+    className: allClassList.join(" "),
+    iconSize: [iconSize, iconSize],
+    iconAnchor: [iconSize / 2, iconSize / 2]
+  });
+  const m = L2.marker([quake.latitude, qLon], {
+    icon
   });
   const magStr = quake.magnitude ? quake.magnitude.toString() : "unkn";
-  circle2.bindTooltip(`${quake.time.toISO()} ${magStr}`);
-  return circle2;
+  m.bindTooltip(`${quake.time.toISO()} ${magStr}`);
+  return m;
 }
 var leaflet_css2 = leaflet_css;
 var TILE_TEMPLATE = "tileUrl";
@@ -64535,20 +61770,16 @@ var MARKER_CSS_ID = "defaultmarkercss";
 var QuakeStationMap = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
-    __publicField(this, "quakeList", []);
-    __publicField(this, "stationList", []);
-    __publicField(this, "geoRegionList", []);
-    __publicField(this, "map");
-    __publicField(this, "classToColor");
-    __publicField(this, "mapItems", []);
-    __publicField(this, "stationClassMap");
-    __publicField(this, "quakeClassMap");
-    __publicField(this, "quakeLayer", L2.layerGroup());
-    __publicField(this, "quakeLayerName", "Quakes");
-    __publicField(this, "stationLayer", L2.layerGroup());
-    __publicField(this, "stationLayerName", "Stations");
-    __publicField(this, "stationIconSize", STATION_ICON_SIZE);
-    __publicField(this, "stationIconSymbol", TRIANGLE);
+    this.quakeList = [];
+    this.stationList = [];
+    this.geoRegionList = [];
+    this.mapItems = [];
+    this.quakeLayer = L2.layerGroup();
+    this.quakeLayerName = "Quakes";
+    this.stationLayer = L2.layerGroup();
+    this.stationLayerName = "Stations";
+    this.stationIconSize = STATION_ICON_SIZE;
+    this.stationIconSymbol = TRIANGLE;
     this.map = null;
     this.classToColor = /* @__PURE__ */ new Map();
     this.stationClassMap = /* @__PURE__ */ new Map();
@@ -64753,7 +61984,7 @@ var QuakeStationMap = class extends SeisPlotElement {
   }
   get fitBounds() {
     const fbAttr = this.hasAttribute(FIT_BOUNDS) ? this.getAttribute(FIT_BOUNDS) : "true";
-    let fb = true;
+    let fb;
     if (!fbAttr) {
       fb = true;
     } else {
@@ -65023,12 +62254,2630 @@ function cssClassForQuake(q) {
   return "qid_" + out.replaceAll(badCSSChars, "_");
 }
 
-// src/particlemotion.ts
+// src/organizeddisplayselect.mts
+function createStationFilterId(sdd) {
+  return `station_${sdd.networkCode}_${sdd.stationCode}`;
+}
+function stationFilter(sdd, container) {
+  return inputIdFilter(createStationFilterId(sdd), container);
+}
+function orientFilter(sdd, container) {
+  const inputId = `orient_${sdd.sourceId.subsourceCode}`;
+  return inputIdFilter(inputId, container);
+}
+function bandFilter(sdd, container) {
+  const inputId = `band_${sdd.sourceId.bandCode}`;
+  return inputIdFilter(inputId, container);
+}
+function gainFilter(sdd, container) {
+  const inputId = `gain_${sdd.sourceId.sourceCode}`;
+  return inputIdFilter(inputId, container);
+}
+function createQuakeFilterId(quake) {
+  return `quake_${quake.eventId}`;
+}
+function quakeFilter(sdd, container) {
+  return sdd.quakeList.reduce((acc, cur) => {
+    return acc && inputIdFilter(createQuakeFilterId(cur), container);
+  }, true);
+}
+function inputIdFilter(inputId, container) {
+  let out = true;
+  const queryEl = container != null ? container : document;
+  const inputEl = queryEl.querySelector(`#${inputId}`);
+  if (inputEl != null) {
+    out = inputEl.checked;
+  }
+  return out;
+}
+function defaultPlotSelect(sdd, container) {
+  return stationFilter(sdd, container) && bandFilter(sdd, container) && gainFilter(sdd, container) && orientFilter(sdd, container) && quakeFilter(sdd, container);
+}
+
+// src/organizeddisplaytools.mts
+var UNDERSCORE = "_";
+var TOOLS_HTML = `
+<details>
+  <summary>Tools</summary>
+  <form>
+    <fieldset class="plottype">
+      <legend>Plot</legend>
+      <span>
+        <input type="checkbox" name="with_seis" id="with_seis">
+        <label for="with_seis">seismograph</label>
+      </span>
+      <span>
+        <input type="checkbox" name="with_map" id="with_map">
+        <label for="with_map">map</label>
+      </span>
+      <span>
+        <input type="checkbox" name="with_info" id="with_info">
+        <label for="with_info">info</label>
+      </span>
+    </fieldset>
+    <fieldset class="overlay">
+    <legend>Overlay:</legend>
+    <span>
+      <input type="radio" name="overlay" id="overlay_individual" value="individual" checked>
+      <label for="overlay_individual">individual</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_vector" value="vector">
+      <label for="overlay_vector">vector</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_component" value="component">
+      <label for="overlay_component">component</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_station_component" value="stationcomponent">
+      <label for="overlay_station_component">station component</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_station" value="station">
+      <label for="overlay_station">station</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_all" value="all">
+      <label for="overlay_all">all</label>
+    </span>
+    <span>
+      <input type="radio" name="overlay" id="overlay_none" value="none">
+      <label for="overlay_none">none</label>
+    </span>
+  </fieldset>
+
+  </form>
+</details>
+`;
+var OrganizedDisplayTools = class extends SeisPlotElement {
+  constructor(seisData, seisConfig) {
+    super(seisData, seisConfig);
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "wrapper");
+    wrapper.innerHTML = TOOLS_HTML;
+    this.getShadowRoot().appendChild(wrapper);
+    this._organizedDisplay = null;
+  }
+  get organizedDisplay() {
+    return this._organizedDisplay;
+  }
+  set organizedDisplay(orgdisp) {
+    this._organizedDisplay = orgdisp;
+    this.initCheckboxes(orgdisp);
+  }
+  initCheckboxes(orgdisp) {
+    if (orgdisp) {
+      const shadow = this.shadowRoot;
+      const doSeisCB = shadow?.querySelector(
+        "input#with_seis"
+      );
+      if (doSeisCB) {
+        doSeisCB.checked = orgdisp.map === "true";
+      }
+      const doMapCB = shadow?.querySelector(
+        "input#with_map"
+      );
+      if (doMapCB) {
+        doMapCB.checked = orgdisp.map === "true";
+      }
+      const doInfoCB = shadow?.querySelector(
+        "input#with_info"
+      );
+      if (doInfoCB) {
+        doInfoCB.checked = orgdisp.info === "true";
+      }
+      shadow?.querySelectorAll("fieldset.overlay input").forEach((i) => {
+        const inEl = i;
+        inEl.checked = orgdisp.overlayby === inEl.value;
+      });
+      const details = shadow?.querySelector("div.wrapper details");
+      details?.querySelector("fieldset.sort")?.remove();
+      details?.appendChild(this.createSortCheckboxes(orgdisp));
+      const select = document.createElement("fieldset");
+      select.classList.add("selection");
+      const selectlegend = document.createElement("legend");
+      selectlegend.textContent = "Select:";
+      select.appendChild(selectlegend);
+      details?.appendChild(select);
+      select.querySelector("fieldset.stations")?.remove();
+      select.appendChild(this.createStationCheckboxes(orgdisp));
+      select.querySelector("fieldset.orientations")?.remove();
+      select.appendChild(this.createOrientationCheckboxes(orgdisp));
+      select.querySelector("fieldset.quakes")?.remove();
+      select.appendChild(this.createQuakeCheckboxes(orgdisp));
+    }
+  }
+  createSortCheckboxes(orgdisp) {
+    const sortFS = document.createElement("fieldset");
+    sortFS.classList.add("sort");
+    const legend = document.createElement("legend");
+    legend.textContent = "Sort:";
+    sortFS.appendChild(legend);
+    const sortKeyList = Array.from(orgdisp._sorting.keys());
+    sortKeyList.push("none");
+    for (const sortKey of sortKeyList) {
+      const span = document.createElement("span");
+      const input = document.createElement("input");
+      input.setAttribute("type", "radio");
+      input.setAttribute("name", "sort");
+      input.setAttribute("id", `sort_${sortKey}`);
+      input.setAttribute("value", sortKey);
+      input.checked = orgdisp.sortby === input.value;
+      input.addEventListener("change", (_e) => {
+        if (this._organizedDisplay) {
+          this._organizedDisplay?.setAttribute("sort", input.value);
+        }
+      });
+      span.appendChild(input);
+      const label = document.createElement("label");
+      label.setAttribute("for", `sort_${sortKey}`);
+      label.textContent = sortKey;
+      span.appendChild(label);
+      sortFS.appendChild(span);
+    }
+    return sortFS;
+  }
+  createStationCheckboxes(orgdisp) {
+    const staDiv = document.createElement("fieldset");
+    staDiv.classList.add("stations");
+    const staDivLabel = document.createElement("legend");
+    staDivLabel.textContent = "Station:";
+    staDiv.appendChild(staDivLabel);
+    this.updateStationCheckboxes(orgdisp);
+    return staDiv;
+  }
+  updateCheckboxes(orgdisp) {
+    this.updateStationCheckboxes(orgdisp);
+    this.updateOrientationCheckboxes(orgdisp);
+    this.updateQuakeCheckboxes(orgdisp);
+  }
+  allStationCheckboxes() {
+    const div = this.shadowRoot?.querySelector("fieldset.stations");
+    if (div == null) {
+      return [];
+    }
+    return div.querySelectorAll("input");
+  }
+  updateStationCheckboxes(orgdisp) {
+    const staDiv = this.shadowRoot?.querySelector("fieldset.stations");
+    if (staDiv === null) {
+      return;
+    }
+    const stations = uniqueStations2(orgdisp.sortedSeisData());
+    stations.forEach((sta) => {
+      const display = sta.codes(UNDERSCORE);
+      const key = `station_${display}`;
+      const name = "station";
+      let foundSta = false;
+      staDiv.querySelectorAll("input").forEach((cb) => {
+        if (cb.value === key) {
+          foundSta = true;
+        }
+      });
+      if (!foundSta) {
+        this.createCheckbox(staDiv, name, key, display);
+      }
+    });
+  }
+  createCheckbox(staDiv, name, key, display) {
+    if (display == null) {
+      display = key;
+    }
+    const span = document.createElement("span");
+    const input = document.createElement("input");
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("name", name);
+    input.setAttribute("id", key);
+    input.setAttribute("value", key);
+    input.checked = true;
+    input.addEventListener("change", (_e) => {
+      if (this._organizedDisplay) {
+        this._organizedDisplay.redraw();
+      }
+    });
+    span.appendChild(input);
+    const label = document.createElement("label");
+    label.setAttribute("for", key);
+    label.textContent = display;
+    span.appendChild(label);
+    staDiv.appendChild(span);
+    return input;
+  }
+  createOrientationCheckboxes(orgdisp) {
+    const orientDiv = document.createElement("fieldset");
+    orientDiv.classList.add("orientations");
+    const orientDivLabel = document.createElement("legend");
+    orientDivLabel.textContent = "Orientation:";
+    orientDiv.appendChild(orientDivLabel);
+    this.updateOrientationCheckboxes(orgdisp);
+    return orientDiv;
+  }
+  allOrientationCheckboxes() {
+    const div = this.shadowRoot?.querySelector("fieldset.orientations");
+    if (div == null) {
+      return [];
+    }
+    return div.querySelectorAll("input");
+  }
+  updateOrientationCheckboxes(orgdisp) {
+    const div = this.shadowRoot?.querySelector("fieldset.orientations");
+    if (div == null) {
+      return;
+    }
+    const orientations = uniqueSubsourceCodes(orgdisp.sortedSeisData()).sort();
+    orientations.forEach((orient) => {
+      const key = `orient_${orient}`;
+      const name = "orientation";
+      let found = false;
+      div.querySelectorAll("input").forEach((cb) => {
+        if (cb.value === key) {
+          found = true;
+        }
+      });
+      if (!found) {
+        this.createCheckbox(div, name, key, orient);
+      }
+    });
+  }
+  createQuakeCheckboxes(orgdisp) {
+    const quakeDiv = document.createElement("fieldset");
+    quakeDiv.classList.add("quakes");
+    const quakeDivLabel = document.createElement("legend");
+    quakeDivLabel.textContent = "Earthquake:";
+    quakeDiv.appendChild(quakeDivLabel);
+    this.updateQuakeCheckboxes(orgdisp);
+    return quakeDiv;
+  }
+  allQuakeCheckboxes() {
+    const div = this.shadowRoot?.querySelector("fieldset.quakes");
+    if (div == null) {
+      return [];
+    }
+    return div.querySelectorAll("input");
+  }
+  updateQuakeCheckboxes(orgdisp) {
+    const div = this.shadowRoot?.querySelector("fieldset.quakes");
+    if (div === null) {
+      return;
+    }
+    const quakes = uniqueQuakes(orgdisp.sortedSeisData());
+    quakes.forEach((quake) => {
+      const key = createQuakeFilterId(quake);
+      const name = "quake";
+      let found = false;
+      div.querySelectorAll("input").forEach((cb) => {
+        if (cb.value === key) {
+          found = true;
+        }
+      });
+      if (!found) {
+        this.createCheckbox(
+          div,
+          name,
+          key,
+          `${quake.hasMagnitude() ? quake.magnitude.mag : ""} ${quake.time.toISO({ includeOffset: false })}`
+        );
+      }
+    });
+  }
+  draw() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    wrapper.innerHTML = TOOLS_HTML;
+    this.wireComponents();
+  }
+  wireComponents() {
+    const shadow = this.shadowRoot;
+    const doMapCB = shadow?.querySelector("input#with_map");
+    doMapCB?.addEventListener("change", () => {
+      if (this._organizedDisplay) {
+        this._organizedDisplay.map = doMapCB.checked ? "true" : "false";
+      }
+    });
+    const doInfoCB = shadow?.querySelector(
+      "input#with_info"
+    );
+    doInfoCB?.addEventListener("change", () => {
+      if (this._organizedDisplay) {
+        this._organizedDisplay.info = `${doInfoCB.checked}`;
+      }
+    });
+    shadow?.querySelectorAll("fieldset.overlay input").forEach((i) => {
+      const inEl = i;
+      inEl.addEventListener("change", (_e) => {
+        if (this._organizedDisplay) {
+          this._organizedDisplay?.setAttribute("overlay", inEl.value);
+        }
+      });
+    });
+    shadow?.querySelectorAll("fieldset.sort input").forEach((i) => {
+      const inEl = i;
+      inEl.addEventListener("change", (_e) => {
+        if (this._organizedDisplay) {
+          this._organizedDisplay?.setAttribute("sort", inEl.value);
+        }
+      });
+    });
+    this.initCheckboxes(this._organizedDisplay);
+  }
+};
+var ORG_DISP_TOOLS_ELEMENT = "sp-orgdisp-tools";
+customElements.define(ORG_DISP_TOOLS_ELEMENT, OrganizedDisplayTools);
+
+// src/fft.mts
+var fft_exports = {};
+__export(fft_exports, {
+  FFTResult: () => FFTResult,
+  calcDFT: () => calcDFT,
+  fftForward: () => fftForward,
+  findPowerTwo: () => findPowerTwo,
+  inverseDFT: () => inverseDFT
+});
+function fftForward(seis) {
+  let sdd;
+  if (seis instanceof Seismogram) {
+    sdd = SeismogramDisplayData.fromSeismogram(seis);
+  } else {
+    sdd = seis;
+  }
+  if (isDef(sdd.seismogram)) {
+    const seismogram = sdd.seismogram;
+    if (seismogram.isContiguous()) {
+      const result = FFTResult.createFromPackedFreq(
+        calcDFT(seismogram.y),
+        seismogram.numPoints,
+        seismogram.sampleRate
+      );
+      result.seismogramDisplayData = sdd;
+      return result;
+    } else {
+      throw new Error("Can only take FFT is seismogram is contiguous.");
+    }
+  } else {
+    throw new Error("Can not take FFT is seismogram is null.");
+  }
+}
+function calcDFT(timeseries) {
+  let [N, log2N] = findPowerTwo(timeseries.length);
+  if (N < 16) {
+    log2N = 4;
+    N = 16;
+  }
+  const dft = new RDFT(log2N);
+  const inArray = new Float32Array(N);
+  inArray.fill(0);
+  for (let i = 0; i < timeseries.length; i++) {
+    inArray[i] = timeseries[i];
+  }
+  const out = new Float32Array(N).fill(0);
+  dft.evaluate(inArray, out);
+  return out;
+}
+function inverseDFT(packedFreq, numPoints) {
+  if (numPoints > packedFreq.length) {
+    throw new Error(
+      `Not enough points in packed freq array for ${numPoints}, only ${packedFreq.length}`
+    );
+  }
+  let [N, log2N] = findPowerTwo(packedFreq.length);
+  if (N < 16) {
+    log2N = 4;
+    N = 16;
+  }
+  if (N !== packedFreq.length) {
+    throw new Error(`power of two check fails: ${N} ${packedFreq.length}`);
+  }
+  const dft = new RDFT(log2N);
+  const out = new Float32Array(N).fill(0);
+  dft.evaluateInverse(packedFreq, out);
+  return out.slice(0, numPoints);
+}
+function findPowerTwo(fftlength) {
+  let log2N = 1;
+  let N = 2;
+  while (N < fftlength) {
+    log2N += 1;
+    N = 2 * N;
+  }
+  return [N, log2N];
+}
+var FFTResult = class _FFTResult {
+  constructor(origLength, sampleRate) {
+    this.origLength = origLength;
+    this.sampleRate = sampleRate;
+    this.packedFreq = new Float32Array(0);
+    this.numPoints = 0;
+  }
+  /**
+   * Factory method to create FFTResult from packed array.
+   *
+   * @param   packedFreq real and imag values in packed format
+   * @param   origLength length of the original timeseries before padding.
+   * @param   sampleRate sample rate of original data
+   * @returns            FFTResult
+   */
+  static createFromPackedFreq(packedFreq, origLength, sampleRate) {
+    const fftResult = new _FFTResult(origLength, sampleRate);
+    fftResult.packedFreq = packedFreq;
+    fftResult.numPoints = packedFreq.length;
+    const [N, log2N] = findPowerTwo(packedFreq.length);
+    if (N < origLength) {
+      throw new Error(
+        `Not enough freq points, ${packedFreq.length}, for orig length of ${origLength}, must be > and power two, (${N}, ${log2N})`
+      );
+    }
+    return fftResult;
+  }
+  /**
+   * Factory method to create from array of complex numbers.
+   *
+   * @param   complexArray real and imag values as array of Complex objects.
+   * @param   origLength   length of the original timeseries before padding.
+   * @param   sampleRate sample rate of original data
+   * @returns               FFTResult
+   */
+  static createFromComplex(complexArray, origLength, sampleRate) {
+    const N = 2 * (complexArray.length - 1);
+    const modFreq = new Float32Array(N).fill(0);
+    modFreq[0] = complexArray[0].real();
+    for (let i = 1; i < complexArray.length - 1; i++) {
+      modFreq[i] = complexArray[i].real();
+      modFreq[N - i] = complexArray[i].imag();
+    }
+    modFreq[N / 2] = complexArray[complexArray.length - 1].real();
+    return _FFTResult.createFromPackedFreq(modFreq, origLength, sampleRate);
+  }
+  /**
+   * Factory method to create from amp and phase arrays
+   *
+   * @param   amp        amplitude values
+   * @param   phase      phase values
+   * @param   origLength length of the original timeseries before padding.
+   * @param   sampleRate sample rate of original data
+   * @returns             FFTResult
+   */
+  static createFromAmpPhase(amp, phase, origLength, sampleRate) {
+    if (amp.length !== phase.length) {
+      throw new Error(
+        `amp and phase must be same length: ${amp.length} ${phase.length}`
+      );
+    }
+    const modComplex = new Array(amp.length);
+    for (let i = 0; i < amp.length; i++) {
+      modComplex[i] = complexFromPolar(amp[i], phase[i]);
+    }
+    return _FFTResult.createFromComplex(modComplex, origLength, sampleRate);
+  }
+  /**
+   * The minimum non-zero frequency in the fft
+   *
+   * @returns fundamental frequency
+   */
+  get fundamentalFrequency() {
+    if (this.sampleRate) {
+      return this.sampleRate / this.numPoints;
+    } else {
+      throw new Error(
+        "sample rate not set on FFTResult, needed to calc min frequency"
+      );
+    }
+  }
+  asComplex() {
+    const complexArray = [];
+    const L3 = this.packedFreq.length;
+    complexArray.push(new Complex(this.packedFreq[0], 0));
+    for (let i = 1; i < this.packedFreq.length / 2; i++) {
+      const c = new Complex(this.packedFreq[i], this.packedFreq[L3 - i]);
+      complexArray.push(c);
+    }
+    complexArray.push(new Complex(this.packedFreq[L3 / 2], 0));
+    return complexArray;
+  }
+  asAmpPhase() {
+    const amp = new Float32Array(1 + this.packedFreq.length / 2);
+    const phase = new Float32Array(1 + this.packedFreq.length / 2);
+    let c = new Complex(this.packedFreq[0], 0);
+    amp[0] = c.abs();
+    phase[0] = c.angle();
+    const L3 = this.packedFreq.length;
+    for (let i = 1; i < this.packedFreq.length / 2; i++) {
+      c = new Complex(this.packedFreq[i], this.packedFreq[L3 - i]);
+      amp[i] = c.abs();
+      phase[i] = c.angle();
+    }
+    c = new Complex(this.packedFreq[L3 / 2], 0);
+    amp[this.packedFreq.length / 2] = c.abs();
+    phase[this.packedFreq.length / 2] = c.angle();
+    return [amp, phase];
+  }
+  /**
+   * calculates the inverse fft of this.packedFreq
+   *
+   * @returns time domain representation
+   */
+  fftInverse() {
+    return inverseDFT(this.packedFreq, this.origLength);
+  }
+  frequencies() {
+    const out = new Float32Array(this.numPoints / 2 + 1).fill(0);
+    for (let i = 0; i < out.length; i++) {
+      out[i] = i * this.fundamentalFrequency;
+    }
+    return out;
+  }
+  get numFrequencies() {
+    return this.numPoints / 2 + 1;
+  }
+  get minFrequency() {
+    return this.fundamentalFrequency;
+  }
+  get maxFrequency() {
+    return this.sampleRate / 2;
+  }
+  amplitudes() {
+    const [amp] = this.asAmpPhase();
+    return amp;
+  }
+  phases() {
+    const [, phase] = this.asAmpPhase();
+    return phase;
+  }
+  clone() {
+    const out = _FFTResult.createFromPackedFreq(
+      this.packedFreq.slice(),
+      this.origLength,
+      this.sampleRate
+    );
+    out.seismogramDisplayData = this.seismogramDisplayData;
+    return out;
+  }
+};
+
+// src/spectraplot.mts
+var spectraplot_exports = {};
+__export(spectraplot_exports, {
+  AMPLITUDE: () => AMPLITUDE,
+  FreqAmp: () => FreqAmp,
+  KIND: () => KIND,
+  LOGFREQ: () => LOGFREQ,
+  PHASE: () => PHASE,
+  SPECTA_CSS_ID: () => SPECTA_CSS_ID,
+  SPECTRA_ELEMENT: () => SPECTRA_ELEMENT,
+  SpectraPlot: () => SpectraPlot,
+  spectra_plot_css: () => spectra_plot_css
+});
+
+// src/seismograph.mts
+var seismograph_exports = {};
+__export(seismograph_exports, {
+  COLOR_CSS_ID: () => COLOR_CSS_ID,
+  SEISMOGRAPH_CSS_ID: () => SEISMOGRAPH_CSS_ID,
+  SEISMOGRAPH_ELEMENT: () => SEISMOGRAPH_ELEMENT,
+  SEIS_CLICK_EVENT: () => SEIS_CLICK_EVENT,
+  SEIS_MOVE_EVENT: () => SEIS_MOVE_EVENT,
+  Seismograph: () => Seismograph,
+  SeismographAmplitudeScalable: () => SeismographAmplitudeScalable,
+  SeismographTimeScalable: () => SeismographTimeScalable,
+  ZERO_DURATION: () => ZERO_DURATION,
+  createDateFormatWrapper: () => createDateFormatWrapper,
+  createFullMarkersForQuakeAtChannel: () => createFullMarkersForQuakeAtChannel,
+  createFullMarkersForQuakeAtStation: () => createFullMarkersForQuakeAtStation,
+  createMarkerForOriginTime: () => createMarkerForOriginTime,
+  createMarkerForPicks: () => createMarkerForPicks,
+  createMarkerForQuakePicks: () => createMarkerForQuakePicks,
+  createMarkersForTravelTimes: () => createMarkersForTravelTimes,
+  createNumberFormatWrapper: () => createNumberFormatWrapper,
+  seismograph_css: () => seismograph_css
+});
+
+// node_modules/d3-axis/src/identity.js
+function identity_default2(x2) {
+  return x2;
+}
+
+// node_modules/d3-axis/src/axis.js
+var top = 1;
+var right = 2;
+var bottom = 3;
+var left = 4;
+var epsilon = 1e-6;
+function translateX(x2) {
+  return "translate(" + x2 + ",0)";
+}
+function translateY(y2) {
+  return "translate(0," + y2 + ")";
+}
+function number4(scale) {
+  return (d) => +scale(d);
+}
+function center(scale, offset2) {
+  offset2 = Math.max(0, scale.bandwidth() - offset2 * 2) / 2;
+  if (scale.round()) offset2 = Math.round(offset2);
+  return (d) => +scale(d) + offset2;
+}
+function entering() {
+  return !this.__axis;
+}
+function axis(orient, scale) {
+  var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset2 = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === top || orient === left ? -1 : 1, x2 = orient === left || orient === right ? "x" : "y", transform2 = orient === top || orient === bottom ? translateX : translateY;
+  function axis2(context) {
+    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format2 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default2 : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset2, range1 = +range[range.length - 1] + offset2, position = (scale.bandwidth ? center : number4)(scale.copy(), offset2), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
+    path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+    tick = tick.merge(tickEnter);
+    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x2 + "2", k * tickSizeInner));
+    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x2, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
+    if (context !== selection2) {
+      path2 = path2.transition(context);
+      tick = tick.transition(context);
+      line = line.transition(context);
+      text = text.transition(context);
+      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
+        return isFinite(d = position(d)) ? transform2(d + offset2) : this.getAttribute("transform");
+      });
+      tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
+        var p = this.parentNode.__axis;
+        return transform2((p && isFinite(p = p(d)) ? p : position(d)) + offset2);
+      });
+    }
+    tickExit.remove();
+    path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset2 + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset2 + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset2 + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset2 + "H" + range1);
+    tick.attr("opacity", 1).attr("transform", function(d) {
+      return transform2(position(d) + offset2);
+    });
+    line.attr(x2 + "2", k * tickSizeInner);
+    text.attr(x2, k * spacing).text(format2);
+    selection2.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
+    selection2.each(function() {
+      this.__axis = position;
+    });
+  }
+  axis2.scale = function(_) {
+    return arguments.length ? (scale = _, axis2) : scale;
+  };
+  axis2.ticks = function() {
+    return tickArguments = Array.from(arguments), axis2;
+  };
+  axis2.tickArguments = function(_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
+  };
+  axis2.tickValues = function(_) {
+    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
+  };
+  axis2.tickFormat = function(_) {
+    return arguments.length ? (tickFormat2 = _, axis2) : tickFormat2;
+  };
+  axis2.tickSize = function(_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeInner = function(_) {
+    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeOuter = function(_) {
+    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
+  };
+  axis2.tickPadding = function(_) {
+    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
+  };
+  axis2.offset = function(_) {
+    return arguments.length ? (offset2 = +_, axis2) : offset2;
+  };
+  return axis2;
+}
+function axisTop(scale) {
+  return axis(top, scale);
+}
+function axisRight(scale) {
+  return axis(right, scale);
+}
+function axisBottom(scale) {
+  return axis(bottom, scale);
+}
+function axisLeft(scale) {
+  return axis(left, scale);
+}
+
+// src/seismographmarker.mts
+var seismographmarker_exports = {};
+__export(seismographmarker_exports, {
+  MARKERTYPE_PICK: () => MARKERTYPE_PICK,
+  MARKERTYPE_PREDICTED: () => MARKERTYPE_PREDICTED,
+  createFullMarkersForQuakeAtChannel: () => createFullMarkersForQuakeAtChannel,
+  createFullMarkersForQuakeAtStation: () => createFullMarkersForQuakeAtStation,
+  createMarkerForOriginTime: () => createMarkerForOriginTime,
+  createMarkerForPicks: () => createMarkerForPicks,
+  createMarkerForQuakePicks: () => createMarkerForQuakePicks,
+  createMarkersForTravelTimes: () => createMarkersForTravelTimes,
+  isValidMarker: () => isValidMarker
+});
+var MARKERTYPE_PICK = "pick";
+var MARKERTYPE_PREDICTED = "predicted";
+function isValidMarker(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const m = v;
+  return typeof m.time === "string" && typeof m.name === "string" && typeof m.markertype === "string" && typeof m.description === "string" && (!("link" in m) || typeof m.link === "string");
+}
+function createMarkersForTravelTimes(quake, ttime) {
+  return ttime.arrivals.map((a) => {
+    return {
+      markertype: MARKERTYPE_PREDICTED,
+      name: a.phase,
+      time: quake.time.plus(Duration.fromMillis(1e3 * a.time)),
+      description: ""
+    };
+  });
+}
+function createMarkerForOriginTime(quake) {
+  return {
+    markertype: MARKERTYPE_PREDICTED,
+    name: "origin",
+    time: quake.time,
+    description: ""
+  };
+}
+function createFullMarkersForQuakeAtStation(quake, station) {
+  const markers = [];
+  if (quake.hasOrigin()) {
+    const daz = distaz(
+      station.latitude,
+      station.longitude,
+      quake.latitude,
+      quake.longitude
+    );
+    let magVal = "";
+    let magStr = "";
+    if (quake.hasPreferredMagnitude()) {
+      magVal = quake.preferredMagnitude ? `${quake.preferredMagnitude.mag}` : "";
+      magStr = quake.preferredMagnitude ? quake.preferredMagnitude.toString() : "";
+    }
+    markers.push({
+      markertype: MARKERTYPE_PREDICTED,
+      name: `M${magVal} ${quake.time.toFormat("HH:mm")}`,
+      time: quake.time,
+      link: `https://earthquake.usgs.gov/earthquakes/eventpage/${quake.eventId}/executive`,
+      description: `${quake.time.toISO()}
+${quake.latitude.toFixed(2)}/${quake.longitude.toFixed(2)} ${(quake.depth / 1e3).toFixed(2)} km
+${quake.description}
+${magStr}
+${daz.delta.toFixed(2)} deg to ${station.stationCode} (${daz.distanceKm} km)
+`
+    });
+  }
+  return markers;
+}
+function createFullMarkersForQuakeAtChannel(quake, channel) {
+  let markers = createFullMarkersForQuakeAtStation(quake, channel.station);
+  if (quake.preferredOrigin) {
+    markers = markers.concat(
+      createMarkerForPicks(quake.preferredOrigin, channel)
+    );
+  }
+  return markers;
+}
+function createMarkerForQuakePicks(quake, channel) {
+  const markers = [];
+  if (quake.pickList) {
+    quake.pickList.forEach((pick3) => {
+      if (pick3 && pick3.isOnChannel(channel)) {
+        markers.push({
+          markertype: MARKERTYPE_PICK,
+          name: "pick",
+          time: pick3.time,
+          description: ""
+        });
+      }
+    });
+  }
+  return markers;
+}
+function createMarkerForPicks(origin, channel) {
+  const markers = [];
+  if (origin.arrivals) {
+    origin.arrivals.forEach((arrival) => {
+      if (arrival && arrival.pick.isOnChannel(channel)) {
+        markers.push({
+          markertype: MARKERTYPE_PICK,
+          name: arrival.phase,
+          time: arrival.pick.time,
+          description: ""
+        });
+      }
+    });
+  }
+  return markers;
+}
+
+// src/seismograph.mts
+registerHelpers();
+var CLIP_PREFIX = "seismographclip";
+var SEIS_CLICK_EVENT = "seisclick";
+var SEIS_MOVE_EVENT = "seismousemove";
+var SEISMOGRAPH_ELEMENT = "sp-seismograph";
+var seismograph_css = `
+
+:host {
+  display: block;
+  min-height: 50px;
+  height: 100%;
+}
+
+div.wrapper {
+  min-height: 50px;
+  height: 100%;
+}
+
+@property --sp-seismograph-is-xlabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --sp-seismograph-is-xsublabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --sp-seismograph-is-ylabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --sp-seismograph-is-ysublabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --sp-seismograph-display-title {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+.marker {
+  opacity: 0.4;
+}
+
+.marker .markerpath {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+.marker polygon {
+  fill: rgba(150,220,150,.4);
+}
+
+.marker.predicted polygon {
+  fill: rgba(220,220,220,.4);
+}
+
+.marker.pick polygon {
+  fill: rgba(255,100,100,.4);
+}
+
+path.seispath {
+  stroke: skyblue;
+  fill: none;
+  stroke-width: 1px;
+}
+
+path.orientZ {
+  stroke: seagreen;
+}
+
+path.orientN {
+  stroke: cornflowerblue;
+}
+
+path.orientE {
+  stroke: orange;
+}
+
+path.alignment {
+  stroke-dasharray: 8;
+  stroke-width: 2px;
+}
+
+svg.seismograph {
+  height: 100%;
+  width: 100%;
+  min-height: 25px;
+  min-width: 25px;
+}
+
+svg.seismograph g.ySublabel text {
+  font-size: smaller;
+}
+
+svg.seismograph g.xSublabel text {
+  font-size: smaller;
+}
+
+svg.seismograph text.title {
+  font-size: larger;
+  font-weight: bold;
+  fill: black;
+  color: black;
+}
+
+svg.realtimePlot g.allseismograms path.seispath {
+  stroke: skyblue;
+}
+
+/* links in svg */
+svg.seismograph text a {
+  fill: #0000EE;
+  text-decoration: underline;
+}
+
+
+`;
+var COLOR_CSS_ID = "seismographcolors";
+var SEISMOGRAPH_CSS_ID = "seismographcss";
+var Seismograph = class _Seismograph extends SeisPlotElement {
+  constructor(seisData, seisConfig) {
+    super(seisData, seisConfig);
+    this.minmax_sample_pixels = DEFAULT_MAX_SAMPLE_PER_PIXEL;
+    this.outerWidth = -1;
+    this.outerHeight = -1;
+    this.throttleRescale = null;
+    this.throttleRedraw = null;
+    this.plotId = ++_Seismograph._lastID;
+    this.beforeFirstDraw = true;
+    this._debugAlignmentSeisData = [];
+    this.width = 200;
+    this.height = 100;
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "wrapper");
+    this.addStyle(seismograph_css, SEISMOGRAPH_CSS_ID);
+    const lineColorsCSS = this.seismographConfig.createCSSForLineColors();
+    this.addStyle(lineColorsCSS, COLOR_CSS_ID);
+    this.getShadowRoot().appendChild(wrapper);
+    this.canvas = null;
+    this.canvasHolder = null;
+    this.svg = select_default2(wrapper).append("svg").style("z-index", 100);
+    const svgNode2 = this.svg.node();
+    if (svgNode2 != null) {
+      wrapper.appendChild(svgNode2);
+    }
+    if (isDef(this.seismographConfig.minHeight) && isNumArg(this.seismographConfig.minHeight) && this.seismographConfig.minHeight > 0) {
+      const minHeight = this.seismographConfig.minHeight;
+      this.svg.style("min-height", minHeight + "px");
+    }
+    if (isNumArg(this.seismographConfig.maxHeight) && this.seismographConfig.maxHeight > 0) {
+      this.svg.style("max-height", this.seismographConfig.maxHeight + "px");
+    }
+    if (isNumArg(this.seismographConfig.minWidth) && this.seismographConfig.minWidth > 0) {
+      const minWidth = this.seismographConfig.minWidth;
+      this.svg.style("min-width", minWidth + "px");
+    }
+    if (isNumArg(this.seismographConfig.maxWidth) && this.seismographConfig.maxWidth > 0) {
+      this.svg.style("max-width", this.seismographConfig.maxWidth + "px");
+    }
+    this.svg.classed("seismograph", true);
+    this.svg.classed(AUTO_COLOR_SELECTOR, true);
+    this.svg.attr("plotId", this.plotId);
+    const alignmentTimeOffset = Duration.fromMillis(0);
+    const maxDuration = findMaxDuration(this.seisData);
+    this.time_scalable = new SeismographTimeScalable(
+      this,
+      alignmentTimeOffset,
+      maxDuration
+    );
+    if (isDef(this.seismographConfig.linkedTimeScale)) {
+      this.seismographConfig.linkedTimeScale.link(this.time_scalable);
+    }
+    this.calcTimeScaleDomain();
+    this.amp_scalable = new SeismographAmplitudeScalable(this);
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      this.seismographConfig.linkedAmplitudeScale.link(this.amp_scalable);
+    }
+    this.redoDisplayYScale();
+    this.g = this.svg.append("g").classed("marginTransform", true).attr(
+      "transform",
+      "translate(" + this.seismographConfig.margin.left + "," + this.seismographConfig.margin.top + ")"
+    );
+    this.g.append("g").classed("allseismograms", true).classed(AUTO_COLOR_SELECTOR, true);
+    this.g.append("g").attr("class", "allmarkers").attr("style", "clip-path: url(#" + CLIP_PREFIX + this.plotId + ")");
+    this._resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target instanceof _Seismograph) {
+          const graph = entry.target;
+          const rect = entry.contentRect;
+          if (!graph.beforeFirstDraw && (rect.width !== graph.outerWidth || rect.height !== graph.outerHeight)) {
+            graph.redraw();
+          }
+        }
+      }
+    });
+    this._resizeObserver.observe(this);
+    this.addEventListener("click", (evt) => {
+      const detail = this.calcDetailForEvent(evt, "click");
+      const event = new CustomEvent(
+        SEIS_CLICK_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
+      this.dispatchEvent(event);
+    });
+    this.addEventListener("mousemove", (evt) => {
+      const detail = this.calcDetailForEvent(evt, "mousemove");
+      const event = new CustomEvent(
+        SEIS_MOVE_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
+      this.dispatchEvent(event);
+    });
+  }
+  get seismographConfig() {
+    return super.seismographConfig;
+  }
+  set seismographConfig(seismographConfig) {
+    if (isDef(this.seismographConfig.linkedTimeScale)) {
+      this.seismographConfig.linkedTimeScale.unlink(this.time_scalable);
+    }
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      this.seismographConfig.linkedAmplitudeScale.unlink(this.amp_scalable);
+    }
+    super.seismographConfig = seismographConfig;
+    if (isDef(this.seismographConfig.linkedTimeScale)) {
+      this.seismographConfig.linkedTimeScale.link(this.time_scalable);
+    }
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      this.seismographConfig.linkedAmplitudeScale.link(this.amp_scalable);
+    }
+    this.redraw();
+  }
+  connectedCallback() {
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      this.beforeFirstDraw = false;
+      this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
+    } else {
+      this.redraw();
+    }
+  }
+  disconnectedCallback() {
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      this.seismographConfig.linkedAmplitudeScale.unlink(this.amp_scalable);
+    }
+    if (this.seismographConfig.linkedTimeScale) {
+      this.seismographConfig.linkedTimeScale.unlink(this.time_scalable);
+    }
+  }
+  attributeChangedCallback(_name, _oldValue, _newValue) {
+    this.redraw();
+  }
+  checkResize() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const svgEl = wrapper.querySelector("svg");
+    const rect = svgEl.getBoundingClientRect();
+    if (rect.width !== this.outerWidth || rect.height !== this.outerHeight) {
+      return true;
+    }
+    return false;
+  }
+  draw() {
+    if (!this.isConnected) {
+      return;
+    }
+    if (this.panZoomer && this.seismographConfig.linkedTimeScale) {
+      this.panZoomer.linkedTimeScale = this.seismographConfig.linkedTimeScale;
+      this.panZoomer.wheelZoom = this.seismographConfig.wheelZoom;
+    }
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const svgEl = wrapper.querySelector("svg");
+    const rect = svgEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      log(
+        `Attempt draw seismograph, but width/height too small: ${rect.width} ${rect.height}`
+      );
+      return;
+    }
+    let calcHeight = rect.height;
+    if (rect.width !== this.outerWidth || rect.height !== this.outerHeight) {
+      if (isNumArg(this.seismographConfig.minHeight) && calcHeight < this.seismographConfig.minHeight) {
+        calcHeight = this.seismographConfig.minHeight;
+      }
+      if (isNumArg(this.seismographConfig.maxHeight) && calcHeight > this.seismographConfig.maxHeight) {
+        calcHeight = this.seismographConfig.maxHeight;
+      }
+    }
+    this.calcWidthHeight(rect.width, calcHeight);
+    this.g.attr(
+      "transform",
+      `translate(${this.seismographConfig.margin.left}, ${this.seismographConfig.margin.top} )`
+    );
+    if (this.canvas && this.canvasHolder) {
+      this.canvasHolder.attr("width", this.width).attr("height", this.height);
+      this.canvasHolder.attr("x", this.seismographConfig.margin.left);
+      this.canvasHolder.attr("y", this.seismographConfig.margin.top);
+      this.canvas.attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height);
+      this.canvas.attr("style", `width: ${this.width}px; height: ${this.height}px;`);
+    } else {
+      const svg = select_default2(svgEl);
+      this.canvasHolder = svg.insert("foreignObject", ":first-child").classed("seismograph", true).attr("x", this.seismographConfig.margin.left).attr("y", this.seismographConfig.margin.top).attr("width", this.width).attr("height", this.height);
+      if (this.canvasHolder == null) {
+        throw new Error("canvasHolder is null");
+      }
+      const c = this.canvasHolder.append("xhtml:canvas").classed("seismograph", true).attr("xmlns", XHTML_NS).attr("x", 0).attr("y", 0).attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height).attr("style", `width: ${this.width}px; height: ${this.height}px;`);
+      this.canvas = c;
+      if (this.seismographConfig.linkedTimeScale) {
+        const canvasHolderNode = this.canvasHolder.node();
+        if (!this.panZoomer && canvasHolderNode) {
+          this.panZoomer = new PanZoomer(canvasHolderNode, this.seismographConfig.linkedTimeScale, this.seismographConfig.wheelZoom);
+        } else if (this.panZoomer && canvasHolderNode) {
+          this.panZoomer.target = canvasHolderNode;
+        }
+      }
+    }
+    this.drawSeismograms();
+    this.drawAxis();
+    const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
+    drawAxisLabels(
+      svgEl,
+      this.seismographConfig,
+      this.height,
+      this.width,
+      this.createHandlebarsInput(),
+      unitsLabel
+    );
+    if (this.seismographConfig.doMarkers) {
+      this.drawMarkers();
+    }
+    this.beforeFirstDraw = false;
+  }
+  printSizes() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const svgEl = wrapper.querySelector("svg");
+    let out = "";
+    const rect = svgEl.getBoundingClientRect();
+    out += "svg rect.height " + rect.height + "\n";
+    out += "svg rect.width " + rect.width + "\n";
+    const grect = this.getBoundingClientRect();
+    out += "parent rect.height " + grect.height + "\n";
+    out += "parent rect.width " + grect.width + "\n";
+    const cnode = this.canvas?.node();
+    const crect = cnode?.getBoundingClientRect();
+    if (this.canvas && cnode && crect) {
+      out += "c rect.height " + crect.height + "\n";
+      out += "c rect.width " + crect.width + "\n";
+      out += "c style.height " + this.canvas.style("height") + "\n";
+      out += "c style.width " + this.canvas.style("width") + "\n";
+      out += "this.height " + this.height + "\n";
+      out += "this.width " + this.width + "\n";
+      out += "canvas.height " + cnode.height + "\n";
+      out += "canvas.width " + cnode.width + "\n";
+      out += "this.outerHeight " + this.outerHeight + "\n";
+      out += "this.outerWidth " + this.outerWidth + "\n";
+      const m = this.seismographConfig.margin;
+      out += m ? `this.margin ${String(m)}
+` : `this.margin null
+`;
+    } else {
+      out += "crect bounding rect is null\n";
+    }
+    log(out);
+  }
+  calcDetailForEvent(evt, _type) {
+    const margin = this.seismographConfig.margin;
+    const mouseTimeVal = this.timeScaleForAxis().invert(
+      evt.offsetX - margin.left
+    );
+    const mouseAmp = this.ampScaleForAxis().invert(evt.offsetY - margin.top);
+    const out = {
+      mouseevent: evt,
+      time: null,
+      relative_time: null,
+      amplitude: mouseAmp,
+      seismograph: this
+    };
+    if (mouseTimeVal instanceof DateTime) {
+      out.time = mouseTimeVal;
+    } else {
+      out.relative_time = Duration.fromMillis(mouseTimeVal * 1e3);
+    }
+    return out;
+  }
+  isVisible() {
+    const elem = this.canvas?.node();
+    if (!elem) {
+      return false;
+    }
+    return !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length);
+  }
+  drawSeismograms() {
+    if (!this.isVisible()) {
+      return;
+    }
+    const canvas = this.canvas?.node();
+    if (!canvas) {
+      return;
+    }
+    clearCanvas(canvas);
+    if (this.seismographConfig.xGridLines) {
+      drawXScaleGridLines(
+        canvas,
+        this.timeScaleForAxis(),
+        this.seismographConfig.gridLineColor
+      );
+    }
+    if (this.seismographConfig.yGridLines) {
+      drawYScaleGridLines(
+        canvas,
+        this.ampScaleForAxis(),
+        this.seismographConfig.gridLineColor
+      );
+    }
+    drawAllOnCanvas(
+      canvas,
+      this._seisDataList,
+      this._seisDataList.map((sdd) => this.timeScaleForSeisDisplayData(sdd, true)),
+      // Set resolution scaling to true
+      this._seisDataList.map((sdd) => this.ampScaleForSeisDisplayData(sdd)),
+      this._seisDataList.map(
+        (_sdd, ti) => this.seismographConfig.getColorForIndex(ti)
+      ),
+      this.seismographConfig.lineWidth * this.seismographConfig.resolutionScale,
+      this.seismographConfig.connectSegments,
+      this.minmax_sample_pixels
+    );
+  }
+  calcScaleAndZoom() {
+    this.rescaleYAxis();
+    const container = this.svg.select("defs").select("#" + CLIP_PREFIX + this.plotId);
+    if (container.empty()) {
+      this.svg.append("defs").append("clipPath").attr("id", CLIP_PREFIX + this.plotId);
+    }
+    const clip = this.svg.select("defs").select("#" + CLIP_PREFIX + this.plotId);
+    clip.selectAll("rect").remove();
+    clip.append("rect").attr("width", this.width).attr("height", this.height);
+  }
+  ampScaleForSeisDisplayData(sdd) {
+    const ampScale = this.__initAmpScale(true);
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      const drawHalfWidth = this.amp_scalable.drawHalfWidth;
+      let sensitivityVal = 1;
+      if (this.seismographConfig.doGain && sdd.seismogram?.isYUnitCount() && sdd.sensitivity?.sensitivity) {
+        sensitivityVal = sdd.sensitivity.sensitivity;
+      }
+      if (!this.seismographConfig.isCenteredAmp()) {
+        return ampScale.domain([
+          (this.amp_scalable.drawMiddle - drawHalfWidth) * sensitivityVal,
+          (this.amp_scalable.drawMiddle + drawHalfWidth) * sensitivityVal
+        ]);
+      }
+      const sddInterval = this.displayTimeRangeForSeisDisplayData(sdd);
+      const minMax = calcMinMax(
+        sdd,
+        sddInterval,
+        false,
+        this.seismographConfig.amplitudeMode
+      );
+      if (minMax) {
+        const myMin = minMax.middle - drawHalfWidth * sensitivityVal;
+        const myMax = minMax.middle + drawHalfWidth * sensitivityVal;
+        ampScale.domain([myMin, myMax]);
+      } else {
+        ampScale.domain([-1, 1]);
+      }
+    } else if (this.seismographConfig.fixedAmplitudeScale) {
+      ampScale.domain(this.seismographConfig.fixedAmplitudeScale);
+    } else {
+      throw new Error(
+        "ampScaleForSeisDisplayData Must be either linked or fixed amp scale"
+      );
+    }
+    return ampScale;
+  }
+  displayTimeRangeForSeisDisplayData(sdd) {
+    let plotInterval;
+    if (this.seismographConfig.linkedTimeScale) {
+      if (this.time_scalable.drawDuration.equals(ZERO_DURATION)) {
+        this.seismographConfig.linkedTimeScale.recalculate().catch((m) => {
+          console.warn(
+            `problem recalc displayTimeRangeForSeisDisplayData: ${m}`
+          );
+        });
+      }
+      const startOffset = this.time_scalable.drawAlignmentTimeOffset;
+      const duration3 = this.time_scalable.drawDuration;
+      plotInterval = sdd.relativeTimeWindow(startOffset, duration3);
+    } else if (this.seismographConfig.fixedTimeScale) {
+      plotInterval = this.seismographConfig.fixedTimeScale;
+    } else {
+      throw new Error("Must be either fixed or linked time scale");
+    }
+    return plotInterval;
+  }
+  timeScaleForSeisDisplayData(sdd, scaleForResolution = false) {
+    let plotInterval;
+    if (sdd) {
+      if (sdd instanceof SeismogramDisplayData) {
+        plotInterval = this.displayTimeRangeForSeisDisplayData(sdd);
+      } else {
+        plotInterval = sdd;
+      }
+    } else {
+      if (this.seismographConfig.linkedTimeScale) {
+        plotInterval = durationEnd(
+          this.seismographConfig.linkedTimeScale.duration,
+          DateTime.utc()
+        );
+      } else if (this.seismographConfig.fixedTimeScale) {
+        plotInterval = this.seismographConfig.fixedTimeScale;
+      } else {
+        plotInterval = durationEnd(1, DateTime.utc());
+      }
+    }
+    return new LuxonTimeScale(
+      plotInterval,
+      [0, scaleForResolution ? this.seismographConfig.resolutionScale * this.width : this.width]
+    );
+  }
+  /**
+   * Draws the top, bottom, (time) axis and the left and right (amplitude) axis if configured.
+   */
+  drawAxis() {
+    this.drawTopBottomAxis();
+    this.drawLeftRightAxis();
+  }
+  /**
+   * Creates amp scale, set range based on height.
+   * @private
+   * @returns amp scale with range set
+   */
+  __initAmpScale(scaleForResolution = false) {
+    const ampAxisScale = linear2();
+    const height = (scaleForResolution ? this.seismographConfig.resolutionScale * this.height : this.height) - 1;
+    ampAxisScale.range([height, 1]);
+    return ampAxisScale;
+  }
+  ampScaleForAxis() {
+    const ampAxisScale = this.__initAmpScale();
+    if (this.seismographConfig.fixedAmplitudeScale) {
+      ampAxisScale.domain(this.seismographConfig.fixedAmplitudeScale);
+    } else if (this.seismographConfig.linkedAmplitudeScale) {
+      let middle;
+      if (this.seismographConfig.isCenteredAmp()) {
+        middle = 0;
+      } else {
+        middle = this.amp_scalable.drawMiddle;
+      }
+      ampAxisScale.domain([
+        middle - this.amp_scalable.drawHalfWidth,
+        middle + this.amp_scalable.drawHalfWidth
+      ]);
+    } else {
+      throw new Error(
+        "ampScaleForAxis Must be either linked or fixed amp scale"
+      );
+    }
+    return ampAxisScale;
+  }
+  timeScaleForAxis() {
+    let xScaleToDraw;
+    if (this.seismographConfig.isRelativeTime) {
+      xScaleToDraw = linear2();
+      xScaleToDraw.range([0, this.width]);
+      if (this.seismographConfig.linkedTimeScale) {
+        const startOffset = this.time_scalable.drawAlignmentTimeOffset.toMillis() / 1e3;
+        const duration3 = this.time_scalable.drawDuration.toMillis() / 1e3;
+        if (duration3 > 0) {
+          xScaleToDraw.domain([startOffset, startOffset + duration3]);
+        } else {
+          xScaleToDraw.domain([startOffset + duration3, startOffset]);
+        }
+      } else if (this.seismographConfig.fixedTimeScale) {
+        const psed = this.seismographConfig.fixedTimeScale;
+        const s2 = validStartTime(psed);
+        const e = validEndTime(psed);
+        xScaleToDraw.domain([s2.toMillis() / 1e3, e.toMillis() / 1e3]);
+      } else {
+        throw new Error("neither fixed nor linked time scale");
+      }
+    } else {
+      if (this.seismographConfig.linkedTimeScale) {
+        if (this.seisData.length > 0) {
+          xScaleToDraw = this.timeScaleForSeisDisplayData(this.seisData[0]);
+        } else {
+          xScaleToDraw = this.timeScaleForSeisDisplayData();
+        }
+      } else if (this.seismographConfig.fixedTimeScale) {
+        const psed = this.seismographConfig.fixedTimeScale;
+        xScaleToDraw = this.timeScaleForSeisDisplayData(psed);
+      } else {
+        throw new Error("neither fixed nor linked time scale");
+      }
+    }
+    return xScaleToDraw;
+  }
+  /**
+   * Draws the left and right (amplitude) axis if configured.
+   *
+   */
+  drawTopBottomAxis() {
+    this.g.selectAll("g.axis--x").remove();
+    this.g.selectAll("g.axis--x-top").remove();
+    let xScaleToDraw = this.timeScaleForAxis();
+    if (this.seismographConfig.isRelativeTime) {
+      xScaleToDraw = xScaleToDraw;
+      if (this.seismographConfig.isXAxis) {
+        const xAxis = axisBottom(xScaleToDraw);
+        xAxis.tickFormat(
+          createNumberFormatWrapper(this.seismographConfig.relativeTimeFormat)
+        );
+        this.g.append("g").attr("class", "axis axis--x").attr("transform", "translate(0," + this.height + ")").call(xAxis);
+      }
+      if (this.seismographConfig.isXAxisTop) {
+        const xAxisTop = axisTop(xScaleToDraw);
+        xAxisTop.tickFormat(
+          createNumberFormatWrapper(this.seismographConfig.relativeTimeFormat)
+        );
+        this.g.append("g").attr("class", "axis axis--x-top").call(xAxisTop);
+      }
+    } else {
+      xScaleToDraw = xScaleToDraw;
+      if (this.seismographConfig.isXAxis) {
+        const xAxis = axisBottom(xScaleToDraw.d3scale);
+        xAxis.tickFormat(
+          createDateFormatWrapper(this.seismographConfig.timeFormat)
+        );
+        this.g.append("g").attr("class", "axis axis--x").attr("transform", "translate(0," + this.height + ")").call(xAxis);
+      }
+      if (this.seismographConfig.isXAxisTop) {
+        const xAxisTop = axisTop(xScaleToDraw.d3scale);
+        xAxisTop.tickFormat(
+          createDateFormatWrapper(this.seismographConfig.timeFormat)
+        );
+        this.g.append("g").attr("class", "axis axis--x-top").call(xAxisTop);
+      }
+    }
+  }
+  /**
+   * Draws the left and right (amplitude) axis if configured.
+   */
+  drawLeftRightAxis() {
+    this.g.selectAll("g.axis--y").remove();
+    this.g.selectAll("g.axis--y-right").remove();
+    const [yAxis, yAxisRight] = this.createLeftRightAxis();
+    if (isDef(yAxis)) {
+      this.g.append("g").attr("class", "axis axis--y").call(yAxis);
+    }
+    if (isDef(yAxisRight)) {
+      this.g.append("g").attr("class", "axis axis--y-right").attr("transform", "translate(" + this.width + ",0)").call(yAxisRight);
+    }
+  }
+  createLeftRightAxis() {
+    let yAxis = null;
+    let yAxisRight = null;
+    const axisScale = this.ampScaleForAxis();
+    if (this.seismographConfig.isYAxis) {
+      yAxis = axisLeft(axisScale).tickFormat(
+        numberFormatWrapper(this.seismographConfig.amplitudeFormat)
+      );
+      yAxis.scale(axisScale);
+      yAxis.ticks(
+        this.seismographConfig.yAxisNumTickHint,
+        this.seismographConfig.amplitudeFormat
+      );
+    }
+    if (this.seismographConfig.isYAxisRight) {
+      yAxisRight = axisRight(axisScale).tickFormat(
+        numberFormatWrapper(this.seismographConfig.amplitudeFormat)
+      );
+      yAxisRight.scale(axisScale);
+      yAxisRight.ticks(this.seismographConfig.yAxisNumTickHint, this.seismographConfig.amplitudeFormat);
+    }
+    return [yAxis, yAxisRight];
+  }
+  rescaleYAxis() {
+    if (!this.beforeFirstDraw) {
+      const delay = 500;
+      if (this.throttleRescale) {
+        clearTimeout(this.throttleRescale);
+      }
+      this.throttleRescale = setTimeout(() => {
+        const [yAxis, yAxisRight] = this.createLeftRightAxis();
+        if (yAxis) {
+          this.g.select(".axis--y").transition().duration(delay / 2).call(yAxis);
+        }
+        if (yAxisRight) {
+          this.g.select(".axis--y-right").transition().duration(delay / 2).call(yAxisRight);
+        }
+        this.throttleRescale = null;
+      }, delay);
+    }
+  }
+  createHandlebarsInput() {
+    return {
+      seisDataList: this._seisDataList,
+      seisConfig: this._seismographConfig
+    };
+  }
+  drawAxisLabels() {
+    this.drawTitle();
+    this.drawXLabel();
+    this.drawXSublabel();
+    this.drawYLabel();
+    this.drawYSublabel();
+  }
+  resetZoom() {
+    if (this.seismographConfig.linkedTimeScale) {
+      this.seismographConfig.linkedTimeScale.unzoom();
+    } else {
+      throw new Error("can't reset zoom for fixedTimeScale");
+    }
+  }
+  redrawWithXScale() {
+    const mythis = this;
+    if (!this.beforeFirstDraw) {
+      this.g.select("g.allseismograms").selectAll("g.seismogram").remove();
+      if (this.seismographConfig.windowAmp) {
+        this.recheckAmpScaleDomain();
+      }
+      this.drawSeismograms();
+      this.g.select("g.allmarkers").selectAll("g.marker").attr("transform", function(v) {
+        const mh = v;
+        mh.xscale = mythis.timeScaleForSeisDisplayData(mh.sdd);
+        const textx = mh.xscale.for(mh.marker.time);
+        return "translate(" + textx + ",0)";
+      });
+      this.g.select("g.allmarkers").selectAll("g.markertext").attr("transform", function() {
+        const axisScale = mythis.ampScaleForAxis();
+        const maxY = axisScale.range()[0];
+        const deltaY = axisScale.range()[0] - axisScale.range()[1];
+        const texty = maxY - mythis.seismographConfig.markerTextOffset * deltaY;
+        return "translate(0," + texty + ") rotate(" + mythis.seismographConfig.markerTextAngle + ")";
+      });
+      const undrawnMarkers = this._seisDataList.reduce((acc, sdd) => {
+        const sddXScale = this.timeScaleForSeisDisplayData(sdd);
+        sdd.markerList.forEach(
+          (m) => acc.push({
+            // use marker holder to also hold xscale in case relative plot
+            marker: m,
+            sdd,
+            xscale: sddXScale
+          })
+        );
+        return acc;
+      }, new Array(0)).filter((mh) => {
+        const xpixel = mh.xscale.for(mh.marker.time);
+        return xpixel >= mh.xscale.range[0] && xpixel <= mh.xscale.range[1];
+      });
+      if (this.seismographConfig.doMarkers && undrawnMarkers.length !== 0) {
+        this.drawMarkers();
+      }
+      this.drawTopBottomAxis();
+    }
+  }
+  drawMarkers() {
+    const axisScale = this.ampScaleForAxis();
+    const allMarkers = this._seisDataList.reduce((acc, sdd) => {
+      const sddXScale = this.timeScaleForSeisDisplayData(sdd);
+      sdd.markerList.forEach(
+        (m) => acc.push({
+          // use marker holder to also hold xscale in case relative plot
+          marker: m,
+          sdd,
+          xscale: sddXScale
+        })
+      );
+      return acc;
+    }, []).filter((mh) => {
+      const xpixel = mh.xscale.for(mh.marker.time);
+      return xpixel >= mh.xscale.range[0] && xpixel <= mh.xscale.range[1];
+    });
+    const mythis = this;
+    const markerG = this.g.select("g.allmarkers");
+    markerG.selectAll("g.marker").remove();
+    const labelSelection = markerG.selectAll("g.marker").data(allMarkers, function(v) {
+      const mh = v;
+      return `${mh.marker.name}_${mh.marker.time.toISO()}`;
+    });
+    labelSelection.exit().remove();
+    const radianTextAngle = this.seismographConfig.markerTextAngle * Math.PI / 180;
+    labelSelection.enter().append("g").classed("marker", true).attr("transform", function(v) {
+      const mh = v;
+      const textx = mh.xscale.for(mh.marker.time);
+      return "translate(" + textx + ",0)";
+    }).each(function(mh) {
+      const drawG = select_default2(this);
+      drawG.classed(mh.marker.name, true).classed(mh.marker.markertype, true);
+      const innerTextG = drawG.append("g").attr("class", "markertext").attr("transform", () => {
+        const maxY = axisScale.range()[0];
+        const deltaY = axisScale.range()[0] - axisScale.range()[1];
+        const texty = maxY - mythis.seismographConfig.markerTextOffset * deltaY;
+        return "translate(0," + texty + ") rotate(" + mythis.seismographConfig.markerTextAngle + ")";
+      });
+      innerTextG.append("title").text(() => {
+        if (mh.marker.description) {
+          return mh.marker.description;
+        } else {
+          return mh.marker.markertype + " " + mh.marker.name + " " + mh.marker.time.toISO();
+        }
+      });
+      const textSel = innerTextG.append("text");
+      if (mh.marker.link && mh.marker.link.length > 0) {
+        textSel.append("svg:a").attr("xlink:href", () => "" + mh.marker.link).text(function(datum2) {
+          const mh2 = datum2;
+          return mh2.marker.name;
+        });
+      } else {
+        textSel.text(function(datum2) {
+          const mh2 = datum2;
+          return mh2.marker.name;
+        });
+      }
+      textSel.attr("dy", "-0.35em").call(function(selection2) {
+        selection2.each(function(datum2) {
+          const mh2 = datum2;
+          mh2.bbox = {
+            height: 15,
+            width: 20
+          };
+          try {
+            mh2.bbox = this.getBBox();
+          } catch (error51) {
+            console.warn(error51);
+          }
+        });
+      });
+      innerTextG.insert("polygon", "text").attr("points", function(datum2) {
+        const mh2 = datum2;
+        let bboxH = 10 + 5;
+        let bboxW = 10;
+        if (mh2.bbox) {
+          bboxH = mh2.bbox.height + 5;
+          bboxW = mh2.bbox.width;
+        }
+        return "0,0 " + -1 * bboxH * Math.tan(radianTextAngle) + ",-" + bboxH + " " + bboxW + ",-" + bboxH + " " + bboxW + ",0";
+      });
+      let markerPoleY;
+      if (mythis.seismographConfig.markerFlagpoleBase === "none") {
+        markerPoleY = 0;
+      } else if (mythis.seismographConfig.markerFlagpoleBase === "short") {
+        markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 4;
+      } else if (mythis.seismographConfig.markerFlagpoleBase === "center") {
+        markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 2;
+      } else {
+        markerPoleY = axisScale.range()[0];
+      }
+      const markerPole = `M0,0l0,${markerPoleY}`;
+      drawG.append("path").classed("markerpath", true).attr("d", markerPole);
+    });
+  }
+  calcWidthHeight(nOuterWidth, nOuterHeight) {
+    if (nOuterWidth < this.seismographConfig.margin.left + this.seismographConfig.margin.right) {
+      throw new Error(
+        `width too small for margin: ${nOuterWidth} < ${this.seismographConfig.margin.left} + ${this.seismographConfig.margin.right}`
+      );
+    }
+    if (nOuterHeight < this.seismographConfig.margin.top + this.seismographConfig.margin.bottom) {
+      throw new Error(
+        `height too small for margin: ${nOuterHeight} < ${this.seismographConfig.margin.top} + ${this.seismographConfig.margin.bottom}`
+      );
+    }
+    this.outerWidth = nOuterWidth;
+    this.outerHeight = nOuterHeight;
+    this.height = this.outerHeight - this.seismographConfig.margin.top - this.seismographConfig.margin.bottom;
+    this.width = this.outerWidth - this.seismographConfig.margin.left - this.seismographConfig.margin.right;
+    this.calcScaleAndZoom();
+    if (this.canvasHolder) {
+      this.canvasHolder.attr("width", this.width).attr("height", this.height + 1);
+    }
+    if (this.canvas) {
+      this.canvas.attr("width", this.seismographConfig.resolutionScale * this.width).attr("height", this.seismographConfig.resolutionScale * this.height + 1);
+    }
+    if (this.panZoomer) {
+      this.panZoomer.width = this.width;
+    }
+  }
+  drawTitle() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const isTitleCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-title");
+    const svgEl = wrapper.querySelector("svg");
+    if (isTitleCSS === "0") {
+      removeTitle(svgEl);
+    } else {
+      drawTitle(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
+  }
+  drawXLabel() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const isXLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xlabel");
+    const svgEl = wrapper.querySelector("svg");
+    if (isXLabelCSS === "0") {
+      removeXLabel(svgEl);
+    } else {
+      drawXLabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
+  }
+  drawXSublabel() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const isXSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-xsublabel");
+    const svgEl = wrapper.querySelector("svg");
+    if (isXSublabelCSS === "0") {
+      removeXSublabel(svgEl);
+    } else {
+      drawXSublabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
+  }
+  drawYLabel() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const isYLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ylabel");
+    const svgEl = wrapper.querySelector("svg");
+    if (isYLabelCSS === "0") {
+      removeYLabel(svgEl);
+    } else {
+      drawYLabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
+  }
+  drawYSublabel() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const isYSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ysublabel");
+    const svgEl = wrapper.querySelector("svg");
+    if (isYSublabelCSS === "0") {
+      removeYSublabel(svgEl);
+    } else {
+      const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
+      drawYSublabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput(),
+        unitsLabel
+      );
+    }
+  }
+  /**
+   * Update the duration if not already set. This only matters for
+   * linedTimeScale currently.
+   */
+  calcTimeScaleDomain() {
+    if (isDef(this.seismographConfig.linkedTimeScale)) {
+      const linkedTimeScale = this.seismographConfig.linkedTimeScale;
+      if (this._seisDataList.length !== 0 && linkedTimeScale.duration.toMillis() === 0) {
+        this.seismographConfig.linkedTimeScale.duration = findMaxDuration(
+          this._seisDataList
+        );
+      }
+    }
+  }
+  /**
+   * Calculate the amplitude range over the current time range, depending
+   * on amplitude style.
+   *
+   * @returns min max over the time range
+   */
+  calcAmpScaleDomain() {
+    let minMax;
+    if (this.seismographConfig.fixedAmplitudeScale) {
+      minMax = MinMaxable.fromArray(this.seismographConfig.fixedAmplitudeScale);
+    } else {
+      if (this.seismographConfig.windowAmp) {
+        if (isDef(this.seismographConfig.linkedTimeScale)) {
+          minMax = findMinMaxOverRelativeTimeRange(
+            this._seisDataList,
+            this.seismographConfig.linkedTimeScale.offset,
+            this.seismographConfig.linkedTimeScale.duration,
+            this.seismographConfig.doGain,
+            this.seismographConfig.amplitudeMode
+          );
+        } else if (isDef(this.seismographConfig.fixedTimeScale)) {
+          minMax = findMinMaxOverTimeRange(
+            this._seisDataList,
+            this.seismographConfig.fixedTimeScale,
+            this.seismographConfig.doGain,
+            this.seismographConfig.amplitudeMode
+          );
+        } else {
+          throw new Error("neither fixed nor linked time scale");
+        }
+      } else {
+        minMax = findMinMax(
+          this._seisDataList,
+          this.seismographConfig.doGain,
+          this.seismographConfig.amplitudeMode
+        );
+      }
+      if (minMax.halfWidth === 0) {
+      }
+      if (this.seismographConfig.isYAxisNice) {
+        let scale = linear2();
+        scale.domain(minMax.asArray());
+        scale = scale.nice();
+        minMax = MinMaxable.fromArray(scale.domain());
+      }
+    }
+    return minMax;
+  }
+  recheckAmpScaleDomain() {
+    const calcMidHW = this.calcAmpScaleDomain();
+    const oldMiddle = this.amp_scalable.middle;
+    const oldHalfWidth = this.amp_scalable.halfWidth;
+    this.amp_scalable.minMax = calcMidHW;
+    if (this.seismographConfig.linkedAmplitudeScale) {
+      if (this.amp_scalable.middle !== oldMiddle || this.amp_scalable.halfWidth !== oldHalfWidth) {
+        this.seismographConfig.linkedAmplitudeScale.recalculate().catch((m) => {
+          console.warn(`problem recalc amp scale: ${m}`);
+        });
+      }
+    } else {
+      this.redoDisplayYScale();
+    }
+  }
+  redoDisplayYScale() {
+    this.rescaleYAxis();
+    if (this.seismographConfig.ySublabelIsUnits) {
+      this.drawYSublabel();
+    }
+  }
+  createUnitsLabel() {
+    let ySublabel = "";
+    if (this.seismographConfig.doGain && this._seisDataList.length > 0 && this._seisDataList.every((sdd) => sdd.hasSensitivity()) && this._seisDataList.every(
+      (sdd) => isDef(sdd.seismogram) && sdd.seismogram.yUnit === COUNT_UNIT2
+    )) {
+      const firstSensitivity = this._seisDataList[0].sensitivity;
+      const allSameUnits = firstSensitivity && this._seisDataList.every(
+        (sdd) => isDef(firstSensitivity) && sdd.sensitivity && firstSensitivity.inputUnits === sdd.sensitivity.inputUnits
+      );
+      if (this.seismographConfig.ySublabelIsUnits) {
+        const unitList = this._seisDataList.map(
+          (sdd) => sdd.sensitivity ? sdd.sensitivity.inputUnits : "uknown"
+        ).join(",");
+        if (!allSameUnits) {
+          ySublabel = unitList;
+        } else {
+          ySublabel = firstSensitivity.inputUnits;
+        }
+      }
+    } else {
+      if (this.seismographConfig.ySublabelIsUnits) {
+        const allUnits = [];
+        for (const t of this._seisDataList) {
+          if (t.seismogram) {
+            const u = t.seismogram.yUnit;
+            allUnits.push(u);
+          }
+        }
+        if (allUnits.length === 0) {
+          allUnits.push("Count");
+        }
+        ySublabel = allUnits.join(" ");
+      }
+    }
+    if (this.seismographConfig.ySublabelIsUnits && this.seismographConfig.isCenteredAmp()) {
+      ySublabel = `centered ${ySublabel}`;
+    }
+    return ySublabel;
+  }
+  getSeismogramData() {
+    return this._seisDataList;
+  }
+  /**
+   * Notification to the element that something about the current seismogram
+   * data has changed. This could be that the actual waveform data has been updated
+   * or that auxillary data like quake or channel has been added. This should
+   * trigger a redraw.
+   */
+  seisDataUpdated() {
+    this.calcTimeScaleDomain();
+    this.recheckAmpScaleDomain();
+    if (!this.beforeFirstDraw) {
+      if (this.seismographConfig.linkedAmplitudeScale) {
+        this.seismographConfig.linkedAmplitudeScale.recalculate().catch((e) => warn(e));
+      } else {
+        this.redraw();
+      }
+    }
+  }
+  /**
+   * Finds the SeismogramDisplayData within the display containing the given
+   * Seismogram.
+   *
+   * @param   seis seismogram to search for
+   * @returns       SeismogramDisplayData if found or null if not
+   */
+  getDisplayDataForSeismogram(seis) {
+    const out = this._seisDataList.find((sd) => sd.seismogram === seis);
+    if (out) {
+      return out;
+    } else {
+      return null;
+    }
+  }
+  /**
+   * Removes a seismogram from the display.
+   *
+   * @param   seisData seis data to remove
+   */
+  removeSeisData(seisData) {
+    this._seisDataList = this._seisDataList.filter((sd) => sd !== seisData);
+  }
+  /**
+   * Removes seismograms that do not overlap the window.
+   *
+   * @param   timeRange overlap data to keep
+   */
+  trim(timeRange) {
+    if (this._seisDataList) {
+      this._seisDataList = this._seisDataList.filter(function(d) {
+        return d.timeRange.overlaps(timeRange);
+      });
+      if (this._seisDataList.length > 0) {
+        this.recheckAmpScaleDomain();
+        this.drawSeismograms();
+      }
+    }
+  }
+};
+var SeismographAmplitudeScalable = class extends AmplitudeScalable {
+  constructor(graph) {
+    const calcMidHW = graph.calcAmpScaleDomain();
+    super(calcMidHW);
+    this.graph = graph;
+    this.drawHalfWidth = super.halfWidth;
+    this.drawMiddle = super.middle;
+  }
+  notifyAmplitudeChange(middle, halfWidth) {
+    if (middle !== this.drawMiddle || halfWidth !== this.drawHalfWidth) {
+      this.drawMiddle = middle;
+      this.drawHalfWidth = halfWidth;
+      this.graph.redoDisplayYScale();
+      if (!this.graph.beforeFirstDraw) {
+        this.graph.redraw();
+      }
+    }
+  }
+};
+var ZERO_DURATION = Duration.fromMillis(0);
+var SeismographTimeScalable = class extends TimeScalable {
+  constructor(graph, alignmentTimeOffset, duration3) {
+    super(alignmentTimeOffset, duration3);
+    this.graph = graph;
+    this.drawAlignmentTimeOffset = ZERO_DURATION;
+    this.drawDuration = ZERO_DURATION;
+  }
+  notifyTimeRangeChange(offset2, duration3) {
+    if (!this.drawAlignmentTimeOffset.equals(offset2) || !this.drawDuration.equals(duration3)) {
+      this.drawAlignmentTimeOffset = offset2;
+      this.drawDuration = duration3;
+      if (isDef(this.graph) && !this.graph.beforeFirstDraw) {
+        window.requestAnimationFrame(() => {
+          this.graph.redrawWithXScale();
+        });
+      }
+    }
+  }
+};
+Seismograph._lastID = 0;
+function createNumberFormatWrapper(formatter) {
+  return (nValue) => {
+    if (typeof nValue === "number") {
+      return formatter(nValue);
+    } else {
+      return formatter(nValue.valueOf());
+    }
+  };
+}
+function createDateFormatWrapper(formatter) {
+  return (nValue) => {
+    if (nValue instanceof Date) {
+      return formatter(nValue);
+    } else if (typeof nValue === "number") {
+      return formatter(new Date(nValue));
+    } else {
+      return formatter(new Date(nValue.valueOf()));
+    }
+  };
+}
+customElements.define(SEISMOGRAPH_ELEMENT, Seismograph);
+
+// node_modules/d3-shape/src/constant.js
+function constant_default3(x2) {
+  return function constant() {
+    return x2;
+  };
+}
+
+// node_modules/d3-path/src/path.js
+var pi = Math.PI;
+var tau = 2 * pi;
+var epsilon2 = 1e-6;
+var tauEpsilon = tau - epsilon2;
+function append(strings) {
+  this._ += strings[0];
+  for (let i = 1, n2 = strings.length; i < n2; ++i) {
+    this._ += arguments[i] + strings[i];
+  }
+}
+function appendRound(digits) {
+  let d = Math.floor(digits);
+  if (!(d >= 0)) throw new Error(`invalid digits: ${digits}`);
+  if (d > 15) return append;
+  const k = 10 ** d;
+  return function(strings) {
+    this._ += strings[0];
+    for (let i = 1, n2 = strings.length; i < n2; ++i) {
+      this._ += Math.round(arguments[i] * k) / k + strings[i];
+    }
+  };
+}
+var Path = class {
+  constructor(digits) {
+    this._x0 = this._y0 = // start of current subpath
+    this._x1 = this._y1 = null;
+    this._ = "";
+    this._append = digits == null ? append : appendRound(digits);
+  }
+  moveTo(x2, y2) {
+    this._append`M${this._x0 = this._x1 = +x2},${this._y0 = this._y1 = +y2}`;
+  }
+  closePath() {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._append`Z`;
+    }
+  }
+  lineTo(x2, y2) {
+    this._append`L${this._x1 = +x2},${this._y1 = +y2}`;
+  }
+  quadraticCurveTo(x1, y1, x2, y2) {
+    this._append`Q${+x1},${+y1},${this._x1 = +x2},${this._y1 = +y2}`;
+  }
+  bezierCurveTo(x1, y1, x2, y2, x3, y3) {
+    this._append`C${+x1},${+y1},${+x2},${+y2},${this._x1 = +x3},${this._y1 = +y3}`;
+  }
+  arcTo(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    if (r < 0) throw new Error(`negative radius: ${r}`);
+    let x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
+    if (this._x1 === null) {
+      this._append`M${this._x1 = x1},${this._y1 = y1}`;
+    } else if (!(l01_2 > epsilon2)) ;
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon2) || !r) {
+      this._append`L${this._x1 = x1},${this._y1 = y1}`;
+    } else {
+      let x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l2 = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l2 / l01, t21 = l2 / l21;
+      if (Math.abs(t01 - 1) > epsilon2) {
+        this._append`L${x1 + t01 * x01},${y1 + t01 * y01}`;
+      }
+      this._append`A${r},${r},0,0,${+(y01 * x20 > x01 * y20)},${this._x1 = x1 + t21 * x21},${this._y1 = y1 + t21 * y21}`;
+    }
+  }
+  arc(x2, y2, r, a0, a1, ccw) {
+    x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
+    if (r < 0) throw new Error(`negative radius: ${r}`);
+    let dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
+    if (this._x1 === null) {
+      this._append`M${x0},${y0}`;
+    } else if (Math.abs(this._x1 - x0) > epsilon2 || Math.abs(this._y1 - y0) > epsilon2) {
+      this._append`L${x0},${y0}`;
+    }
+    if (!r) return;
+    if (da < 0) da = da % tau + tau;
+    if (da > tauEpsilon) {
+      this._append`A${r},${r},0,1,${cw},${x2 - dx},${y2 - dy}A${r},${r},0,1,${cw},${this._x1 = x0},${this._y1 = y0}`;
+    } else if (da > epsilon2) {
+      this._append`A${r},${r},0,${+(da >= pi)},${cw},${this._x1 = x2 + r * Math.cos(a1)},${this._y1 = y2 + r * Math.sin(a1)}`;
+    }
+  }
+  rect(x2, y2, w, h) {
+    this._append`M${this._x0 = this._x1 = +x2},${this._y0 = this._y1 = +y2}h${w = +w}v${+h}h${-w}Z`;
+  }
+  toString() {
+    return this._;
+  }
+};
+function path() {
+  return new Path();
+}
+path.prototype = Path.prototype;
+
+// node_modules/d3-shape/src/path.js
+function withPath(shape) {
+  let digits = 3;
+  shape.digits = function(_) {
+    if (!arguments.length) return digits;
+    if (_ == null) {
+      digits = null;
+    } else {
+      const d = Math.floor(_);
+      if (!(d >= 0)) throw new RangeError(`invalid digits: ${_}`);
+      digits = d;
+    }
+    return shape;
+  };
+  return () => new Path(digits);
+}
+
+// node_modules/d3-shape/src/array.js
+var slice = Array.prototype.slice;
+function array_default(x2) {
+  return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
+}
+
+// node_modules/d3-shape/src/curve/linear.js
+function Linear(context) {
+  this._context = context;
+}
+Linear.prototype = {
+  areaStart: function() {
+    this._line = 0;
+  },
+  areaEnd: function() {
+    this._line = NaN;
+  },
+  lineStart: function() {
+    this._point = 0;
+  },
+  lineEnd: function() {
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function(x2, y2) {
+    x2 = +x2, y2 = +y2;
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+        break;
+      case 1:
+        this._point = 2;
+      // falls through
+      default:
+        this._context.lineTo(x2, y2);
+        break;
+    }
+  }
+};
+function linear_default(context) {
+  return new Linear(context);
+}
+
+// node_modules/d3-shape/src/point.js
+function x(p) {
+  return p[0];
+}
+function y(p) {
+  return p[1];
+}
+
+// node_modules/d3-shape/src/line.js
+function line_default(x2, y2) {
+  var defined = constant_default3(true), context = null, curve = linear_default, output = null, path2 = withPath(line);
+  x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default3(x2);
+  y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default3(y2);
+  function line(data) {
+    var i, n2 = (data = array_default(data)).length, d, defined0 = false, buffer;
+    if (context == null) output = curve(buffer = path2());
+    for (i = 0; i <= n2; ++i) {
+      if (!(i < n2 && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();
+        else output.lineEnd();
+      }
+      if (defined0) output.point(+x2(d, i, data), +y2(d, i, data));
+    }
+    if (buffer) return output = null, buffer + "" || null;
+  }
+  line.x = function(_) {
+    return arguments.length ? (x2 = typeof _ === "function" ? _ : constant_default3(+_), line) : x2;
+  };
+  line.y = function(_) {
+    return arguments.length ? (y2 = typeof _ === "function" ? _ : constant_default3(+_), line) : y2;
+  };
+  line.defined = function(_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : constant_default3(!!_), line) : defined;
+  };
+  line.curve = function(_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  };
+  line.context = function(_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  };
+  return line;
+}
+
+// src/spectraplot.mts
+var SPECTRA_ELEMENT = "sp-spectra";
+var SPECTA_CSS_ID = "spectracss";
+var FreqAmp = class {
+  constructor(freq, values) {
+    this.freq = freq;
+    this.values = values;
+    this.inputUnits = "";
+    this.seismogramDisplayData = null;
+    if (freq.length !== values.length) {
+      throw new Error(
+        `Frequencies and complex values must have same length: ${freq.length} ${values.length}`
+      );
+    }
+  }
+  frequencies() {
+    return this.freq;
+  }
+  amplitudes() {
+    const out = new Float32Array(this.values.length);
+    this.values.forEach((c, i) => out[i] = c.abs());
+    return out;
+  }
+  phases() {
+    const out = new Float32Array(this.values.length);
+    this.values.forEach((c, i) => out[i] = c.angle());
+    return out;
+  }
+  get numFrequencies() {
+    return this.freq.length;
+  }
+  get minFrequency() {
+    return this.fundamentalFrequency;
+  }
+  get maxFrequency() {
+    return this.freq[this.freq.length - 1];
+  }
+  // for compatibility with FFTResult
+  get fundamentalFrequency() {
+    return this.freq[0];
+  }
+};
+var spectra_plot_css = `
+:host {
+  display: block
+}
+
+div.wrapper {
+  height: 100%;
+  min-height: 100px;
+}
+path.fftpath {
+  stroke: skyblue;
+  fill: none;
+  stroke-width: 1px;
+}
+
+svg.spectra_plot {
+  height: 100%;
+  width: 100%;
+  min-height: 100px;
+  display: block;
+}
+svg.spectra_plot text.title {
+  font-size: larger;
+  font-weight: bold;
+  fill: black;
+  color: black;
+}
+
+svg.spectra_plot text.sublabel {
+  font-size: smaller;
+}
+
+/* links in svg */
+svg.spectra_plot text a {
+  fill: #0000EE;
+  text-decoration: underline;
+}
+
+`;
+var AMPLITUDE = "amplitude";
+var PHASE = "phase";
+var LOGFREQ = "logfreq";
+var KIND = "kind";
+var SpectraPlot = class extends HTMLElement {
+  constructor(fftResults, seismographConfig) {
+    super();
+    if (seismographConfig) {
+      this._seismographConfig = seismographConfig;
+    } else {
+      this._seismographConfig = new SeismographConfig();
+    }
+    if (fftResults) {
+      this._fftResults = fftResults;
+    } else {
+      this._fftResults = [];
+    }
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("class", "wrapper");
+    addStyleToElement(this, spectra_plot_css, SPECTA_CSS_ID);
+    const lineColorsCSS = this.seismographConfig.createCSSForLineColors();
+    addStyleToElement(this, lineColorsCSS, COLOR_CSS_ID);
+    this.shadowRoot?.appendChild(wrapper);
+  }
+  get fftResults() {
+    return this._fftResults;
+  }
+  set fftResults(fftResults) {
+    this._fftResults = fftResults;
+    this.draw();
+  }
+  get seismographConfig() {
+    return this._seismographConfig;
+  }
+  set seismographConfig(seismographConfig) {
+    this._seismographConfig = seismographConfig;
+    this.draw();
+  }
+  get kind() {
+    let k = this.hasAttribute(KIND) ? this.getAttribute(KIND) : AMPLITUDE;
+    if (!k) {
+      k = AMPLITUDE;
+    }
+    return k;
+  }
+  set kind(val) {
+    this.setAttribute(KIND, val);
+  }
+  get logfreq() {
+    if (!this.hasAttribute(LOGFREQ)) {
+      return true;
+    }
+    const b = this.getAttribute(LOGFREQ);
+    if (b && b.toLowerCase() === "true") {
+      return true;
+    }
+    return false;
+  }
+  set logfreq(val) {
+    this.setAttribute(LOGFREQ, `${val}`);
+  }
+  connectedCallback() {
+    this.draw();
+  }
+  static get observedAttributes() {
+    return [LOGFREQ, KIND];
+  }
+  attributeChangedCallback(_name, _oldValue, _newValue) {
+    this.draw();
+  }
+  draw() {
+    if (!this.isConnected) {
+      return;
+    }
+    const ampPhaseList = [];
+    let maxFFTAmpLen = 0;
+    const extentFFTData = [];
+    const freqMinMax = [];
+    if (this.kind === PHASE) {
+      extentFFTData.push(-Math.PI);
+      extentFFTData.push(Math.PI);
+      if (this.seismographConfig.ySublabelIsUnits) {
+        this.seismographConfig.ySublabelIsUnits = false;
+        this.seismographConfig.ySublabel = "Radian";
+      }
+    } else {
+      if (this.seismographConfig.ySublabelIsUnits) {
+        this.seismographConfig.ySublabelIsUnits = false;
+        this.seismographConfig.ySublabel = "";
+      }
+    }
+    for (const fftA of this.fftResults) {
+      if (this.logfreq === true) {
+        freqMinMax.push(fftA.fundamentalFrequency);
+      } else {
+        freqMinMax.push(0);
+      }
+      freqMinMax.push(fftA.maxFrequency);
+      let ap;
+      if (fftA instanceof FFTResult || fftA instanceof FreqAmp) {
+        ap = fftA;
+      } else {
+        throw new Error("fftResults must be array of FFTResult");
+      }
+      ampPhaseList.push(ap);
+      if (maxFFTAmpLen < ap.numFrequencies) {
+        maxFFTAmpLen = ap.numFrequencies;
+      }
+      let ampSlice;
+      if (this.kind === AMPLITUDE) {
+        ampSlice = ap.amplitudes();
+      } else if (this.kind === PHASE) {
+        ampSlice = ap.phases();
+      } else {
+        throw new Error(`Unknown plot kind=${this.kind}`);
+      }
+      if (this.kind === AMPLITUDE) {
+        ampSlice = ampSlice.slice(1);
+      }
+      const currExtent = extent(ampSlice);
+      if (this.kind === AMPLITUDE && currExtent[0] === 0) {
+        currExtent[0] = 0.1 * ampSlice.reduce(function(acc, curr) {
+          if (curr > 0 && curr < acc) {
+            return curr;
+          } else {
+            return acc;
+          }
+        }, 1e-9);
+      }
+      if (currExtent[0]) {
+        extentFFTData.push(currExtent[0]);
+      }
+      if (currExtent[1]) {
+        extentFFTData.push(currExtent[1]);
+      }
+    }
+    if (freqMinMax.length < 2) {
+      freqMinMax.push(0.1);
+      freqMinMax.push(10);
+    }
+    if (extentFFTData.length < 2) {
+      extentFFTData.push(0.1);
+      extentFFTData.push(1);
+    }
+    const wrapper = this.shadowRoot?.querySelector("div");
+    while (wrapper.lastChild) {
+      wrapper.removeChild(wrapper.lastChild);
+    }
+    const svg_element = document.createElementNS(SVG_NS, "svg");
+    wrapper.appendChild(svg_element);
+    const svg = select_default2(svg_element);
+    svg.classed("spectra_plot", true).classed(AUTO_COLOR_SELECTOR, true);
+    const rect = svg_element.getBoundingClientRect();
+    const width = +rect.width - this.seismographConfig.margin.left - this.seismographConfig.margin.right;
+    const height = +rect.height - this.seismographConfig.margin.top - this.seismographConfig.margin.bottom;
+    const g = svg.append("g").attr(
+      "transform",
+      "translate(" + this.seismographConfig.margin.left + "," + this.seismographConfig.margin.top + ")"
+    );
+    let xScale;
+    if (this.logfreq) {
+      xScale = log2().rangeRound([0, width]);
+    } else {
+      xScale = linear2().rangeRound([0, width]);
+    }
+    const freqMin = freqMinMax.reduce((acc, cur) => Math.min(acc, cur));
+    const freqMax = freqMinMax.reduce((acc, cur) => Math.max(acc, cur));
+    xScale.domain([freqMin, freqMax]);
+    let fftMin = extentFFTData.reduce(
+      (acc, cur) => Math.min(acc, cur),
+      Number.MAX_VALUE
+    );
+    let fftMax = extentFFTData.reduce((acc, cur) => Math.max(acc, cur), -1);
+    if ((fftMax - fftMin) / fftMax < 0.1) {
+      fftMin = fftMin * 0.1;
+      fftMax = fftMax * 2;
+    }
+    let yScale;
+    if (this.kind === AMPLITUDE) {
+      yScale = log2().rangeRound([height, 0]);
+      yScale.domain([fftMin, fftMax]);
+      if (yScale.domain()[0] === yScale.domain()[1]) {
+        yScale.domain([yScale.domain()[0] / 2, yScale.domain()[1] * 2]);
+      }
+    } else {
+      yScale = linear2().rangeRound([height, 0]);
+      yScale.domain([fftMin, fftMax]);
+      if (yScale.domain()[0] === yScale.domain()[1]) {
+        yScale.domain([yScale.domain()[0] - 1, yScale.domain()[1] + 1]);
+      }
+    }
+    const xAxis = axisBottom(xScale);
+    g.append("g").attr("transform", "translate(0," + height + ")").call(xAxis);
+    const yAxis = axisLeft(yScale);
+    g.append("g").call(yAxis);
+    this.seismographConfig.yLabel = "Amplitude";
+    if (this.kind === PHASE) {
+      this.seismographConfig.yLabel = "Phase";
+    }
+    this.seismographConfig.xLabel = "Frequency";
+    this.seismographConfig.xSublabel = "Hz";
+    if (this.seismographConfig.ySublabelIsUnits) {
+      if (this.kind === PHASE) {
+        this.seismographConfig.ySublabel = "radian";
+      } else {
+        this.seismographConfig.ySublabel = "";
+        for (const ap of ampPhaseList) {
+          this.seismographConfig.ySublabel += ap.inputUnits;
+        }
+      }
+    }
+    const pathg = g.append("g").classed(G_DATA_SELECTOR, true);
+    for (const ap of ampPhaseList) {
+      let ampSlice;
+      if (this.kind === AMPLITUDE) {
+        ampSlice = ap.amplitudes();
+      } else if (this.kind === PHASE) {
+        ampSlice = ap.phases();
+      } else {
+        throw new Error(`Unknown plot kind=${this.kind}`);
+      }
+      let freqSlice = ap.frequencies();
+      if (this.logfreq) {
+        freqSlice = freqSlice.slice(1);
+        ampSlice = ampSlice.slice(1);
+      }
+      const line = line_default();
+      line.x(function(d, i) {
+        return xScale(freqSlice[i]);
+      });
+      line.y(function(d) {
+        if (d !== 0 && !isNaN(d)) {
+          return yScale(d);
+        } else {
+          return yScale.range()[0];
+        }
+      });
+      pathg.append("g").append("path").classed("fftpath", true).datum(ampSlice).attr("d", line);
+    }
+    const handlebarInput = {
+      seisDataList: this.fftResults.map((f) => f.seismogramDisplayData),
+      seisConfig: this.seismographConfig
+    };
+    drawAxisLabels(
+      svg_element,
+      this.seismographConfig,
+      height,
+      width,
+      handlebarInput
+    );
+  }
+};
+customElements.define(SPECTRA_ELEMENT, SpectraPlot);
+
+// src/particlemotion.mts
 var particlemotion_exports = {};
 __export(particlemotion_exports, {
   DEFAULT_TITLE: () => DEFAULT_TITLE2,
   DEFAULT_XLABEL: () => DEFAULT_XLABEL,
   DEFAULT_YLABEL: () => DEFAULT_YLABEL,
+  PARTICLE_MOTION_CSS_ID: () => PARTICLE_MOTION_CSS_ID,
   PARTICLE_MOTION_ELEMENT: () => PARTICLE_MOTION_ELEMENT,
   ParticleMotion: () => ParticleMotion,
   createParticleMotionConfig: () => createParticleMotionConfig,
@@ -65094,7 +64943,8 @@ function createParticleMotionConfig(timeRange, defaultSeisConfig) {
   seisConfig.margin.left = 40;
   return seisConfig;
 }
-var _ParticleMotion = class _ParticleMotion extends SeisPlotElement {
+var PARTICLE_MOTION_CSS_ID = "particlemotioncss";
+var ParticleMotion = class _ParticleMotion extends SeisPlotElement {
   constructor(xSeisData, ySeisData, seisConfig) {
     if (!xSeisData) {
       xSeisData = [];
@@ -65116,23 +64966,11 @@ var _ParticleMotion = class _ParticleMotion extends SeisPlotElement {
       seisConfig = createParticleMotionConfig();
     }
     super(seisData, seisConfig);
-    __publicField(this, "plotId");
-    __publicField(this, "_xSeisData");
-    __publicField(this, "_ySeisData");
-    __publicField(this, "width");
-    __publicField(this, "height");
-    __publicField(this, "outerWidth", -1);
-    __publicField(this, "outerHeight", -1);
-    __publicField(this, "xScale");
-    __publicField(this, "xScaleRmean");
-    __publicField(this, "xAxis");
-    __publicField(this, "yScale");
-    __publicField(this, "yScaleRmean");
-    __publicField(this, "yAxis");
-    __publicField(this, "g");
+    this.outerWidth = -1;
+    this.outerHeight = -1;
     this._xSeisData = xSeisData;
     this._ySeisData = ySeisData;
-    this.addStyle(particleMotion_css);
+    this.addStyle(particleMotion_css, PARTICLE_MOTION_CSS_ID);
     const lineColorsCSS = this.seismographConfig.createCSSForLineColors();
     this.addStyle(lineColorsCSS, COLOR_CSS_ID);
     const wrapper = document.createElement("div");
@@ -65326,9 +65164,7 @@ var _ParticleMotion = class _ParticleMotion extends SeisPlotElement {
     xaxisG.transition().duration(delay / 2).call(this.xAxis);
   }
   calcScaleDomain() {
-    let halfDomainDelta = 1;
     if (this.seismographConfig.fixedAmplitudeScale) {
-      halfDomainDelta = (this.seismographConfig.fixedAmplitudeScale[1] - this.seismographConfig.fixedAmplitudeScale[0]) / 2;
       this.xScale.domain(this.seismographConfig.fixedAmplitudeScale).nice();
       this.yScale.domain(this.seismographConfig.fixedAmplitudeScale).nice();
     } else {
@@ -65340,7 +65176,7 @@ var _ParticleMotion = class _ParticleMotion extends SeisPlotElement {
       if (this.ySeisData) {
         yMinMax = findMinMaxOfSDD(this.ySeisData);
       }
-      halfDomainDelta = xMinMax.halfWidth;
+      let halfDomainDelta = xMinMax.halfWidth;
       if (yMinMax.halfWidth > halfDomainDelta) {
         halfDomainDelta = yMinMax.halfWidth;
       }
@@ -65389,28 +65225,21 @@ var _ParticleMotion = class _ParticleMotion extends SeisPlotElement {
     };
   }
 };
-__publicField(_ParticleMotion, "_lastID");
-var ParticleMotion = _ParticleMotion;
 ParticleMotion._lastID = 0;
 customElements.define(PARTICLE_MOTION_ELEMENT, ParticleMotion);
 
-// src/organizeddisplay.ts
+// src/organizeddisplayitem.mts
 var querystringify = __toESM(require_querystringify(), 1);
 var ORG_DISP_ITEM = "sp-organized-display-item";
-var ORG_DISPLAY = "sp-organized-display";
-var ORG_TYPE = "orgtype";
 var PLOT_TYPE = "plottype";
 var SEISMOGRAPH = "seismograph";
 var SPECTRA = "amp_spectra";
 var PARTICLE_MOTION = "particlemotion";
 var MAP = "map";
 var INFO2 = "info";
-var QUAKE_TABLE = "quake_table";
-var STATION_TABLE = "station_table";
 var OrganizedDisplayItem = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
-    __publicField(this, "extras");
     if (this.plottype.startsWith(PARTICLE_MOTION)) {
       this._seismographConfig = createParticleMotionConfig(null, seisConfig);
     }
@@ -65557,6 +65386,24 @@ var OrganizedDisplayItem = class extends SeisPlotElement {
   }
 };
 customElements.define(ORG_DISP_ITEM, OrganizedDisplayItem);
+function getFromQueryParams(qParams, name, defaultValue = "") {
+  if (name in qParams) {
+    const v = qParams[name];
+    if (isStringArg(v)) {
+      return v;
+    } else {
+      throw new Error(
+        `param ${name} exists but is not string: ${stringify(qParams[name])}`
+      );
+    }
+  }
+  return defaultValue;
+}
+
+// src/organizeddisplay.mts
+var ORG_DISPLAY_CSS_ID = "orgdispcss";
+var ORG_DISPLAY = "sp-organized-display";
+var ORG_TYPE = "orgtype";
 var WITH_INFO = "info";
 var DEFAULT_WITH_INFO = "false";
 var WITH_MAP = "map";
@@ -65572,171 +65419,9 @@ var OVERLAY_STATION = "station";
 var OVERLAY_STATION_COMPONENT = "stationcomponent";
 var OVERLAY_ALL = "all";
 var OVERLAY_FUNCTION = "function";
-var TOOLS_HTML = `
-<details>
-  <summary>Tools</summary>
-  <form>
-    <fieldset class="plottype">
-      <legend>Plot</legend>
-      <span>
-        <input type="checkbox" name="with_map" id="with_map">
-        <label for="with_map">map</label>
-      </span>
-      <span>
-        <input type="checkbox" name="with_info" id="with_info">
-        <label for="with_info">info</label>
-      </span>
-    </fieldset>
-    <fieldset class="overlay">
-    <legend>Overlay Type</legend>
-    <span>
-      <input type="radio" name="overlay" id="overlay_individual" value="individual" checked>
-      <label for="overlay_individual">individual</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_vector" value="vector">
-      <label for="overlay_vector">vector</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_component" value="component">
-      <label for="overlay_component">component</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_station_component" value="stationcomponent">
-      <label for="overlay_station_component">station component</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_station" value="station">
-      <label for="overlay_station">station</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_all" value="all">
-      <label for="overlay_all">all</label>
-    </span>
-    <span>
-      <input type="radio" name="overlay" id="overlay_none" value="none">
-      <label for="overlay_none">none</label>
-    </span>
-  </fieldset>
-
-  </form>
-</details>
-`;
-var OrganizedDisplayTools = class extends SeisPlotElement {
-  constructor(seisData, seisConfig) {
-    super(seisData, seisConfig);
-    __publicField(this, "_organizedDisplay");
-    const wrapper = document.createElement("div");
-    wrapper.setAttribute("class", "wrapper");
-    wrapper.innerHTML = TOOLS_HTML;
-    this.getShadowRoot().appendChild(wrapper);
-    this._organizedDisplay = null;
-  }
-  get organizedDisplay() {
-    return this._organizedDisplay;
-  }
-  set organizedDisplay(orgdisp) {
-    this._organizedDisplay = orgdisp;
-    this.initCheckboxes(orgdisp);
-  }
-  initCheckboxes(orgdisp) {
-    if (orgdisp) {
-      const shadow = this.shadowRoot;
-      const doMapCB = shadow?.querySelector(
-        "input#with_map"
-      );
-      if (doMapCB) {
-        doMapCB.checked = orgdisp.map === "true";
-      }
-      const doInfoCB = shadow?.querySelector(
-        "input#with_info"
-      );
-      if (doInfoCB) {
-        doInfoCB.checked = orgdisp.info === "true";
-      }
-      shadow?.querySelectorAll("fieldset.overlay input").forEach((i) => {
-        const inEl = i;
-        inEl.checked = orgdisp.overlayby === inEl.value;
-      });
-      const details = shadow?.querySelector("div.wrapper details");
-      details?.querySelector("fieldset.sort")?.remove();
-      const sortFS = document.createElement("fieldset");
-      sortFS.classList.add("sort");
-      const legend = document.createElement("legend");
-      legend.textContent = "Sort Type";
-      sortFS.appendChild(legend);
-      const sortKeyList = Array.from(orgdisp._sorting.keys());
-      sortKeyList.push("none");
-      for (const sortKey of sortKeyList) {
-        const span = document.createElement("span");
-        const input = document.createElement("input");
-        input.setAttribute("type", "radio");
-        input.setAttribute("name", "sort");
-        input.setAttribute("id", `sort_${sortKey}`);
-        input.setAttribute("value", sortKey);
-        input.checked = orgdisp.sortby === input.value;
-        input.addEventListener("change", (_e) => {
-          if (this._organizedDisplay) {
-            this._organizedDisplay?.setAttribute("sort", input.value);
-          }
-        });
-        span.appendChild(input);
-        const label = document.createElement("label");
-        label.setAttribute("for", `sort_${sortKey}`);
-        label.textContent = sortKey;
-        span.appendChild(label);
-        sortFS.appendChild(span);
-      }
-      details?.appendChild(sortFS);
-    }
-  }
-  draw() {
-    const wrapper = this.getShadowRoot().querySelector("div");
-    wrapper.innerHTML = TOOLS_HTML;
-    this.wireComponents();
-  }
-  wireComponents() {
-    const shadow = this.shadowRoot;
-    const doMapCB = shadow?.querySelector("input#with_map");
-    doMapCB?.addEventListener("change", () => {
-      if (this._organizedDisplay) {
-        this._organizedDisplay.map = doMapCB.checked ? "true" : "false";
-      }
-    });
-    const doInfoCB = shadow?.querySelector(
-      "input#with_info"
-    );
-    doInfoCB?.addEventListener("change", () => {
-      if (this._organizedDisplay) {
-        this._organizedDisplay.info = `${doInfoCB.checked}`;
-      }
-    });
-    shadow?.querySelectorAll("fieldset.overlay input").forEach((i) => {
-      const inEl = i;
-      inEl.addEventListener("change", (_e) => {
-        if (this._organizedDisplay) {
-          this._organizedDisplay?.setAttribute("overlay", inEl.value);
-        }
-      });
-    });
-    shadow?.querySelectorAll("fieldset.sort input").forEach((i) => {
-      const inEl = i;
-      inEl.addEventListener("change", (_e) => {
-        if (this._organizedDisplay) {
-          this._organizedDisplay?.setAttribute("sort", inEl.value);
-        }
-      });
-    });
-    this.initCheckboxes(this._organizedDisplay);
-  }
-};
-var ORG_DISP_TOOLS_ELEMENT = "sp-orgdisp-tools";
-customElements.define(ORG_DISP_TOOLS_ELEMENT, OrganizedDisplayTools);
 var OrganizedDisplay = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
-    __publicField(this, "bottomSeismographConfig");
-    __publicField(this, "topSeismographConfig");
     this.bottomSeismographConfig = null;
     this.topSeismographConfig = null;
     const wrapper = document.createElement("div");
@@ -65761,7 +65446,7 @@ var OrganizedDisplay = class extends SeisPlotElement {
     div.wrapper {
       height: 100%;
     }
-    `);
+    `, ORG_DISPLAY_CSS_ID);
     this.getShadowRoot().appendChild(wrapper);
   }
   static get observedAttributes() {
@@ -65836,17 +65521,26 @@ var OrganizedDisplay = class extends SeisPlotElement {
   set overlayby(val) {
     this.setAttribute(OVERLAY_BY, val);
   }
+  selectedData() {
+    const sortedData = this.sortedSeisData();
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const toolsElement = wrapper.querySelector(ORG_DISP_TOOLS_ELEMENT)?.shadowRoot?.querySelector("div");
+    const selectedData = sortedData.filter((sdd) => defaultPlotSelect(sdd, toolsElement));
+    return selectedData;
+  }
   draw() {
     if (!this.isConnected) {
       return;
     }
-    const wrapper = this.getShadowRoot().querySelector("div");
-    wrapper.querySelectorAll(ORG_DISP_ITEM).forEach((item) => wrapper.removeChild(item));
-    const sortedData = this.sortedSeisData();
+    const allData = this.sortedSeisData();
+    const selectedData = this.selectedData();
+    this.drawTools(allData);
+    this.drawMap(allData, selectedData);
+    this.drawInfo(selectedData);
+    this.drawSeismograph(selectedData);
+  }
+  drawSeismograph(sortedData) {
     let seisDispItems = new Array();
-    this.drawTools(sortedData);
-    this.drawMap(sortedData);
-    this.drawInfo(sortedData);
     if (this.overlayby === OVERLAY_INDIVIDUAL) {
       sortedData.forEach((sdd) => {
         const oi = new OrganizedDisplayItem([sdd], this.seismographConfig);
@@ -65889,16 +65583,18 @@ var OrganizedDisplay = class extends SeisPlotElement {
     if (this.bottomSeismographConfig != null && seisDispItems.length > 1) {
       seisDispItems[seisDispItems.length - 1].seismographConfig = this.bottomSeismographConfig;
     }
+    const wrapper = this.getShadowRoot().querySelector("div");
+    wrapper.querySelectorAll(ORG_DISP_ITEM).forEach((item) => wrapper.removeChild(item));
     seisDispItems.forEach((odi) => {
       if (odi.plottype === SEISMOGRAPH) {
-        odi.addEventListener("mouseenter", (evt) => {
+        odi.addEventListener("mouseenter", (_evt) => {
           const mapElement = wrapper.querySelector(MAP_ELEMENT);
           if (mapElement) {
             mapElement.stationHighlight(uniqueStations2(odi.seisData));
             mapElement.quakeHighlight(uniqueQuakes(odi.seisData));
           }
         });
-        odi.addEventListener("mouseleave", (evt) => {
+        odi.addEventListener("mouseleave", (_evt) => {
           const mapElement = wrapper.querySelector(MAP_ELEMENT);
           if (mapElement) {
             mapElement.stationUnhighlight();
@@ -65906,14 +65602,17 @@ var OrganizedDisplay = class extends SeisPlotElement {
           }
         });
       }
+      wrapper.appendChild(odi);
     });
-    let allOrgDispItems = new Array();
-    allOrgDispItems = allOrgDispItems.concat(seisDispItems);
-    allOrgDispItems.forEach((oi) => {
-      wrapper.appendChild(oi);
-      oi.draw();
-    });
-    return;
+    return seisDispItems;
+  }
+  getTools() {
+    const wrapper = this.getShadowRoot().querySelector("div");
+    const toolsElement = wrapper.querySelector(ORG_DISP_TOOLS_ELEMENT);
+    if (toolsElement) {
+      return toolsElement;
+    }
+    return null;
   }
   drawTools(sortedData) {
     if (!this.isConnected) {
@@ -65923,19 +65622,24 @@ var OrganizedDisplay = class extends SeisPlotElement {
     const toolsElement = wrapper.querySelector(ORG_DISP_TOOLS_ELEMENT);
     if (this.tools !== "true" && toolsElement) {
       wrapper.removeChild(toolsElement);
-    } else if (this.tools === "true" && !isDef(toolsElement)) {
-      if (sortedData == null) {
-        sortedData = this.sortedSeisData();
+    } else if (this.tools === "true") {
+      if (!isDef(toolsElement)) {
+        if (sortedData == null) {
+          sortedData = this.sortedSeisData();
+        }
+        const toolsdisp = new OrganizedDisplayTools(
+          sortedData,
+          this.seismographConfig
+        );
+        toolsdisp.organizedDisplay = this;
+        wrapper.insertBefore(toolsdisp, wrapper.firstElementChild);
+      } else {
+        const orgDispTools = toolsElement;
+        orgDispTools.updateCheckboxes(this);
       }
-      const toolsdisp = new OrganizedDisplayTools(
-        sortedData,
-        this.seismographConfig
-      );
-      toolsdisp.organizedDisplay = this;
-      wrapper.insertBefore(toolsdisp, wrapper.firstElementChild);
     }
   }
-  drawMap(sortedData) {
+  drawMap(allData, sortedData) {
     if (!this.isConnected) {
       return;
     }
@@ -65961,8 +65665,13 @@ var OrganizedDisplay = class extends SeisPlotElement {
       } else {
         wrapper.insertBefore(mapdisp, wrapper.firstElementChild);
       }
-    } else if (this.map === "true" && isDef(mapElement)) {
+    }
+    if (this.map === "true" && isDef(mapElement)) {
       mapElement.seisData = sortedData;
+      const allStations2 = uniqueStations2(allData);
+      const selectedStations = uniqueStations2(sortedData);
+      const unselectedStations = allStations2.filter((sta) => !selectedStations.includes(sta));
+      mapElement.addStation(unselectedStations, UNSELECTED);
     }
   }
   drawInfo(sortedData) {
@@ -65976,7 +65685,7 @@ var OrganizedDisplay = class extends SeisPlotElement {
     if (this.info !== "true" && infoElement) {
       wrapper.removeChild(infoElement);
     } else if (this.info === "true" && !isDef(infoElement)) {
-      const sortedData2 = this.sortedSeisData();
+      const sortedData2 = this.selectedData();
       const infoDisp = new QuakeStationTable(
         sortedData2,
         this.seismographConfig
@@ -66004,10 +65713,9 @@ var OrganizedDisplay = class extends SeisPlotElement {
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === WITH_MAP) {
-      const sortedData = this.sortedSeisData();
-      this.drawMap(sortedData);
+      this.drawMap(this.sortedSeisData(), this.selectedData());
     } else if (name === WITH_INFO) {
-      const sortedData = this.sortedSeisData();
+      const sortedData = this.selectedData();
       this.drawInfo(sortedData);
     } else if (QuakeStationMap.observedAttributes.includes(name)) {
       const wrapper = this.getShadowRoot().querySelector(
@@ -66023,19 +65731,6 @@ var OrganizedDisplay = class extends SeisPlotElement {
   }
 };
 customElements.define(ORG_DISPLAY, OrganizedDisplay);
-function getFromQueryParams(qParams, name, defaultValue = "") {
-  if (name in qParams) {
-    const v = qParams[name];
-    if (isStringArg(v)) {
-      return v;
-    } else {
-      throw new Error(
-        `param ${name} exists but is not string: ${stringify(qParams[name])}`
-      );
-    }
-  }
-  return defaultValue;
-}
 function individualDisplay(sddList, seisConfig) {
   if (!seisConfig) {
     seisConfig = new SeismographConfig();
@@ -66143,16 +65838,12 @@ function createPlots(organized, divElement) {
   });
 }
 
-// src/animatedseismograph.ts
+// src/animatedseismograph.mts
 var AnimatedTimeScaler = class {
   constructor(timeScale, alignmentTime, minRedrawMillis) {
-    __publicField(this, "alignmentTime");
-    __publicField(this, "timeScale");
-    __publicField(this, "minRedrawMillis");
-    __publicField(this, "_calcRedrawMillis");
-    __publicField(this, "goAnimation", true);
-    __publicField(this, "previousStep", Number.NEGATIVE_INFINITY);
-    __publicField(this, "_animationId", 0);
+    this.goAnimation = true;
+    this.previousStep = Number.NEGATIVE_INFINITY;
+    this._animationId = 0;
     this.timeScale = timeScale;
     this.alignmentTime = alignmentTime ? alignmentTime : DateTime.utc();
     if (minRedrawMillis) {
@@ -66204,12 +65895,6 @@ var AnimatedTimeScaler = class {
 };
 var RTDisplayContainer = class {
   constructor(rawSeisData, organizedDisplay, animationScaler, packetHandler, config2) {
-    __publicField(this, "rawSeisData");
-    __publicField(this, "organizedDisplay");
-    __publicField(this, "animationScaler");
-    __publicField(this, "packetHandler");
-    __publicField(this, "config");
-    __publicField(this, "resizeObserver");
     this.rawSeisData = rawSeisData;
     this.organizedDisplay = organizedDisplay;
     this.animationScaler = animationScaler;
@@ -66235,6 +65920,12 @@ var RTDisplayContainer = class {
       }, 1e3);
     });
     return p;
+  }
+  removeAllSeisData() {
+    while (this.rawSeisData.length > 0) {
+      this.rawSeisData.pop();
+    }
+    this.organizedDisplay.removeAllSeisData();
   }
 };
 function isValidRTConfig(configObj) {
@@ -66315,7 +66006,7 @@ function internalCreateRealtimeDisplay(config2) {
     } else {
       msr = packet.miniseed;
     }
-    let seisSegment = null;
+    let seisSegment;
     if (msr) {
       seisSegment = createSeismogramSegment(msr);
     } else if (ms3) {
@@ -66349,6 +66040,12 @@ function internalCreateRealtimeDisplay(config2) {
           dispMatchSDD.seismogram = matchSDD.seismogram;
         }
       } else {
+        if (config2.removeTrend && matchSDD.seismogram) {
+          const addDispSDD = matchSDD.cloneWithNewSeismogram(removeTrend(matchSDD.seismogram));
+          orgDisp.appendSeisData(addDispSDD);
+        } else {
+          orgDisp.appendSeisData(matchSDD);
+        }
       }
     } else {
       const sdd = SeismogramDisplayData.fromSeismogramSegment(seisSegment);
@@ -66359,9 +66056,9 @@ function internalCreateRealtimeDisplay(config2) {
       sdd.alignmentTime = animationScaler.alignmentTime;
       if (config2.removeTrend && sdd.seismogram) {
         const dispSDD = sdd.cloneWithNewSeismogram(removeTrend(sdd.seismogram));
-        orgDisp.seisData.push(dispSDD);
+        orgDisp.appendSeisData(dispSDD);
       } else {
-        orgDisp.seisData.push(sdd);
+        orgDisp.appendSeisData(sdd);
       }
       orgDisp.seisDataUpdated();
     }
@@ -66413,7 +66110,7 @@ function calcOnePixelDuration(seismograph) {
   return Duration.fromMillis(timerInterval);
 }
 
-// src/components.ts
+// src/components.mts
 var components_exports = {};
 __export(components_exports, {
   CHANNEL_CODE_ELEMENT: () => CHANNEL_CODE_ELEMENT,
@@ -66584,8 +66281,7 @@ customElements.define(CHANNEL_CODE_ELEMENT, ChannelCodeInput);
 var ChannelListChooser = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "channels");
-    __publicField(this, "selected_channels", /* @__PURE__ */ new Set());
+    this.selected_channels = /* @__PURE__ */ new Set();
     this.channels = [];
     this.draw_element();
   }
@@ -66661,8 +66357,7 @@ customElements.define(CHANNEL_LIST_ELEMENT, ChannelListChooser);
 var SourceIdListChooser = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "sourceIdList");
-    __publicField(this, "selected_sourceIds", /* @__PURE__ */ new Set());
+    this.selected_sourceIds = /* @__PURE__ */ new Set();
     this.sourceIdList = [];
     this.draw_element();
   }
@@ -66738,8 +66433,8 @@ customElements.define(SOURCEID_LIST_ELEMENT, SourceIdListChooser);
 var LabeledMinMax = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "default_min", 0);
-    __publicField(this, "default_max", 10);
+    this.default_min = 0;
+    this.default_max = 10;
     this.attachShadow({ mode: "open" });
     this.draw_element();
   }
@@ -67444,7 +67139,7 @@ var LatLonChoice = class extends HTMLElement {
 };
 customElements.define(LATLON_CHOICE_ELEMENT, LatLonChoice);
 
-// src/dataset.ts
+// src/dataset.mts
 var dataset_exports = {};
 __export(dataset_exports, {
   CATALOG_FILE: () => CATALOG_FILE,
@@ -67464,7 +67159,7 @@ __export(dataset_exports, {
   sddFromMSeed3: () => sddFromMSeed3
 });
 
-// src/traveltime.ts
+// src/traveltime.mts
 var traveltime_exports = {};
 __export(traveltime_exports, {
   FAKE_EMPTY_SVG: () => FAKE_EMPTY_SVG,
@@ -67544,31 +67239,9 @@ function createOriginArrival(distdeg) {
 var TraveltimeQuery = class extends FDSNCommon {
   constructor(host) {
     if (!isNonEmptyStringArg(host)) {
-      host = IRIS_HOST;
+      host = EARTHSCOPE_HOST;
     }
     super(TRAVELTIME_SERVICE, host);
-    /** @private */
-    __publicField(this, "_evdepth");
-    /** @private */
-    __publicField(this, "_distdeg");
-    /** @private */
-    __publicField(this, "_model");
-    /** @private */
-    __publicField(this, "_phases");
-    /** @private */
-    __publicField(this, "_stalat");
-    /** @private */
-    __publicField(this, "_stalon");
-    /** @private */
-    __publicField(this, "_receiverdepth");
-    /** @private */
-    __publicField(this, "_evlat");
-    /** @private */
-    __publicField(this, "_evlon");
-    /** @private */
-    __publicField(this, "_format");
-    /** @private */
-    __publicField(this, "_noheader");
     this._path_base = IRISWS_PATH_BASE;
     this._evdepth = 0;
     this._format = JSON_FORMAT;
@@ -67851,12 +67524,13 @@ var TraveltimeQuery = class extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formURL() {
     let url2 = appendToPath(this.formBaseURL(), "query?");
@@ -67975,7 +67649,7 @@ var FAKE_EMPTY_SVG = `
 </svg>
 `;
 
-// src/dataset.ts
+// src/dataset.mts
 var import_jszip = __toESM(require_jszip_min(), 1);
 var DATASET_DIR = "dataset";
 var DOT_ZIP_EXT = ".zip";
@@ -67985,12 +67659,7 @@ var CATALOG_FILE = "catalog.quakeml";
 var INVENTORY_FILE = "inventory.staxml";
 var Dataset = class _Dataset {
   constructor() {
-    __publicField(this, "name", "dataset");
-    __publicField(this, "catalog");
-    __publicField(this, "inventory");
-    __publicField(this, "waveforms");
-    __publicField(this, "processedWaveforms");
-    __publicField(this, "extra");
+    this.name = "dataset";
     this.catalog = new Array(0);
     this.inventory = new Array(0);
     this.waveforms = new Array(0);
@@ -68155,7 +67824,7 @@ async function loadFromZip(zip) {
       const rawXml = new DOMParser().parseFromString(rawXmlText, XML_MIME);
       return parseQuakeML(rawXml).eventList;
     }
-  }) : [];
+  }) : Promise.resolve([]);
   const inventoryFile = datasetDir.file(INVENTORY_FILE);
   const staml = inventoryFile ? inventoryFile.async("string").then(function(rawXmlText_1) {
     if (rawXmlText_1.length === 0) {
@@ -68169,8 +67838,8 @@ async function loadFromZip(zip) {
       );
       return parseStationXml(rawXml_2);
     }
-  }) : [];
-  const promises = await Promise.all([sddList_1, qml, staml]);
+  }) : Promise.resolve([]);
+  const promises = await Promise.all([Promise.resolve(sddList_1), qml, staml]);
   const dataset = new Dataset();
   dataset.waveforms = promises[0];
   dataset.catalog = promises[1];
@@ -68218,8 +67887,6 @@ function insertExtraHeaders(eh, sdd, key, ds) {
           }
         }
       }
-    }
-    if ("taup" in eh) {
     }
     if ("traveltimes" in myEH && Array.isArray(myEH["traveltimes"])) {
       for (const tt of myEH["traveltimes"]) {
@@ -68281,7 +67948,7 @@ function mightBeZipFile(buf) {
   return true;
 }
 
-// src/datechooser.ts
+// src/datechooser.mts
 var datechooser_exports = {};
 __export(datechooser_exports, {
   CLOCK_ELEMENT: () => CLOCK_ELEMENT,
@@ -68322,10 +67989,8 @@ var PREV_NEXT = "prev-next";
 var Clock = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "_time");
-    __publicField(this, "dateFormat", "yyyy-MM-dd HH:mm:ss");
-    __publicField(this, "updateMillis", 500);
-    __publicField(this, "_updater");
+    this.dateFormat = "yyyy-MM-dd HH:mm:ss";
+    this.updateMillis = 500;
     this._time = DateTime.utc().set({ millisecond: 0 });
     const shadow = this.attachShadow({ mode: "open" });
     const wrapper = document.createElement("span");
@@ -68350,9 +68015,6 @@ customElements.define(CLOCK_ELEMENT, Clock);
 var HourMinChooser = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "_time");
-    __publicField(this, "updateCallback");
-    __publicField(this, "popupDiv");
     this._time = DateTime.utc().set({ second: 0, millisecond: 0 });
     const attr_date_time = this.getAttribute("date-time");
     if (attr_date_time) {
@@ -68561,9 +68223,6 @@ customElements.define(HOURMIN_ELEMENT, HourMinChooser);
 var DateTimeChooser = class extends HTMLElement {
   constructor(time3) {
     super();
-    __publicField(this, "_time");
-    __publicField(this, "updateCallback");
-    __publicField(this, "hourMin");
     const attr_date_time = this.getAttribute("date-time");
     if (time3) {
       this._time = time3;
@@ -68663,11 +68322,6 @@ var DURATION_CHANGED = "duration";
 var TimeRangeChooser = class extends HTMLElement {
   constructor() {
     super();
-    __publicField(this, "updateCallback");
-    __publicField(this, "_duration");
-    __publicField(this, "startChooser");
-    __publicField(this, "endChooser");
-    __publicField(this, "_mostRecentChanged");
     this._mostRecentChanged = "end";
     this.updateCallback = (_timerange) => {
     };
@@ -68971,7 +68625,7 @@ function extractDuration(value) {
   return dur;
 }
 
-// src/fdsnavailability.ts
+// src/fdsnavailability.mts
 var fdsnavailability_exports = {};
 __export(fdsnavailability_exports, {
   AVAILABILITY_SERVICE: () => AVAILABILITY_SERVICE,
@@ -69005,34 +68659,6 @@ var AvailabilityQuery = class extends FDSNCommon {
       host = EARTHSCOPE_HOST;
     }
     super(AVAILABILITY_SERVICE, host);
-    /** @private */
-    __publicField(this, "_networkCode");
-    /** @private */
-    __publicField(this, "_stationCode");
-    /** @private */
-    __publicField(this, "_locationCode");
-    /** @private */
-    __publicField(this, "_channelCode");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_quality");
-    /** @private */
-    __publicField(this, "_merge");
-    /** @private */
-    __publicField(this, "_show");
-    /** @private */
-    __publicField(this, "_mergeGaps");
-    /** @private */
-    __publicField(this, "_limit");
-    /** @private */
-    __publicField(this, "_orderby");
-    /** @private */
-    __publicField(this, "_includerestricted");
-    /** @private */
-    __publicField(this, "_format");
   }
   /**
    * Gets/Sets the version of the fdsnws spec, 1 is currently the only value.
@@ -69556,12 +69182,13 @@ var AvailabilityQuery = class extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formVersionURL() {
     return appendToPath(this.formBaseURL(), "version");
@@ -69666,17 +69293,16 @@ function isValidDatasource(jsonValue) {
   }
 }
 
-// src/fdsndatacenters.ts
+// src/fdsndatacenters.mts
 var fdsndatacenters_exports = {};
 __export(fdsndatacenters_exports, {
   DATACENTERS_PATH_BASE: () => DATACENTERS_PATH_BASE,
   DATACENTERS_SERVICE: () => DATACENTERS_SERVICE,
   DataCentersQuery: () => DataCentersQuery,
-  FDSN_HOST: () => FDSN_HOST,
   isValidRootType: () => isValidRootType2
 });
 
-// src/fdsndataselect.ts
+// src/fdsndataselect.mts
 var fdsndataselect_exports = {};
 __export(fdsndataselect_exports, {
   DATASELECT_SERVICE: () => DATASELECT_SERVICE,
@@ -69700,28 +69326,6 @@ var DataSelectQuery = class _DataSelectQuery extends FDSNCommon {
       host = EARTHSCOPE_HOST;
     }
     super(DATASELECT_SERVICE, host);
-    /** @private */
-    __publicField(this, "_networkCode");
-    /** @private */
-    __publicField(this, "_stationCode");
-    /** @private */
-    __publicField(this, "_locationCode");
-    /** @private */
-    __publicField(this, "_channelCode");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_quality");
-    /** @private */
-    __publicField(this, "_minimumLength");
-    /** @private */
-    __publicField(this, "_longestOnly");
-    /** @private */
-    __publicField(this, "_repository");
-    /** @private */
-    __publicField(this, "_format");
     if (host === EARTHSCOPE_HOST) {
       this.protocol("https:");
     }
@@ -70141,7 +69745,7 @@ var DataSelectQuery = class _DataSelectQuery extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    const protocol = this._host === EARTHSCOPE_HOST ? "https:" : this._protocol;
+    const protocol = protocolForKnownHost(this._host, this._protocol);
     if (protocol.endsWith(colon)) {
       colon = "";
     }
@@ -70296,7 +69900,7 @@ function createDataSelectQuery(params) {
   return out;
 }
 
-// src/fdsnevent.ts
+// src/fdsnevent.mts
 var fdsnevent_exports = {};
 __export(fdsnevent_exports, {
   EVENT_SERVICE: () => EVENT_SERVICE,
@@ -70314,58 +69918,6 @@ var EventQuery = class extends FDSNCommon {
       host = USGS_HOST;
     }
     super(EVENT_SERVICE, host);
-    /** @private */
-    __publicField(this, "_eventId");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_updatedAfter");
-    /** @private */
-    __publicField(this, "_minMag");
-    /** @private */
-    __publicField(this, "_maxMag");
-    /** @private */
-    __publicField(this, "_magnitudeType");
-    /** @private */
-    __publicField(this, "_minDepth");
-    /** @private */
-    __publicField(this, "_maxDepth");
-    /** @private */
-    __publicField(this, "_minLat");
-    /** @private */
-    __publicField(this, "_maxLat");
-    /** @private */
-    __publicField(this, "_minLon");
-    /** @private */
-    __publicField(this, "_maxLon");
-    /** @private */
-    __publicField(this, "_latitude");
-    /** @private */
-    __publicField(this, "_longitude");
-    /** @private */
-    __publicField(this, "_minRadius");
-    /** @private */
-    __publicField(this, "_maxRadius");
-    /** @private */
-    __publicField(this, "_includeArrivals");
-    /** @private */
-    __publicField(this, "_includeAllOrigins");
-    /** @private */
-    __publicField(this, "_includeAllMagnitudes");
-    /** @private */
-    __publicField(this, "_limit");
-    /** @private */
-    __publicField(this, "_offset");
-    /** @private */
-    __publicField(this, "_orderBy");
-    /** @private */
-    __publicField(this, "_contributor");
-    /** @private */
-    __publicField(this, "_catalog");
-    /** @private */
-    __publicField(this, "_format");
   }
   /**
    * Gets/Sets the version of the fdsnws spec, 1 is currently the only value.
@@ -70901,12 +70453,13 @@ var EventQuery = class extends FDSNCommon {
       this._host = USGS_HOST;
       this._protocol = "https:";
     }
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   /**
    * Forms the URL to get catalogs from the web service, without any query paramters
@@ -71027,10 +70580,6 @@ var EventQuery = class extends FDSNCommon {
    * @returns url
    */
   formURL() {
-    let colon = ":";
-    if (this._protocol.endsWith(colon)) {
-      colon = "";
-    }
     let url2 = appendToPath(this.formBaseURL(), "query?");
     if (this._eventId) {
       url2 = url2 + makeParam("eventid", this._eventId);
@@ -71132,7 +70681,7 @@ var EventQuery = class extends FDSNCommon {
   }
 };
 
-// src/fdsnstation.ts
+// src/fdsnstation.mts
 var fdsnstation_exports = {};
 __export(fdsnstation_exports, {
   EARTHSCOPE_HOST: () => EARTHSCOPE_HOST,
@@ -71164,56 +70713,10 @@ var StationQuery = class extends FDSNCommon {
   /**
    * Construct a query
    *
-   * @param host the host to connect to , defaults to service.iris.edu
+   * @param host the host to connect to , defaults to service.earthscope.org
    */
   constructor(host) {
     super(STATION_SERVICE, host);
-    /** @private */
-    __publicField(this, "_networkCode");
-    /** @private */
-    __publicField(this, "_stationCode");
-    /** @private */
-    __publicField(this, "_locationCode");
-    /** @private */
-    __publicField(this, "_channelCode");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_startBefore");
-    /** @private */
-    __publicField(this, "_endBefore");
-    /** @private */
-    __publicField(this, "_startAfter");
-    /** @private */
-    __publicField(this, "_endAfter");
-    /** @private */
-    __publicField(this, "_minLat");
-    /** @private */
-    __publicField(this, "_maxLat");
-    /** @private */
-    __publicField(this, "_minLon");
-    /** @private */
-    __publicField(this, "_maxLon");
-    /** @private */
-    __publicField(this, "_latitude");
-    /** @private */
-    __publicField(this, "_longitude");
-    /** @private */
-    __publicField(this, "_minRadius");
-    /** @private */
-    __publicField(this, "_maxRadius");
-    /** @private */
-    __publicField(this, "_includeRestricted");
-    /** @private */
-    __publicField(this, "_includeAvailability");
-    /** @private */
-    __publicField(this, "_format");
-    /** @private */
-    __publicField(this, "_updatedAfter");
-    /** @private */
-    __publicField(this, "_matchTimeseries");
   }
   /**
    * Gets/Sets the version of the fdsnws spec, 1 is currently the only value.
@@ -71999,12 +71502,13 @@ var StationQuery = class extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   formPostURL() {
     return appendToPath(this.formBaseURL(), "query");
@@ -72102,8 +71606,7 @@ var StationQuery = class extends FDSNCommon {
   }
 };
 
-// src/fdsndatacenters.ts
-var FDSN_HOST = "www.fdsn.org";
+// src/fdsndatacenters.mts
 var DATACENTERS_SERVICE = "datacenters";
 var DATACENTERS_PATH_BASE = "ws";
 var DataCentersQuery = class extends FDSNCommon {
@@ -72112,12 +71615,6 @@ var DataCentersQuery = class extends FDSNCommon {
       host = FDSN_HOST;
     }
     super(DATACENTERS_SERVICE, host);
-    /** @private */
-    __publicField(this, "_name");
-    /** @private */
-    __publicField(this, "_services");
-    /** @private */
-    __publicField(this, "_includedatasets");
     this._path_base = DATACENTERS_PATH_BASE;
   }
   /**
@@ -72430,12 +71927,13 @@ var DataCentersQuery = class extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return `${this._protocol}${colon}//${this._host}${port}/${path2}`;
+    return `${protocol}${colon}//${this._host}${port}/${path2}`;
   }
   /**
    * Forms version url, not part of spec and so may not be supported.
@@ -72498,7 +71996,7 @@ function isValidRootType2(jsonValue) {
   }
 }
 
-// src/fdsneventcomponent.ts
+// src/fdsneventcomponent.mts
 var fdsneventcomponent_exports = {};
 __export(fdsneventcomponent_exports, {
   EarthquakeSearch: () => EarthquakeSearch
@@ -72718,7 +72216,7 @@ var EarthquakeSearch = class extends HTMLElement {
 };
 customElements.define("sp-earthquake-search", EarthquakeSearch);
 
-// src/fdsnstationcomponent.ts
+// src/fdsnstationcomponent.mts
 var fdsnstationcomponent_exports = {};
 __export(fdsnstationcomponent_exports, {
   CHANNEL_SEARCH_ELEMENT: () => CHANNEL_SEARCH_ELEMENT,
@@ -72922,10 +72420,11 @@ var ChannelSearch = class extends HTMLElement {
 var CHANNEL_SEARCH_ELEMENT = "sp-channel-search";
 customElements.define(CHANNEL_SEARCH_ELEMENT, ChannelSearch);
 
-// src/helicorder.ts
+// src/helicorder.mts
 var helicorder_exports = {};
 __export(helicorder_exports, {
   DEFAULT_MAX_HEIGHT: () => DEFAULT_MAX_HEIGHT,
+  HELICORDER_CSS_ID: () => HELICORDER_CSS_ID,
   HELICORDER_ELEMENT: () => HELICORDER_ELEMENT,
   HELICORDER_SELECTOR: () => HELICORDER_SELECTOR,
   HELI_CLICK_EVENT: () => HELI_CLICK_EVENT,
@@ -72940,6 +72439,7 @@ __export(helicorder_exports, {
 });
 var HELI_CLICK_EVENT = "heliclick";
 var HELI_MOUSE_MOVE_EVENT = "helimousemove";
+var HELICORDER_CSS_ID = "helicordercss";
 var HELICORDER_ELEMENT = "sp-helicorder";
 function getNowLineEndTime(hoursPerLine) {
   if (!hoursPerLine) {
@@ -72977,7 +72477,7 @@ var Helicorder = class extends SeisPlotElement {
     }
     const wrapper = document.createElement("div");
     wrapper.setAttribute("class", "wrapper");
-    this.addStyle(helicorder_css);
+    this.addStyle(helicorder_css, HELICORDER_CSS_ID);
     this.getShadowRoot().appendChild(wrapper);
     this.addEventListener("click", (evt) => {
       const detail = this.calcDetailForEvent(evt);
@@ -73145,7 +72645,7 @@ var Helicorder = class extends SeisPlotElement {
     for (const lineTime of lineTimes) {
       const lineNumber = lineTime.lineNumber;
       const lineInterval = lineTime.interval;
-      let startTime2 = lineTime.interval.start;
+      const startTime2 = lineTime.interval.start;
       const endTime = lineTime.interval.end;
       let height = baseHeight;
       const marginTop = lineNumber === 0 ? 0 : Math.round(-1 * height * this.heliConfig.overlap);
@@ -73228,15 +72728,17 @@ var Helicorder = class extends SeisPlotElement {
         `;
       }
       if (lineNumber === 0) {
-        const utcDiv = document.createElement("div");
+        let utcDiv = seismographWrapper.querySelector("div.utclabels");
+        if (utcDiv != null) {
+          seismographWrapper.removeChild(utcDiv);
+        }
+        utcDiv = document.createElement("div");
         utcDiv.setAttribute("class", "utclabels");
         const innerDiv = utcDiv.appendChild(document.createElement("div"));
         innerDiv.setAttribute("style", `top: ${lineSeisConfig.margin.top}px;`);
         const textEl = innerDiv.appendChild(document.createElement("text"));
         textEl.textContent = nameForTimeZone(this.heliConfig.yLabelTimeZone, startTime2);
-        const rightTextEl = innerDiv.appendChild(
-          document.createElement("text")
-        );
+        const rightTextEl = innerDiv.appendChild(document.createElement("text"));
         rightTextEl.textContent = nameForTimeZone(this.heliConfig.yLabelRightTimeZone, startTime2);
         seismographWrapper.insertBefore(utcDiv, seismographWrapper.firstChild);
       }
@@ -73245,7 +72747,6 @@ var Helicorder = class extends SeisPlotElement {
       } else {
         seismograph.redraw();
       }
-      startTime2 = endTime;
     }
   }
   configureAmplitudeFromData(singleSeisData) {
@@ -73284,7 +72785,7 @@ var Helicorder = class extends SeisPlotElement {
     }
   }
   cutForLine(singleSeisData, lineInterval) {
-    let lineCutSeis = null;
+    let lineCutSeis;
     let lineSeisData;
     if (singleSeisData.seismogram) {
       lineCutSeis = singleSeisData.seismogram.cut(lineInterval);
@@ -73326,7 +72827,7 @@ var Helicorder = class extends SeisPlotElement {
     const nl = this.heliConfig.numLines;
     const maxHeight = this.heliConfig.maxHeight !== null ? this.heliConfig.maxHeight : DEFAULT_MAX_HEIGHT;
     const baseHeight = (maxHeight - (heliMargin.top + heliMargin.bottom)) / (nl - (nl - 1) * this.heliConfig.overlap);
-    let clickLine = 0;
+    let clickLine;
     if (evt.offsetY < heliMargin.top + baseHeight * 0.5) {
       clickLine = 0;
     } else {
@@ -73362,14 +72863,9 @@ var DEFAULT_MAX_HEIGHT = 600;
 var HelicorderConfig = class _HelicorderConfig extends SeismographConfig {
   constructor(timeRange, lineSeisConfig) {
     super();
-    __publicField(this, "lineSeisConfig");
-    __publicField(this, "overlap");
-    __publicField(this, "numLines");
-    __publicField(this, "maxVariation");
-    __publicField(this, "detrendLines", false);
-    __publicField(this, "yLabelTimeZone", FixedOffsetZone.utcInstance);
-    __publicField(this, "yLabelRightTimeZone", FixedOffsetZone.utcInstance);
-    __publicField(this, "timeLabelSpacing");
+    this.detrendLines = false;
+    this.yLabelTimeZone = FixedOffsetZone.utcInstance;
+    this.yLabelRightTimeZone = FixedOffsetZone.utcInstance;
     if (!isDef(timeRange)) {
       throw new Error("Helicorder config must have fixedTimeScale set");
     }
@@ -73424,8 +72920,6 @@ var HelicorderConfig = class _HelicorderConfig extends SeismographConfig {
 };
 var HeliTimeRange = class {
   constructor(startTime, duration3, lineNumber) {
-    __publicField(this, "lineNumber");
-    __publicField(this, "interval");
     this.interval = startDuration(startTime, duration3);
     this.lineNumber = lineNumber;
   }
@@ -73442,7 +72936,7 @@ var HELICORDER_SELECTOR = "helicorder";
 var HELI_COLOR_CSS_ID = "helicordercolors";
 customElements.define(HELICORDER_ELEMENT, Helicorder);
 
-// src/mseedarchive.ts
+// src/mseedarchive.mts
 var mseedarchive_exports = {};
 __export(mseedarchive_exports, {
   Allowed_Flags: () => Allowed_Flags,
@@ -73455,10 +72949,6 @@ __export(mseedarchive_exports, {
 var Allowed_Flags = ["n", "s", "l", "c", "Y", "j", "H"];
 var MSeedArchive = class {
   constructor(rootUrl, pattern) {
-    __publicField(this, "_rootUrl");
-    __publicField(this, "_pattern");
-    __publicField(this, "_recordSize");
-    __publicField(this, "_timeoutSec");
     this._rootUrl = fixProtocolInUrl(rootUrl);
     this._pattern = pattern;
     this._recordSize = 512;
@@ -73515,7 +73005,7 @@ var MSeedArchive = class {
   loadSeismograms(channelTimeList) {
     const promiseArray = channelTimeList.map((ct) => {
       if (isDef(ct.channel)) {
-        const request = ct;
+        const request = Promise.resolve(ct);
         const dataRecords = this.loadDataForChannel(
           ct.channel,
           ct.startTime,
@@ -73528,7 +73018,7 @@ var MSeedArchive = class {
           };
         });
       } else if (isDef(ct.sourceId)) {
-        const request = ct;
+        const request = Promise.resolve(ct);
         const dataRecords = this.loadData(
           ct.sourceId.networkCode,
           ct.sourceId.stationCode,
@@ -73757,7 +73247,7 @@ function maxTimeForRecord(recordSize, sampleRate) {
   return Duration.fromMillis(1e3 * ((recordSize - 40) * 2) / sampleRate);
 }
 
-// src/nws.ts
+// src/nws.mts
 var nws_exports = {};
 __export(nws_exports, {
   NWSBaseObj: () => NWSBaseObj,
@@ -73836,6 +73326,7 @@ __export(external_exports, {
   ZodOptional: () => ZodOptional,
   ZodPipe: () => ZodPipe,
   ZodPrefault: () => ZodPrefault,
+  ZodPreprocess: () => ZodPreprocess,
   ZodPromise: () => ZodPromise,
   ZodReadonly: () => ZodReadonly,
   ZodRealError: () => ZodRealError,
@@ -73914,6 +73405,7 @@ __export(external_exports, {
   int32: () => int32,
   int64: () => int64,
   intersection: () => intersection,
+  invertCodec: () => invertCodec,
   ipv4: () => ipv42,
   ipv6: () => ipv62,
   iso: () => iso_exports,
@@ -74095,6 +73587,7 @@ __export(core_exports2, {
   $ZodOptional: () => $ZodOptional,
   $ZodPipe: () => $ZodPipe,
   $ZodPrefault: () => $ZodPrefault,
+  $ZodPreprocess: () => $ZodPreprocess,
   $ZodPromise: () => $ZodPromise,
   $ZodReadonly: () => $ZodReadonly,
   $ZodRealError: () => $ZodRealError,
@@ -74294,7 +73787,8 @@ __export(core_exports2, {
 });
 
 // node_modules/zod/v4/core/core.js
-var NEVER = Object.freeze({
+var _a;
+var NEVER = /* @__PURE__ */ Object.freeze({
   status: "aborted"
 });
 // @__NO_SIDE_EFFECTS__
@@ -74329,10 +73823,10 @@ function $constructor(name, initializer3, params) {
   }
   Object.defineProperty(Definition, "name", { value: name });
   function _(def) {
-    var _a2;
+    var _a3;
     const inst = params?.Parent ? new Definition() : this;
     init2(inst, def);
-    (_a2 = inst._zod).deferred ?? (_a2.deferred = []);
+    (_a3 = inst._zod).deferred ?? (_a3.deferred = []);
     for (const fn of inst._zod.deferred) {
       fn();
     }
@@ -74361,7 +73855,8 @@ var $ZodEncodeError = class extends Error {
     this.name = "ZodEncodeError";
   }
 };
-var globalConfig = {};
+(_a = globalThis).__zod_globalConfig ?? (_a.__zod_globalConfig = {});
+var globalConfig = globalThis.__zod_globalConfig;
 function config(newConfig) {
   if (newConfig)
     Object.assign(globalConfig, newConfig);
@@ -74394,6 +73889,7 @@ __export(util_exports2, {
   defineLazy: () => defineLazy,
   esc: () => esc,
   escapeRegex: () => escapeRegex,
+  explicitlyAborted: () => explicitlyAborted,
   extend: () => extend2,
   finalizeIssue: () => finalizeIssue,
   floatSafeRemainder: () => floatSafeRemainder,
@@ -74482,19 +73978,12 @@ function cleanRegex(source) {
   return source.slice(start2, end);
 }
 function floatSafeRemainder(val, step) {
-  const valDecCount = (val.toString().split(".")[1] || "").length;
-  const stepString = step.toString();
-  let stepDecCount = (stepString.split(".")[1] || "").length;
-  if (stepDecCount === 0 && /\d?e-\d?/.test(stepString)) {
-    const match2 = stepString.match(/\d?e-(\d?)/);
-    if (match2?.[1]) {
-      stepDecCount = Number.parseInt(match2[1]);
-    }
-  }
-  const decCount = valDecCount > stepDecCount ? valDecCount : stepDecCount;
-  const valInt = Number.parseInt(val.toFixed(decCount).replace(".", ""));
-  const stepInt = Number.parseInt(step.toFixed(decCount).replace(".", ""));
-  return valInt % stepInt / 10 ** decCount;
+  const ratio = val / step;
+  const roundedRatio = Math.round(ratio);
+  const tolerance = Number.EPSILON * Math.max(Math.abs(ratio), 1);
+  if (Math.abs(ratio - roundedRatio) < tolerance)
+    return 0;
+  return ratio - roundedRatio;
 }
 var EVALUATING = /* @__PURE__ */ Symbol("evaluating");
 function defineLazy(object2, key, getter) {
@@ -74576,7 +74065,10 @@ var captureStackTrace = "captureStackTrace" in Error ? Error.captureStackTrace :
 function isObject2(data) {
   return typeof data === "object" && data !== null && !Array.isArray(data);
 }
-var allowsEval = cached(() => {
+var allowsEval = /* @__PURE__ */ cached(() => {
+  if (globalConfig.jitless) {
+    return false;
+  }
   if (typeof navigator !== "undefined" && navigator?.userAgent?.includes("Cloudflare")) {
     return false;
   }
@@ -74609,6 +74101,10 @@ function shallowClone(o) {
     return { ...o };
   if (Array.isArray(o))
     return [...o];
+  if (o instanceof Map)
+    return new Map(o);
+  if (o instanceof Set)
+    return new Set(o);
   return o;
 }
 function numKeys(data) {
@@ -74665,7 +74161,14 @@ var getParsedType = (data) => {
   }
 };
 var propertyKeyTypes = /* @__PURE__ */ new Set(["string", "number", "symbol"]);
-var primitiveTypes = /* @__PURE__ */ new Set(["string", "number", "bigint", "boolean", "symbol", "undefined"]);
+var primitiveTypes = /* @__PURE__ */ new Set([
+  "string",
+  "number",
+  "bigint",
+  "boolean",
+  "symbol",
+  "undefined"
+]);
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -74834,6 +74337,9 @@ function safeExtend(schema, shape) {
   return clone2(schema, def);
 }
 function merge3(a, b) {
+  if (a._zod.def.checks?.length) {
+    throw new Error(".merge() cannot be used on object schemas containing refinements. Use .safeExtend() instead.");
+  }
   const def = mergeDefs(a._zod.def, {
     get shape() {
       const _shape = { ...a._zod.def.shape, ...b._zod.def.shape };
@@ -74843,8 +74349,7 @@ function merge3(a, b) {
     get catchall() {
       return b._zod.def.catchall;
     },
-    checks: []
-    // delete existing checks
+    checks: b._zod.def.checks ?? []
   });
   return clone2(a, def);
 }
@@ -74927,10 +74432,20 @@ function aborted(x2, startIndex = 0) {
   }
   return false;
 }
+function explicitlyAborted(x2, startIndex = 0) {
+  if (x2.aborted === true)
+    return true;
+  for (let i = startIndex; i < x2.issues.length; i++) {
+    if (x2.issues[i]?.continue === false) {
+      return true;
+    }
+  }
+  return false;
+}
 function prefixIssues(path2, issues) {
   return issues.map((iss) => {
-    var _a2;
-    (_a2 = iss).path ?? (_a2.path = []);
+    var _a3;
+    (_a3 = iss).path ?? (_a3.path = []);
     iss.path.unshift(path2);
     return iss;
   });
@@ -74939,17 +74454,14 @@ function unwrapMessage(message) {
   return typeof message === "string" ? message : message?.message;
 }
 function finalizeIssue(iss, ctx, config2) {
-  const full = { ...iss, path: iss.path ?? [] };
-  if (!iss.message) {
-    const message = unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config2.customError?.(iss)) ?? unwrapMessage(config2.localeError?.(iss)) ?? "Invalid input";
-    full.message = message;
+  const message = iss.message ? iss.message : unwrapMessage(iss.inst?._zod.def?.error?.(iss)) ?? unwrapMessage(ctx?.error?.(iss)) ?? unwrapMessage(config2.customError?.(iss)) ?? unwrapMessage(config2.localeError?.(iss)) ?? "Invalid input";
+  const { inst: _inst, continue: _continue, input: _input, ...rest } = iss;
+  rest.path ?? (rest.path = []);
+  rest.message = message;
+  if (ctx?.reportInput) {
+    rest.input = _input;
   }
-  delete full.inst;
-  delete full.continue;
-  if (!ctx?.reportInput) {
-    delete full.input;
-  }
-  return full;
+  return rest;
 }
 function getSizableOrigin(input) {
   if (input instanceof Set)
@@ -75066,10 +74578,10 @@ var initializer = (inst, def) => {
 };
 var $ZodError = $constructor("$ZodError", initializer);
 var $ZodRealError = $constructor("$ZodError", initializer, { Parent: Error });
-function flattenError(error48, mapper = (issue2) => issue2.message) {
+function flattenError(error51, mapper = (issue2) => issue2.message) {
   const fieldErrors = {};
   const formErrors = [];
-  for (const sub of error48.issues) {
+  for (const sub of error51.issues) {
     if (sub.path.length > 0) {
       fieldErrors[sub.path[0]] = fieldErrors[sub.path[0]] || [];
       fieldErrors[sub.path[0]].push(mapper(sub));
@@ -75079,50 +74591,53 @@ function flattenError(error48, mapper = (issue2) => issue2.message) {
   }
   return { formErrors, fieldErrors };
 }
-function formatError(error48, mapper = (issue2) => issue2.message) {
+function formatError(error51, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error49) => {
-    for (const issue2 of error49.issues) {
+  const processError = (error52, path2 = []) => {
+    for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }));
+        issue2.errors.map((issues) => processError({ issues }, [...path2, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues });
+        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues });
-      } else if (issue2.path.length === 0) {
-        fieldErrors._errors.push(mapper(issue2));
+        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
       } else {
-        let curr = fieldErrors;
-        let i = 0;
-        while (i < issue2.path.length) {
-          const el = issue2.path[i];
-          const terminal = i === issue2.path.length - 1;
-          if (!terminal) {
-            curr[el] = curr[el] || { _errors: [] };
-          } else {
-            curr[el] = curr[el] || { _errors: [] };
-            curr[el]._errors.push(mapper(issue2));
+        const fullpath = [...path2, ...issue2.path];
+        if (fullpath.length === 0) {
+          fieldErrors._errors.push(mapper(issue2));
+        } else {
+          let curr = fieldErrors;
+          let i = 0;
+          while (i < fullpath.length) {
+            const el = fullpath[i];
+            const terminal = i === fullpath.length - 1;
+            if (!terminal) {
+              curr[el] = curr[el] || { _errors: [] };
+            } else {
+              curr[el] = curr[el] || { _errors: [] };
+              curr[el]._errors.push(mapper(issue2));
+            }
+            curr = curr[el];
+            i++;
           }
-          curr = curr[el];
-          i++;
         }
       }
     }
   };
-  processError(error48);
+  processError(error51);
   return fieldErrors;
 }
-function treeifyError(error48, mapper = (issue2) => issue2.message) {
+function treeifyError(error51, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error49, path2 = []) => {
-    var _a2, _b;
-    for (const issue2 of error49.issues) {
+  const processError = (error52, path2 = []) => {
+    var _a3, _b;
+    for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, issue2.path));
+        issue2.errors.map((issues) => processError({ issues }, [...path2, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, issue2.path);
+        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, issue2.path);
+        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
       } else {
         const fullpath = [...path2, ...issue2.path];
         if (fullpath.length === 0) {
@@ -75136,7 +74651,7 @@ function treeifyError(error48, mapper = (issue2) => issue2.message) {
           const terminal = i === fullpath.length - 1;
           if (typeof el === "string") {
             curr.properties ?? (curr.properties = {});
-            (_a2 = curr.properties)[el] ?? (_a2[el] = { errors: [] });
+            (_a3 = curr.properties)[el] ?? (_a3[el] = { errors: [] });
             curr = curr.properties[el];
           } else {
             curr.items ?? (curr.items = []);
@@ -75151,7 +74666,7 @@ function treeifyError(error48, mapper = (issue2) => issue2.message) {
       }
     }
   };
-  processError(error48);
+  processError(error51);
   return result;
 }
 function toDotPath(_path) {
@@ -75172,9 +74687,9 @@ function toDotPath(_path) {
   }
   return segs.join("");
 }
-function prettifyError(error48) {
+function prettifyError(error51) {
   const lines = [];
-  const issues = [...error48.issues].sort((a, b) => (a.path ?? []).length - (b.path ?? []).length);
+  const issues = [...error51.issues].sort((a, b) => (a.path ?? []).length - (b.path ?? []).length);
   for (const issue2 of issues) {
     lines.push(`\u2716 ${issue2.message}`);
     if (issue2.path?.length)
@@ -75185,7 +74700,7 @@ function prettifyError(error48) {
 
 // node_modules/zod/v4/core/parse.js
 var _parse = (_Err) => (schema, value, _ctx, _params) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
+  const ctx = _ctx ? { ..._ctx, async: false } : { async: false };
   const result = schema._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise) {
     throw new $ZodAsyncError();
@@ -75199,7 +74714,7 @@ var _parse = (_Err) => (schema, value, _ctx, _params) => {
 };
 var parse3 = /* @__PURE__ */ _parse($ZodRealError);
 var _parseAsync = (_Err) => async (schema, value, _ctx, params) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
+  const ctx = _ctx ? { ..._ctx, async: true } : { async: true };
   let result = schema._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise)
     result = await result;
@@ -75224,7 +74739,7 @@ var _safeParse = (_Err) => (schema, value, _ctx) => {
 };
 var safeParse = /* @__PURE__ */ _safeParse($ZodRealError);
 var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { async: true }) : { async: true };
+  const ctx = _ctx ? { ..._ctx, async: true } : { async: true };
   let result = schema._zod.run({ value, issues: [] }, ctx);
   if (result instanceof Promise)
     result = await result;
@@ -75235,7 +74750,7 @@ var _safeParseAsync = (_Err) => async (schema, value, _ctx) => {
 };
 var safeParseAsync = /* @__PURE__ */ _safeParseAsync($ZodRealError);
 var _encode = (_Err) => (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  const ctx = _ctx ? { ..._ctx, direction: "backward" } : { direction: "backward" };
   return _parse(_Err)(schema, value, ctx);
 };
 var encode = /* @__PURE__ */ _encode($ZodRealError);
@@ -75244,7 +74759,7 @@ var _decode = (_Err) => (schema, value, _ctx) => {
 };
 var decode = /* @__PURE__ */ _decode($ZodRealError);
 var _encodeAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  const ctx = _ctx ? { ..._ctx, direction: "backward" } : { direction: "backward" };
   return _parseAsync(_Err)(schema, value, ctx);
 };
 var encodeAsync = /* @__PURE__ */ _encodeAsync($ZodRealError);
@@ -75253,7 +74768,7 @@ var _decodeAsync = (_Err) => async (schema, value, _ctx) => {
 };
 var decodeAsync = /* @__PURE__ */ _decodeAsync($ZodRealError);
 var _safeEncode = (_Err) => (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  const ctx = _ctx ? { ..._ctx, direction: "backward" } : { direction: "backward" };
   return _safeParse(_Err)(schema, value, ctx);
 };
 var safeEncode = /* @__PURE__ */ _safeEncode($ZodRealError);
@@ -75262,7 +74777,7 @@ var _safeDecode = (_Err) => (schema, value, _ctx) => {
 };
 var safeDecode = /* @__PURE__ */ _safeDecode($ZodRealError);
 var _safeEncodeAsync = (_Err) => async (schema, value, _ctx) => {
-  const ctx = _ctx ? Object.assign(_ctx, { direction: "backward" }) : { direction: "backward" };
+  const ctx = _ctx ? { ..._ctx, direction: "backward" } : { direction: "backward" };
   return _safeParseAsync(_Err)(schema, value, ctx);
 };
 var safeEncodeAsync = /* @__PURE__ */ _safeEncodeAsync($ZodRealError);
@@ -75295,6 +74810,7 @@ __export(regexes_exports, {
   hex: () => hex2,
   hostname: () => hostname,
   html5Email: () => html5Email,
+  httpProtocol: () => httpProtocol,
   idnEmail: () => idnEmail,
   integer: () => integer,
   ipv4: () => ipv4,
@@ -75333,7 +74849,7 @@ __export(regexes_exports, {
   uuid7: () => uuid7,
   xid: () => xid
 });
-var cuid = /^[cC][^\s-]{8,}$/;
+var cuid = /^[cC][0-9a-z]{6,}$/;
 var cuid2 = /^[0-9a-z]+$/;
 var ulid = /^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$/;
 var xid = /^[0-9a-vA-V]{20}$/;
@@ -75372,6 +74888,7 @@ var base64 = /^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/
 var base64url = /^[A-Za-z0-9_-]*$/;
 var hostname = /^(?=.{1,253}\.?$)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[-0-9a-zA-Z]{0,61}[0-9a-zA-Z])?)*\.?$/;
 var domain = /^([a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+var httpProtocol = /^https?$/;
 var e164 = /^\+[1-9]\d{6,14}$/;
 var dateSource = `(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))`;
 var date2 = /* @__PURE__ */ new RegExp(`^${dateSource}$`);
@@ -75430,10 +74947,10 @@ var sha512_base64url = /* @__PURE__ */ fixedBase64url(86);
 
 // node_modules/zod/v4/core/checks.js
 var $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
-  var _a2;
+  var _a3;
   inst._zod ?? (inst._zod = {});
   inst._zod.def = def;
-  (_a2 = inst._zod).onattach ?? (_a2.onattach = []);
+  (_a3 = inst._zod).onattach ?? (_a3.onattach = []);
 });
 var numericOriginMap = {
   number: "number",
@@ -75499,8 +75016,8 @@ var $ZodCheckGreaterThan = /* @__PURE__ */ $constructor("$ZodCheckGreaterThan", 
 var $ZodCheckMultipleOf = /* @__PURE__ */ $constructor("$ZodCheckMultipleOf", (inst, def) => {
   $ZodCheck.init(inst, def);
   inst._zod.onattach.push((inst2) => {
-    var _a2;
-    (_a2 = inst2._zod.bag).multipleOf ?? (_a2.multipleOf = def.value);
+    var _a3;
+    (_a3 = inst2._zod.bag).multipleOf ?? (_a3.multipleOf = def.value);
   });
   inst._zod.check = (payload) => {
     if (typeof payload.value !== typeof def.value)
@@ -75633,9 +75150,9 @@ var $ZodCheckBigIntFormat = /* @__PURE__ */ $constructor("$ZodCheckBigIntFormat"
   };
 });
 var $ZodCheckMaxSize = /* @__PURE__ */ $constructor("$ZodCheckMaxSize", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -75661,9 +75178,9 @@ var $ZodCheckMaxSize = /* @__PURE__ */ $constructor("$ZodCheckMaxSize", (inst, d
   };
 });
 var $ZodCheckMinSize = /* @__PURE__ */ $constructor("$ZodCheckMinSize", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -75689,9 +75206,9 @@ var $ZodCheckMinSize = /* @__PURE__ */ $constructor("$ZodCheckMinSize", (inst, d
   };
 });
 var $ZodCheckSizeEquals = /* @__PURE__ */ $constructor("$ZodCheckSizeEquals", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.size !== void 0;
   });
@@ -75719,9 +75236,9 @@ var $ZodCheckSizeEquals = /* @__PURE__ */ $constructor("$ZodCheckSizeEquals", (i
   };
 });
 var $ZodCheckMaxLength = /* @__PURE__ */ $constructor("$ZodCheckMaxLength", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -75748,9 +75265,9 @@ var $ZodCheckMaxLength = /* @__PURE__ */ $constructor("$ZodCheckMaxLength", (ins
   };
 });
 var $ZodCheckMinLength = /* @__PURE__ */ $constructor("$ZodCheckMinLength", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -75777,9 +75294,9 @@ var $ZodCheckMinLength = /* @__PURE__ */ $constructor("$ZodCheckMinLength", (ins
   };
 });
 var $ZodCheckLengthEquals = /* @__PURE__ */ $constructor("$ZodCheckLengthEquals", (inst, def) => {
-  var _a2;
+  var _a3;
   $ZodCheck.init(inst, def);
-  (_a2 = inst._zod.def).when ?? (_a2.when = (payload) => {
+  (_a3 = inst._zod.def).when ?? (_a3.when = (payload) => {
     const val = payload.value;
     return !nullish(val) && val.length !== void 0;
   });
@@ -75808,7 +75325,7 @@ var $ZodCheckLengthEquals = /* @__PURE__ */ $constructor("$ZodCheckLengthEquals"
   };
 });
 var $ZodCheckStringFormat = /* @__PURE__ */ $constructor("$ZodCheckStringFormat", (inst, def) => {
-  var _a2, _b;
+  var _a3, _b;
   $ZodCheck.init(inst, def);
   inst._zod.onattach.push((inst2) => {
     const bag = inst2._zod.bag;
@@ -75819,7 +75336,7 @@ var $ZodCheckStringFormat = /* @__PURE__ */ $constructor("$ZodCheckStringFormat"
     }
   });
   if (def.pattern)
-    (_a2 = inst._zod).check ?? (_a2.check = (payload) => {
+    (_a3 = inst._zod).check ?? (_a3.check = (payload) => {
       def.pattern.lastIndex = 0;
       if (def.pattern.test(payload.value))
         return;
@@ -76015,13 +75532,13 @@ var Doc = class {
 // node_modules/zod/v4/core/versions.js
 var version2 = {
   major: 4,
-  minor: 3,
-  patch: 6
+  minor: 4,
+  patch: 3
 };
 
 // node_modules/zod/v4/core/schemas.js
 var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
-  var _a2;
+  var _a3;
   inst ?? (inst = {});
   inst._zod.def = def;
   inst._zod.bag = inst._zod.bag || {};
@@ -76036,7 +75553,7 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
     }
   }
   if (checks.length === 0) {
-    (_a2 = inst._zod).deferred ?? (_a2.deferred = []);
+    (_a3 = inst._zod).deferred ?? (_a3.deferred = []);
     inst._zod.deferred?.push(() => {
       inst._zod.run = inst._zod.parse;
     });
@@ -76046,6 +75563,8 @@ var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
       let asyncResult;
       for (const ch of checks2) {
         if (ch._zod.def.when) {
+          if (explicitlyAborted(payload))
+            continue;
           const shouldRun = ch._zod.def.when(payload);
           if (!shouldRun)
             continue;
@@ -76186,6 +75705,19 @@ var $ZodURL = /* @__PURE__ */ $constructor("$ZodURL", (inst, def) => {
   inst._zod.check = (payload) => {
     try {
       const trimmed = payload.value.trim();
+      if (!def.normalize && def.protocol?.source === httpProtocol.source) {
+        if (!/^https?:\/\//i.test(trimmed)) {
+          payload.issues.push({
+            code: "invalid_format",
+            format: "url",
+            note: "Invalid URL format",
+            input: payload.value,
+            inst,
+            continue: !def.abort
+          });
+          return;
+        }
+      }
       const url2 = new URL(trimmed);
       if (def.hostname) {
         def.hostname.lastIndex = 0;
@@ -76339,6 +75871,8 @@ var $ZodCIDRv6 = /* @__PURE__ */ $constructor("$ZodCIDRv6", (inst, def) => {
 function isValidBase64(data) {
   if (data === "")
     return true;
+  if (/\s/.test(data))
+    return false;
   if (data.length % 4 !== 0)
     return false;
   try {
@@ -76531,8 +76065,6 @@ var $ZodUndefined = /* @__PURE__ */ $constructor("$ZodUndefined", (inst, def) =>
   $ZodType.init(inst, def);
   inst._zod.pattern = _undefined;
   inst._zod.values = /* @__PURE__ */ new Set([void 0]);
-  inst._zod.optin = "optional";
-  inst._zod.optout = "optional";
   inst._zod.parse = (payload, _ctx) => {
     const input = payload.value;
     if (typeof input === "undefined")
@@ -76661,15 +76193,27 @@ var $ZodArray = /* @__PURE__ */ $constructor("$ZodArray", (inst, def) => {
     return payload;
   };
 });
-function handlePropertyResult(result, final, key, input, isOptionalOut) {
+function handlePropertyResult(result, final, key, input, isOptionalIn, isOptionalOut) {
+  const isPresent = key in input;
   if (result.issues.length) {
-    if (isOptionalOut && !(key in input)) {
+    if (isOptionalIn && isOptionalOut && !isPresent) {
       return;
     }
     final.issues.push(...prefixIssues(key, result.issues));
   }
+  if (!isPresent && !isOptionalIn) {
+    if (!result.issues.length) {
+      final.issues.push({
+        code: "invalid_type",
+        expected: "nonoptional",
+        input: void 0,
+        path: [key]
+      });
+    }
+    return;
+  }
   if (result.value === void 0) {
-    if (key in input) {
+    if (isPresent) {
       final.value[key] = void 0;
     }
   } else {
@@ -76697,8 +76241,11 @@ function handleCatchall(proms, input, payload, ctx, def, inst) {
   const keySet = def.keySet;
   const _catchall = def.catchall._zod;
   const t = _catchall.def.type;
+  const isOptionalIn = _catchall.optin === "optional";
   const isOptionalOut = _catchall.optout === "optional";
   for (const key in input) {
+    if (key === "__proto__")
+      continue;
     if (keySet.has(key))
       continue;
     if (t === "never") {
@@ -76707,9 +76254,9 @@ function handleCatchall(proms, input, payload, ctx, def, inst) {
     }
     const r = _catchall.run({ value: input[key], issues: [] }, ctx);
     if (r instanceof Promise) {
-      proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalOut)));
+      proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalIn, isOptionalOut)));
     } else {
-      handlePropertyResult(r, payload, key, input, isOptionalOut);
+      handlePropertyResult(r, payload, key, input, isOptionalIn, isOptionalOut);
     }
   }
   if (unrecognized.length) {
@@ -76775,12 +76322,13 @@ var $ZodObject = /* @__PURE__ */ $constructor("$ZodObject", (inst, def) => {
     const shape = value.shape;
     for (const key of value.keys) {
       const el = shape[key];
+      const isOptionalIn = el._zod.optin === "optional";
       const isOptionalOut = el._zod.optout === "optional";
       const r = el._zod.run({ value: input[key], issues: [] }, ctx);
       if (r instanceof Promise) {
-        proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalOut)));
+        proms.push(r.then((r2) => handlePropertyResult(r2, payload, key, input, isOptionalIn, isOptionalOut)));
       } else {
-        handlePropertyResult(r, payload, key, input, isOptionalOut);
+        handlePropertyResult(r, payload, key, input, isOptionalIn, isOptionalOut);
       }
     }
     if (!catchall) {
@@ -76811,9 +76359,10 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
       const id2 = ids[key];
       const k = esc(key);
       const schema = shape[key];
+      const isOptionalIn = schema?._zod?.optin === "optional";
       const isOptionalOut = schema?._zod?.optout === "optional";
       doc.write(`const ${id2} = ${parseStr(key)};`);
-      if (isOptionalOut) {
+      if (isOptionalIn && isOptionalOut) {
         doc.write(`
         if (${id2}.issues.length) {
           if (${k} in input) {
@@ -76832,6 +76381,33 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
           newResult[${k}] = ${id2}.value;
         }
         
+      `);
+      } else if (!isOptionalIn) {
+        doc.write(`
+        const ${id2}_present = ${k} in input;
+        if (${id2}.issues.length) {
+          payload.issues = payload.issues.concat(${id2}.issues.map(iss => ({
+            ...iss,
+            path: iss.path ? [${k}, ...iss.path] : [${k}]
+          })));
+        }
+        if (!${id2}_present && !${id2}.issues.length) {
+          payload.issues.push({
+            code: "invalid_type",
+            expected: "nonoptional",
+            input: undefined,
+            path: [${k}]
+          });
+        }
+
+        if (${id2}_present) {
+          if (${id2}.value === undefined) {
+            newResult[${k}] = undefined;
+          } else {
+            newResult[${k}] = ${id2}.value;
+          }
+        }
+
       `);
       } else {
         doc.write(`
@@ -76925,10 +76501,9 @@ var $ZodUnion = /* @__PURE__ */ $constructor("$ZodUnion", (inst, def) => {
     }
     return void 0;
   });
-  const single = def.options.length === 1;
-  const first = def.options[0]._zod.run;
+  const first = def.options.length === 1 ? def.options[0]._zod.run : null;
   inst._zod.parse = (payload, ctx) => {
-    if (single) {
+    if (first) {
       return first(payload, ctx);
     }
     let async = false;
@@ -76981,10 +76556,9 @@ function handleExclusiveUnionResults(results, final, inst, ctx) {
 var $ZodXor = /* @__PURE__ */ $constructor("$ZodXor", (inst, def) => {
   $ZodUnion.init(inst, def);
   def.inclusive = false;
-  const single = def.options.length === 1;
-  const first = def.options[0]._zod.run;
+  const first = def.options.length === 1 ? def.options[0]._zod.run : null;
   inst._zod.parse = (payload, ctx) => {
-    if (single) {
+    if (first) {
       return first(payload, ctx);
     }
     let async = false;
@@ -77059,7 +76633,7 @@ var $ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("$ZodDiscriminatedUnio
     if (opt) {
       return opt._zod.run(payload, ctx);
     }
-    if (def.unionFallback) {
+    if (def.unionFallback || ctx.direction === "backward") {
       return _super(payload, ctx);
     }
     payload.issues.push({
@@ -77067,6 +76641,7 @@ var $ZodDiscriminatedUnion = /* @__PURE__ */ $constructor("$ZodDiscriminatedUnio
       errors: [],
       note: "No matching discriminator",
       discriminator: def.discriminator,
+      options: Array.from(disc.value.keys()),
       input,
       path: [def.discriminator],
       inst
@@ -77188,63 +76763,95 @@ var $ZodTuple = /* @__PURE__ */ $constructor("$ZodTuple", (inst, def) => {
     }
     payload.value = [];
     const proms = [];
-    const reversedIndex = [...items].reverse().findIndex((item) => item._zod.optin !== "optional");
-    const optStart = reversedIndex === -1 ? 0 : items.length - reversedIndex;
+    const optinStart = getTupleOptStart(items, "optin");
+    const optoutStart = getTupleOptStart(items, "optout");
     if (!def.rest) {
-      const tooBig = input.length > items.length;
-      const tooSmall = input.length < optStart - 1;
-      if (tooBig || tooSmall) {
+      if (input.length < optinStart) {
         payload.issues.push({
-          ...tooBig ? { code: "too_big", maximum: items.length, inclusive: true } : { code: "too_small", minimum: items.length },
+          code: "too_small",
+          minimum: optinStart,
+          inclusive: true,
           input,
           inst,
           origin: "array"
         });
         return payload;
       }
-    }
-    let i = -1;
-    for (const item of items) {
-      i++;
-      if (i >= input.length) {
-        if (i >= optStart)
-          continue;
+      if (input.length > items.length) {
+        payload.issues.push({
+          code: "too_big",
+          maximum: items.length,
+          inclusive: true,
+          input,
+          inst,
+          origin: "array"
+        });
       }
-      const result = item._zod.run({
-        value: input[i],
-        issues: []
-      }, ctx);
-      if (result instanceof Promise) {
-        proms.push(result.then((result2) => handleTupleResult(result2, payload, i)));
+    }
+    const itemResults = new Array(items.length);
+    for (let i = 0; i < items.length; i++) {
+      const r = items[i]._zod.run({ value: input[i], issues: [] }, ctx);
+      if (r instanceof Promise) {
+        proms.push(r.then((rr) => {
+          itemResults[i] = rr;
+        }));
       } else {
-        handleTupleResult(result, payload, i);
+        itemResults[i] = r;
       }
     }
     if (def.rest) {
+      let i = items.length - 1;
       const rest = input.slice(items.length);
       for (const el of rest) {
         i++;
-        const result = def.rest._zod.run({
-          value: el,
-          issues: []
-        }, ctx);
+        const result = def.rest._zod.run({ value: el, issues: [] }, ctx);
         if (result instanceof Promise) {
-          proms.push(result.then((result2) => handleTupleResult(result2, payload, i)));
+          proms.push(result.then((r) => handleTupleResult(r, payload, i)));
         } else {
           handleTupleResult(result, payload, i);
         }
       }
     }
-    if (proms.length)
-      return Promise.all(proms).then(() => payload);
-    return payload;
+    if (proms.length) {
+      return Promise.all(proms).then(() => handleTupleResults(itemResults, payload, items, input, optoutStart));
+    }
+    return handleTupleResults(itemResults, payload, items, input, optoutStart);
   };
 });
+function getTupleOptStart(items, key) {
+  for (let i = items.length - 1; i >= 0; i--) {
+    if (items[i]._zod[key] !== "optional")
+      return i + 1;
+  }
+  return 0;
+}
 function handleTupleResult(result, final, index) {
   if (result.issues.length) {
     final.issues.push(...prefixIssues(index, result.issues));
   }
   final.value[index] = result.value;
+}
+function handleTupleResults(itemResults, final, items, input, optoutStart) {
+  for (let i = 0; i < items.length; i++) {
+    const r = itemResults[i];
+    const isPresent = i < input.length;
+    if (r.issues.length) {
+      if (!isPresent && i >= optoutStart) {
+        final.value.length = i;
+        break;
+      }
+      final.issues.push(...prefixIssues(i, r.issues));
+    }
+    final.value[i] = r.value;
+  }
+  for (let i = final.value.length - 1; i >= input.length; i--) {
+    if (items[i]._zod.optout === "optional" && final.value[i] === void 0) {
+      final.value.length = i;
+    } else {
+      break;
+    }
+  }
+  return final;
 }
 var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
   $ZodType.init(inst, def);
@@ -77267,19 +76874,35 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
       for (const key of values) {
         if (typeof key === "string" || typeof key === "number" || typeof key === "symbol") {
           recordKeys.add(typeof key === "number" ? key.toString() : key);
+          const keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx);
+          if (keyResult instanceof Promise) {
+            throw new Error("Async schemas not supported in object keys currently");
+          }
+          if (keyResult.issues.length) {
+            payload.issues.push({
+              code: "invalid_key",
+              origin: "record",
+              issues: keyResult.issues.map((iss) => finalizeIssue(iss, ctx, config())),
+              input: key,
+              path: [key],
+              inst
+            });
+            continue;
+          }
+          const outKey = keyResult.value;
           const result = def.valueType._zod.run({ value: input[key], issues: [] }, ctx);
           if (result instanceof Promise) {
             proms.push(result.then((result2) => {
               if (result2.issues.length) {
                 payload.issues.push(...prefixIssues(key, result2.issues));
               }
-              payload.value[key] = result2.value;
+              payload.value[outKey] = result2.value;
             }));
           } else {
             if (result.issues.length) {
               payload.issues.push(...prefixIssues(key, result.issues));
             }
-            payload.value[key] = result.value;
+            payload.value[outKey] = result.value;
           }
         }
       }
@@ -77302,6 +76925,8 @@ var $ZodRecord = /* @__PURE__ */ $constructor("$ZodRecord", (inst, def) => {
       payload.value = {};
       for (const key of Reflect.ownKeys(input)) {
         if (key === "__proto__")
+          continue;
+        if (!Object.prototype.propertyIsEnumerable.call(input, key))
           continue;
         let keyResult = def.keyType._zod.run({ value: key, issues: [] }, ctx);
         if (keyResult instanceof Promise) {
@@ -77507,6 +77132,7 @@ var $ZodFile = /* @__PURE__ */ $constructor("$ZodFile", (inst, def) => {
 });
 var $ZodTransform = /* @__PURE__ */ $constructor("$ZodTransform", (inst, def) => {
   $ZodType.init(inst, def);
+  inst._zod.optin = "optional";
   inst._zod.parse = (payload, ctx) => {
     if (ctx.direction === "backward") {
       throw new $ZodEncodeError(inst.constructor.name);
@@ -77516,6 +77142,7 @@ var $ZodTransform = /* @__PURE__ */ $constructor("$ZodTransform", (inst, def) =>
       const output = _out instanceof Promise ? _out : Promise.resolve(_out);
       return output.then((output2) => {
         payload.value = output2;
+        payload.fallback = true;
         return payload;
       });
     }
@@ -77523,11 +77150,12 @@ var $ZodTransform = /* @__PURE__ */ $constructor("$ZodTransform", (inst, def) =>
       throw new $ZodAsyncError();
     }
     payload.value = _out;
+    payload.fallback = true;
     return payload;
   };
 });
 function handleOptionalResult(result, input) {
-  if (result.issues.length && input === void 0) {
+  if (input === void 0 && (result.issues.length || result.fallback)) {
     return { issues: [], value: void 0 };
   }
   return result;
@@ -77545,10 +77173,11 @@ var $ZodOptional = /* @__PURE__ */ $constructor("$ZodOptional", (inst, def) => {
   });
   inst._zod.parse = (payload, ctx) => {
     if (def.innerType._zod.optin === "optional") {
+      const input = payload.value;
       const result = def.innerType._zod.run(payload, ctx);
       if (result instanceof Promise)
-        return result.then((r) => handleOptionalResult(r, payload.value));
-      return handleOptionalResult(result, payload.value);
+        return result.then((r) => handleOptionalResult(r, input));
+      return handleOptionalResult(result, input);
     }
     if (payload.value === void 0) {
       return payload;
@@ -77664,7 +77293,7 @@ var $ZodSuccess = /* @__PURE__ */ $constructor("$ZodSuccess", (inst, def) => {
 });
 var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
   $ZodType.init(inst, def);
-  defineLazy(inst._zod, "optin", () => def.innerType._zod.optin);
+  inst._zod.optin = "optional";
   defineLazy(inst._zod, "optout", () => def.innerType._zod.optout);
   defineLazy(inst._zod, "values", () => def.innerType._zod.values);
   inst._zod.parse = (payload, ctx) => {
@@ -77684,6 +77313,7 @@ var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
             input: payload.value
           });
           payload.issues = [];
+          payload.fallback = true;
         }
         return payload;
       });
@@ -77698,6 +77328,7 @@ var $ZodCatch = /* @__PURE__ */ $constructor("$ZodCatch", (inst, def) => {
         input: payload.value
       });
       payload.issues = [];
+      payload.fallback = true;
     }
     return payload;
   };
@@ -77743,7 +77374,7 @@ function handlePipeResult(left2, next, ctx) {
     left2.aborted = true;
     return left2;
   }
-  return next._zod.run({ value: left2.value, issues: left2.issues }, ctx);
+  return next._zod.run({ value: left2.value, issues: left2.issues, fallback: left2.fallback }, ctx);
 }
 var $ZodCodec = /* @__PURE__ */ $constructor("$ZodCodec", (inst, def) => {
   $ZodType.init(inst, def);
@@ -77795,6 +77426,9 @@ function handleCodecTxResult(left2, value, nextSchema, ctx) {
   }
   return nextSchema._zod.run({ value, issues: left2.issues }, ctx);
 }
+var $ZodPreprocess = /* @__PURE__ */ $constructor("$ZodPreprocess", (inst, def) => {
+  $ZodPipe.init(inst, def);
+});
 var $ZodReadonly = /* @__PURE__ */ $constructor("$ZodReadonly", (inst, def) => {
   $ZodType.init(inst, def);
   defineLazy(inst._zod, "propValues", () => def.innerType._zod.propValues);
@@ -77946,7 +77580,12 @@ var $ZodPromise = /* @__PURE__ */ $constructor("$ZodPromise", (inst, def) => {
 });
 var $ZodLazy = /* @__PURE__ */ $constructor("$ZodLazy", (inst, def) => {
   $ZodType.init(inst, def);
-  defineLazy(inst._zod, "innerType", () => def.getter());
+  defineLazy(inst._zod, "innerType", () => {
+    const d = def;
+    if (!d._cachedInner)
+      d._cachedInner = def.getter();
+    return d._cachedInner;
+  });
   defineLazy(inst._zod, "pattern", () => inst._zod.innerType?._zod?.pattern);
   defineLazy(inst._zod, "propValues", () => inst._zod.innerType?._zod?.propValues);
   defineLazy(inst._zod, "optin", () => inst._zod.innerType?._zod?.optin ?? void 0);
@@ -78001,6 +77640,7 @@ __export(locales_exports, {
   cs: () => cs_default,
   da: () => da_default,
   de: () => de_default,
+  el: () => el_default,
   en: () => en_default,
   eo: () => eo_default,
   es: () => es_default,
@@ -78009,6 +77649,7 @@ __export(locales_exports, {
   fr: () => fr_default,
   frCA: () => fr_CA_default,
   he: () => he_default,
+  hr: () => hr_default,
   hu: () => hu_default,
   hy: () => hy_default,
   id: () => id_default,
@@ -78028,6 +77669,7 @@ __export(locales_exports, {
   pl: () => pl_default,
   ps: () => ps_default,
   pt: () => pt_default,
+  ro: () => ro_default,
   ru: () => ru_default,
   sl: () => sl_default,
   sv: () => sv_default,
@@ -78981,8 +78623,118 @@ function de_default() {
   };
 }
 
-// node_modules/zod/v4/locales/en.js
+// node_modules/zod/v4/locales/el.js
 var error9 = () => {
+  const Sizable = {
+    string: { unit: "\u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03AE\u03C1\u03B5\u03C2", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" },
+    file: { unit: "bytes", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" },
+    array: { unit: "\u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF\u03B1", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" },
+    set: { unit: "\u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF\u03B1", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" },
+    map: { unit: "\u03BA\u03B1\u03C4\u03B1\u03C7\u03C9\u03C1\u03AE\u03C3\u03B5\u03B9\u03C2", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" }
+  };
+  function getSizing(origin) {
+    return Sizable[origin] ?? null;
+  }
+  const FormatDictionary = {
+    regex: "\u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2",
+    email: "\u03B4\u03B9\u03B5\u03CD\u03B8\u03C5\u03BD\u03C3\u03B7 email",
+    url: "URL",
+    emoji: "emoji",
+    uuid: "UUID",
+    uuidv4: "UUIDv4",
+    uuidv6: "UUIDv6",
+    nanoid: "nanoid",
+    guid: "GUID",
+    cuid: "cuid",
+    cuid2: "cuid2",
+    ulid: "ULID",
+    xid: "XID",
+    ksuid: "KSUID",
+    datetime: "ISO \u03B7\u03BC\u03B5\u03C1\u03BF\u03BC\u03B7\u03BD\u03AF\u03B1 \u03BA\u03B1\u03B9 \u03CE\u03C1\u03B1",
+    date: "ISO \u03B7\u03BC\u03B5\u03C1\u03BF\u03BC\u03B7\u03BD\u03AF\u03B1",
+    time: "ISO \u03CE\u03C1\u03B1",
+    duration: "ISO \u03B4\u03B9\u03AC\u03C1\u03BA\u03B5\u03B9\u03B1",
+    ipv4: "\u03B4\u03B9\u03B5\u03CD\u03B8\u03C5\u03BD\u03C3\u03B7 IPv4",
+    ipv6: "\u03B4\u03B9\u03B5\u03CD\u03B8\u03C5\u03BD\u03C3\u03B7 IPv6",
+    mac: "\u03B4\u03B9\u03B5\u03CD\u03B8\u03C5\u03BD\u03C3\u03B7 MAC",
+    cidrv4: "\u03B5\u03CD\u03C1\u03BF\u03C2 IPv4",
+    cidrv6: "\u03B5\u03CD\u03C1\u03BF\u03C2 IPv6",
+    base64: "\u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC \u03BA\u03C9\u03B4\u03B9\u03BA\u03BF\u03C0\u03BF\u03B9\u03B7\u03BC\u03AD\u03BD\u03B7 \u03C3\u03B5 base64",
+    base64url: "\u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC \u03BA\u03C9\u03B4\u03B9\u03BA\u03BF\u03C0\u03BF\u03B9\u03B7\u03BC\u03AD\u03BD\u03B7 \u03C3\u03B5 base64url",
+    json_string: "\u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC JSON",
+    e164: "\u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 E.164",
+    jwt: "JWT",
+    template_literal: "\u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2"
+  };
+  const TypeDictionary = {
+    nan: "NaN"
+  };
+  return (issue2) => {
+    switch (issue2.code) {
+      case "invalid_type": {
+        const expected = TypeDictionary[issue2.expected] ?? issue2.expected;
+        const receivedType = parsedType(issue2.input);
+        const received = TypeDictionary[receivedType] ?? receivedType;
+        if (typeof issue2.expected === "string" && /^[A-Z]/.test(issue2.expected)) {
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD instanceof ${issue2.expected}, \u03BB\u03AE\u03C6\u03B8\u03B7\u03BA\u03B5 ${received}`;
+        }
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${expected}, \u03BB\u03AE\u03C6\u03B8\u03B7\u03BA\u03B5 ${received}`;
+      }
+      case "invalid_value":
+        if (issue2.values.length === 1)
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${stringifyPrimitive(issue2.values[0])}`;
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD \u03AD\u03BD\u03B1 \u03B1\u03C0\u03CC ${joinValues(issue2.values, "|")}`;
+      case "too_big": {
+        const adj = issue2.inclusive ? "<=" : "<";
+        const sizing = getSizing(issue2.origin);
+        if (sizing)
+          return `\u03A0\u03BF\u03BB\u03CD \u03BC\u03B5\u03B3\u03AC\u03BB\u03BF: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${issue2.origin ?? "\u03C4\u03B9\u03BC\u03AE"} \u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9 ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "\u03C3\u03C4\u03BF\u03B9\u03C7\u03B5\u03AF\u03B1"}`;
+        return `\u03A0\u03BF\u03BB\u03CD \u03BC\u03B5\u03B3\u03AC\u03BB\u03BF: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${issue2.origin ?? "\u03C4\u03B9\u03BC\u03AE"} \u03BD\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 ${adj}${issue2.maximum.toString()}`;
+      }
+      case "too_small": {
+        const adj = issue2.inclusive ? ">=" : ">";
+        const sizing = getSizing(issue2.origin);
+        if (sizing) {
+          return `\u03A0\u03BF\u03BB\u03CD \u03BC\u03B9\u03BA\u03C1\u03CC: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${issue2.origin} \u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9 ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        }
+        return `\u03A0\u03BF\u03BB\u03CD \u03BC\u03B9\u03BA\u03C1\u03CC: \u03B1\u03BD\u03B1\u03BC\u03B5\u03BD\u03CC\u03C4\u03B1\u03BD ${issue2.origin} \u03BD\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 ${adj}${issue2.minimum.toString()}`;
+      }
+      case "invalid_format": {
+        const _issue = issue2;
+        if (_issue.format === "starts_with") {
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC: \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03BE\u03B5\u03BA\u03B9\u03BD\u03AC \u03BC\u03B5 "${_issue.prefix}"`;
+        }
+        if (_issue.format === "ends_with")
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC: \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03C4\u03B5\u03BB\u03B5\u03B9\u03CE\u03BD\u03B5\u03B9 \u03BC\u03B5 "${_issue.suffix}"`;
+        if (_issue.format === "includes")
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC: \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03C0\u03B5\u03C1\u03B9\u03AD\u03C7\u03B5\u03B9 "${_issue.includes}"`;
+        if (_issue.format === "regex")
+          return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03C3\u03C5\u03BC\u03B2\u03BF\u03BB\u03BF\u03C3\u03B5\u03B9\u03C1\u03AC: \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03C4\u03B1\u03B9\u03C1\u03B9\u03AC\u03B6\u03B5\u03B9 \u03BC\u03B5 \u03C4\u03BF \u03BC\u03BF\u03C4\u03AF\u03B2\u03BF ${_issue.pattern}`;
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03BF: ${FormatDictionary[_issue.format] ?? issue2.format}`;
+      }
+      case "not_multiple_of":
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03BF\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2: \u03C0\u03C1\u03AD\u03C0\u03B5\u03B9 \u03BD\u03B1 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03BF \u03C4\u03BF\u03C5 ${issue2.divisor}`;
+      case "unrecognized_keys":
+        return `\u0386\u03B3\u03BD\u03C9\u03C3\u03C4${issue2.keys.length > 1 ? "\u03B1" : "\u03BF"} \u03BA\u03BB\u03B5\u03B9\u03B4${issue2.keys.length > 1 ? "\u03B9\u03AC" : "\u03AF"}: ${joinValues(issue2.keys, ", ")}`;
+      case "invalid_key":
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03BF \u03BA\u03BB\u03B5\u03B9\u03B4\u03AF \u03C3\u03C4\u03BF ${issue2.origin}`;
+      case "invalid_union":
+        return "\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2";
+      case "invalid_element":
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03C4\u03B9\u03BC\u03AE \u03C3\u03C4\u03BF ${issue2.origin}`;
+      default:
+        return `\u039C\u03B7 \u03AD\u03B3\u03BA\u03C5\u03C1\u03B7 \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF\u03C2`;
+    }
+  };
+};
+function el_default() {
+  return {
+    localeError: error9()
+  };
+}
+
+// node_modules/zod/v4/locales/en.js
+var error10 = () => {
   const Sizable = {
     string: { unit: "characters", verb: "to have" },
     file: { unit: "bytes", verb: "to have" },
@@ -79076,6 +78828,10 @@ var error9 = () => {
       case "invalid_key":
         return `Invalid key in ${issue2.origin}`;
       case "invalid_union":
+        if (issue2.options && Array.isArray(issue2.options) && issue2.options.length > 0) {
+          const opts = issue2.options.map((o) => `'${o}'`).join(" | ");
+          return `Invalid discriminator value. Expected ${opts}`;
+        }
         return "Invalid input";
       case "invalid_element":
         return `Invalid value in ${issue2.origin}`;
@@ -79086,12 +78842,12 @@ var error9 = () => {
 };
 function en_default() {
   return {
-    localeError: error9()
+    localeError: error10()
   };
 }
 
 // node_modules/zod/v4/locales/eo.js
-var error10 = () => {
+var error11 = () => {
   const Sizable = {
     string: { unit: "karaktrojn", verb: "havi" },
     file: { unit: "bajtojn", verb: "havi" },
@@ -79196,12 +78952,12 @@ var error10 = () => {
 };
 function eo_default() {
   return {
-    localeError: error10()
+    localeError: error11()
   };
 }
 
 // node_modules/zod/v4/locales/es.js
-var error11 = () => {
+var error12 = () => {
   const Sizable = {
     string: { unit: "caracteres", verb: "tener" },
     file: { unit: "bytes", verb: "tener" },
@@ -79329,12 +79085,12 @@ var error11 = () => {
 };
 function es_default() {
   return {
-    localeError: error11()
+    localeError: error12()
   };
 }
 
 // node_modules/zod/v4/locales/fa.js
-var error12 = () => {
+var error13 = () => {
   const Sizable = {
     string: { unit: "\u06A9\u0627\u0631\u0627\u06A9\u062A\u0631", verb: "\u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F" },
     file: { unit: "\u0628\u0627\u06CC\u062A", verb: "\u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F" },
@@ -79444,12 +79200,12 @@ var error12 = () => {
 };
 function fa_default() {
   return {
-    localeError: error12()
+    localeError: error13()
   };
 }
 
 // node_modules/zod/v4/locales/fi.js
-var error13 = () => {
+var error14 = () => {
   const Sizable = {
     string: { unit: "merkki\xE4", subject: "merkkijonon" },
     file: { unit: "tavua", subject: "tiedoston" },
@@ -79557,12 +79313,12 @@ var error13 = () => {
 };
 function fi_default() {
   return {
-    localeError: error13()
+    localeError: error14()
   };
 }
 
 // node_modules/zod/v4/locales/fr.js
-var error14 = () => {
+var error15 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
     file: { unit: "octets", verb: "avoir" },
@@ -79603,9 +79359,27 @@ var error14 = () => {
     template_literal: "entr\xE9e"
   };
   const TypeDictionary = {
-    nan: "NaN",
+    string: "cha\xEEne",
     number: "nombre",
-    array: "tableau"
+    int: "entier",
+    boolean: "bool\xE9en",
+    bigint: "grand entier",
+    symbol: "symbole",
+    undefined: "ind\xE9fini",
+    null: "null",
+    never: "jamais",
+    void: "vide",
+    date: "date",
+    array: "tableau",
+    object: "objet",
+    tuple: "tuple",
+    record: "enregistrement",
+    map: "carte",
+    set: "ensemble",
+    file: "fichier",
+    nonoptional: "non-optionnel",
+    nan: "NaN",
+    function: "fonction"
   };
   return (issue2) => {
     switch (issue2.code) {
@@ -79626,16 +79400,15 @@ var error14 = () => {
         const adj = issue2.inclusive ? "<=" : "<";
         const sizing = getSizing(issue2.origin);
         if (sizing)
-          return `Trop grand : ${issue2.origin ?? "valeur"} doit ${sizing.verb} ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "\xE9l\xE9ment(s)"}`;
-        return `Trop grand : ${issue2.origin ?? "valeur"} doit \xEAtre ${adj}${issue2.maximum.toString()}`;
+          return `Trop grand : ${TypeDictionary[issue2.origin] ?? "valeur"} doit ${sizing.verb} ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "\xE9l\xE9ment(s)"}`;
+        return `Trop grand : ${TypeDictionary[issue2.origin] ?? "valeur"} doit \xEAtre ${adj}${issue2.maximum.toString()}`;
       }
       case "too_small": {
         const adj = issue2.inclusive ? ">=" : ">";
         const sizing = getSizing(issue2.origin);
-        if (sizing) {
-          return `Trop petit : ${issue2.origin} doit ${sizing.verb} ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
-        }
-        return `Trop petit : ${issue2.origin} doit \xEAtre ${adj}${issue2.minimum.toString()}`;
+        if (sizing)
+          return `Trop petit : ${TypeDictionary[issue2.origin] ?? "valeur"} doit ${sizing.verb} ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        return `Trop petit : ${TypeDictionary[issue2.origin] ?? "valeur"} doit \xEAtre ${adj}${issue2.minimum.toString()}`;
       }
       case "invalid_format": {
         const _issue = issue2;
@@ -79666,12 +79439,12 @@ var error14 = () => {
 };
 function fr_default() {
   return {
-    localeError: error14()
+    localeError: error15()
   };
 }
 
 // node_modules/zod/v4/locales/fr-CA.js
-var error15 = () => {
+var error16 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
     file: { unit: "octets", verb: "avoir" },
@@ -79774,12 +79547,12 @@ var error15 = () => {
 };
 function fr_CA_default() {
   return {
-    localeError: error15()
+    localeError: error16()
   };
 }
 
 // node_modules/zod/v4/locales/he.js
-var error16 = () => {
+var error17 = () => {
   const TypeNames = {
     string: { label: "\u05DE\u05D7\u05E8\u05D5\u05D6\u05EA", gender: "f" },
     number: { label: "\u05DE\u05E1\u05E4\u05E8", gender: "m" },
@@ -79969,12 +79742,135 @@ var error16 = () => {
 };
 function he_default() {
   return {
-    localeError: error16()
+    localeError: error17()
+  };
+}
+
+// node_modules/zod/v4/locales/hr.js
+var error18 = () => {
+  const Sizable = {
+    string: { unit: "znakova", verb: "imati" },
+    file: { unit: "bajtova", verb: "imati" },
+    array: { unit: "stavki", verb: "imati" },
+    set: { unit: "stavki", verb: "imati" }
+  };
+  function getSizing(origin) {
+    return Sizable[origin] ?? null;
+  }
+  const FormatDictionary = {
+    regex: "unos",
+    email: "email adresa",
+    url: "URL",
+    emoji: "emoji",
+    uuid: "UUID",
+    uuidv4: "UUIDv4",
+    uuidv6: "UUIDv6",
+    nanoid: "nanoid",
+    guid: "GUID",
+    cuid: "cuid",
+    cuid2: "cuid2",
+    ulid: "ULID",
+    xid: "XID",
+    ksuid: "KSUID",
+    datetime: "ISO datum i vrijeme",
+    date: "ISO datum",
+    time: "ISO vrijeme",
+    duration: "ISO trajanje",
+    ipv4: "IPv4 adresa",
+    ipv6: "IPv6 adresa",
+    cidrv4: "IPv4 raspon",
+    cidrv6: "IPv6 raspon",
+    base64: "base64 kodirani tekst",
+    base64url: "base64url kodirani tekst",
+    json_string: "JSON tekst",
+    e164: "E.164 broj",
+    jwt: "JWT",
+    template_literal: "unos"
+  };
+  const TypeDictionary = {
+    nan: "NaN",
+    string: "tekst",
+    number: "broj",
+    boolean: "boolean",
+    array: "niz",
+    object: "objekt",
+    set: "skup",
+    file: "datoteka",
+    date: "datum",
+    bigint: "bigint",
+    symbol: "simbol",
+    undefined: "undefined",
+    null: "null",
+    function: "funkcija",
+    map: "mapa"
+  };
+  return (issue2) => {
+    switch (issue2.code) {
+      case "invalid_type": {
+        const expected = TypeDictionary[issue2.expected] ?? issue2.expected;
+        const receivedType = parsedType(issue2.input);
+        const received = TypeDictionary[receivedType] ?? receivedType;
+        if (/^[A-Z]/.test(issue2.expected)) {
+          return `Neispravan unos: o\u010Dekuje se instanceof ${issue2.expected}, a primljeno je ${received}`;
+        }
+        return `Neispravan unos: o\u010Dekuje se ${expected}, a primljeno je ${received}`;
+      }
+      case "invalid_value":
+        if (issue2.values.length === 1)
+          return `Neispravna vrijednost: o\u010Dekivano ${stringifyPrimitive(issue2.values[0])}`;
+        return `Neispravna opcija: o\u010Dekivano jedno od ${joinValues(issue2.values, "|")}`;
+      case "too_big": {
+        const adj = issue2.inclusive ? "<=" : "<";
+        const sizing = getSizing(issue2.origin);
+        const origin = TypeDictionary[issue2.origin] ?? issue2.origin;
+        if (sizing)
+          return `Preveliko: o\u010Dekivano da ${origin ?? "vrijednost"} ima ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "elemenata"}`;
+        return `Preveliko: o\u010Dekivano da ${origin ?? "vrijednost"} bude ${adj}${issue2.maximum.toString()}`;
+      }
+      case "too_small": {
+        const adj = issue2.inclusive ? ">=" : ">";
+        const sizing = getSizing(issue2.origin);
+        const origin = TypeDictionary[issue2.origin] ?? issue2.origin;
+        if (sizing) {
+          return `Premalo: o\u010Dekivano da ${origin} ima ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        }
+        return `Premalo: o\u010Dekivano da ${origin} bude ${adj}${issue2.minimum.toString()}`;
+      }
+      case "invalid_format": {
+        const _issue = issue2;
+        if (_issue.format === "starts_with")
+          return `Neispravan tekst: mora zapo\u010Dinjati s "${_issue.prefix}"`;
+        if (_issue.format === "ends_with")
+          return `Neispravan tekst: mora zavr\u0161avati s "${_issue.suffix}"`;
+        if (_issue.format === "includes")
+          return `Neispravan tekst: mora sadr\u017Eavati "${_issue.includes}"`;
+        if (_issue.format === "regex")
+          return `Neispravan tekst: mora odgovarati uzorku ${_issue.pattern}`;
+        return `Neispravna ${FormatDictionary[_issue.format] ?? issue2.format}`;
+      }
+      case "not_multiple_of":
+        return `Neispravan broj: mora biti vi\u0161ekratnik od ${issue2.divisor}`;
+      case "unrecognized_keys":
+        return `Neprepoznat${issue2.keys.length > 1 ? "i klju\u010Devi" : " klju\u010D"}: ${joinValues(issue2.keys, ", ")}`;
+      case "invalid_key":
+        return `Neispravan klju\u010D u ${TypeDictionary[issue2.origin] ?? issue2.origin}`;
+      case "invalid_union":
+        return "Neispravan unos";
+      case "invalid_element":
+        return `Neispravna vrijednost u ${TypeDictionary[issue2.origin] ?? issue2.origin}`;
+      default:
+        return `Neispravan unos`;
+    }
+  };
+};
+function hr_default() {
+  return {
+    localeError: error18()
   };
 }
 
 // node_modules/zod/v4/locales/hu.js
-var error17 = () => {
+var error19 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "legyen" },
     file: { unit: "byte", verb: "legyen" },
@@ -80078,7 +79974,7 @@ var error17 = () => {
 };
 function hu_default() {
   return {
-    localeError: error17()
+    localeError: error19()
   };
 }
 
@@ -80093,7 +79989,7 @@ function withDefiniteArticle(word) {
   const lastChar = word[word.length - 1];
   return word + (vowels.includes(lastChar) ? "\u0576" : "\u0568");
 }
-var error18 = () => {
+var error20 = () => {
   const Sizable = {
     string: {
       unit: {
@@ -80226,12 +80122,12 @@ var error18 = () => {
 };
 function hy_default() {
   return {
-    localeError: error18()
+    localeError: error20()
   };
 }
 
 // node_modules/zod/v4/locales/id.js
-var error19 = () => {
+var error21 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "memiliki" },
     file: { unit: "byte", verb: "memiliki" },
@@ -80333,12 +80229,12 @@ var error19 = () => {
 };
 function id_default() {
   return {
-    localeError: error19()
+    localeError: error21()
   };
 }
 
 // node_modules/zod/v4/locales/is.js
-var error20 = () => {
+var error22 = () => {
   const Sizable = {
     string: { unit: "stafi", verb: "a\xF0 hafa" },
     file: { unit: "b\xE6ti", verb: "a\xF0 hafa" },
@@ -80443,12 +80339,12 @@ var error20 = () => {
 };
 function is_default() {
   return {
-    localeError: error20()
+    localeError: error22()
   };
 }
 
 // node_modules/zod/v4/locales/it.js
-var error21 = () => {
+var error23 = () => {
   const Sizable = {
     string: { unit: "caratteri", verb: "avere" },
     file: { unit: "byte", verb: "avere" },
@@ -80533,7 +80429,7 @@ var error21 = () => {
           return `Stringa non valida: deve includere "${_issue.includes}"`;
         if (_issue.format === "regex")
           return `Stringa non valida: deve corrispondere al pattern ${_issue.pattern}`;
-        return `Invalid ${FormatDictionary[_issue.format] ?? issue2.format}`;
+        return `Input non valido: ${FormatDictionary[_issue.format] ?? issue2.format}`;
       }
       case "not_multiple_of":
         return `Numero non valido: deve essere un multiplo di ${issue2.divisor}`;
@@ -80552,12 +80448,12 @@ var error21 = () => {
 };
 function it_default() {
   return {
-    localeError: error21()
+    localeError: error23()
   };
 }
 
 // node_modules/zod/v4/locales/ja.js
-var error22 = () => {
+var error24 = () => {
   const Sizable = {
     string: { unit: "\u6587\u5B57", verb: "\u3067\u3042\u308B" },
     file: { unit: "\u30D0\u30A4\u30C8", verb: "\u3067\u3042\u308B" },
@@ -80660,12 +80556,12 @@ var error22 = () => {
 };
 function ja_default() {
   return {
-    localeError: error22()
+    localeError: error24()
   };
 }
 
 // node_modules/zod/v4/locales/ka.js
-var error23 = () => {
+var error25 = () => {
   const Sizable = {
     string: { unit: "\u10E1\u10D8\u10DB\u10D1\u10DD\u10DA\u10DD", verb: "\u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D8\u10EA\u10D0\u10D5\u10D3\u10D4\u10E1" },
     file: { unit: "\u10D1\u10D0\u10D8\u10E2\u10D8", verb: "\u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D8\u10EA\u10D0\u10D5\u10D3\u10D4\u10E1" },
@@ -80698,9 +80594,9 @@ var error23 = () => {
     ipv6: "IPv6 \u10DB\u10D8\u10E1\u10D0\u10DB\u10D0\u10E0\u10D7\u10D8",
     cidrv4: "IPv4 \u10D3\u10D8\u10D0\u10DE\u10D0\u10D6\u10DD\u10DC\u10D8",
     cidrv6: "IPv6 \u10D3\u10D8\u10D0\u10DE\u10D0\u10D6\u10DD\u10DC\u10D8",
-    base64: "base64-\u10D9\u10DD\u10D3\u10D8\u10E0\u10D4\u10D1\u10E3\u10DA\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8",
-    base64url: "base64url-\u10D9\u10DD\u10D3\u10D8\u10E0\u10D4\u10D1\u10E3\u10DA\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8",
-    json_string: "JSON \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8",
+    base64: "base64-\u10D9\u10DD\u10D3\u10D8\u10E0\u10D4\u10D1\u10E3\u10DA\u10D8 \u10D5\u10D4\u10DA\u10D8",
+    base64url: "base64url-\u10D9\u10DD\u10D3\u10D8\u10E0\u10D4\u10D1\u10E3\u10DA\u10D8 \u10D5\u10D4\u10DA\u10D8",
+    json_string: "JSON \u10D5\u10D4\u10DA\u10D8",
     e164: "E.164 \u10DC\u10DD\u10DB\u10D4\u10E0\u10D8",
     jwt: "JWT",
     template_literal: "\u10E8\u10D4\u10E7\u10D5\u10D0\u10DC\u10D0"
@@ -80708,7 +80604,7 @@ var error23 = () => {
   const TypeDictionary = {
     nan: "NaN",
     number: "\u10E0\u10D8\u10EA\u10EE\u10D5\u10D8",
-    string: "\u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8",
+    string: "\u10D5\u10D4\u10DA\u10D8",
     boolean: "\u10D1\u10E3\u10DA\u10D4\u10D0\u10DC\u10D8",
     function: "\u10E4\u10E3\u10DC\u10E5\u10EA\u10D8\u10D0",
     array: "\u10DB\u10D0\u10E1\u10D8\u10D5\u10D8"
@@ -80746,14 +80642,14 @@ var error23 = () => {
       case "invalid_format": {
         const _issue = issue2;
         if (_issue.format === "starts_with") {
-          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10D8\u10EC\u10E7\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 "${_issue.prefix}"-\u10D8\u10D7`;
+          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10D5\u10D4\u10DA\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10D8\u10EC\u10E7\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 "${_issue.prefix}"-\u10D8\u10D7`;
         }
         if (_issue.format === "ends_with")
-          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10DB\u10D7\u10D0\u10D5\u10E0\u10D3\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 "${_issue.suffix}"-\u10D8\u10D7`;
+          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10D5\u10D4\u10DA\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10DB\u10D7\u10D0\u10D5\u10E0\u10D3\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 "${_issue.suffix}"-\u10D8\u10D7`;
         if (_issue.format === "includes")
-          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D8\u10EA\u10D0\u10D5\u10D3\u10D4\u10E1 "${_issue.includes}"-\u10E1`;
+          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10D5\u10D4\u10DA\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D8\u10EA\u10D0\u10D5\u10D3\u10D4\u10E1 "${_issue.includes}"-\u10E1`;
         if (_issue.format === "regex")
-          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10E1\u10E2\u10E0\u10D8\u10DC\u10D2\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D4\u10E1\u10D0\u10D1\u10D0\u10DB\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 \u10E8\u10D0\u10D1\u10DA\u10DD\u10DC\u10E1 ${_issue.pattern}`;
+          return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 \u10D5\u10D4\u10DA\u10D8: \u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D4\u10E1\u10D0\u10D1\u10D0\u10DB\u10D4\u10D1\u10DD\u10D3\u10D4\u10E1 \u10E8\u10D0\u10D1\u10DA\u10DD\u10DC\u10E1 ${_issue.pattern}`;
         return `\u10D0\u10E0\u10D0\u10E1\u10EC\u10DD\u10E0\u10D8 ${FormatDictionary[_issue.format] ?? issue2.format}`;
       }
       case "not_multiple_of":
@@ -80773,12 +80669,12 @@ var error23 = () => {
 };
 function ka_default() {
   return {
-    localeError: error23()
+    localeError: error25()
   };
 }
 
 // node_modules/zod/v4/locales/km.js
-var error24 = () => {
+var error26 = () => {
   const Sizable = {
     string: { unit: "\u178F\u17BD\u17A2\u1780\u17D2\u179F\u179A", verb: "\u1782\u17BD\u179A\u1798\u17B6\u1793" },
     file: { unit: "\u1794\u17C3", verb: "\u1782\u17BD\u179A\u1798\u17B6\u1793" },
@@ -80884,7 +80780,7 @@ var error24 = () => {
 };
 function km_default() {
   return {
-    localeError: error24()
+    localeError: error26()
   };
 }
 
@@ -80894,7 +80790,7 @@ function kh_default() {
 }
 
 // node_modules/zod/v4/locales/ko.js
-var error25 = () => {
+var error27 = () => {
   const Sizable = {
     string: { unit: "\uBB38\uC790", verb: "to have" },
     file: { unit: "\uBC14\uC774\uD2B8", verb: "to have" },
@@ -81001,7 +80897,7 @@ var error25 = () => {
 };
 function ko_default() {
   return {
-    localeError: error25()
+    localeError: error27()
   };
 }
 
@@ -81019,7 +80915,7 @@ function getUnitTypeFromNumber(number8) {
     return "one";
   return "few";
 }
-var error26 = () => {
+var error28 = () => {
   const Sizable = {
     string: {
       unit: {
@@ -81205,12 +81101,12 @@ var error26 = () => {
 };
 function lt_default() {
   return {
-    localeError: error26()
+    localeError: error28()
   };
 }
 
 // node_modules/zod/v4/locales/mk.js
-var error27 = () => {
+var error29 = () => {
   const Sizable = {
     string: { unit: "\u0437\u043D\u0430\u0446\u0438", verb: "\u0434\u0430 \u0438\u043C\u0430\u0430\u0442" },
     file: { unit: "\u0431\u0430\u0458\u0442\u0438", verb: "\u0434\u0430 \u0438\u043C\u0430\u0430\u0442" },
@@ -81315,12 +81211,12 @@ var error27 = () => {
 };
 function mk_default() {
   return {
-    localeError: error27()
+    localeError: error29()
   };
 }
 
 // node_modules/zod/v4/locales/ms.js
-var error28 = () => {
+var error30 = () => {
   const Sizable = {
     string: { unit: "aksara", verb: "mempunyai" },
     file: { unit: "bait", verb: "mempunyai" },
@@ -81423,12 +81319,12 @@ var error28 = () => {
 };
 function ms_default() {
   return {
-    localeError: error28()
+    localeError: error30()
   };
 }
 
 // node_modules/zod/v4/locales/nl.js
-var error29 = () => {
+var error31 = () => {
   const Sizable = {
     string: { unit: "tekens", verb: "heeft" },
     file: { unit: "bytes", verb: "heeft" },
@@ -81534,12 +81430,12 @@ var error29 = () => {
 };
 function nl_default() {
   return {
-    localeError: error29()
+    localeError: error31()
   };
 }
 
 // node_modules/zod/v4/locales/no.js
-var error30 = () => {
+var error32 = () => {
   const Sizable = {
     string: { unit: "tegn", verb: "\xE5 ha" },
     file: { unit: "bytes", verb: "\xE5 ha" },
@@ -81643,12 +81539,12 @@ var error30 = () => {
 };
 function no_default() {
   return {
-    localeError: error30()
+    localeError: error32()
   };
 }
 
 // node_modules/zod/v4/locales/ota.js
-var error31 = () => {
+var error33 = () => {
   const Sizable = {
     string: { unit: "harf", verb: "olmal\u0131d\u0131r" },
     file: { unit: "bayt", verb: "olmal\u0131d\u0131r" },
@@ -81753,12 +81649,12 @@ var error31 = () => {
 };
 function ota_default() {
   return {
-    localeError: error31()
+    localeError: error33()
   };
 }
 
 // node_modules/zod/v4/locales/ps.js
-var error32 = () => {
+var error34 = () => {
   const Sizable = {
     string: { unit: "\u062A\u0648\u06A9\u064A", verb: "\u0648\u0644\u0631\u064A" },
     file: { unit: "\u0628\u0627\u06CC\u067C\u0633", verb: "\u0648\u0644\u0631\u064A" },
@@ -81868,12 +81764,12 @@ var error32 = () => {
 };
 function ps_default() {
   return {
-    localeError: error32()
+    localeError: error34()
   };
 }
 
 // node_modules/zod/v4/locales/pl.js
-var error33 = () => {
+var error35 = () => {
   const Sizable = {
     string: { unit: "znak\xF3w", verb: "mie\u0107" },
     file: { unit: "bajt\xF3w", verb: "mie\u0107" },
@@ -81978,12 +81874,12 @@ var error33 = () => {
 };
 function pl_default() {
   return {
-    localeError: error33()
+    localeError: error35()
   };
 }
 
 // node_modules/zod/v4/locales/pt.js
-var error34 = () => {
+var error36 = () => {
   const Sizable = {
     string: { unit: "caracteres", verb: "ter" },
     file: { unit: "bytes", verb: "ter" },
@@ -82087,7 +81983,127 @@ var error34 = () => {
 };
 function pt_default() {
   return {
-    localeError: error34()
+    localeError: error36()
+  };
+}
+
+// node_modules/zod/v4/locales/ro.js
+var error37 = () => {
+  const Sizable = {
+    string: { unit: "caractere", verb: "s\u0103 aib\u0103" },
+    file: { unit: "octe\u021Bi", verb: "s\u0103 aib\u0103" },
+    array: { unit: "elemente", verb: "s\u0103 aib\u0103" },
+    set: { unit: "elemente", verb: "s\u0103 aib\u0103" },
+    map: { unit: "intr\u0103ri", verb: "s\u0103 aib\u0103" }
+  };
+  function getSizing(origin) {
+    return Sizable[origin] ?? null;
+  }
+  const FormatDictionary = {
+    regex: "intrare",
+    email: "adres\u0103 de email",
+    url: "URL",
+    emoji: "emoji",
+    uuid: "UUID",
+    uuidv4: "UUIDv4",
+    uuidv6: "UUIDv6",
+    nanoid: "nanoid",
+    guid: "GUID",
+    cuid: "cuid",
+    cuid2: "cuid2",
+    ulid: "ULID",
+    xid: "XID",
+    ksuid: "KSUID",
+    datetime: "dat\u0103 \u0219i or\u0103 ISO",
+    date: "dat\u0103 ISO",
+    time: "or\u0103 ISO",
+    duration: "durat\u0103 ISO",
+    ipv4: "adres\u0103 IPv4",
+    ipv6: "adres\u0103 IPv6",
+    mac: "adres\u0103 MAC",
+    cidrv4: "interval IPv4",
+    cidrv6: "interval IPv6",
+    base64: "\u0219ir codat base64",
+    base64url: "\u0219ir codat base64url",
+    json_string: "\u0219ir JSON",
+    e164: "num\u0103r E.164",
+    jwt: "JWT",
+    template_literal: "intrare"
+  };
+  const TypeDictionary = {
+    nan: "NaN",
+    string: "\u0219ir",
+    number: "num\u0103r",
+    boolean: "boolean",
+    function: "func\u021Bie",
+    array: "matrice",
+    object: "obiect",
+    undefined: "nedefinit",
+    symbol: "simbol",
+    bigint: "num\u0103r mare",
+    void: "void",
+    never: "never",
+    map: "hart\u0103",
+    set: "set"
+  };
+  return (issue2) => {
+    switch (issue2.code) {
+      case "invalid_type": {
+        const expected = TypeDictionary[issue2.expected] ?? issue2.expected;
+        const receivedType = parsedType(issue2.input);
+        const received = TypeDictionary[receivedType] ?? receivedType;
+        return `Intrare invalid\u0103: a\u0219teptat ${expected}, primit ${received}`;
+      }
+      case "invalid_value":
+        if (issue2.values.length === 1)
+          return `Intrare invalid\u0103: a\u0219teptat ${stringifyPrimitive(issue2.values[0])}`;
+        return `Op\u021Biune invalid\u0103: a\u0219teptat una dintre ${joinValues(issue2.values, "|")}`;
+      case "too_big": {
+        const adj = issue2.inclusive ? "<=" : "<";
+        const sizing = getSizing(issue2.origin);
+        if (sizing)
+          return `Prea mare: a\u0219teptat ca ${issue2.origin ?? "valoarea"} ${sizing.verb} ${adj}${issue2.maximum.toString()} ${sizing.unit ?? "elemente"}`;
+        return `Prea mare: a\u0219teptat ca ${issue2.origin ?? "valoarea"} s\u0103 fie ${adj}${issue2.maximum.toString()}`;
+      }
+      case "too_small": {
+        const adj = issue2.inclusive ? ">=" : ">";
+        const sizing = getSizing(issue2.origin);
+        if (sizing) {
+          return `Prea mic: a\u0219teptat ca ${issue2.origin} ${sizing.verb} ${adj}${issue2.minimum.toString()} ${sizing.unit}`;
+        }
+        return `Prea mic: a\u0219teptat ca ${issue2.origin} s\u0103 fie ${adj}${issue2.minimum.toString()}`;
+      }
+      case "invalid_format": {
+        const _issue = issue2;
+        if (_issue.format === "starts_with") {
+          return `\u0218ir invalid: trebuie s\u0103 \xEEnceap\u0103 cu "${_issue.prefix}"`;
+        }
+        if (_issue.format === "ends_with")
+          return `\u0218ir invalid: trebuie s\u0103 se termine cu "${_issue.suffix}"`;
+        if (_issue.format === "includes")
+          return `\u0218ir invalid: trebuie s\u0103 includ\u0103 "${_issue.includes}"`;
+        if (_issue.format === "regex")
+          return `\u0218ir invalid: trebuie s\u0103 se potriveasc\u0103 cu modelul ${_issue.pattern}`;
+        return `Format invalid: ${FormatDictionary[_issue.format] ?? issue2.format}`;
+      }
+      case "not_multiple_of":
+        return `Num\u0103r invalid: trebuie s\u0103 fie multiplu de ${issue2.divisor}`;
+      case "unrecognized_keys":
+        return `Chei nerecunoscute: ${joinValues(issue2.keys, ", ")}`;
+      case "invalid_key":
+        return `Cheie invalid\u0103 \xEEn ${issue2.origin}`;
+      case "invalid_union":
+        return "Intrare invalid\u0103";
+      case "invalid_element":
+        return `Valoare invalid\u0103 \xEEn ${issue2.origin}`;
+      default:
+        return `Intrare invalid\u0103`;
+    }
+  };
+};
+function ro_default() {
+  return {
+    localeError: error37()
   };
 }
 
@@ -82107,7 +82123,7 @@ function getRussianPlural(count, one2, few, many) {
   }
   return many;
 }
-var error35 = () => {
+var error38 = () => {
   const Sizable = {
     string: {
       unit: {
@@ -82244,12 +82260,12 @@ var error35 = () => {
 };
 function ru_default() {
   return {
-    localeError: error35()
+    localeError: error38()
   };
 }
 
 // node_modules/zod/v4/locales/sl.js
-var error36 = () => {
+var error39 = () => {
   const Sizable = {
     string: { unit: "znakov", verb: "imeti" },
     file: { unit: "bajtov", verb: "imeti" },
@@ -82354,12 +82370,12 @@ var error36 = () => {
 };
 function sl_default() {
   return {
-    localeError: error36()
+    localeError: error39()
   };
 }
 
 // node_modules/zod/v4/locales/sv.js
-var error37 = () => {
+var error40 = () => {
   const Sizable = {
     string: { unit: "tecken", verb: "att ha" },
     file: { unit: "bytes", verb: "att ha" },
@@ -82465,12 +82481,12 @@ var error37 = () => {
 };
 function sv_default() {
   return {
-    localeError: error37()
+    localeError: error40()
   };
 }
 
 // node_modules/zod/v4/locales/ta.js
-var error38 = () => {
+var error41 = () => {
   const Sizable = {
     string: { unit: "\u0B8E\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0B95\u0BCD\u0B95\u0BB3\u0BCD", verb: "\u0B95\u0BCA\u0BA3\u0BCD\u0B9F\u0BBF\u0BB0\u0BC1\u0B95\u0BCD\u0B95 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD" },
     file: { unit: "\u0BAA\u0BC8\u0B9F\u0BCD\u0B9F\u0BC1\u0B95\u0BB3\u0BCD", verb: "\u0B95\u0BCA\u0BA3\u0BCD\u0B9F\u0BBF\u0BB0\u0BC1\u0B95\u0BCD\u0B95 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD" },
@@ -82576,12 +82592,12 @@ var error38 = () => {
 };
 function ta_default() {
   return {
-    localeError: error38()
+    localeError: error41()
   };
 }
 
 // node_modules/zod/v4/locales/th.js
-var error39 = () => {
+var error42 = () => {
   const Sizable = {
     string: { unit: "\u0E15\u0E31\u0E27\u0E2D\u0E31\u0E01\u0E29\u0E23", verb: "\u0E04\u0E27\u0E23\u0E21\u0E35" },
     file: { unit: "\u0E44\u0E1A\u0E15\u0E4C", verb: "\u0E04\u0E27\u0E23\u0E21\u0E35" },
@@ -82687,12 +82703,12 @@ var error39 = () => {
 };
 function th_default() {
   return {
-    localeError: error39()
+    localeError: error42()
   };
 }
 
 // node_modules/zod/v4/locales/tr.js
-var error40 = () => {
+var error43 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "olmal\u0131" },
     file: { unit: "bayt", verb: "olmal\u0131" },
@@ -82793,12 +82809,12 @@ var error40 = () => {
 };
 function tr_default() {
   return {
-    localeError: error40()
+    localeError: error43()
   };
 }
 
 // node_modules/zod/v4/locales/uk.js
-var error41 = () => {
+var error44 = () => {
   const Sizable = {
     string: { unit: "\u0441\u0438\u043C\u0432\u043E\u043B\u0456\u0432", verb: "\u043C\u0430\u0442\u0438\u043C\u0435" },
     file: { unit: "\u0431\u0430\u0439\u0442\u0456\u0432", verb: "\u043C\u0430\u0442\u0438\u043C\u0435" },
@@ -82902,7 +82918,7 @@ var error41 = () => {
 };
 function uk_default() {
   return {
-    localeError: error41()
+    localeError: error44()
   };
 }
 
@@ -82912,7 +82928,7 @@ function ua_default() {
 }
 
 // node_modules/zod/v4/locales/ur.js
-var error42 = () => {
+var error45 = () => {
   const Sizable = {
     string: { unit: "\u062D\u0631\u0648\u0641", verb: "\u06C1\u0648\u0646\u0627" },
     file: { unit: "\u0628\u0627\u0626\u0679\u0633", verb: "\u06C1\u0648\u0646\u0627" },
@@ -83018,17 +83034,18 @@ var error42 = () => {
 };
 function ur_default() {
   return {
-    localeError: error42()
+    localeError: error45()
   };
 }
 
 // node_modules/zod/v4/locales/uz.js
-var error43 = () => {
+var error46 = () => {
   const Sizable = {
     string: { unit: "belgi", verb: "bo\u2018lishi kerak" },
     file: { unit: "bayt", verb: "bo\u2018lishi kerak" },
     array: { unit: "element", verb: "bo\u2018lishi kerak" },
-    set: { unit: "element", verb: "bo\u2018lishi kerak" }
+    set: { unit: "element", verb: "bo\u2018lishi kerak" },
+    map: { unit: "yozuv", verb: "bo\u2018lishi kerak" }
   };
   function getSizing(origin) {
     return Sizable[origin] ?? null;
@@ -83128,12 +83145,12 @@ var error43 = () => {
 };
 function uz_default() {
   return {
-    localeError: error43()
+    localeError: error46()
   };
 }
 
 // node_modules/zod/v4/locales/vi.js
-var error44 = () => {
+var error47 = () => {
   const Sizable = {
     string: { unit: "k\xFD t\u1EF1", verb: "c\xF3" },
     file: { unit: "byte", verb: "c\xF3" },
@@ -83237,12 +83254,12 @@ var error44 = () => {
 };
 function vi_default() {
   return {
-    localeError: error44()
+    localeError: error47()
   };
 }
 
 // node_modules/zod/v4/locales/zh-CN.js
-var error45 = () => {
+var error48 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u7B26", verb: "\u5305\u542B" },
     file: { unit: "\u5B57\u8282", verb: "\u5305\u542B" },
@@ -83347,12 +83364,12 @@ var error45 = () => {
 };
 function zh_CN_default() {
   return {
-    localeError: error45()
+    localeError: error48()
   };
 }
 
 // node_modules/zod/v4/locales/zh-TW.js
-var error46 = () => {
+var error49 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u5143", verb: "\u64C1\u6709" },
     file: { unit: "\u4F4D\u5143\u7D44", verb: "\u64C1\u6709" },
@@ -83455,12 +83472,12 @@ var error46 = () => {
 };
 function zh_TW_default() {
   return {
-    localeError: error46()
+    localeError: error49()
   };
 }
 
 // node_modules/zod/v4/locales/yo.js
-var error47 = () => {
+var error50 = () => {
   const Sizable = {
     string: { unit: "\xE0mi", verb: "n\xED" },
     file: { unit: "bytes", verb: "n\xED" },
@@ -83563,12 +83580,12 @@ var error47 = () => {
 };
 function yo_default() {
   return {
-    localeError: error47()
+    localeError: error50()
   };
 }
 
 // node_modules/zod/v4/core/registries.js
-var _a;
+var _a2;
 var $output = /* @__PURE__ */ Symbol("ZodOutput");
 var $input = /* @__PURE__ */ Symbol("ZodInput");
 var $ZodRegistry = class {
@@ -83614,7 +83631,7 @@ var $ZodRegistry = class {
 function registry() {
   return new $ZodRegistry();
 }
-(_a = globalThis).__zod_globalRegistry ?? (_a.__zod_globalRegistry = registry());
+(_a2 = globalThis).__zod_globalRegistry ?? (_a2.__zod_globalRegistry = registry());
 var globalRegistry = globalThis.__zod_globalRegistry;
 
 // node_modules/zod/v4/core/api.js
@@ -84532,7 +84549,7 @@ function _refine(Class2, fn, _params) {
   return schema;
 }
 // @__NO_SIDE_EFFECTS__
-function _superRefine(fn) {
+function _superRefine(fn, params) {
   const ch = /* @__PURE__ */ _check((payload) => {
     payload.addIssue = (issue2) => {
       if (typeof issue2 === "string") {
@@ -84549,7 +84566,7 @@ function _superRefine(fn) {
       }
     };
     return fn(payload.value, payload);
-  });
+  }, params);
   return ch;
 }
 // @__NO_SIDE_EFFECTS__
@@ -84679,7 +84696,7 @@ function initializeContext(params) {
   };
 }
 function process2(schema, ctx, _params = { path: [], schemaPath: [] }) {
-  var _a2;
+  var _a3;
   const def = schema._zod.def;
   const seen = ctx.seen.get(schema);
   if (seen) {
@@ -84726,8 +84743,8 @@ function process2(schema, ctx, _params = { path: [], schemaPath: [] }) {
     delete result.schema.examples;
     delete result.schema.default;
   }
-  if (ctx.io === "input" && result.schema._prefault)
-    (_a2 = result.schema).default ?? (_a2.default = result.schema._prefault);
+  if (ctx.io === "input" && "_prefault" in result.schema)
+    (_a3 = result.schema).default ?? (_a3.default = result.schema._prefault);
   delete result.schema._prefault;
   const _result = ctx.seen.get(schema);
   return _result.schema;
@@ -84908,10 +84925,15 @@ function finalize(ctx, schema) {
     result.$id = ctx.external.uri(id2);
   }
   Object.assign(result, root2.def ?? root2.schema);
+  const rootMetaId = ctx.metadataRegistry.get(schema)?.id;
+  if (rootMetaId !== void 0 && result.id === rootMetaId)
+    delete result.id;
   const defs = ctx.external?.defs ?? {};
   for (const entry of ctx.seen.entries()) {
     const seen = entry[1];
     if (seen.def && seen.defId) {
+      if (seen.def.id === seen.defId)
+        delete seen.def.id;
       defs[seen.defId] = seen.def;
     }
   }
@@ -84967,6 +84989,8 @@ function isTransforming(_schema, _ctx) {
     return isTransforming(def.keyType, ctx) || isTransforming(def.valueType, ctx);
   }
   if (def.type === "pipe") {
+    if (_schema._zod.traits.has("$ZodCodec"))
+      return true;
     return isTransforming(def.in, ctx) || isTransforming(def.out, ctx);
   }
   if (def.type === "object") {
@@ -85056,39 +85080,28 @@ var numberProcessor = (schema, ctx, _json, _params) => {
     json2.type = "integer";
   else
     json2.type = "number";
-  if (typeof exclusiveMinimum === "number") {
-    if (ctx.target === "draft-04" || ctx.target === "openapi-3.0") {
+  const exMin = typeof exclusiveMinimum === "number" && exclusiveMinimum >= (minimum ?? Number.NEGATIVE_INFINITY);
+  const exMax = typeof exclusiveMaximum === "number" && exclusiveMaximum <= (maximum ?? Number.POSITIVE_INFINITY);
+  const legacy = ctx.target === "draft-04" || ctx.target === "openapi-3.0";
+  if (exMin) {
+    if (legacy) {
       json2.minimum = exclusiveMinimum;
       json2.exclusiveMinimum = true;
     } else {
       json2.exclusiveMinimum = exclusiveMinimum;
     }
-  }
-  if (typeof minimum === "number") {
+  } else if (typeof minimum === "number") {
     json2.minimum = minimum;
-    if (typeof exclusiveMinimum === "number" && ctx.target !== "draft-04") {
-      if (exclusiveMinimum >= minimum)
-        delete json2.minimum;
-      else
-        delete json2.exclusiveMinimum;
-    }
   }
-  if (typeof exclusiveMaximum === "number") {
-    if (ctx.target === "draft-04" || ctx.target === "openapi-3.0") {
+  if (exMax) {
+    if (legacy) {
       json2.maximum = exclusiveMaximum;
       json2.exclusiveMaximum = true;
     } else {
       json2.exclusiveMaximum = exclusiveMaximum;
     }
-  }
-  if (typeof maximum === "number") {
+  } else if (typeof maximum === "number") {
     json2.maximum = maximum;
-    if (typeof exclusiveMaximum === "number" && ctx.target !== "draft-04") {
-      if (exclusiveMaximum <= maximum)
-        delete json2.maximum;
-      else
-        delete json2.exclusiveMaximum;
-    }
   }
   if (typeof multipleOf === "number")
     json2.multipleOf = multipleOf;
@@ -85260,7 +85273,10 @@ var arrayProcessor = (schema, ctx, _json, params) => {
   if (typeof maximum === "number")
     json2.maxItems = maximum;
   json2.type = "array";
-  json2.items = process2(def.element, ctx, { ...params, path: [...params.path, "items"] });
+  json2.items = process2(def.element, ctx, {
+    ...params,
+    path: [...params.path, "items"]
+  });
 };
 var objectProcessor = (schema, ctx, _json, params) => {
   const json2 = _json;
@@ -85453,7 +85469,8 @@ var catchProcessor = (schema, ctx, json2, params) => {
 };
 var pipeProcessor = (schema, ctx, _json, params) => {
   const def = schema._zod.def;
-  const innerType = ctx.io === "input" ? def.in._zod.def.type === "transform" ? def.out : def.in : def.out;
+  const inIsTransform = def.in._zod.traits.has("$ZodTransform");
+  const innerType = ctx.io === "input" ? inIsTransform ? def.out : def.in : def.out;
   process2(innerType, ctx, params);
   const seen = ctx.seen.get(schema);
   seen.ref = innerType;
@@ -85687,6 +85704,7 @@ __export(schemas_exports2, {
   ZodOptional: () => ZodOptional,
   ZodPipe: () => ZodPipe,
   ZodPrefault: () => ZodPrefault,
+  ZodPreprocess: () => ZodPreprocess,
   ZodPromise: () => ZodPromise,
   ZodReadonly: () => ZodReadonly,
   ZodRecord: () => ZodRecord,
@@ -85747,6 +85765,7 @@ __export(schemas_exports2, {
   int32: () => int32,
   int64: () => int64,
   intersection: () => intersection,
+  invertCodec: () => invertCodec,
   ipv4: () => ipv42,
   ipv6: () => ipv62,
   json: () => json,
@@ -85916,8 +85935,8 @@ var initializer2 = (inst, issues) => {
     }
   });
 };
-var ZodError = $constructor("ZodError", initializer2);
-var ZodRealError = $constructor("ZodError", initializer2, {
+var ZodError = /* @__PURE__ */ $constructor("ZodError", initializer2);
+var ZodRealError = /* @__PURE__ */ $constructor("ZodError", initializer2, {
   Parent: Error
 });
 
@@ -85936,6 +85955,43 @@ var safeEncodeAsync2 = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
 var safeDecodeAsync2 = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
 
 // node_modules/zod/v4/classic/schemas.js
+var _installedGroups = /* @__PURE__ */ new WeakMap();
+function _installLazyMethods(inst, group, methods) {
+  const proto = Object.getPrototypeOf(inst);
+  let installed = _installedGroups.get(proto);
+  if (!installed) {
+    installed = /* @__PURE__ */ new Set();
+    _installedGroups.set(proto, installed);
+  }
+  if (installed.has(group))
+    return;
+  installed.add(group);
+  for (const key in methods) {
+    const fn = methods[key];
+    Object.defineProperty(proto, key, {
+      configurable: true,
+      enumerable: false,
+      get() {
+        const bound = fn.bind(this);
+        Object.defineProperty(this, key, {
+          configurable: true,
+          writable: true,
+          enumerable: true,
+          value: bound
+        });
+        return bound;
+      },
+      set(v) {
+        Object.defineProperty(this, key, {
+          configurable: true,
+          writable: true,
+          enumerable: true,
+          value: v
+        });
+      }
+    });
+  }
+}
 var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   $ZodType.init(inst, def);
   Object.assign(inst["~standard"], {
@@ -85948,23 +86004,6 @@ var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   inst.def = def;
   inst.type = def.type;
   Object.defineProperty(inst, "_def", { value: def });
-  inst.check = (...checks) => {
-    return inst.clone(util_exports2.mergeDefs(def, {
-      checks: [
-        ...def.checks ?? [],
-        ...checks.map((ch) => typeof ch === "function" ? { _zod: { check: ch, def: { check: "custom" }, onattach: [] } } : ch)
-      ]
-    }), {
-      parent: true
-    });
-  };
-  inst.with = inst.check;
-  inst.clone = (def2, params) => clone2(inst, def2, params);
-  inst.brand = () => inst;
-  inst.register = ((reg, meta3) => {
-    reg.add(inst, meta3);
-    return inst;
-  });
   inst.parse = (data, params) => parse4(inst, data, params, { callee: inst.parse });
   inst.safeParse = (data, params) => safeParse2(inst, data, params);
   inst.parseAsync = async (data, params) => parseAsync2(inst, data, params, { callee: inst.parseAsync });
@@ -85978,45 +86017,108 @@ var ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
   inst.safeDecode = (data, params) => safeDecode2(inst, data, params);
   inst.safeEncodeAsync = async (data, params) => safeEncodeAsync2(inst, data, params);
   inst.safeDecodeAsync = async (data, params) => safeDecodeAsync2(inst, data, params);
-  inst.refine = (check2, params) => inst.check(refine(check2, params));
-  inst.superRefine = (refinement) => inst.check(superRefine(refinement));
-  inst.overwrite = (fn) => inst.check(_overwrite(fn));
-  inst.optional = () => optional(inst);
-  inst.exactOptional = () => exactOptional(inst);
-  inst.nullable = () => nullable(inst);
-  inst.nullish = () => optional(nullable(inst));
-  inst.nonoptional = (params) => nonoptional(inst, params);
-  inst.array = () => array2(inst);
-  inst.or = (arg) => union([inst, arg]);
-  inst.and = (arg) => intersection(inst, arg);
-  inst.transform = (tx) => pipe(inst, transform(tx));
-  inst.default = (def2) => _default2(inst, def2);
-  inst.prefault = (def2) => prefault(inst, def2);
-  inst.catch = (params) => _catch2(inst, params);
-  inst.pipe = (target) => pipe(inst, target);
-  inst.readonly = () => readonly(inst);
-  inst.describe = (description) => {
-    const cl = inst.clone();
-    globalRegistry.add(cl, { description });
-    return cl;
-  };
+  _installLazyMethods(inst, "ZodType", {
+    check(...chks) {
+      const def2 = this.def;
+      return this.clone(util_exports2.mergeDefs(def2, {
+        checks: [
+          ...def2.checks ?? [],
+          ...chks.map((ch) => typeof ch === "function" ? { _zod: { check: ch, def: { check: "custom" }, onattach: [] } } : ch)
+        ]
+      }), { parent: true });
+    },
+    with(...chks) {
+      return this.check(...chks);
+    },
+    clone(def2, params) {
+      return clone2(this, def2, params);
+    },
+    brand() {
+      return this;
+    },
+    register(reg, meta3) {
+      reg.add(this, meta3);
+      return this;
+    },
+    refine(check2, params) {
+      return this.check(refine(check2, params));
+    },
+    superRefine(refinement, params) {
+      return this.check(superRefine(refinement, params));
+    },
+    overwrite(fn) {
+      return this.check(_overwrite(fn));
+    },
+    optional() {
+      return optional(this);
+    },
+    exactOptional() {
+      return exactOptional(this);
+    },
+    nullable() {
+      return nullable(this);
+    },
+    nullish() {
+      return optional(nullable(this));
+    },
+    nonoptional(params) {
+      return nonoptional(this, params);
+    },
+    array() {
+      return array2(this);
+    },
+    or(arg) {
+      return union([this, arg]);
+    },
+    and(arg) {
+      return intersection(this, arg);
+    },
+    transform(tx) {
+      return pipe(this, transform(tx));
+    },
+    default(d) {
+      return _default2(this, d);
+    },
+    prefault(d) {
+      return prefault(this, d);
+    },
+    catch(params) {
+      return _catch2(this, params);
+    },
+    pipe(target) {
+      return pipe(this, target);
+    },
+    readonly() {
+      return readonly(this);
+    },
+    describe(description) {
+      const cl = this.clone();
+      globalRegistry.add(cl, { description });
+      return cl;
+    },
+    meta(...args) {
+      if (args.length === 0)
+        return globalRegistry.get(this);
+      const cl = this.clone();
+      globalRegistry.add(cl, args[0]);
+      return cl;
+    },
+    isOptional() {
+      return this.safeParse(void 0).success;
+    },
+    isNullable() {
+      return this.safeParse(null).success;
+    },
+    apply(fn) {
+      return fn(this);
+    }
+  });
   Object.defineProperty(inst, "description", {
     get() {
       return globalRegistry.get(inst)?.description;
     },
     configurable: true
   });
-  inst.meta = (...args) => {
-    if (args.length === 0) {
-      return globalRegistry.get(inst);
-    }
-    const cl = inst.clone();
-    globalRegistry.add(cl, args[0]);
-    return cl;
-  };
-  inst.isOptional = () => inst.safeParse(void 0).success;
-  inst.isNullable = () => inst.safeParse(null).success;
-  inst.apply = (fn) => fn(inst);
   return inst;
 });
 var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
@@ -86027,21 +86129,53 @@ var _ZodString = /* @__PURE__ */ $constructor("_ZodString", (inst, def) => {
   inst.format = bag.format ?? null;
   inst.minLength = bag.minimum ?? null;
   inst.maxLength = bag.maximum ?? null;
-  inst.regex = (...args) => inst.check(_regex(...args));
-  inst.includes = (...args) => inst.check(_includes(...args));
-  inst.startsWith = (...args) => inst.check(_startsWith(...args));
-  inst.endsWith = (...args) => inst.check(_endsWith(...args));
-  inst.min = (...args) => inst.check(_minLength(...args));
-  inst.max = (...args) => inst.check(_maxLength(...args));
-  inst.length = (...args) => inst.check(_length(...args));
-  inst.nonempty = (...args) => inst.check(_minLength(1, ...args));
-  inst.lowercase = (params) => inst.check(_lowercase(params));
-  inst.uppercase = (params) => inst.check(_uppercase(params));
-  inst.trim = () => inst.check(_trim());
-  inst.normalize = (...args) => inst.check(_normalize(...args));
-  inst.toLowerCase = () => inst.check(_toLowerCase());
-  inst.toUpperCase = () => inst.check(_toUpperCase());
-  inst.slugify = () => inst.check(_slugify());
+  _installLazyMethods(inst, "_ZodString", {
+    regex(...args) {
+      return this.check(_regex(...args));
+    },
+    includes(...args) {
+      return this.check(_includes(...args));
+    },
+    startsWith(...args) {
+      return this.check(_startsWith(...args));
+    },
+    endsWith(...args) {
+      return this.check(_endsWith(...args));
+    },
+    min(...args) {
+      return this.check(_minLength(...args));
+    },
+    max(...args) {
+      return this.check(_maxLength(...args));
+    },
+    length(...args) {
+      return this.check(_length(...args));
+    },
+    nonempty(...args) {
+      return this.check(_minLength(1, ...args));
+    },
+    lowercase(params) {
+      return this.check(_lowercase(params));
+    },
+    uppercase(params) {
+      return this.check(_uppercase(params));
+    },
+    trim() {
+      return this.check(_trim());
+    },
+    normalize(...args) {
+      return this.check(_normalize(...args));
+    },
+    toLowerCase() {
+      return this.check(_toLowerCase());
+    },
+    toUpperCase() {
+      return this.check(_toUpperCase());
+    },
+    slugify() {
+      return this.check(_slugify());
+    }
+  });
 });
 var ZodString = /* @__PURE__ */ $constructor("ZodString", (inst, def) => {
   $ZodString.init(inst, def);
@@ -86120,7 +86254,7 @@ function url(params) {
 }
 function httpUrl(params) {
   return _url(ZodURL, {
-    protocol: /^https?$/,
+    protocol: regexes_exports.httpProtocol,
     hostname: regexes_exports.domain,
     ...util_exports2.normalizeParams(params)
   });
@@ -86262,21 +86396,53 @@ var ZodNumber = /* @__PURE__ */ $constructor("ZodNumber", (inst, def) => {
   $ZodNumber.init(inst, def);
   ZodType.init(inst, def);
   inst._zod.processJSONSchema = (ctx, json2, params) => numberProcessor(inst, ctx, json2, params);
-  inst.gt = (value, params) => inst.check(_gt(value, params));
-  inst.gte = (value, params) => inst.check(_gte(value, params));
-  inst.min = (value, params) => inst.check(_gte(value, params));
-  inst.lt = (value, params) => inst.check(_lt(value, params));
-  inst.lte = (value, params) => inst.check(_lte(value, params));
-  inst.max = (value, params) => inst.check(_lte(value, params));
-  inst.int = (params) => inst.check(int2(params));
-  inst.safe = (params) => inst.check(int2(params));
-  inst.positive = (params) => inst.check(_gt(0, params));
-  inst.nonnegative = (params) => inst.check(_gte(0, params));
-  inst.negative = (params) => inst.check(_lt(0, params));
-  inst.nonpositive = (params) => inst.check(_lte(0, params));
-  inst.multipleOf = (value, params) => inst.check(_multipleOf(value, params));
-  inst.step = (value, params) => inst.check(_multipleOf(value, params));
-  inst.finite = () => inst;
+  _installLazyMethods(inst, "ZodNumber", {
+    gt(value, params) {
+      return this.check(_gt(value, params));
+    },
+    gte(value, params) {
+      return this.check(_gte(value, params));
+    },
+    min(value, params) {
+      return this.check(_gte(value, params));
+    },
+    lt(value, params) {
+      return this.check(_lt(value, params));
+    },
+    lte(value, params) {
+      return this.check(_lte(value, params));
+    },
+    max(value, params) {
+      return this.check(_lte(value, params));
+    },
+    int(params) {
+      return this.check(int2(params));
+    },
+    safe(params) {
+      return this.check(int2(params));
+    },
+    positive(params) {
+      return this.check(_gt(0, params));
+    },
+    nonnegative(params) {
+      return this.check(_gte(0, params));
+    },
+    negative(params) {
+      return this.check(_lt(0, params));
+    },
+    nonpositive(params) {
+      return this.check(_lte(0, params));
+    },
+    multipleOf(value, params) {
+      return this.check(_multipleOf(value, params));
+    },
+    step(value, params) {
+      return this.check(_multipleOf(value, params));
+    },
+    finite() {
+      return this;
+    }
+  });
   const bag = inst._zod.bag;
   inst.minValue = Math.max(bag.minimum ?? Number.NEGATIVE_INFINITY, bag.exclusiveMinimum ?? Number.NEGATIVE_INFINITY) ?? null;
   inst.maxValue = Math.min(bag.maximum ?? Number.POSITIVE_INFINITY, bag.exclusiveMaximum ?? Number.POSITIVE_INFINITY) ?? null;
@@ -86423,11 +86589,23 @@ var ZodArray = /* @__PURE__ */ $constructor("ZodArray", (inst, def) => {
   ZodType.init(inst, def);
   inst._zod.processJSONSchema = (ctx, json2, params) => arrayProcessor(inst, ctx, json2, params);
   inst.element = def.element;
-  inst.min = (minLength, params) => inst.check(_minLength(minLength, params));
-  inst.nonempty = (params) => inst.check(_minLength(1, params));
-  inst.max = (maxLength, params) => inst.check(_maxLength(maxLength, params));
-  inst.length = (len, params) => inst.check(_length(len, params));
-  inst.unwrap = () => inst.element;
+  _installLazyMethods(inst, "ZodArray", {
+    min(n2, params) {
+      return this.check(_minLength(n2, params));
+    },
+    nonempty(params) {
+      return this.check(_minLength(1, params));
+    },
+    max(n2, params) {
+      return this.check(_maxLength(n2, params));
+    },
+    length(n2, params) {
+      return this.check(_length(n2, params));
+    },
+    unwrap() {
+      return this.element;
+    }
+  });
 });
 function array2(element, params) {
   return _array(ZodArray, element, params);
@@ -86443,23 +86621,47 @@ var ZodObject = /* @__PURE__ */ $constructor("ZodObject", (inst, def) => {
   util_exports2.defineLazy(inst, "shape", () => {
     return def.shape;
   });
-  inst.keyof = () => _enum2(Object.keys(inst._zod.def.shape));
-  inst.catchall = (catchall) => inst.clone({ ...inst._zod.def, catchall });
-  inst.passthrough = () => inst.clone({ ...inst._zod.def, catchall: unknown() });
-  inst.loose = () => inst.clone({ ...inst._zod.def, catchall: unknown() });
-  inst.strict = () => inst.clone({ ...inst._zod.def, catchall: never() });
-  inst.strip = () => inst.clone({ ...inst._zod.def, catchall: void 0 });
-  inst.extend = (incoming) => {
-    return util_exports2.extend(inst, incoming);
-  };
-  inst.safeExtend = (incoming) => {
-    return util_exports2.safeExtend(inst, incoming);
-  };
-  inst.merge = (other) => util_exports2.merge(inst, other);
-  inst.pick = (mask) => util_exports2.pick(inst, mask);
-  inst.omit = (mask) => util_exports2.omit(inst, mask);
-  inst.partial = (...args) => util_exports2.partial(ZodOptional, inst, args[0]);
-  inst.required = (...args) => util_exports2.required(ZodNonOptional, inst, args[0]);
+  _installLazyMethods(inst, "ZodObject", {
+    keyof() {
+      return _enum2(Object.keys(this._zod.def.shape));
+    },
+    catchall(catchall) {
+      return this.clone({ ...this._zod.def, catchall });
+    },
+    passthrough() {
+      return this.clone({ ...this._zod.def, catchall: unknown() });
+    },
+    loose() {
+      return this.clone({ ...this._zod.def, catchall: unknown() });
+    },
+    strict() {
+      return this.clone({ ...this._zod.def, catchall: never() });
+    },
+    strip() {
+      return this.clone({ ...this._zod.def, catchall: void 0 });
+    },
+    extend(incoming) {
+      return util_exports2.extend(this, incoming);
+    },
+    safeExtend(incoming) {
+      return util_exports2.safeExtend(this, incoming);
+    },
+    merge(other) {
+      return util_exports2.merge(this, other);
+    },
+    pick(mask) {
+      return util_exports2.pick(this, mask);
+    },
+    omit(mask) {
+      return util_exports2.omit(this, mask);
+    },
+    partial(...args) {
+      return util_exports2.partial(ZodOptional, this, args[0]);
+    },
+    required(...args) {
+      return util_exports2.required(ZodNonOptional, this, args[0]);
+    }
+  });
 });
 function object(shape, params) {
   const def = {
@@ -86564,6 +86766,14 @@ var ZodRecord = /* @__PURE__ */ $constructor("ZodRecord", (inst, def) => {
   inst.valueType = def.valueType;
 });
 function record(keyType, valueType, params) {
+  if (!valueType || !valueType._zod) {
+    return new ZodRecord({
+      type: "record",
+      keyType: string2(),
+      valueType: keyType,
+      ...util_exports2.normalizeParams(valueType)
+    });
+  }
   return new ZodRecord({
     type: "record",
     keyType,
@@ -86735,10 +86945,12 @@ var ZodTransform = /* @__PURE__ */ $constructor("ZodTransform", (inst, def) => {
     if (output instanceof Promise) {
       return output.then((output2) => {
         payload.value = output2;
+        payload.fallback = true;
         return payload;
       });
     }
     payload.value = output;
+    payload.fallback = true;
     return payload;
   };
 });
@@ -86893,6 +87105,20 @@ function codec(in_, out, params) {
     reverseTransform: params.encode
   });
 }
+function invertCodec(codec2) {
+  const def = codec2._zod.def;
+  return new ZodCodec({
+    type: "pipe",
+    in: def.out,
+    out: def.in,
+    transform: def.reverseTransform,
+    reverseTransform: def.transform
+  });
+}
+var ZodPreprocess = /* @__PURE__ */ $constructor("ZodPreprocess", (inst, def) => {
+  ZodPipe.init(inst, def);
+  $ZodPreprocess.init(inst, def);
+});
 var ZodReadonly = /* @__PURE__ */ $constructor("ZodReadonly", (inst, def) => {
   $ZodReadonly.init(inst, def);
   ZodType.init(inst, def);
@@ -86972,8 +87198,8 @@ function custom(fn, _params) {
 function refine(fn, _params = {}) {
   return _refine(ZodCustom, fn, _params);
 }
-function superRefine(fn) {
-  return _superRefine(fn);
+function superRefine(fn, params) {
+  return _superRefine(fn, params);
 }
 var describe2 = describe;
 var meta2 = meta;
@@ -87011,7 +87237,11 @@ function json(params) {
   return jsonSchema;
 }
 function preprocess(fn, schema) {
-  return pipe(transform(fn), schema);
+  return new ZodPreprocess({
+    type: "pipe",
+    in: transform(fn),
+    out: schema
+  });
 }
 
 // node_modules/zod/v4/classic/compat.js
@@ -87432,12 +87662,6 @@ function convertBaseSchema(schema, ctx) {
     default:
       throw new Error(`Unsupported type: ${type}`);
   }
-  if (schema.description) {
-    zodSchema = zodSchema.describe(schema.description);
-  }
-  if (schema.default !== void 0) {
-    zodSchema = zodSchema.default(schema.default);
-  }
   return zodSchema;
 }
 function convertSchema(schema, ctx) {
@@ -87474,6 +87698,9 @@ function convertSchema(schema, ctx) {
   if (schema.readOnly === true) {
     baseSchema = z.readonly(baseSchema);
   }
+  if (schema.default !== void 0) {
+    baseSchema = baseSchema.default(schema.default);
+  }
   const extraMeta = {};
   const coreMetadataKeys = ["$id", "id", "$comment", "$anchor", "$vocabulary", "$dynamicRef", "$dynamicAnchor"];
   for (const key of coreMetadataKeys) {
@@ -87495,23 +87722,32 @@ function convertSchema(schema, ctx) {
   if (Object.keys(extraMeta).length > 0) {
     ctx.registry.add(baseSchema, extraMeta);
   }
+  if (schema.description) {
+    baseSchema = baseSchema.describe(schema.description);
+  }
   return baseSchema;
 }
 function fromJSONSchema(schema, params) {
   if (typeof schema === "boolean") {
     return schema ? z.any() : z.never();
   }
-  const version3 = detectVersion(schema, params?.defaultTarget);
-  const defs = schema.$defs || schema.definitions || {};
+  let normalized;
+  try {
+    normalized = JSON.parse(JSON.stringify(schema));
+  } catch {
+    throw new Error("fromJSONSchema input is not valid JSON (possibly cyclic); use $defs/$ref for recursive schemas");
+  }
+  const version3 = detectVersion(normalized, params?.defaultTarget);
+  const defs = normalized.$defs || normalized.definitions || {};
   const ctx = {
     version: version3,
     defs,
     refs: /* @__PURE__ */ new Map(),
     processing: /* @__PURE__ */ new Set(),
-    rootSchema: schema,
+    rootSchema: normalized,
     registry: params?.registry ?? globalRegistry
   };
-  return convertSchema(schema, ctx);
+  return convertSchema(normalized, ctx);
 }
 
 // node_modules/zod/v4/classic/coerce.js
@@ -87542,7 +87778,7 @@ function date5(params) {
 // node_modules/zod/v4/classic/external.js
 config(en_default());
 
-// src/nws.ts
+// src/nws.mts
 function loadNWSPointInfo(lat, lon) {
   const fetchInit = defaultFetchInitObj();
   fetchInit["headers"] = {
@@ -87721,7 +87957,7 @@ var NWSObservation = NWSBaseObj.extend({
   })
 });
 
-// src/ringserverweb.ts
+// src/ringserverweb.mts
 var ringserverweb_exports = {};
 __export(ringserverweb_exports, {
   DATALINK_PATH: () => DATALINK_PATH2,
@@ -87735,7 +87971,7 @@ __export(ringserverweb_exports, {
   typeForId: () => typeForId2
 });
 
-// src/ringserverweb4.ts
+// src/ringserverweb4.mts
 var ringserverweb4_exports = {};
 __export(ringserverweb4_exports, {
   DATALINK_PATH: () => DATALINK_PATH,
@@ -87743,6 +87979,7 @@ __export(ringserverweb4_exports, {
   IRIS_HOST: () => IRIS_HOST2,
   RingserverConnection: () => RingserverConnection,
   SEEDLINK_PATH: () => SEEDLINK_PATH,
+  calcLatency: () => calcLatency,
   sidForId: () => sidForId,
   stationsFromStreams: () => stationsFromStreams,
   typeForId: () => typeForId
@@ -87772,23 +88009,13 @@ var StreamsResult = external_exports.object({
   stream: external_exports.array(StreamStat2),
   accessTime: external_exports.custom((d) => d instanceof DateTime).optional()
 });
-var IRIS_HOST2 = "rtserve.iris.washington.edu";
 var EARTHSCOPE_HOST2 = "rtserve.earthscope.org";
+var IRIS_HOST2 = EARTHSCOPE_HOST2;
 var RingserverConnection = class {
   constructor(host, port) {
-    /** @private */
-    __publicField(this, "_protocol");
-    /** @private */
-    __publicField(this, "_host");
-    /** @private */
-    __publicField(this, "_port");
-    /** @private */
-    __publicField(this, "_prefix");
-    /** @private */
-    __publicField(this, "_timeoutSec");
-    __publicField(this, "isFDSNSourceId", false);
-    __publicField(this, "dlproto", "1.0");
-    const hostStr = isNonEmptyStringArg(host) ? host : IRIS_HOST2;
+    this.isFDSNSourceId = false;
+    this.dlproto = "1.0";
+    const hostStr = isNonEmptyStringArg(host) ? host : EARTHSCOPE_HOST2;
     if (hostStr.startsWith("http")) {
       const rs_url = new URL(hostStr);
       this._host = rs_url.hostname;
@@ -87934,13 +88161,12 @@ var RingserverConnection = class {
    *  The optional matchPattern is a regular expression, so for example
    *  '.+_JSC_00_HH.' would get all HH? channels from any station name JSC.
    *
-   * @param level 1-6
    * @param matchPattern regular expression to match
    * @returns Result as a Promise.
    */
   pullStreamIds(matchPattern) {
     let queryParams = "";
-    if (matchPattern && matchPattern.length > 0) {
+    if (matchPattern != null && matchPattern.length > 0) {
       queryParams = queryParams + "&match=" + matchPattern;
     }
     const url2 = this.formStreamIdsURL(queryParams);
@@ -88007,11 +88233,18 @@ var RingserverConnection = class {
    * @returns the string url
    */
   formBaseURL() {
-    if (this._port === 0) {
-      this._port = 80;
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    let colon = ":";
+    if (protocol.endsWith(colon)) {
+      colon = "";
     }
-    const port = defaultPortStringForProtocol(this._protocol, this._port);
-    return `${checkProtocol(this._protocol)}//${this._host}${port}${this._prefix}`;
+    let port;
+    if (this._port === 0) {
+      port = defaultPortStringForProtocol(protocol, 80);
+    } else {
+      port = defaultPortStringForProtocol(protocol, this._port);
+    }
+    return `${checkProtocol(protocol)}${colon}//${this._host}${port}${this._prefix}`;
   }
   /**
    * Forms the ringserver id/json url.
@@ -88037,7 +88270,16 @@ var RingserverConnection = class {
    * @returns the stream ids url
    */
   formStreamIdsURL(queryParams) {
-    return appendToPath(this.formBaseURL(), "streamids") + (queryParams && queryParams.length > 0 ? "?" + queryParams : "");
+    let qpStr = "";
+    if (queryParams != null && queryParams.length > 0) {
+      if (queryParams.startsWith("&")) {
+        queryParams = queryParams.substring(1);
+      }
+      qpStr = `?${queryParams}`;
+    }
+    const path2 = appendToPath(this.formBaseURL(), "streamids");
+    const out = `${path2}${qpStr}`;
+    return out;
   }
 };
 function stationsFromStreams(streams) {
@@ -88073,6 +88315,9 @@ function stationsFromStreams(streams) {
   }
   return Array.from(out.values());
 }
+function calcLatency(stat) {
+  return Interval.fromDateTimes(stat.end_time, DateTime.utc()).toDuration();
+}
 function typeForId(id2) {
   const split = id2.split("/");
   if (split.length >= 2) {
@@ -88097,25 +88342,15 @@ function sidForId(id2) {
   return null;
 }
 
-// src/ringserverweb.ts
+// src/ringserverweb.mts
 var SEEDLINK_PATH2 = "seedlink";
 var DATALINK_PATH2 = "datalink";
 var IRIS_HOST3 = "rtserve.iris.washington.edu";
 var ORG = "Organization: ";
 var RingserverConnection2 = class {
   constructor(host, port) {
-    /** @private */
-    __publicField(this, "_protocol");
-    /** @private */
-    __publicField(this, "_host");
-    /** @private */
-    __publicField(this, "_port");
-    /** @private */
-    __publicField(this, "_prefix");
-    /** @private */
-    __publicField(this, "_timeoutSec");
-    __publicField(this, "isFDSNSourceId", false);
-    __publicField(this, "dlproto", "1.0");
+    this.isFDSNSourceId = false;
+    this.dlproto = "1.0";
     const hostStr = isNonEmptyStringArg(host) ? host : IRIS_HOST3;
     if (hostStr.startsWith("http")) {
       const rs_url = new URL(hostStr);
@@ -88377,8 +88612,6 @@ function stationsFromStreams2(streams) {
 }
 var NslcWithType = class {
   constructor(type, nslc) {
-    __publicField(this, "type");
-    __publicField(this, "nslc");
     this.type = type;
     this.nslc = nslc;
   }
@@ -88415,11 +88648,6 @@ function nslcSplit(id2) {
 }
 var StreamStat3 = class {
   constructor(key, start2, end) {
-    __publicField(this, "key");
-    __publicField(this, "startRaw");
-    __publicField(this, "endRaw");
-    __publicField(this, "start");
-    __publicField(this, "end");
     this.key = key;
     this.startRaw = start2;
     this.endRaw = end;
@@ -88455,7 +88683,7 @@ var StreamStat3 = class {
   }
 };
 
-// src/sacpolezero.ts
+// src/sacpolezero.mts
 var sacpolezero_exports = {};
 __export(sacpolezero_exports, {
   SacPoleZero: () => SacPoleZero,
@@ -88465,26 +88693,6 @@ __export(sacpolezero_exports, {
 });
 var SacPoleZero = class _SacPoleZero {
   constructor(poles, zeros, constant) {
-    /**
-     * Complex poles
-     */
-    __publicField(this, "poles");
-    /**
-     * Complex zeros
-     */
-    __publicField(this, "zeros");
-    /**
-     * Scalar overall gain
-     */
-    __publicField(this, "constant");
-    /** number of zeros added to convert to displacement, for debugging */
-    __publicField(this, "gamma");
-    /** hertz/radian factor, for debugging */
-    __publicField(this, "mulFactor");
-    /** sensitivity accounting for gamma, for debugging */
-    __publicField(this, "sd");
-    /** normalization factor for poles and zeros accounting for gamma, for debugging */
-    __publicField(this, "A0");
     this.poles = poles;
     this.zeros = zeros;
     this.constant = constant;
@@ -88586,8 +88794,8 @@ var SacPoleZero = class _SacPoleZero {
       constant: 1
     };
     const lines = data.split("\n");
-    let numZeros = 0;
-    let numPoles = 0;
+    let numZeros;
+    let numPoles;
     let i = 0;
     while (i < lines.length) {
       let l2 = lines[i];
@@ -88659,7 +88867,7 @@ function linspace(start2, stop, num) {
   return out;
 }
 
-// src/seedlink.ts
+// src/seedlink.mts
 var seedlink_exports = {};
 __export(seedlink_exports, {
   SeedlinkConnection: () => SeedlinkConnection2,
@@ -88668,19 +88876,13 @@ __export(seedlink_exports, {
 var WS_SEEDLINK3_SUBPROTOCOL = "SeedLink3.1";
 var SeedlinkConnection2 = class {
   constructor(url2, requestConfig, receiveMiniseedFn, errorHandler) {
-    __publicField(this, "url");
-    __publicField(this, "requestConfig");
-    __publicField(this, "receiveMiniseedFn");
-    __publicField(this, "errorHandler");
-    __publicField(this, "closeFn");
-    __publicField(this, "webSocket");
-    __publicField(this, "subprotocol");
-    __publicField(this, "command");
-    __publicField(this, "helloLines", []);
+    this.helloLines = [];
     this.url = url2;
     this.requestConfig = requestConfig;
     this.receiveMiniseedFn = receiveMiniseedFn;
     this.errorHandler = errorHandler;
+    this.logCommandFn = (msg) => {
+    };
     this.closeFn = null;
     this.command = "DATA";
     this.webSocket = null;
@@ -88710,7 +88912,11 @@ var SeedlinkConnection2 = class {
       this.webSocket.onmessage = (event) => {
         this.handle(event);
       };
-      this.webSocket.send("END\r");
+      const cmd = "END\r";
+      if (this.logCommandFn) {
+        this.logCommandFn(cmd);
+      }
+      this.webSocket.send(cmd);
       return val;
     }).catch((err) => {
       this.close();
@@ -88824,6 +89030,7 @@ var SeedlinkConnection2 = class {
    * @returns            Promise that resolves to the response from the server.
    */
   sendHello() {
+    const mythis = this;
     const webSocket = this.webSocket;
     const promise2 = new Promise(function(resolve, reject) {
       if (webSocket) {
@@ -88831,6 +89038,9 @@ var SeedlinkConnection2 = class {
           if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data));
+            if (mythis.logCommandFn) {
+              mythis.logCommandFn(replyMsg);
+            }
             const lines = replyMsg.trim().split("\r");
             if (lines.length === 2) {
               resolve([lines[0], lines[1]]);
@@ -88841,7 +89051,11 @@ var SeedlinkConnection2 = class {
             reject(new Error("event.data not ArrayBufferLike?"));
           }
         };
-        webSocket.send("HELLO\r");
+        const cmd = "HELLO\r";
+        if (mythis.logCommandFn) {
+          mythis.logCommandFn(cmd);
+        }
+        webSocket.send(cmd);
       } else {
         reject(new Error("webSocket has been closed"));
       }
@@ -88870,6 +89084,7 @@ var SeedlinkConnection2 = class {
    * @returns        Promise that resolves to the reply from the server.
    */
   createCmdPromise(mycmd) {
+    const mythis = this;
     const webSocket = this.webSocket;
     const promise2 = new Promise(function(resolve, reject) {
       if (webSocket) {
@@ -88877,6 +89092,9 @@ var SeedlinkConnection2 = class {
           if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data)).trim();
+            if (mythis.logCommandFn) {
+              mythis.logCommandFn(replyMsg);
+            }
             if (replyMsg === "OK") {
               resolve(replyMsg);
             } else {
@@ -88886,6 +89104,9 @@ var SeedlinkConnection2 = class {
             reject(new Error("event.data not ArrayBufferLike?"));
           }
         };
+        if (mythis.logCommandFn) {
+          mythis.logCommandFn(mycmd);
+        }
         webSocket.send(mycmd + "\r\n");
       } else {
         reject(new Error("webSocket has been closed"));
@@ -88899,37 +89120,29 @@ var SeedlinkConnection2 = class {
    * @private
    * @param   error the error
    */
-  handleError(error48) {
+  handleError(error51) {
     if (this.errorHandler) {
-      this.errorHandler(error48);
+      this.errorHandler(error51);
     } else {
-      log("seedlink handleError: " + error48.message);
+      log("seedlink handleError: " + error51.message);
     }
   }
 };
 
-// src/seismogramloader.ts
+// src/seismogramloader.mts
 var seismogramloader_exports = {};
 __export(seismogramloader_exports, {
   SeismogramLoader: () => SeismogramLoader
 });
 
-// src/irisfedcatalog.ts
+// src/irisfedcatalog.mts
 var IRISFEDCAT_SERVICE = "fedcatalog";
 var SERVICE_VERSION5 = 1;
-var SERVICE_NAME5 = `irisws-${IRISFEDCAT_SERVICE}-${SERVICE_VERSION5}`;
+var SERVICE_NAME5 = `${IRISWS_PATH_BASE}-${IRISFEDCAT_SERVICE}-${SERVICE_VERSION5}`;
 var TARGET_DATASELECT = "dataselect";
 var FAKE_EMPTY_TEXT = "\n";
 var FedCatalogDataCenter = class {
   constructor() {
-    __publicField(this, "dataCenter");
-    __publicField(this, "services");
-    __publicField(this, "stationService");
-    __publicField(this, "dataSelectService");
-    __publicField(this, "postLines");
-    __publicField(this, "stationQuery");
-    __publicField(this, "dataSelectQuery");
-    __publicField(this, "level");
     this.dataCenter = "";
     this.stationService = "";
     this.dataSelectService = "";
@@ -88983,8 +89196,6 @@ var FedCatalogDataCenter = class {
 };
 var FedCatalogResult = class {
   constructor() {
-    __publicField(this, "params");
-    __publicField(this, "queries");
     this.params = /* @__PURE__ */ new Map();
     this.queries = [];
   }
@@ -88993,64 +89204,13 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
   /**
    * Construct a query
    *
-   * @param host the host to connect to , defaults to service.iris.edu
+   * @param host the host to connect to , defaults to service.earthscope.org
    */
   constructor(host) {
     if (!isNonEmptyStringArg(host)) {
-      host = IRIS_HOST;
+      host = EARTHSCOPE_HOST;
     }
     super(IRISFEDCAT_SERVICE, host);
-    /** @private */
-    __publicField(this, "_targetService");
-    /** @private */
-    __publicField(this, "_level");
-    /** @private */
-    __publicField(this, "_networkCode");
-    /** @private */
-    __publicField(this, "_stationCode");
-    /** @private */
-    __publicField(this, "_locationCode");
-    /** @private */
-    __publicField(this, "_channelCode");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_startBefore");
-    /** @private */
-    __publicField(this, "_endBefore");
-    /** @private */
-    __publicField(this, "_startAfter");
-    /** @private */
-    __publicField(this, "_endAfter");
-    /** @private */
-    __publicField(this, "_minLat");
-    /** @private */
-    __publicField(this, "_maxLat");
-    /** @private */
-    __publicField(this, "_minLon");
-    /** @private */
-    __publicField(this, "_maxLon");
-    /** @private */
-    __publicField(this, "_latitude");
-    /** @private */
-    __publicField(this, "_longitude");
-    /** @private */
-    __publicField(this, "_minRadius");
-    /** @private */
-    __publicField(this, "_maxRadius");
-    /** @private */
-    __publicField(this, "_includeRestricted");
-    /** @private */
-    __publicField(this, "_includeAvailability");
-    /** @private */
-    __publicField(this, "_format");
-    /** @private */
-    __publicField(this, "_updatedAfter");
-    /** @private */
-    __publicField(this, "_matchTimeseries");
-    __publicField(this, "fedCatResult");
     this._path_base = IRISWS_PATH_BASE;
     this.fedCatResult = null;
   }
@@ -89892,12 +90052,13 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = appendToPath(appendToPath(this._path_base, this._service), this._specVersion);
-    return appendToPath(`${this._protocol}${colon}//${this._host}${port}`, path2);
+    return appendToPath(`${protocol}${colon}//${this._host}${port}`, path2);
   }
   /**
    * Form URL to post the remote web service. No parameters are added
@@ -90002,20 +90163,9 @@ var FedCatalogQuery = class _FedCatalogQuery extends FDSNCommon {
   }
 };
 
-// src/seismogramloader.ts
+// src/seismogramloader.mts
 var SeismogramLoader = class {
   constructor(stationQuery, eventQuery, dataselectQuery) {
-    __publicField(this, "stationQuery");
-    __publicField(this, "withFedCatalog");
-    __publicField(this, "withResponse");
-    __publicField(this, "markOrigin");
-    __publicField(this, "eventQuery");
-    __publicField(this, "dataselectQuery");
-    __publicField(this, "_startPhaseList");
-    __publicField(this, "_endPhaseList");
-    __publicField(this, "_markedPhaseList");
-    __publicField(this, "_startOffset");
-    __publicField(this, "_endOffset");
     if (stationQuery instanceof StationQuery) {
       this.stationQuery = stationQuery;
     } else if (Array.isArray(stationQuery)) {
@@ -90327,7 +90477,7 @@ var SeismogramLoader = class {
   }
 };
 
-// src/seismographconfigeditor.ts
+// src/seismographconfigeditor.mts
 var seismographconfigeditor_exports = {};
 __export(seismographconfigeditor_exports, {
   configEditor_css: () => configEditor_css,
@@ -90581,7 +90731,7 @@ if (document) {
   insertCSS(configEditor_css, "configeditor");
 }
 
-// src/syngine.ts
+// src/syngine.mts
 var syngine_exports = {};
 __export(syngine_exports, {
   SERVICE_NAME: () => SERVICE_NAME6,
@@ -90592,80 +90742,16 @@ __export(syngine_exports, {
 });
 var SYNGINE_SERVICE = "syngine";
 var SERVICE_VERSION6 = 1;
-var SERVICE_NAME6 = `irisws-${SYNGINE_SERVICE}-${SERVICE_VERSION6}`;
+var SERVICE_NAME6 = `${IRISWS_PATH_BASE}-${SYNGINE_SERVICE}-${SERVICE_VERSION6}`;
 function calcMoment(Mw) {
   return 10 ** (Mw / 2 * 3 + 9.1);
 }
 var SyngineQuery = class extends FDSNCommon {
   constructor(host) {
     if (!isNonEmptyStringArg(host)) {
-      host = IRIS_HOST;
+      host = EARTHSCOPE_HOST;
     }
     super(SYNGINE_SERVICE, host);
-    /** @private */
-    __publicField(this, "_model");
-    /** @private */
-    __publicField(this, "_label");
-    /** @private */
-    __publicField(this, "_components");
-    /** @private */
-    __publicField(this, "_units");
-    /** @private */
-    __publicField(this, "_dt");
-    /** @private */
-    __publicField(this, "_scale");
-    /** @private */
-    __publicField(this, "_kernelwidth");
-    /** @private */
-    __publicField(this, "_sourcewidth");
-    /** @private */
-    __publicField(this, "_originTime");
-    /** @private */
-    __publicField(this, "_startTime");
-    /** @private */
-    __publicField(this, "_endTime");
-    /** @private */
-    __publicField(this, "_receiverlatitude");
-    /** @private */
-    __publicField(this, "_receiverlongitude");
-    /** @private */
-    __publicField(this, "_network");
-    /** @private */
-    __publicField(this, "_station");
-    /** @private */
-    __publicField(this, "_networkCode");
-    /** @private */
-    __publicField(this, "_stationCode");
-    /** @private */
-    __publicField(this, "_locationCode");
-    __publicField(this, "_channel");
-    // source-options
-    /** @private */
-    __publicField(this, "_eventid");
-    /** @private */
-    __publicField(this, "_quake");
-    /** @private */
-    __publicField(this, "_sourcelatitude");
-    /** @private */
-    __publicField(this, "_sourcelongitude");
-    /** @private */
-    __publicField(this, "_sourcedepthinmeters");
-    /** @private */
-    __publicField(this, "_sourcedistanceindegrees");
-    /** @private */
-    __publicField(this, "_greensfunction");
-    /** @private */
-    __publicField(this, "_sourcemomenttensor");
-    /** @private */
-    __publicField(this, "_sourcedoublecouple");
-    /** @private */
-    __publicField(this, "_sourceforce");
-    // USGS Finite Fault Model
-    // Todo
-    // Custom Source Time Function
-    // Todo
-    /** @private */
-    __publicField(this, "_format");
     this._path_base = IRISWS_PATH_BASE;
   }
   /**
@@ -91198,12 +91284,13 @@ var SyngineQuery = class extends FDSNCommon {
    */
   formBaseURL() {
     let colon = ":";
-    if (this._protocol.endsWith(colon)) {
+    const protocol = protocolForKnownHost(this._host, this._protocol);
+    if (protocol.endsWith(colon)) {
       colon = "";
     }
-    const port = this.defaultPortStringForProtocol(this._protocol);
+    const port = this.defaultPortStringForProtocol(protocol);
     const path2 = `${this._path_base}/${this._service}/${this._specVersion}`;
-    return appendToPath(`${this._protocol}${colon}//${this._host}${port}`, path2);
+    return appendToPath(`${protocol}${colon}//${this._host}${port}`, path2);
   }
   formVersionURL() {
     return appendToPath(this.formBaseURL(), "version");
@@ -91330,7 +91417,7 @@ var SyngineQuery = class extends FDSNCommon {
   }
 };
 
-// src/taper.ts
+// src/taper.mts
 var taper_exports = {};
 __export(taper_exports, {
   COSINE: () => COSINE,
@@ -91384,7 +91471,7 @@ var HANNING = "HANNING";
 var HAMMING = "HAMMING";
 var COSINE = "COSINE";
 
-// src/taup3.ts
+// src/taup3.mts
 var taup3_exports = {};
 __export(taup3_exports, {
   FAKE_EMPTY_SVG: () => FAKE_EMPTY_SVG2,
@@ -91466,28 +91553,6 @@ var TauPQuery = class extends FDSNCommon {
       host = USC_HOST;
     }
     super(TAUP_SERVICE, host);
-    /** @private */
-    __publicField(this, "_evdepth");
-    /** @private */
-    __publicField(this, "_distdeg");
-    /** @private */
-    __publicField(this, "_model");
-    /** @private */
-    __publicField(this, "_phases");
-    /** @private */
-    __publicField(this, "_stalat");
-    /** @private */
-    __publicField(this, "_stalon");
-    /** @private */
-    __publicField(this, "_receiverdepth");
-    /** @private */
-    __publicField(this, "_evlat");
-    /** @private */
-    __publicField(this, "_evlon");
-    /** @private */
-    __publicField(this, "_format");
-    /** @private */
-    __publicField(this, "_noheader");
     this.specVersion("3");
     this._path_base = LOCALWS_PATH_BASE;
     this._evdepth = [0];
@@ -91874,7 +91939,7 @@ var FAKE_EMPTY_SVG2 = `
 </svg>
 `;
 
-// src/transfer.ts
+// src/transfer.mts
 var transfer_exports = {};
 __export(transfer_exports, {
   METER: () => METER,
@@ -91988,7 +92053,7 @@ var Converter = class {
    * @throws OperationOrderError, UnknownUnitError, IncompatibleUnitError, MeasureStructureError
    */
   to(to) {
-    var _a2, _b;
+    var _a3, _b;
     if (this.origin == null)
       throw new Error(".to must be called after .from");
     this.destination = this.getUnit(to);
@@ -92017,7 +92082,7 @@ var Converter = class {
       if (anchor == null) {
         throw new MeasureStructureError(`Unable to find anchor for "${origin.measure}" to "${destination.measure}". Please make sure it is defined.`);
       }
-      const transform2 = (_a2 = anchor[destination.system]) === null || _a2 === void 0 ? void 0 : _a2.transform;
+      const transform2 = (_a3 = anchor[destination.system]) === null || _a3 === void 0 ? void 0 : _a3.transform;
       const ratio = (_b = anchor[destination.system]) === null || _b === void 0 ? void 0 : _b.ratio;
       if (typeof transform2 === "function") {
         result = transform2(result, this.cls);
@@ -92040,7 +92105,7 @@ var Converter = class {
    * @throws OperationOrderError
    */
   toBest(options) {
-    var _a2, _b, _c;
+    var _a3, _b, _c;
     if (this.origin == null)
       throw new OperationOrderError(".toBest must be called after .from");
     const isNegative = this.cls.lt(this.val, 0);
@@ -92048,7 +92113,7 @@ var Converter = class {
     let cutOffNumber = isNegative ? -1 : 1;
     let system = this.origin.system;
     if (typeof options === "object") {
-      exclude = (_a2 = options.exclude) !== null && _a2 !== void 0 ? _a2 : [];
+      exclude = (_a3 = options.exclude) !== null && _a3 !== void 0 ? _a3 : [];
       cutOffNumber = (_b = options.cutOffNumber) !== null && _b !== void 0 ? _b : cutOffNumber;
       system = (_c = options.system) !== null && _c !== void 0 ? _c : this.origin.system;
     }
@@ -92085,8 +92150,8 @@ var Converter = class {
    * Finds the unit
    */
   getUnit(abbr) {
-    var _a2;
-    return (_a2 = this.unitCache.get(abbr)) !== null && _a2 !== void 0 ? _a2 : null;
+    var _a3;
+    return (_a3 = this.unitCache.get(abbr)) !== null && _a3 !== void 0 ? _a3 : null;
   }
   /**
    * Provides additional information about the unit
@@ -95013,7 +95078,7 @@ var allMeasures = {
 };
 var all_default = allMeasures;
 
-// src/transfer.ts
+// src/transfer.mts
 var convert = configureMeasurements(all_default);
 function transfer(seis, response, lowCut, lowPass, highPass, highCut) {
   if (!response) {
@@ -95062,7 +95127,7 @@ function calcResponse(response, numPoints, sampleRate, unit3) {
   const sacPoleZero = convertToSacPoleZero(response);
   const siUnit = unit3.replaceAll("**", "");
   const unitQty = convert(1).getUnit(siUnit);
-  let gamma2 = 0;
+  let gamma2;
   if (unitQty === null) {
     throw new Error("unknown response unit: " + unit3);
   } else if (unitQty.measure === "length") {
@@ -95253,7 +95318,6 @@ function convertPoleZeroToSacStyle(polesZeros, sensitivity, sensitivity_freq, ga
       polesZeros.poles[i].imag() * mulFactor
     );
   }
-  let constant = polesZeros.normalizationFactor;
   let sd = sensitivity;
   const fs = sensitivity_freq;
   sd *= Math.pow(2 * Math.PI * fs, gamma2);
@@ -95266,6 +95330,7 @@ function convertPoleZeroToSacStyle(polesZeros, sensitivity, sensitivity_freq, ga
       polesZeros.poles.length - polesZeros.zeros.length
     );
   }
+  let constant;
   if (poles.length === 0 && zeros.length === 0) {
     constant = sd * A0;
   } else {
@@ -95292,7 +95357,7 @@ function calc_A0(poles, zeros, ref_freq) {
   return a0;
 }
 
-// src/usgsgeojson.ts
+// src/usgsgeojson.mts
 var usgsgeojson_exports = {};
 __export(usgsgeojson_exports, {
   USGS_TECTONIC_SUMMARY_URL: () => USGS_TECTONIC_SUMMARY_URL,
@@ -95507,11 +95572,11 @@ function parseFeatureAsQuake(feature) {
   );
   origin.depth = feature.geometry.coordinates[2] * 1e3;
   quake.originList.push(origin);
-  const mag = new Magnitude(p.mag);
-  mag.type = p.magType;
-  quake.magnitudeList.push(mag);
+  const mag = p?.mag != null ? new Magnitude(p.mag) : ZERO_MAGNITUDE;
+  mag.type = p.magType ? p.magType : ZERO_MAGNITUDE.type;
   quake.preferredOrigin = origin;
   quake.preferredMagnitude = mag;
+  quake.magnitudeList.push(mag);
   return quake;
 }
 function isValidUSGSGeoJsonSummary(jsonValue) {
@@ -95638,7 +95703,7 @@ function isValidUSGSTectonic(jsonValue) {
   return true;
 }
 
-// src/vector.ts
+// src/vector.mts
 var vector_exports = {};
 __export(vector_exports, {
   DtoR: () => DtoR,
@@ -95649,11 +95714,6 @@ __export(vector_exports, {
 var DtoR = Math.PI / 180;
 var RotatedSeismograms = class {
   constructor(radial, azimuthRadial, transverse, azimuthTransverse, rotation) {
-    __publicField(this, "radial");
-    __publicField(this, "transverse");
-    __publicField(this, "azimuthRadial");
-    __publicField(this, "azimuthTransverse");
-    __publicField(this, "rotation");
     this.radial = radial;
     this.azimuthRadial = azimuthRadial;
     this.transverse = transverse;
@@ -95785,7 +95845,7 @@ function vectorMagnitudeSegment(seisA, seisB, seisC, orientCode) {
   return outSeis;
 }
 
-// src/index.ts
+// src/index.mts
 var OregonDSP2 = __toESM(require_oregondsp(), 1);
 var leaflet = __toESM(require_leaflet_src(), 1);
 export {
