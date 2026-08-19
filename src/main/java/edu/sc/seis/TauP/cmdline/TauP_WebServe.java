@@ -490,8 +490,9 @@ public class TauP_WebServe extends TauP_Tool {
             "o", "output", "help", "version",
             "debug", "verbose", "prop", "phasefile",
             "nd", "tvel", "modmerge", "ndmerge", "tvelmerge",
-            "staxml", "quakeml",
-            "sid", "eid"
+            "staxml", "quakeml"
+            // should allow remote access to sid and eid?
+            //"sid", "eid"
     );
 
     public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,

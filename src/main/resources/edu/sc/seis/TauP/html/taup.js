@@ -343,7 +343,9 @@ export async function display_results(taup_url) {
         seismograph.draw();
 
         // load syngine
-        let isSyngine = document.querySelector('input[name="issyngine"]').checked;
+        // maybe shouldn't allow via web? disable by comment out in html
+        const syngineCheckbox = document.querySelector('input[name="issyngine"]');
+        let isSyngine = (syngineCheckbox==null)?false:syngineCheckbox.checked;
         let syngineSeisProm = [];
         if (isSyngine) {
           let modelName = getModelName();
@@ -381,6 +383,7 @@ export function clearErrorMessages() {
 }
 
 export function displayErrorMessage(title, the_url, exception) {
+  console.error(exception);
   console.log(title);
   const container_el = document.querySelector("#messages");
   const msgDiv = document.createElement("div");
@@ -742,7 +745,7 @@ export function form_tool_url() {
       let rake = document.querySelector('input[name="rake"]').value;
       let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
       url += `&strikediprake=${strike},${dip},${rake}`;
-      if (toolname === 'curve' || toolname === 'find' ) {
+      if (toolname === 'curve' || toolname === 'find' || toolname === 'beachball' ) {
         // spikes uses distance az field
         let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
         url += `&az=${curveazimuth}`;

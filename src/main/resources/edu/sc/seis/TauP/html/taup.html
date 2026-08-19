@@ -299,10 +299,10 @@
 
       <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront tool_spikes">
           <legend>Scattering:</legend>
+          <input type="checkbox" id="isscatter" name="isscatter" />
           <label for="isscatter">
               <span>Scatter: </span>
           </label>
-          <input type="checkbox" id="isscatter" name="isscatter" />
 
           <label for="scatdepth">
               <span>Depth (km): </span>
@@ -317,10 +317,10 @@
       <fieldset class="tool_time tool_curve tool_find tool_spikes tool_beachball">
         <legend>Amplitude:</legend>
         <div>
+          <input type="checkbox" id="amp" name="amplitude"  />
           <label for="amp">
               <span>Amplitude: </span>
           </label>
-          <input type="checkbox" id="amp" name="amplitude"  />
 
           <label for="mw">
               <span>Mw: </span>
@@ -364,7 +364,7 @@
             <input id="usgsfaulteid" name="usgsfaulteid" value="se609212" />
           </span>
 
-          <span class="for_tool tool_curve">
+          <span class="for_tool tool_curve tool_beachball">
             <label for="curveazimuth">
                 <span>Azimuth: </span>
             </label>
@@ -410,24 +410,26 @@
           <label for="bbnumpoints">
               <span>Num Points: </span>
           </label>
-          <input type="number" id="bbnumpoints" name="bbnumpoints" value="2000" />
+          <input type="number" id="bbnumpoints" name="bbnumpoints" value="1000" />
           <label for="bbgridstep">
               <span>Grid step: </span>
           </label>
           <input type="number" id="bbgridstep" name="bbgridstep" value="0.5" />
         </div>
       </fieldset>
+      <!-- maybe not allow syngine in web?
       <fieldset class="tool_spikes">
         <legend>Spikes:</legend>
         <div>
           <input type="checkbox" id="issyngine" name="issyngine" checked />
           <label for="issyngine">
               <span>Overlay
-                <a href="https://service.iris.edu/irisws/syngine/1/">
+                <a href="https://service.earthscope.org/irisws/syngine/1/">
                   Syngine</a>: </span>
           </label>
         </div>
       </fieldset>
+    -->
       <fieldset class="tool_find">
         <legend>Find:</legend>
         <div>
