@@ -9,7 +9,10 @@ seismic sources, optionally overlain by takeoff angles for seismic phases,
 and arrivals at their takeoff and azimuth.
 
 Note that only phases starting with a P leg will plot on the P beachball, and only phases starting with
-an S leg will plot on the Sv, Sh and S beachball.
+an S leg will plot on the Sv, Sh and S beachball. The S beachball is plotted
+as the vector magnitude of the combination of Sh and Sv waves, which means that
+it is always positive and so does not show the quadrant effect as do the
+other three types.
 
 For example, this command plots a beachball, phase distance circles and
 a few arrivals.

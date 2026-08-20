@@ -149,17 +149,19 @@ propagating rays, must collectively have an imaginary component as well in
 order to satisfy the boundary conditions and energy conservation at the
 interface. Both of these cases will result in a phase shift of the arrival.
 
-Amplitudes calculations also have potential numerical issues for horizontal
-rays leaving the source, and at 180 degree distance. In both cases the
+Amplitudes calculations also have potential numerical issues
+at 180 degree distance. In this case the
 geometrical spreading factor has potential infinities. We limit the value
-for this calculation not to be within 1e-3 radian (~ 0.05 degrees) of these
-angles to prevent unrealistic very large values.
+for this calculation not to be within 1e-3 radian (~ 0.05 degrees) of this
+distance to prevent unrealistic very large values.
 
-Attenuation is often the largests amplitude reductin effect, but is also
+Attenuation is often the largests amplitude reduction effect, but is also
 frequency dependent. This makes it complicated as no other feature of TauP,
 being a ray theoretical calculation, makes use of the frequency. For
 attenuation, we calculate the value as an average over a range of frequencies,
 but it is not clear that this is the best solution for all phases.
+The default is to calculate the attenuation for 64 frequencies
+evenly spaced between between zero and 1 Hz.
 
 Time Errors
 ------------
