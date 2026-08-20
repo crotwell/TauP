@@ -208,7 +208,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             printResultJson(writer, uniqFaultPlaneList, distanceValues, arrivalList, beachBalls);
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
-            printResultSVG(writer, beachBalls.get(0));
+            printResultSVG(writer, beachBalls.get(0), legendArgs.isLegend());
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {
             printResultHtml(writer, uniqFaultPlaneList, distanceValues, arrivalList, beachBalls);
         } else {
@@ -217,7 +217,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         }
     }
 
-    public void printResultSVG(PrintWriter writer, BeachBall beachBall) throws TauPException {
+    public void printResultSVG(PrintWriter writer, BeachBall beachBall, boolean withLegend) throws TauPException {
         float pixelWidth = outputTypeArgs.getPixelWidth();
         StringBuilder extraCSS = getBeachballExtraCSS();
         StringBuilder extraDefs = getBeachballExtraDefs();
@@ -252,6 +252,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         }
         SvgEarth.printSvgEndZoom(writer);
 
+        if (legendArgs.isLegend()) {
+            LegendLocation legendLocation = legendArgs.getLegendLocation();
+            float xtrans = LegendLocation.xTranslatePercent(legendLocation, pixelWidth, 100);
+            float ytrans = LegendLocation.yTranslatePercent(legendLocation, pixelWidth, 100);
+            List<String> textLines = createTextLegendLines(beachBall);
+            SvgUtil.createTextLegend(writer, textLines, "" , xtrans, ytrans);
+        }
         SvgEarth.printSvgEnd(writer);
         writer.flush();
     }
@@ -564,8 +571,24 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         SvgEarth.drawLabeledDot(writer, faultPlane.pAxis().times(R), iconSize, R, pixelWidth, earthScaling, " P", "compress", "P Axis");
         SvgEarth.drawLabeledDot(writer, faultPlane.tAxis().times(R), iconSize, R, pixelWidth, earthScaling, " T", "dilitate", "T Axis");
         SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().times(R), iconSize, R, pixelWidth, earthScaling, " N", "", "Null Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.pAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " P", "compress", "P Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.tAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " T", "dilitate", "T Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " N", "", "Null Axis");
 
         writer.println("</g>");
+    }
+
+    public List<String> createTextLegendLines(BeachBall beachBall) {
+        List<String> textLines = new ArrayList<>();
+        textLines.add("Strike: "+beachBall.getFaultPlane().getStrike()+" Dip: "+beachBall.getFaultPlane().getDip()+" Rake: "+beachBall.getFaultPlane().getRake());
+        textLines.add("Model: "+getTauModelName());
+        SphericalCoordinate p = beachBall.getFaultPlane().pAxis().toSpherical();
+        textLines.add("P Axis: to: "+p.getTakeoffAngleDegree()+" az: "+p.getAzimuthDegree());
+        SphericalCoordinate t = beachBall.getFaultPlane().pAxis().toSpherical();
+        textLines.add("T Axis: to: "+t.getTakeoffAngleDegree()+" az: "+t.getAzimuthDegree());
+        SphericalCoordinate n = beachBall.getFaultPlane().pAxis().toSpherical();
+        textLines.add("N Axis: to: "+n.getTakeoffAngleDegree()+" az: "+n.getAzimuthDegree());
+        return textLines;
     }
 
     public void printResultHtml(PrintWriter writer,
@@ -589,35 +612,23 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         for (BeachBall bb : beachBalls) {
             FaultPlane faultPlane = bb.getFaultPlane();
+            if (legendArgs.isLegend()) {
 
-            String modelLine = String.join("", TauP_Time.createModelHeaderLine(getTauModelName(),
-                    getScatterer(), getDistanceArgs().getGeodeticArgs().getGeoDistTypes()));
-            writer.println("<h5>" + modelLine + " " + faultPlane + "</h5>");
-
-            Vector p = faultPlane.pAxis();
-            SphericalCoordinate coordP = p.toSpherical();
-            writer.println("<h5>P: takeoff: " + Outputs.formatLatLon(coordP.getTakeoffAngleDegree())
-                    + " az: " + Outputs.formatLatLon(coordP.getAzimuthDegree()) + "</h5>");
-
-            Vector t = faultPlane.tAxis();
-            SphericalCoordinate coordT = t.toSpherical();
-            writer.println("<h5>T: takeoff: " + Outputs.formatLatLon(coordT.getTakeoffAngleDegree())
-                    + " az: " + Outputs.formatLatLon(coordT.getAzimuthDegree()) + "</h5>");
-
-            Vector n = faultPlane.nullAxis();
-            SphericalCoordinate coordN = n.toSpherical();
-            writer.println("<h5>N: takeoff: " + Outputs.formatLatLon(coordN.getTakeoffAngleDegree())
-                    + " az: " + Outputs.formatLatLon(coordN.getAzimuthDegree()) + "</h5>");
-
-            if (!bb.getArrivals().isEmpty()) {
-                TauP_Time.printArrivalsAsHtmlTable(writer, bb.getArrivals(), getTauModelName(), getScatterer(),
-                        false, sourceArgs, new ArrayList<String>(), "beachball",
-                        false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                List<String> legendLines = createTextLegendLines(bb);
+                writer.println("<pre>");
+                for (String line : legendLines) {
+                    writer.println(line+"\n");
+                }
+                writer.println("</pre>");
+                if (!bb.getArrivals().isEmpty()) {
+                    TauP_Time.printArrivalsAsHtmlTable(writer, bb.getArrivals(), getTauModelName(), getScatterer(),
+                            false, sourceArgs, new ArrayList<String>(), "beachball",
+                            false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                }
             }
-
             writer.println("<div class=\"beachball\">");
-            writer.println("  <h5>Amplitude: " + bb + "</h5>");
-            printResultSVG(writer, bb);
+            writer.println("  <h5>Wave Type: " + bb.getBbType() + "</h5>");
+            printResultSVG(writer, bb, false);
             writer.println("</div>");
         }
         HTMLUtil.addSortTableJS(writer);
@@ -677,6 +688,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         this.hemisphereType = hemisphereType;
     }
     HemisphereType hemisphereType = HemisphereType.lower;
+
+    @CommandLine.Mixin
+    LegendArgs legendArgs = new LegendArgs();
 
     @CommandLine.Option(names="--numpoints",
             description = "Number of points for json, number of arrows to show direction for svg",

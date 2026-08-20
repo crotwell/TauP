@@ -1,9 +1,10 @@
 Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
-                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                    [-o=<outFile>] [--prop=<toolPropsFilename>] [-x=type]
-                    [-y=type] [--xminmax=x x]... [--yminmax=y y]...
-                    [--mod=model [--mod=model]... | --nd=model [--nd=model]...
-                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --html |
+                    [--legendloc=<legendLocation>] [--mapwidth=<mapwidth>]
+                    [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                    [--prop=<toolPropsFilename>] [-x=type] [-y=type]
+                    [--xminmax=x x]... [--yminmax=y y]... [--mod=model
+                    [--mod=model]... | --nd=model [--nd=model]... |
+                    --tvel=model [--tvel=model]...] [--csv | --gmt | --html |
                     --json | --nameddiscon | --svg | --text]
 Plot velocity vs depth for a model.
 
@@ -12,6 +13,9 @@ Options:
       --debug                enable debugging output
       --help                 display this help message
       --legend               create a legend
+      --legendloc=<legendLocation>
+                             position legend, one of TOP_LEFT, TOP_RIGHT,
+                               BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                              plot width unit, i for inch, c for cm or p for px.

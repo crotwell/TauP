@@ -2,10 +2,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.ColorType;
-import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.cmdline.args.ModelArgs;
-import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
@@ -207,12 +204,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.HTML)) {
             xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
-                    SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+                    SvgUtil.createReflTransCSSColors()+"\n", legendArgs);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             //String xLabel = ReflTransAxisType.labelFor(xAxisType);
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
-                    SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+                    SvgUtil.createReflTransCSSColors()+"\n", legendArgs);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -1155,8 +1152,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         this.yAxisMinMax = yAxisMinMax;
     }
 
-    @CommandLine.Option(names = "--legend", description = "create a legend")
-    boolean isLegend = false;
+    @CommandLine.Mixin
+    LegendArgs legendArgs = new LegendArgs();
 
     String modelType;
 

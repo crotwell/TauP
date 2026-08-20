@@ -1,13 +1,14 @@
 Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
-                      [--phasecircles] [--verbose]
+                      [--legend] [--phasecircles] [--verbose]
                       [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                       [--az=<azimuth>] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--equitorialradius=m] [--equitorialradius=m]
                       [--gridstep=<gridAngleStep>] [--hemi=type]
                       [--invflattening=f] [--invflattening=f]
-                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                      [--mw=<mw>] [--numattenuationfreq=<numFrequencies>]
+                      [--legendloc=<legendLocation>] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
+                      [--numattenuationfreq=<numFrequencies>]
                       [--numpoints=<numPoints>] [-o=<outFile>]
                       [--planet=<planet>] [--planet=<planet>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
@@ -55,6 +56,10 @@ Options:
       --help                 display this help message
       --hemi=type            Beachball hemisphere type, default is lower, one
                                of upper, lower, both
+      --legend               create a legend
+      --legendloc=<legendLocation>
+                             position legend, one of TOP_LEFT, TOP_RIGHT,
+                               BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                              plot width unit, i for inch, c for cm or p for px.

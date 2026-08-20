@@ -396,7 +396,6 @@
           </label>
         </div>
         <div>
-
           <input type="checkbox" id="phasecircles" name="phasecircles"  />
           <label for="phasecircles">
               <span>Show Phases</span>
@@ -415,6 +414,34 @@
               <span>Grid step: </span>
           </label>
           <input type="number" id="bbgridstep" name="bbgridstep" value="0.5" />
+        </div>
+      </fieldset>
+      <fieldset class="tool_path tool_curve tool_refltrans tool_beachball tool_wavefront tool_velplot">
+        <div>
+          <input type="checkbox" id="islegend" name="islegend"  />
+          <label for="islegend">
+              <span>Legend</span>
+          </label>
+
+            <label>
+              <span>Location: </span>
+          </label>
+            <input type="radio" id="islegendtl" value="TOP_LEFT" name="legendloc" checked />
+            <label for="islegendtl">
+                <span>Top Left: </span>
+            </label>
+            <input type="radio" id="islegendtr" value="TOP_RIGHT" name="legendloc"  />
+            <label for="islegendtr">
+                <span>Top Right: </span>
+            </label>
+            <input type="radio" id="islegendbl" value="BOT_LEFT" name="legendloc"  />
+            <label for="islegendbl">
+                <span>Bottom Left: </span>
+            </label>
+            <input type="radio" id="islegendbr" value="BOT_RIGHT" name="legendloc"  />
+            <label for="islegendbr">
+                <span>Bottom Right: </span>
+            </label>
         </div>
       </fieldset>
       <!-- maybe not allow syngine in web?
@@ -497,11 +524,6 @@
         </fieldset>
 
         <div>
-          <label for="pathlegend">
-              <span>Legend: </span>
-          </label>
-          <input type="checkbox" id="pathlegend" name="pathlegend" checked />
-
           <label for="pathlabel">
               <span>Label: </span>
           </label>
@@ -519,19 +541,15 @@
 
         <fieldset class="tool_wavefront color">
             <legend>Color by:</legend>
-            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_auto" value="auto" checked/>
+            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_auto" value="auto"/>
             <label for="wavefrontcolor_auto">Time</label>
             <input type="radio" name="wavefrontcolor" id="wavefrontcolor_phase" value="phase" />
             <label for="wavefrontcolor_phase">Phase</label>
-            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_wavetype" value="wavetype" />
+            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_wavetype" value="wavetype" checked />
             <label for="wavefrontcolor_wavetype">WaveType</label>
         </fieldset>
 
         <div>
-          <label for="wavefrontlegend">
-              <span>Legend: </span>
-          </label>
-          <input type="checkbox" id="wavefrontlegend" name="wavefrontlegend" checked />
           <label for="negdist">
               <span>Negative Distances: </span>
           </label>
@@ -783,13 +801,6 @@
               </label>
               <input type="checkbox" id="yaxisabs" name="yaxisabs"  />
           </div>
-          <div>
-            <label for="legend">
-                <span>Legend: </span>
-            </label>
-            <input type="checkbox" id="legend" name="legend" checked />
-
-          </div>
 
       </fieldset>
       <fieldset class="tool_velplot" id="velplotaxis">
@@ -885,12 +896,6 @@
                   <span>Log: </span>
               </label>
               <input type="checkbox" id="velplotyaxislog" name="velplotyaxislog"  />
-          </div>
-          <div>
-            <label for="velplotlegend">
-                <span>Legend: </span>
-            </label>
-            <input type="checkbox" id="velplotlegend" name="velplotlegend" checked />
           </div>
 
       </fieldset>

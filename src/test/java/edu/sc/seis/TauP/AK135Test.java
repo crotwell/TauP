@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.LegendArgs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -222,6 +223,8 @@ public class AK135Test  {
         double maxTimeError = 0;
         double maxErrorAtDeg = 0;
         List<XYPlottingData> xyData = new ArrayList<>();
+        LegendArgs legendArgs = new LegendArgs();
+        legendArgs.setLegend(true);
         for (Float sourceDepth : sourceDepthList){
             taup.setSourceDepth(sourceDepth);
             List<TimeDist> tdList = table.get(phase).get(sourceDepth);
@@ -252,7 +255,7 @@ public class AK135Test  {
             xyPlotOutput.setTitle("Published AK135 for "+phaseTitle+" at "+sourceDepth+" km, red="+redVel+" s/deg");
             String filename = "pub_ak135_"+phase+"_"+sourceDepthList.get(0)+".html";
             PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, filename)));
-            xyPlotOutput.printAsHtml(writer, "pub ak135", new ArrayList<>(), "", true);
+            xyPlotOutput.printAsHtml(writer, "pub ak135", new ArrayList<>(), "", legendArgs);
             writer.close();
 
             List<TimeDist> taupTDList = new ArrayList<>();
@@ -305,7 +308,7 @@ public class AK135Test  {
             filename = "ak135_"+phase+"_all"+".html";
         }
         PrintWriter writer = new PrintWriter(new FileWriter(new File(dir, filename)));
-        xyPlotOutput.printAsHtml(writer, "testak135", new ArrayList<>(), "", true);
+        xyPlotOutput.printAsHtml(writer, "testak135", new ArrayList<>(), "", legendArgs);
 
         writer.close();
         PrintWriter jsonWriter = new PrintWriter(new FileWriter(new File(dir, filename.replace(".html", ".json"))));

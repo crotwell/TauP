@@ -30,8 +30,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 
-    @CommandLine.Option(names = "--legend", description = "create a legend")
-    boolean isLegend = false;
+    @CommandLine.Mixin
+    LegendArgs legendArgs = new LegendArgs();
 
     @CommandLine.Option(names = "--onlynameddiscon",
             description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb but not 410")
@@ -227,12 +227,13 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgUtil.endAutocolorG(out);
         }
         SvgEarth.printSvgEndZoom(out);
-        if (isLegend) {
-            float xtrans = (int)(pixelWidth*.01);
-            float ytrans = (int) (pixelWidth*.05);
+        if (legendArgs.isLegend()) {
+            LegendLocation legendLocation = legendArgs.getLegendLocation();
+            float xtrans = LegendLocation.xTranslatePercent(legendLocation, pixelWidth, 100);
+            float ytrans = LegendLocation.yTranslatePercent(legendLocation, pixelWidth, 100);
             if (coloring.getColoring() == ColorType.phase) {
                 SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
-            } else if (coloring.getColoring() == ColorType.wavetype) {
+            } else if (coloring.getColoring() == ColorType.wavetype || coloring.getColoring() == ColorType.auto) {
                 SvgUtil.createWavetypeLegend(out, false, xtrans, ytrans);
             } else {
                 SvgUtil.createTimeStepLegend(out, timeStep, maxTime, "autocolor", xtrans, ytrans );

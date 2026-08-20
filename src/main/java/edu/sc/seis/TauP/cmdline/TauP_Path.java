@@ -60,8 +60,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 
-	@CommandLine.Option(names = "--legend", description = "create a legend")
-	boolean isLegend = false;
+	@CommandLine.Mixin
+	LegendArgs legendArgs = new LegendArgs();
 
 	@CommandLine.Option(names = "--label", description = "label with phase name")
 	boolean isLabel = false;
@@ -292,9 +292,10 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 		SvgEarth.printSvgEndZoom(out);
 
-		if (isLegend) {
-			float xtrans = (int)(pixelWidth*.01);
-			float ytrans = (int) (pixelWidth*.05);
+		if (legendArgs.isLegend()) {
+			LegendLocation legendLocation = legendArgs.getLegendLocation();
+			float xtrans = LegendLocation.xTranslatePercent(legendLocation, pixelWidth, 100);
+			float ytrans = LegendLocation.yTranslatePercent(legendLocation, pixelWidth, 100);
 			switch (coloring.getColoring()) {
 				case auto:
 				case phase:

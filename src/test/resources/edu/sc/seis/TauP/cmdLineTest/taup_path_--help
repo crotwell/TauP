@@ -4,15 +4,15 @@ Usage: taup path [--debug] [--geodetic] [--geodetic] [--help] [--label]
                  [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                  [--color=<coloring>] [--equitorialradius=m]
                  [--equitorialradius=m] [--invflattening=f] [--invflattening=f]
-                 [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                 [--maxpathinc=<maxPathInc>] [-o=<outFile>] [--planet=<planet>]
-                 [--planet=<planet>] [--prop=<toolPropsFilename>]
-                 [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
-                 [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
-                 [--sid=sta[,sta...]]... [--degminmax=min max]...
-                 [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
-                 lon]... [--sta=lat lon]... [--sta=lat lon]...
-                 [--geodist=<geoDistTypes>...]...
+                 [--legendloc=<legendLocation>] [--mapwidth=<mapwidth>]
+                 [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
+                 [-o=<outFile>] [--planet=<planet>] [--planet=<planet>]
+                 [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                 [--staxml=<stationxmlFilename>] [--xaxis=type] [--yaxis=type]
+                 [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
+                 [--degminmax=min max]... [--depthminmax=min max]... [--evt=lat
+                 lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
+                 lon]... [--geodist=<geoDistTypes>...]...
                  [--geodist=<geoDistTypes>...]... [[--mod=<modelName>] [-h=depth
                  [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
                  deg]...] [[-p=phase[,phase...]]...
@@ -44,6 +44,9 @@ Options:
       --help                 display this help message
       --label                label with phase name
       --legend               create a legend
+      --legendloc=<legendLocation>
+                             position legend, one of TOP_LEFT, TOP_RIGHT,
+                               BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                              plot width unit, i for inch, c for cm or p for px.

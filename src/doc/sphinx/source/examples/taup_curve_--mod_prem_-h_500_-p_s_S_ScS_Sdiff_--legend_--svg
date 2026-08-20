@@ -1185,22 +1185,22 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(41.0,41.0)"> <!-- legend -->
+<g class="legend autocolor" transform="translate(11.5199995,11.5199995)"> <!-- legend -->
 <g class="swave phase_s swave">
 <line class="swave phase_s swave" x1="0" y1="0" x2="10" y2="0" />
-<text class="swave phase_s swave" font-size="12" x="11" y="0">s</text>
+<text class="swave phase_s swave" font-size="10" x="11" y="0">s</text>
 </g>
 <g class="swave phase_S swave">
-<line class="swave phase_S swave" x1="0" y1="14" x2="10" y2="14" />
-<text class="swave phase_S swave" font-size="12" x="11" y="14">S</text>
+<line class="swave phase_S swave" x1="0" y1="11" x2="10" y2="11" />
+<text class="swave phase_S swave" font-size="10" x="11" y="11">S</text>
 </g>
 <g class="swave phase_ScS swave">
-<line class="swave phase_ScS swave" x1="0" y1="28" x2="10" y2="28" />
-<text class="swave phase_ScS swave" font-size="12" x="11" y="28">ScS</text>
+<line class="swave phase_ScS swave" x1="0" y1="22" x2="10" y2="22" />
+<text class="swave phase_ScS swave" font-size="10" x="11" y="22">ScS</text>
 </g>
 <g class="swave phase_Sdiff swave">
-<line class="swave phase_Sdiff swave" x1="0" y1="42" x2="10" y2="42" />
-<text class="swave phase_Sdiff swave" font-size="12" x="11" y="42">Sdiff</text>
+<line class="swave phase_Sdiff swave" x1="0" y1="33" x2="10" y2="33" />
+<text class="swave phase_Sdiff swave" font-size="10" x="11" y="33">Sdiff</text>
 </g>
 </g> <!-- legend end-->
 </svg>

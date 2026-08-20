@@ -2163,46 +2163,46 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend " transform="translate(41.0,41.0)"> <!-- legend -->
+<g class="legend " transform="translate(11.5199995,11.5199995)"> <!-- legend -->
 <g class="RppEnergy">
 <line class="RppEnergy" x1="0" y1="0" x2="10" y2="0" />
-<text class="RppEnergy" font-size="12" x="11" y="0">Rpp Energy</text>
+<text class="RppEnergy" font-size="10" x="11" y="0">Rpp Energy</text>
 </g>
 <g class="TppEnergy">
-<line class="TppEnergy" x1="0" y1="14" x2="10" y2="14" />
-<text class="TppEnergy" font-size="12" x="11" y="14">Tpp Energy</text>
+<line class="TppEnergy" x1="0" y1="11" x2="10" y2="11" />
+<text class="TppEnergy" font-size="10" x="11" y="11">Tpp Energy</text>
 </g>
 <g class="RpsEnergy">
-<line class="RpsEnergy" x1="0" y1="28" x2="10" y2="28" />
-<text class="RpsEnergy" font-size="12" x="11" y="28">Rps Energy</text>
+<line class="RpsEnergy" x1="0" y1="22" x2="10" y2="22" />
+<text class="RpsEnergy" font-size="10" x="11" y="22">Rps Energy</text>
 </g>
 <g class="TpsEnergy">
-<line class="TpsEnergy" x1="0" y1="42" x2="10" y2="42" />
-<text class="TpsEnergy" font-size="12" x="11" y="42">Tps Energy</text>
+<line class="TpsEnergy" x1="0" y1="33" x2="10" y2="33" />
+<text class="TpsEnergy" font-size="10" x="11" y="33">Tps Energy</text>
 </g>
 <g class="RspEnergy">
-<line class="RspEnergy" x1="0" y1="56" x2="10" y2="56" />
-<text class="RspEnergy" font-size="12" x="11" y="56">Rsp Energy</text>
+<line class="RspEnergy" x1="0" y1="44" x2="10" y2="44" />
+<text class="RspEnergy" font-size="10" x="11" y="44">Rsp Energy</text>
 </g>
 <g class="TspEnergy">
-<line class="TspEnergy" x1="0" y1="70" x2="10" y2="70" />
-<text class="TspEnergy" font-size="12" x="11" y="70">Tsp Energy</text>
+<line class="TspEnergy" x1="0" y1="55" x2="10" y2="55" />
+<text class="TspEnergy" font-size="10" x="11" y="55">Tsp Energy</text>
 </g>
 <g class="RssEnergy">
-<line class="RssEnergy" x1="0" y1="84" x2="10" y2="84" />
-<text class="RssEnergy" font-size="12" x="11" y="84">Rss Energy</text>
+<line class="RssEnergy" x1="0" y1="66" x2="10" y2="66" />
+<text class="RssEnergy" font-size="10" x="11" y="66">Rss Energy</text>
 </g>
 <g class="TssEnergy">
-<line class="TssEnergy" x1="0" y1="98" x2="10" y2="98" />
-<text class="TssEnergy" font-size="12" x="11" y="98">Tss Energy</text>
+<line class="TssEnergy" x1="0" y1="77" x2="10" y2="77" />
+<text class="TssEnergy" font-size="10" x="11" y="77">Tss Energy</text>
 </g>
 <g class="RshshEnergy">
-<line class="RshshEnergy" x1="0" y1="112" x2="10" y2="112" />
-<text class="RshshEnergy" font-size="12" x="11" y="112">Rshsh Energy</text>
+<line class="RshshEnergy" x1="0" y1="88" x2="10" y2="88" />
+<text class="RshshEnergy" font-size="10" x="11" y="88">Rshsh Energy</text>
 </g>
 <g class="TshshEnergy">
-<line class="TshshEnergy" x1="0" y1="126" x2="10" y2="126" />
-<text class="TshshEnergy" font-size="12" x="11" y="126">Tshsh Energy</text>
+<line class="TshshEnergy" x1="0" y1="99" x2="10" y2="99" />
+<text class="TshshEnergy" font-size="10" x="11" y="99">Tshsh Energy</text>
 </g>
 </g> <!-- legend end-->
 </svg>

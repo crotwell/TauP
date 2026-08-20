@@ -548,7 +548,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isText()) {
             xyOut.printAsGmtText(writer);
         } else if (outputTypeArgs.isGMT()) {
-            xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, isLegend);
+            xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, legendArgs);
         } else if (outputTypeArgs.isSVG() || outputTypeArgs.isHTML()) {
             String cssExtra = "";
             switch (coloring.getColoring()) {
@@ -566,11 +566,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             if (outputTypeArgs.isSVG()) {
                 xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                         outputTypeArgs.getPixelWidth(),
-                        cssExtra, isLegend);
+                        cssExtra, legendArgs);
             } else {
                 xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                         outputTypeArgs.getPixelWidth(),
-                        cssExtra, isLegend);
+                        cssExtra, legendArgs);
             }
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
@@ -923,8 +923,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 
-    @CommandLine.Option(names = "--legend", description = "create a legend")
-    boolean isLegend = false;
+    @CommandLine.Mixin
+    LegendArgs legendArgs = new LegendArgs();
 
     @Override
     public String getOutputFormat() {

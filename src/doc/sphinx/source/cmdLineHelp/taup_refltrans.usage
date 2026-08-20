@@ -1,14 +1,14 @@
 Usage: taup refltrans [--abs] [--angles] [--debug] [--down] [--energyflux]
                       [--fsrf] [--help] [--legend] [--phase] [--pwave]
                       [--shwave] [--swave] [--up] [--verbose] [--anglestep=deg]
-                      [--depth=<depth>] [--mapwidth=<mapwidth>]
-                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                      [--prop=<toolPropsFilename>] [--rpstep=s/km] [-x=type]
-                      [--xminmax=x x]... [--yminmax=y y]... [--layer=vp vs rho
-                      vp vs rho]... [-y=type...]... [--gmt | --html | --json |
-                      --svg | --text] [[--mod=<modelName>] [-h=depth[,
-                      depth...]]... [--stadepth=depth[,depth...]]...
-                      [--scat=depth deg]...]
+                      [--depth=<depth>] [--legendloc=<legendLocation>]
+                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                      [-o=<outFile>] [--prop=<toolPropsFilename>]
+                      [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
+                      y]... [--layer=vp vs rho vp vs rho]... [-y=type...]...
+                      [--gmt | --html | --json | --svg | --text]
+                      [[--mod=<modelName>] [-h=depth[,depth...]]...
+                      [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
 Options:
@@ -28,6 +28,9 @@ Options:
                            inbound and transmitted layer parameters, vp, vs,
                              rho, vp, vs, rho
       --legend             create a legend
+      --legendloc=<legendLocation>
+                           position legend, one of TOP_LEFT, TOP_RIGHT,
+                             BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=<mapwidth>
                            plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>

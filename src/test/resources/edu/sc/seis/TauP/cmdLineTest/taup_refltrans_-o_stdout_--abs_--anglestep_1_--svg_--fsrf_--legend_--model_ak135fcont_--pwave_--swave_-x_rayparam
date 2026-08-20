@@ -2359,22 +2359,22 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend " transform="translate(41.0,41.0)"> <!-- legend -->
+<g class="legend " transform="translate(11.5199995,11.5199995)"> <!-- legend -->
 <g class="FreeRecFuncPz">
 <line class="FreeRecFuncPz" x1="0" y1="0" x2="10" y2="0" />
-<text class="FreeRecFuncPz" font-size="12" x="11" y="0">Free Surface Factor Pz</text>
+<text class="FreeRecFuncPz" font-size="10" x="11" y="0">Free Surface Factor Pz</text>
 </g>
 <g class="FreeRecFuncPr">
-<line class="FreeRecFuncPr" x1="0" y1="14" x2="10" y2="14" />
-<text class="FreeRecFuncPr" font-size="12" x="11" y="14">Free Surface Factor Pr</text>
+<line class="FreeRecFuncPr" x1="0" y1="11" x2="10" y2="11" />
+<text class="FreeRecFuncPr" font-size="10" x="11" y="11">Free Surface Factor Pr</text>
 </g>
 <g class="FreeRecFuncSvz">
-<line class="FreeRecFuncSvz" x1="0" y1="28" x2="10" y2="28" />
-<text class="FreeRecFuncSvz" font-size="12" x="11" y="28">Free Surface Factor Svz</text>
+<line class="FreeRecFuncSvz" x1="0" y1="22" x2="10" y2="22" />
+<text class="FreeRecFuncSvz" font-size="10" x="11" y="22">Free Surface Factor Svz</text>
 </g>
 <g class="FreeRecFuncSvr">
-<line class="FreeRecFuncSvr" x1="0" y1="42" x2="10" y2="42" />
-<text class="FreeRecFuncSvr" font-size="12" x="11" y="42">Free Surface Factor Svr</text>
+<line class="FreeRecFuncSvr" x1="0" y1="33" x2="10" y2="33" />
+<text class="FreeRecFuncSvr" font-size="10" x="11" y="33">Free Surface Factor Svr</text>
 </g>
 </g> <!-- legend end-->
 </svg>

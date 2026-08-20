@@ -1917,62 +1917,62 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(41.0,41.0)"> <!-- legend -->
+<g class="legend autocolor" transform="translate(11.5199995,11.5199995)"> <!-- legend -->
 <g class="pwave phase_P pwave">
 <line class="pwave phase_P pwave" x1="0" y1="0" x2="10" y2="0" />
-<text class="pwave phase_P pwave" font-size="12" x="11" y="0">P</text>
+<text class="pwave phase_P pwave" font-size="10" x="11" y="0">P</text>
 </g>
 <g class="swave phase_S swave">
-<line class="swave phase_S swave" x1="0" y1="14" x2="10" y2="14" />
-<text class="swave phase_S swave" font-size="12" x="11" y="14">S</text>
+<line class="swave phase_S swave" x1="0" y1="11" x2="10" y2="11" />
+<text class="swave phase_S swave" font-size="10" x="11" y="11">S</text>
 </g>
 <g class="pwave phase_Pn pwave">
-<line class="pwave phase_Pn pwave" x1="0" y1="28" x2="10" y2="28" />
-<text class="pwave phase_Pn pwave" font-size="12" x="11" y="28">Pn</text>
+<line class="pwave phase_Pn pwave" x1="0" y1="22" x2="10" y2="22" />
+<text class="pwave phase_Pn pwave" font-size="10" x="11" y="22">Pn</text>
 </g>
 <g class="swave phase_Sn swave">
-<line class="swave phase_Sn swave" x1="0" y1="42" x2="10" y2="42" />
-<text class="swave phase_Sn swave" font-size="12" x="11" y="42">Sn</text>
+<line class="swave phase_Sn swave" x1="0" y1="33" x2="10" y2="33" />
+<text class="swave phase_Sn swave" font-size="10" x="11" y="33">Sn</text>
 </g>
 <g class="pwave phase_PcP pwave">
-<line class="pwave phase_PcP pwave" x1="0" y1="56" x2="10" y2="56" />
-<text class="pwave phase_PcP pwave" font-size="12" x="11" y="56">PcP</text>
+<line class="pwave phase_PcP pwave" x1="0" y1="44" x2="10" y2="44" />
+<text class="pwave phase_PcP pwave" font-size="10" x="11" y="44">PcP</text>
 </g>
 <g class="swave phase_ScS swave">
-<line class="swave phase_ScS swave" x1="0" y1="70" x2="10" y2="70" />
-<text class="swave phase_ScS swave" font-size="12" x="11" y="70">ScS</text>
+<line class="swave phase_ScS swave" x1="0" y1="55" x2="10" y2="55" />
+<text class="swave phase_ScS swave" font-size="10" x="11" y="55">ScS</text>
 </g>
 <g class="pwave phase_Pdiff pwave">
-<line class="pwave phase_Pdiff pwave" x1="0" y1="84" x2="10" y2="84" />
-<text class="pwave phase_Pdiff pwave" font-size="12" x="11" y="84">Pdiff</text>
+<line class="pwave phase_Pdiff pwave" x1="0" y1="66" x2="10" y2="66" />
+<text class="pwave phase_Pdiff pwave" font-size="10" x="11" y="66">Pdiff</text>
 </g>
 <g class="swave phase_Sdiff swave">
-<line class="swave phase_Sdiff swave" x1="0" y1="98" x2="10" y2="98" />
-<text class="swave phase_Sdiff swave" font-size="12" x="11" y="98">Sdiff</text>
+<line class="swave phase_Sdiff swave" x1="0" y1="77" x2="10" y2="77" />
+<text class="swave phase_Sdiff swave" font-size="10" x="11" y="77">Sdiff</text>
 </g>
 <g class="pwave phase_PKP pwave">
-<line class="pwave phase_PKP pwave" x1="0" y1="112" x2="10" y2="112" />
-<text class="pwave phase_PKP pwave" font-size="12" x="11" y="112">PKP</text>
+<line class="pwave phase_PKP pwave" x1="0" y1="88" x2="10" y2="88" />
+<text class="pwave phase_PKP pwave" font-size="10" x="11" y="88">PKP</text>
 </g>
 <g class="both_p_swave phase_SKS both_p_swave">
-<line class="both_p_swave phase_SKS both_p_swave" x1="0" y1="126" x2="10" y2="126" />
-<text class="both_p_swave phase_SKS both_p_swave" font-size="12" x="11" y="126">SKS</text>
+<line class="both_p_swave phase_SKS both_p_swave" x1="0" y1="99" x2="10" y2="99" />
+<text class="both_p_swave phase_SKS both_p_swave" font-size="10" x="11" y="99">SKS</text>
 </g>
 <g class="pwave phase_PKiKP pwave">
-<line class="pwave phase_PKiKP pwave" x1="0" y1="140" x2="10" y2="140" />
-<text class="pwave phase_PKiKP pwave" font-size="12" x="11" y="140">PKiKP</text>
+<line class="pwave phase_PKiKP pwave" x1="0" y1="110" x2="10" y2="110" />
+<text class="pwave phase_PKiKP pwave" font-size="10" x="11" y="110">PKiKP</text>
 </g>
 <g class="both_p_swave phase_SKiKS both_p_swave">
-<line class="both_p_swave phase_SKiKS both_p_swave" x1="0" y1="154" x2="10" y2="154" />
-<text class="both_p_swave phase_SKiKS both_p_swave" font-size="12" x="11" y="154">SKiKS</text>
+<line class="both_p_swave phase_SKiKS both_p_swave" x1="0" y1="121" x2="10" y2="121" />
+<text class="both_p_swave phase_SKiKS both_p_swave" font-size="10" x="11" y="121">SKiKS</text>
 </g>
 <g class="pwave phase_PKIKP pwave">
-<line class="pwave phase_PKIKP pwave" x1="0" y1="168" x2="10" y2="168" />
-<text class="pwave phase_PKIKP pwave" font-size="12" x="11" y="168">PKIKP</text>
+<line class="pwave phase_PKIKP pwave" x1="0" y1="132" x2="10" y2="132" />
+<text class="pwave phase_PKIKP pwave" font-size="10" x="11" y="132">PKIKP</text>
 </g>
 <g class="both_p_swave phase_SKIKS both_p_swave">
-<line class="both_p_swave phase_SKIKS both_p_swave" x1="0" y1="182" x2="10" y2="182" />
-<text class="both_p_swave phase_SKIKS both_p_swave" font-size="12" x="11" y="182">SKIKS</text>
+<line class="both_p_swave phase_SKIKS both_p_swave" x1="0" y1="143" x2="10" y2="143" />
+<text class="both_p_swave phase_SKIKS both_p_swave" font-size="10" x="11" y="143">SKIKS</text>
 </g>
 </g> <!-- legend end-->
 </svg>

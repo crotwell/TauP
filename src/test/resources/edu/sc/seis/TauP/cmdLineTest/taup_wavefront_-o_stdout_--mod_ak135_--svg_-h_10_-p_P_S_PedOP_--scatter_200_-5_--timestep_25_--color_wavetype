@@ -105,6 +105,9 @@
           fill: green;
           stroke: transparent;
         }
+        .legend text {
+          font-size: small;
+        }
 
 text.title {
     text-anchor: middle;

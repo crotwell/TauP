@@ -712,10 +712,6 @@ export function form_tool_url() {
     if (yaxisabs) {
       url += `&yabs=true`;
     }
-    const isLegend = document.querySelector('input[name="legend"]').checked;
-    if (isLegend) {
-      url += `&legend=true`;
-    }
   }
   let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
   if ((isAmplitude && (toolname === "time" || toolname === "find")
@@ -760,8 +756,12 @@ export function form_tool_url() {
     }
   }
   if (toolname === 'beachball') {
-    let wavetype = document.querySelector('input[name="bbwavetype"]:checked').value;
-    url += `&bbtype=${wavetype}`
+    let wavetypeEl = document.querySelector('input[name="bbwavetype"]:checked');
+    if (wavetypeEl!=null) {
+      url += `&bbtype=${wavetypeEl.value}`;
+    } else {
+      url += `&bbtype=ampp`;
+    }
     let phasecircles = document.querySelector('input[name="phasecircles"]').checked;
     if (phasecircles) { url += `&phasecircles=true`;}
 
@@ -800,10 +800,6 @@ export function form_tool_url() {
         url += `&ylog=true`;
       }
     }
-    const isLegend = document.querySelector('input[name="velplotlegend"]').checked;
-    if (isLegend) {
-      url += `&legend=true`;
-    }
   }
   if (toolname === "pierce") {
     if (pierceadddepth.length > 0) {
@@ -822,10 +818,6 @@ export function form_tool_url() {
     }
   }
   if (toolname === "path") {
-    const isLegend = document.querySelector('input[name="pathlegend"]').checked;
-    if (isLegend) {
-      url += `&legend=true`;
-    }
     const isLabel = document.querySelector('input[name="pathlabel"]').checked;
     if (isLabel) {
       url += `&label=true`;
@@ -843,10 +835,6 @@ export function form_tool_url() {
     }
     if (wavefrontcolorType && wavefrontcolorType !== "auto") {
       url += `&color=${wavefrontcolorType}`
-    }
-    const isLegend = document.querySelector('input[name="wavefrontlegend"]').checked;
-    if (isLegend) {
-      url += `&legend=true`;
     }
   }
   if (toolname === "refltrans") {
@@ -921,8 +909,20 @@ export function form_tool_url() {
     if (xslowness) {
       url += `&x=rayparam`;
     }
-    url += `&legend=true`;
   }
+  if (toolname === "refltrans" || toolname === "curve"
+      || toolname === "beachball" || toolname==="path"
+      || toolname==="wavefront") {
+    const isLegend = document.querySelector('input[name="islegend"]').checked;
+    if (isLegend) {
+      url += `&legend=true`;
+    }
+    let leglocEl = document.querySelector('input[name="legendloc"]:checked');
+    if (leglocEl!=null) {
+      url += `&legendloc=${leglocEl.value}`;
+    }
+  }
+
   // set format last as most useful to change
   url += `&format=${format}`;
 

@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 
 import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
+import edu.sc.seis.TauP.cmdline.args.LegendArgs;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -170,14 +171,24 @@ public class SvgUtil {
 
     }
 
-    public static void createLegend(PrintWriter out, List<String> labels, List<String> labelClasses, String outerGcss, float xtrans, float ytrans) {
+    public static void createTextLegend(PrintWriter out, List<String> textlines, String outerGcss, float xtrans, float ytrans) {
+        createLegend(out, textlines, new ArrayList<>(), new ArrayList<>(), outerGcss, xtrans, ytrans);
+    }
+
+    public static void createLegend(PrintWriter out, List<String> textlines, List<String> labels, List<String> labelClasses, String outerGcss, float xtrans, float ytrans) {
         int lineLength = 10;
-        int font_size = 12;
-        int yoffset = font_size+2;
+        int font_size = 10;
+        int yoffset = font_size+1;
         out.println("<g class=\"legend "+outerGcss+"\" transform=\"translate("+xtrans+","+ytrans+")\"> <!-- legend -->");
+        int idx = 0;
+        for (int i = 0; i < textlines.size(); i++) {
+            int y = i*yoffset;
+            out.println("<text font-size=\""+font_size+"\" x=\"" + (lineLength+1) + "\" y=\"" + (y) + "\">" + textlines.get(i) + "</text>");
+        }
+        idx = textlines.size();
         for (int i = 0; i < labels.size(); i++) {
             String labelCSS = "tick";
-            int y = i*yoffset;
+            int y = (idx+i)*yoffset;
             if (i < labelClasses.size()) { labelCSS = labelClasses.get(i);}
             out.println("<g class=\""+labelCSS+"\">");
             out.println("<line class=\""+labelCSS+"\" x1=\"0\" y1=\"" + (y) + "\" x2=\"" + lineLength + "\" y2=\"" + (y) + "\" />");
@@ -188,16 +199,18 @@ public class SvgUtil {
     }
 
     public static void createPhaseLegend(PrintWriter out, List<SeismicPhase> phaseList, String outerGcss, float xtrans, float ytrans) {
+        List<String> textList = new ArrayList<>();
         List<String> phasenameList = new ArrayList<>();
         List<String> phaseClassList = new ArrayList<>();
         for (SeismicPhase p : phaseList) {
             phasenameList.add(p.getName());
             phaseClassList.add(SvgUtil.classForPhase(p.getName()));
         }
-        SvgUtil.createLegend(out, phasenameList, phaseClassList, outerGcss,  xtrans, ytrans);
+        SvgUtil.createLegend(out, textList, phasenameList, phaseClassList, outerGcss,  xtrans, ytrans);
     }
 
     public static void createTimeStepLegend(PrintWriter out, double timeStep, double maxTime, String outerGcss, float xtrans, float ytrans) {
+        List<String> textList = new ArrayList<>();
         List<String> labelList = new ArrayList<>();
         List<String> classList = new ArrayList<>();
         for (int i = 0; i < maxTime/timeStep; i++) {
@@ -205,10 +218,11 @@ public class SvgUtil {
             labelList.add(Outputs.formatTimeNoPad(timeVal)+" s");
             classList.add(SvgUtil.formatTimeForCss(timeVal));
         }
-        SvgUtil.createLegend(out, labelList, classList, outerGcss,  xtrans, ytrans);
+        SvgUtil.createLegend(out, textList, labelList, classList, outerGcss,  xtrans, ytrans);
     }
 
     public static void createWavetypeLegend(PrintWriter out, boolean withBoth, float xtrans, float ytrans) {
+        List<String> textList = new ArrayList<>();
         List<String> waveLabels = new ArrayList<>();
         List<String> waveLabelClasses = new ArrayList<>();
         waveLabels.add("P Wave");
@@ -219,7 +233,7 @@ public class SvgUtil {
             waveLabels.add("Both");
             waveLabelClasses.add("both_p_swave");
         }
-        SvgUtil.createLegend(out, waveLabels, waveLabelClasses, "", xtrans, ytrans);
+        SvgUtil.createLegend(out, textList, waveLabels, waveLabelClasses, "", xtrans, ytrans);
     }
 
     public static StringBuffer createCSSColors(String selector, List<String> cssAttrList, List<String> colors) {
@@ -510,33 +524,36 @@ public class SvgUtil {
         HashMap<String, String> colors = coloringArgs.getWavetypeColors();
         for (String wavetype : colors.keySet()) {
             String color = colors.get(wavetype);
-            extrtaCSS.append("        g."+wavetype+" polyline {\n");
-            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        g." + wavetype + " polyline {\n");
+            extrtaCSS.append("            stroke: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        g."+wavetype+" circle {\n");
-            extrtaCSS.append("            stroke: "+color+";\n");
-            extrtaCSS.append("            fill: "+color+";\n");
+            extrtaCSS.append("        g." + wavetype + " circle {\n");
+            extrtaCSS.append("            stroke: " + color + ";\n");
+            extrtaCSS.append("            fill: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        polyline."+wavetype+" {\n");
-            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        polyline." + wavetype + " {\n");
+            extrtaCSS.append("            stroke: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        circle."+wavetype+" {\n");
-            extrtaCSS.append("            stroke: "+color+";\n");
-            extrtaCSS.append("            fill: "+color+";\n");
+            extrtaCSS.append("        circle." + wavetype + " {\n");
+            extrtaCSS.append("            stroke: " + color + ";\n");
+            extrtaCSS.append("            fill: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        ."+wavetype+".label {\n");
-            extrtaCSS.append("          stroke: "+color+";\n");
-            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        ." + wavetype + ".label {\n");
+            extrtaCSS.append("          stroke: " + color + ";\n");
+            extrtaCSS.append("          fill: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        .legend ."+wavetype+" {\n");
-            extrtaCSS.append("          stroke: "+color+";\n");
-            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        .legend ." + wavetype + " {\n");
+            extrtaCSS.append("          stroke: " + color + ";\n");
+            extrtaCSS.append("          fill: " + color + ";\n");
             extrtaCSS.append("        }\n");
-            extrtaCSS.append("        .legend ."+wavetype+" text {\n");
-            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        .legend ." + wavetype + " text {\n");
+            extrtaCSS.append("          fill: " + color + ";\n");
             extrtaCSS.append("          stroke: transparent;\n");
             extrtaCSS.append("        }\n");
         }
+        extrtaCSS.append("        .legend text {\n");
+        extrtaCSS.append("          font-size: small;\n");
+        extrtaCSS.append("        }\n");
         return extrtaCSS;
     }
 

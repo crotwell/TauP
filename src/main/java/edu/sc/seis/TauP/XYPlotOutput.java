@@ -1,17 +1,12 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.ColorType;
-import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
-import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.cmdline.args.ModelArgs;
+import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.GsonUtil;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
 /**
  * Represents an XY plot, with data and axis.
@@ -86,7 +81,7 @@ public class XYPlotOutput {
     public void printAsGmtScript(PrintWriter writer,
                                  String toolname, List<String> cmdLineArgs,
                                  GraphicOutputTypeArgs outputTypeArgs,
-                                 boolean isLegend) {
+                                 LegendArgs legendArgs) {
         printGmtScriptBeginning(writer, toolname, cmdLineArgs, outputTypeArgs);
         int idx = 0;
         for (XYPlottingData xyplotItem : xyPlots) {
@@ -113,8 +108,8 @@ public class XYPlotOutput {
             writer.println("# end of "+xyplotItem.label);
             idx++;
         }
-        if (isLegend) {
-            printGmtScriptLegend(writer);
+        if (legendArgs.isLegend()) {
+            printGmtScriptLegend(writer, legendArgs);
         }
         writer.println("gmt end ");
     }
@@ -154,8 +149,14 @@ public class XYPlotOutput {
 
     }
 
-    public void printGmtScriptLegend(PrintWriter writer) {
-        writer.println("gmt legend -DjTL+o0.25i -Mh -F ");
+    public void printGmtScriptLegend(PrintWriter writer, LegendArgs legendArgs) {
+        String legendLocCode = switch (legendArgs.getLegendLocation()) {
+            case TOP_LEFT -> "TL";
+            case TOP_RIGHT -> "TR";
+            case BOT_LEFT -> "BL";
+            case BOT_RIGHT -> "BR";
+        };
+        writer.println("gmt legend -Dj"+legendLocCode+"+o0.25i -Mh -F ");
     }
 
     public void printAsGmtText(PrintWriter writer) {
@@ -198,19 +199,19 @@ public class XYPlotOutput {
 
 
     public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs,
-                            CharSequence extraCSS, boolean isLegend) throws TauPException {
-        printAsHtml(writer, toolname, cmdLineArgs, 1000, extraCSS, isLegend);
+                            CharSequence extraCSS, LegendArgs legendArgs) throws TauPException {
+        printAsHtml(writer, toolname, cmdLineArgs, 1000, extraCSS, legendArgs);
     }
     public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs,
-                            float pixelWidth, CharSequence extraCSS, boolean isLegend) throws TauPException {
+                            float pixelWidth, CharSequence extraCSS, LegendArgs legendArgs) throws TauPException {
         HTMLUtil.createHtmlStart(writer, "TauP "+toolname, "", false);
-        printAsSvg(writer, toolname, cmdLineArgs, pixelWidth, extraCSS, isLegend);
+        printAsSvg(writer, toolname, cmdLineArgs, pixelWidth, extraCSS, legendArgs);
         writer.println(HTMLUtil.createHtmlEnding());
     }
 
     public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs,
                            float pixelWidth,
-                           CharSequence extraCSS, boolean isLegend) {
+                           CharSequence extraCSS, LegendArgs legendArgs) {
 
         int margin = 80;
         double[] minmax = calcMinMax();
@@ -295,7 +296,11 @@ public class XYPlotOutput {
         writer.println("  </g> <!-- end scaletranslate -->");
         writer.println("  </g> <!-- end clip-path -->");
 
-        if (isLegend) {
+        if (legendArgs.isLegend()) {
+            LegendLocation legendLocation = legendArgs.getLegendLocation();
+            float xtransLegend = LegendLocation.xTranslatePercent(legendLocation, pixelWidth, 100);
+            float ytransLegend = LegendLocation.yTranslatePercent(legendLocation, pixelWidth, 100);
+            List<String> textLines = new ArrayList<>();
             List<String> labels = new ArrayList<>();
             List<String> labelClasses = new ArrayList<>();
             for (XYPlottingData xyp : xyPlots) {
@@ -304,7 +309,7 @@ public class XYPlotOutput {
             }
 
             String autocolorStr = coloringArgs.getColoring() == ColorType.auto ? "autocolor" : "";
-            SvgUtil.createLegend(writer, labels, labelClasses, autocolorStr , (int) (plotWidth * .1), (int) (plotWidth * .1));
+            SvgUtil.createLegend(writer, textLines, labels, labelClasses, autocolorStr , xtransLegend, ytransLegend);
         }
         writer.println("</svg>");
     }

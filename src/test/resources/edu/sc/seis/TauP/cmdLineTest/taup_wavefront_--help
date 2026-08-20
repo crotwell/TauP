@@ -1,14 +1,14 @@
 Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--onlynameddiscon] [--timefiles] [--verbose]
-                      [--color=<coloring>] [--mapwidth=<mapwidth>]
-                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                      [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
-                      [--xaxis=type] [--yaxis=type] [--degminmax=min max]...
-                      [--depthminmax=min max]... [[--mod=<modelName>] [-h=depth
-                      [,depth...]]... [--stadepth=depth[,depth...]]...
-                      [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                      [--phasefile=<phaseFiles>]...] [--gmt | --html | --json |
-                      --svg | --text]
+                      [--color=<coloring>] [--legendloc=<legendLocation>]
+                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                      [-o=<outFile>] [--prop=<toolPropsFilename>]
+                      [--timestep=<timeStep>] [--xaxis=type] [--yaxis=type]
+                      [--degminmax=min max]... [--depthminmax=min max]...
+                      [[--mod=<modelName>] [-h=depth[,depth...]]...
+                      [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                      [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                      [--gmt | --html | --json | --svg | --text]
 Plot wavefronts of seismic phases at steps in time.
 
 Options:
@@ -20,6 +20,9 @@ Options:
       --depthminmax=min max min and max depth, km,  for plotting
       --help                display this help message
       --legend              create a legend
+      --legendloc=<legendLocation>
+                            position legend, one of TOP_LEFT, TOP_RIGHT,
+                              BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=<mapwidth> plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                             plot width unit, i for inch, c for cm or p for px.

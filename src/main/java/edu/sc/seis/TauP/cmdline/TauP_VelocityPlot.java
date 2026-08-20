@@ -124,17 +124,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else if (getOutputTypeArgs().isGMT()) {
             xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     getOutputTypeArgs().asGraphicOutputTypeArgs(),
-                    isLegend);
+                    legendArgs);
         } else if (getOutputTypeArgs().isSVG()) {
             // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
-                    SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
+                    SvgUtil.createWaveTypeColorCSS(coloringArgs), legendArgs);
         } else if (getOutputTypeArgs().isHTML()) {
             // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsHtml(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     outputTypeArgs.getPixelWidth(),
-                    SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
+                    SvgUtil.createWaveTypeColorCSS(coloringArgs), legendArgs);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -560,8 +560,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @CommandLine.Mixin
     VelPlotOutputTypeArgs outputTypeArgs;
 
-    @CommandLine.Option(names = "--legend", description = "create a legend")
-    boolean isLegend = false;
+    @CommandLine.Mixin
+    LegendArgs legendArgs = new LegendArgs();
 
 
     public ModelAxisType getxAxisType() {
