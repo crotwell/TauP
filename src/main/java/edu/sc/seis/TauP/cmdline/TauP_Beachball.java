@@ -114,6 +114,22 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
             List<Arrival> arrivalList = calcArrivalsForSource(faultPlane, distanceValues);
             allArrivals.addAll(arrivalList);
             for (BeachballType bbType : getBeachballType()) {
+                List<Arrival> bbArrivals = new ArrayList<>();
+                if (bbType == BeachballType.ampp) {
+                    // only phases with startung P on P beachball
+                    for (Arrival a : arrivalList) {
+                        if (a.getPhase().sourceSegmentIsPWave()) {
+                            bbArrivals.add(a);
+                        }
+                    }
+                } else {
+                    // S wave
+                    for (Arrival a : arrivalList) {
+                        if ( ! a.getPhase().sourceSegmentIsPWave()) {
+                            bbArrivals.add(a);
+                        }
+                    }
+                }
                 List<RadiationAmplitude> radPattern = new ArrayList<>();
                 if (hemisphereType == HemisphereType.upper || hemisphereType == HemisphereType.both) {
                     radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, false));
@@ -121,7 +137,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 if (hemisphereType == HemisphereType.lower || hemisphereType == HemisphereType.both) {
                     radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
                 }
-                BeachBall bb = new BeachBall(faultPlane, bbType, hemisphereType, arrivalList, radPattern);
+                BeachBall bb = new BeachBall(faultPlane, bbType, hemisphereType, bbArrivals, radPattern);
                 bballs.add(bb);
             }
         }
