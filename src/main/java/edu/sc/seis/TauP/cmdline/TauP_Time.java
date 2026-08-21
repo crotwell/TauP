@@ -192,22 +192,15 @@ public class TauP_Time extends TauP_AbstractRayTool {
             for (Double recDepth : receiverDepths) {
                 TauModel sourceReceiverTMod = modelArgs.depthCorrected(sourceDepth).splitBranch(recDepth);
                 for (String sName : relativePhaseName) {
-                    try {
-                        List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                                sName,
-                                sourceReceiverTMod,
-                                sourceDepth,
-                                recDepth,
-                                modelArgs.getScatterer(),
-                                isDEBUG());
-                        relativePhaseList.addAll(calcRelPhaseList);
-                    } catch (ScatterArrivalFailException e) {
-                        Alert.warning(e.getMessage(),
-                                "    Skipping this relative phase");
-                        if (isVerbose() || isDEBUG()) {
-                            e.printStackTrace();
-                        }
-                    }
+
+                    List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                            sName,
+                            sourceReceiverTMod,
+                            sourceDepth,
+                            recDepth,
+                            modelArgs.getScatterer(),
+                            isDEBUG());
+                    relativePhaseList.addAll(calcRelPhaseList);
                 }
             }
         }
@@ -217,22 +210,15 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public List<SeismicPhase> calcRelativeSeismicPhases(TauModel tauModel, double receiverDepth, Scatterer scatterer) throws TauModelException {
         List<SeismicPhase> relativePhaseList = new ArrayList<>();
         for (String sName : relativePhaseName) {
-            try {
-                List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                        sName,
-                        tauModel,
-                        tauModel.getSourceDepth(),
-                        receiverDepth,
-                        scatterer,
-                        isDEBUG());
-                relativePhaseList.addAll(calcRelPhaseList);
-            } catch (ScatterArrivalFailException e) {
-                Alert.warning(e.getMessage(),
-                        "    Skipping this relative phase");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            }
+
+            List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                    sName,
+                    tauModel,
+                    tauModel.getSourceDepth(),
+                    receiverDepth,
+                    scatterer,
+                    isDEBUG());
+            relativePhaseList.addAll(calcRelPhaseList);
         }
         return relativePhaseList;
     }

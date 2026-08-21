@@ -257,16 +257,10 @@ public class SeismicPhaseFactory {
                             Alert.info(seismicPhase.toString());
                         }
                     }
-                } catch (ScatterArrivalFailException e) {
-                    Alert.warning(e.getMessage() + ", skipping this phase");
-                    if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
-                        e.printStackTrace();
-                    }
-                    newPhases.add( FailedSeismicPhase.failForReason(phaseName.getName(),tMod, receiverDepth, e));
                 } catch (TauModelException e) {
                     Alert.warning("Error with phase '" + tempPhaseName+"', skipping this phase" ,
                             e.getMessage() );
-                    if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
+                    if (TauPConfig.DEBUG) {
                         e.printStackTrace();
                     }
                     newPhases.add( FailedSeismicPhase.failForReason(phaseName.getName(),tMod, receiverDepth, e));

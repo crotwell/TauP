@@ -143,6 +143,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         if (proto == null) {
             throw new IllegalArgumentException("proto cannot be null");
         }
+        if ( ! proto.isSuccessful() && maxRayParam != -1) {
+            throw new IllegalArgumentException("failed proto must have maxRayParam -1");
+        }
         try {
             if (proto.isSuccessful()) {
                 proto.validateSegList();
