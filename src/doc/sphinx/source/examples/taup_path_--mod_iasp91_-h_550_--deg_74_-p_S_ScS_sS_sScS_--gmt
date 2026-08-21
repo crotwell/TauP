@@ -508,7 +508,7 @@ gmt plot -A <<END
    34.52    3507.7
    35.26    3494.9
    36.01    3482.0
-> seg 2/2 s of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km
+> seg 2/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km
    36.01    3482.0
    36.75    3494.9
    37.50    3507.7
@@ -1490,7 +1490,7 @@ gmt plot -A <<END
    36.08    3520.6
    37.03    3501.3
    37.98    3482.0
-> seg 3/3 s of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km
+> seg 3/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km
    37.98    3482.0
    38.93    3501.3
    39.88    3520.6

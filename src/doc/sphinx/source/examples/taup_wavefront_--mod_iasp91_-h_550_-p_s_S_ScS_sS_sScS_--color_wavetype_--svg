@@ -5853,7 +5853,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at   700.00</desc>
     <g>
-      <desc>seg 7/14 s of ScS at   700.00</desc>
+      <desc>seg 7/14 S of ScS at   700.00</desc>
       <polyline class="wavefront phase_ScS swave time_700.00" points="
  2913.30  -1980.50
  2931.57  -1999.05
@@ -6582,7 +6582,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at   800.00</desc>
     <g>
-      <desc>seg 8/14 s of ScS at   800.00</desc>
+      <desc>seg 8/14 S of ScS at   800.00</desc>
       <polyline class="wavefront phase_ScS swave time_800.00" points="
  3419.86  -1459.62
  3459.67  -1501.78
@@ -7274,7 +7274,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at   900.00</desc>
     <g>
-      <desc>seg 9/14 s of ScS at   900.00</desc>
+      <desc>seg 9/14 S of ScS at   900.00</desc>
       <polyline class="wavefront phase_ScS swave time_900.00" points="
  3937.91   -967.36
  3998.15  -1036.60
@@ -7493,7 +7493,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at   900.00</desc>
     <g>
-      <desc>seg 9/17 s of sScS at   900.00</desc>
+      <desc>seg 9/17 S of sScS at   900.00</desc>
       <polyline class="wavefront phase_sScS swave time_900.00" points="
  2803.32  -2079.53
  2808.86  -2084.62
@@ -7800,7 +7800,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at  1000.00</desc>
     <g>
-      <desc>seg 10/14 s of ScS at  1000.00</desc>
+      <desc>seg 10/14 S of ScS at  1000.00</desc>
       <polyline class="wavefront phase_ScS swave time_1000.00" points="
  4461.02   -507.05
  4539.02   -603.30
@@ -7978,7 +7978,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1000.00</desc>
     <g>
-      <desc>seg 10/17 s of sScS at  1000.00</desc>
+      <desc>seg 10/17 S of sScS at  1000.00</desc>
       <polyline class="wavefront phase_sScS swave time_1000.00" points="
  3259.87  -1510.47
  3289.27  -1536.15
@@ -8267,7 +8267,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at  1100.00</desc>
     <g>
-      <desc>seg 11/14 s of ScS at  1100.00</desc>
+      <desc>seg 11/14 S of ScS at  1100.00</desc>
       <polyline class="wavefront phase_ScS swave time_1100.00" points="
  4982.58    -78.91
  5075.90   -202.43
@@ -8420,7 +8420,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1100.00</desc>
     <g>
-      <desc>seg 11/17 s of sScS at  1100.00</desc>
+      <desc>seg 11/17 S of sScS at  1100.00</desc>
       <polyline class="wavefront phase_sScS swave time_1100.00" points="
  3733.84   -965.36
  3787.18  -1016.25
@@ -8595,7 +8595,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at  1200.00</desc>
     <g>
-      <desc>seg 12/14 s of ScS at  1200.00</desc>
+      <desc>seg 12/14 S of ScS at  1200.00</desc>
       <polyline class="wavefront phase_ScS swave time_1200.00" points="
  5496.17    313.32
  5601.97    161.79
@@ -8718,7 +8718,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1200.00</desc>
     <g>
-      <desc>seg 12/17 s of sScS at  1200.00</desc>
+      <desc>seg 12/17 S of sScS at  1200.00</desc>
       <polyline class="wavefront phase_sScS swave time_1200.00" points="
  4219.57   -451.80
  4293.83   -528.02
@@ -8812,7 +8812,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:ScS at  1300.00</desc>
     <g>
-      <desc>seg 13/14 s of ScS at  1300.00</desc>
+      <desc>seg 13/14 S of ScS at  1300.00</desc>
       <polyline class="wavefront phase_ScS swave time_1300.00" points="
  5967.72    617.39
  6067.61    420.16
@@ -8913,7 +8913,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1300.00</desc>
     <g>
-      <desc>seg 13/17 s of sScS at  1300.00</desc>
+      <desc>seg 13/17 S of sScS at  1300.00</desc>
       <polyline class="wavefront phase_sScS swave time_1300.00" points="
  4709.23     30.72
  4802.16    -71.54
@@ -9019,7 +9019,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1400.00</desc>
     <g>
-      <desc>seg 14/17 s of sScS at  1400.00</desc>
+      <desc>seg 14/17 S of sScS at  1400.00</desc>
       <polyline class="wavefront phase_sScS swave time_1400.00" points="
  5197.03    479.46
  5306.04    350.67
@@ -9095,7 +9095,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1500.00</desc>
     <g>
-      <desc>seg 15/17 s of sScS at  1500.00</desc>
+      <desc>seg 15/17 S of sScS at  1500.00</desc>
       <polyline class="wavefront phase_sScS swave time_1500.00" points="
  5673.96    883.03
  5789.78    714.82
@@ -9133,7 +9133,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:sScS at  1600.00</desc>
     <g>
-      <desc>seg 16/17 s of sScS at  1600.00</desc>
+      <desc>seg 16/17 S of sScS at  1600.00</desc>
       <polyline class="wavefront phase_sScS swave time_1600.00" points="
  6087.67   1155.59
  6202.84    955.19

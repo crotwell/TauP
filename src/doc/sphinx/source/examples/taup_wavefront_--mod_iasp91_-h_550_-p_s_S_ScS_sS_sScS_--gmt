@@ -4941,7 +4941,7 @@ gmt plot -Wred  -A  <<END
    55.67    3568.3
    55.79    3522.7
 gmt plot -Wred  -A  <<END
-> seg 7/14 s of ScS at   700.00
+> seg 7/14 S of ScS at   700.00
    55.79    3522.7
    55.71    3548.3
    55.67    3559.3
@@ -5642,7 +5642,7 @@ gmt plot -Wred  -A  <<END
    66.56    3769.5
    66.89    3718.3
 gmt plot -Wred  -A  <<END
-> seg 8/14 s of ScS at   800.00
+> seg 8/14 S of ScS at   800.00
    66.89    3718.3
    66.54    3771.6
    66.37    3794.4
@@ -6307,7 +6307,7 @@ gmt plot -Wred  -A  <<END
    75.67    4111.0
    76.20    4055.0
 gmt plot -Wred  -A  <<END
-> seg 9/14 s of ScS at   900.00
+> seg 9/14 S of ScS at   900.00
    76.20    4055.0
    75.47    4130.3
    75.15    4161.9
@@ -6514,7 +6514,7 @@ gmt plot -Wred  -A  <<END
    53.42    3526.5
    53.43    3490.4
 gmt plot -Wred  -A  <<END
-> seg 9/17 s of sScS at   900.00
+> seg 9/17 S of sScS at   900.00
    53.43    3490.4
    53.42    3497.9
    53.41    3501.5
@@ -6807,7 +6807,7 @@ gmt plot -Wred  -A  <<END
    82.83    4547.1
    83.52    4489.7
 gmt plot -Wred  -A  <<END
-> seg 10/14 s of ScS at  1000.00
+> seg 10/14 S of ScS at  1000.00
    83.52    4489.7
    82.43    4578.9
    81.97    4615.8
@@ -6973,7 +6973,7 @@ gmt plot -Wred  -A  <<END
    64.94    3638.9
    65.14    3592.8
 gmt plot -Wred  -A  <<END
-> seg 10/17 s of sScS at  1000.00
+> seg 10/17 S of sScS at  1000.00
    65.14    3592.8
    64.97    3630.3
    64.88    3647.1
@@ -7247,7 +7247,7 @@ gmt plot -Wred  -A  <<END
    88.29    5040.2
    89.09    4983.2
 gmt plot -Wred  -A  <<END
-> seg 11/14 s of ScS at  1100.00
+> seg 11/14 S of ScS at  1100.00
    89.09    4983.2
    87.72    5079.9
    87.14    5119.6
@@ -7388,7 +7388,7 @@ gmt plot -Wred  -A  <<END
    75.09    3908.7
    75.50    3856.6
 gmt plot -Wred  -A  <<END
-> seg 11/17 s of sScS at  1100.00
+> seg 11/17 S of sScS at  1100.00
    75.50    3856.6
    74.98    3921.2
    74.75    3948.4
@@ -7549,7 +7549,7 @@ gmt plot -Wred  -A  <<END
    92.38    5560.2
    93.26    5505.1
 gmt plot -Wred  -A  <<END
-> seg 12/14 s of ScS at  1200.00
+> seg 12/14 S of ScS at  1200.00
    93.26    5505.1
    91.65    5604.3
    90.98    5644.7
@@ -7660,7 +7660,7 @@ gmt plot -Wred  -A  <<END
    83.31    4298.3
    83.89    4243.7
 gmt plot -Wred  -A  <<END
-> seg 12/17 s of sScS at  1200.00
+> seg 12/17 S of sScS at  1200.00
    83.89    4243.7
    82.99    4326.2
    82.60    4360.5
@@ -7740,7 +7740,7 @@ gmt plot -Wred  -A  <<END
    94.87    6044.3
    95.91    5999.6
 gmt plot -Wred  -A  <<END
-> seg 13/14 s of ScS at  1300.00
+> seg 13/14 S of ScS at  1300.00
    95.91    5999.6
    93.96    6082.1
    93.16    6115.3
@@ -7829,7 +7829,7 @@ gmt plot -Wred  -A  <<END
    89.66    4764.3
    90.37    4709.3
 gmt plot -Wred  -A  <<END
-> seg 13/17 s of sScS at  1300.00
+> seg 13/17 S of sScS at  1300.00
    90.37    4709.3
    89.15    4802.7
    88.63    4841.2
@@ -7921,7 +7921,7 @@ gmt plot -Wred  -A  <<END
    94.47    5272.8
    95.27    5219.1
 gmt plot -Wred  -A  <<END
-> seg 14/17 s of sScS at  1400.00
+> seg 14/17 S of sScS at  1400.00
    95.27    5219.1
    93.78    5317.6
    93.16    5357.9
@@ -7983,7 +7983,7 @@ gmt plot -Wred  -A  <<END
    97.92    5790.0
    98.85    5742.3
 gmt plot -Wred  -A  <<END
-> seg 15/17 s of sScS at  1500.00
+> seg 15/17 S of sScS at  1500.00
    98.85    5742.3
    97.04    5833.7
    96.29    5870.5
@@ -8007,7 +8007,7 @@ gmt plot -Wred  -A  <<END
    99.75    6236.7
   100.75    6196.4
 gmt plot -Wred  -A  <<END
-> seg 16/17 s of sScS at  1600.00
+> seg 16/17 S of sScS at  1600.00
   100.75    6196.4
    98.75    6276.0
    97.94    6308.4
