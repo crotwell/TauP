@@ -4,7 +4,7 @@ conda activate sphinx
 # check requirements.in and if update run
 # pip-compile requirements.in
 # if ready to publish, get new DOI from zenodo and add to build.gradle.kts
-# as zenodo_rel_id
+# as zenodo_rel_id, git tag before sphinx then move tag after update docs
 # then
 ./gradlew sphinx
 
