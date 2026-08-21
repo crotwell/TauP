@@ -194,9 +194,19 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         if (!hasFault) {
             throw new TauPException("beachball requires either --strikediprake or a source with a fault plane");
         }
-        if (getOutputFormat().equals(OutputTypes.SVG) && getBeachballType().size()>1) {
-            throw new TauPException("Can only output one beachball type for --svg");
+        if (getOutputFormat().equals(OutputTypes.SVG)) {
+            if (getBeachballType().size() > 1) {
+                throw new TauPException("Can only output one beachball type for --svg");
+            }
+            if (getDistanceArgs().getQmlStaxmlArgs().getEventIdList().size()>1) {
+                throw new TauPException("Can only output one event for --svg");
+            }
+            if (sourceArgs.hasStrikeDipRake() && !getDistanceArgs().getQmlStaxmlArgs().getEventIdList().isEmpty()) {
+                throw new TauPException("Cannot use only one of --strikediprake and event for --svg");
+            }
+
         }
+
     }
 
     @Override
