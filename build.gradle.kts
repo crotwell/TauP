@@ -216,7 +216,7 @@ dependencies {
     implementation("net.sf.geographiclib:GeographicLib-Java:2.1")
     implementation("org.json:json:20260814")
     implementation("com.google.code.gson:gson:2.14.0")
-    implementation("edu.sc.seis:seisFile:2.4.0")
+    implementation("edu.sc.seis:seisFile:2.4.1")
     //implementation("edu.sc.seis:seisFile:2.4.1-SNAPSHOT")
     implementation("edu.sc.seis:seedCodec:1.2.0")
 
