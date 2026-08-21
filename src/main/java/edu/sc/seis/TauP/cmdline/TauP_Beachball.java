@@ -47,6 +47,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     public void start() throws IOException, TauPException {
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(sourceArgs);
         Set<FaultPlane> uniqFaultPlaneList = new HashSet<>();
+        HashMap<FaultPlane, Event> faultToEvent = new HashMap<>();
         // in case no arrivals, still use given source arg
         if (sourceArgs.hasStrikeDipRake()) {
             uniqFaultPlaneList.add(sourceArgs.getFaultPlane());
@@ -58,7 +59,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                         for (FocalMechanism focalMech : e.getFocalMechanismList()) {
                             if (focalMech.getNodalPlane().length>1) {
                                 NodalPlane np = focalMech.getNodalPlane()[0];
-                                uniqFaultPlaneList.add(new FaultPlane(np));
+                                FaultPlane fp = new FaultPlane(np);
+                                uniqFaultPlaneList.add(fp);
+                                faultToEvent.put(fp, e);
                                 break;
                             }
                         }
@@ -72,7 +75,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     for (FocalMechanism focalMech : e.getFocalMechanismList()) {
                         if (focalMech.getNodalPlane().length>1) {
                             NodalPlane np = focalMech.getNodalPlane()[0];
-                            uniqFaultPlaneList.add(new FaultPlane(np));
+                            FaultPlane fp = new FaultPlane(np);
+                            uniqFaultPlaneList.add(fp);
+                            faultToEvent.put(fp, e);
                             break;
                         }
                     }
@@ -99,6 +104,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                         if (fm.getNodalPlane().length>0) {
                             FaultPlane fp = new FaultPlane(fm.getNodalPlane()[0]);
                             uniqFaultPlaneList.add(fp);
+                            faultToEvent.put(fp, event);
                             SeismicSource es = new SeismicSource(event.getPreferredMagnitude().getMag().getValue(), fp);
                             ray.setSeismicSource(es);
                         }
@@ -138,6 +144,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                     radPattern.addAll(calcRadiationPattern(faultPlane, numPoints, true));
                 }
                 BeachBall bb = new BeachBall(faultPlane, bbType, hemisphereType, bbArrivals, radPattern);
+                if (faultToEvent.containsKey(faultPlane)) {
+                    bb.setEvent(faultToEvent.get(faultPlane));
+                }
                 bballs.add(bb);
             }
         }
@@ -166,7 +175,23 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
     @Override
     public void validateArguments() throws TauPException {
         this.sourceArgs.validateArguments();
-        if (!sourceArgs.hasStrikeDipRake()) {
+        boolean hasFault = sourceArgs.hasStrikeDipRake();
+        for ( LatLonLocatable ll : distanceArgs.getQmlStaxmlArgs().getEventLocations()) {
+            if (ll instanceof Event) {
+                Event e = (Event)ll;
+                if ( ! e.getFocalMechanismList().isEmpty()) {
+                    hasFault = true;
+                    break;
+                }
+            }
+        }
+        for (RayCalculateable ray : distanceArgs.getRayCalculatables(sourceArgs)) {
+            if (ray.hasFaultPlane()) {
+                hasFault = true;
+                break;
+            }
+        }
+        if (!hasFault) {
             throw new TauPException("beachball requires either --strikediprake or a source with a fault plane");
         }
         if (getOutputFormat().equals(OutputTypes.SVG) && getBeachballType().size()>1) {
@@ -208,7 +233,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             printResultJson(writer, uniqFaultPlaneList, distanceValues, arrivalList, beachBalls);
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
-            printResultSVG(writer, beachBalls.get(0), legendArgs.isLegend());
+            printResultSVG(writer, beachBalls.get(0), legendArgs);
         } else if (getOutputFormat().equals(OutputTypes.HTML)) {
             printResultHtml(writer, uniqFaultPlaneList, distanceValues, arrivalList, beachBalls);
         } else {
@@ -217,7 +242,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         }
     }
 
-    public void printResultSVG(PrintWriter writer, BeachBall beachBall, boolean withLegend) throws TauPException {
+    public void printResultSVG(PrintWriter writer, BeachBall beachBall, LegendArgs legendArgs) throws TauPException {
         float pixelWidth = outputTypeArgs.getPixelWidth();
         StringBuilder extraCSS = getBeachballExtraCSS();
         StringBuilder extraDefs = getBeachballExtraDefs();
@@ -580,14 +605,20 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
     public List<String> createTextLegendLines(BeachBall beachBall) {
         List<String> textLines = new ArrayList<>();
-        textLines.add("Strike: "+beachBall.getFaultPlane().getStrike()+" Dip: "+beachBall.getFaultPlane().getDip()+" Rake: "+beachBall.getFaultPlane().getRake());
+        if (beachBall.getEvent()!= null) {
+            Event e = beachBall.getEvent();
+            textLines.add("Event: "+ e.getLocationDescription() );
+        }
+        textLines.add("Strike: "+Outputs.formatDistanceNoPad(beachBall.getFaultPlane().getStrike())
+                +" Dip: "+Outputs.formatDistanceNoPad(beachBall.getFaultPlane().getDip())
+                +" Rake: "+Outputs.formatDistanceNoPad(beachBall.getFaultPlane().getRake()));
         textLines.add("Model: "+getTauModelName());
         SphericalCoordinate p = beachBall.getFaultPlane().pAxis().toSpherical();
-        textLines.add("P Axis: to: "+p.getTakeoffAngleDegree()+" az: "+p.getAzimuthDegree());
-        SphericalCoordinate t = beachBall.getFaultPlane().pAxis().toSpherical();
-        textLines.add("T Axis: to: "+t.getTakeoffAngleDegree()+" az: "+t.getAzimuthDegree());
-        SphericalCoordinate n = beachBall.getFaultPlane().pAxis().toSpherical();
-        textLines.add("N Axis: to: "+n.getTakeoffAngleDegree()+" az: "+n.getAzimuthDegree());
+        textLines.add("P Axis: to: "+Outputs.formatDistanceNoPad(p.getTakeoffAngleDegree())+" az: "+Outputs.formatDistanceNoPad(p.getAzimuthDegree()));
+        SphericalCoordinate t = beachBall.getFaultPlane().tAxis().toSpherical();
+        textLines.add("T Axis: to: "+Outputs.formatDistanceNoPad(t.getTakeoffAngleDegree())+" az: "+Outputs.formatDistanceNoPad(t.getAzimuthDegree()));
+        SphericalCoordinate n = beachBall.getFaultPlane().nullAxis().toSpherical();
+        textLines.add("N Axis: to: "+Outputs.formatDistanceNoPad(n.getTakeoffAngleDegree())+" az: "+Outputs.formatDistanceNoPad(n.getAzimuthDegree()));
         return textLines;
     }
 
@@ -611,13 +642,13 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         writer.println("</li>");
 
         for (BeachBall bb : beachBalls) {
-            FaultPlane faultPlane = bb.getFaultPlane();
+            writer.println("  <h5>Wave Type: " + bb.getBbType() + "</h5>");
             if (legendArgs.isLegend()) {
 
                 List<String> legendLines = createTextLegendLines(bb);
                 writer.println("<pre>");
                 for (String line : legendLines) {
-                    writer.println(line+"\n");
+                    writer.println(line);
                 }
                 writer.println("</pre>");
                 if (!bb.getArrivals().isEmpty()) {
@@ -627,8 +658,9 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 }
             }
             writer.println("<div class=\"beachball\">");
-            writer.println("  <h5>Wave Type: " + bb.getBbType() + "</h5>");
-            printResultSVG(writer, bb, false);
+            LegendArgs falseLegendArgs = new LegendArgs();
+            falseLegendArgs.setLegend(false);
+            printResultSVG(writer, bb, falseLegendArgs);
             writer.println("</div>");
         }
         HTMLUtil.addSortTableJS(writer);

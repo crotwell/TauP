@@ -263,15 +263,29 @@ public class QmlStaxmlArgs {
         return eidList;
     }
 
+    HashMap<String, Event> eidCache = new HashMap<>();
+
     public List<Event> loadEventsFromUSGS(List<String> eidList) throws TauPException {
         List<Event> out = new ArrayList<>();
         try {
             for (String eid : eidList) {
-                FDSNEventQueryParams qp = new FDSNEventQueryParams();
-                qp.setEventid(eid);
-                FDSNEventQuerier querier = new FDSNEventQuerier(qp);
-                querier.setUserAgent(getTaupUserAgent());
-                out.addAll(querier.getQuakeML().extractAllEvents());
+                if (eidCache.containsKey(eid)) {
+                    out.add(eidCache.get(eid));
+                } else {
+                    FDSNEventQueryParams qp = new FDSNEventQueryParams();
+                    qp.setEventid(eid);
+                    FDSNEventQuerier querier = new FDSNEventQuerier(qp);
+                    querier.setUserAgent(getTaupUserAgent());
+                    List<Event> elist = querier.getQuakeML().extractAllEvents();
+                    // should be size 0 or 1
+                    out.addAll(elist);
+                    if ( ! elist.isEmpty()) {
+                        if (eidCache.size()>100) {
+                            eidCache.remove(eidCache.keySet().iterator().next());
+                        }
+                        eidCache.put(eid, elist.get(0));
+                    }
+                }
             }
         } catch (SeisFileException|XMLStreamException e) {
             throw new TauPException("Unable to load station locations from fedcat service", e);

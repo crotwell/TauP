@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import java.util.List;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 
 public class BeachBall {
 
@@ -36,9 +37,22 @@ public class BeachBall {
         return radiationAmplitudeList;
     }
 
+    public List<Arrival> getArrivalList() {
+        return arrivalList;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
     FaultPlane faultPlane;
     BeachballType bbType;
     HemisphereType hemisphereType;
     List<Arrival> arrivalList;
     List<RadiationAmplitude> radiationAmplitudeList;
+    Event event = null;
 }

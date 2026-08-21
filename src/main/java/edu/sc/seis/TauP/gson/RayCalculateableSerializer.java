@@ -70,6 +70,21 @@ public class RayCalculateableSerializer  implements JsonSerializer<RayCalculatea
         } else {
             throw new RuntimeException("Unable to serialize ray: "+src);
         }
+        if (src.hasAzimuth()) {
+            out.addProperty(JSONLabels.AZ, src.getAzimuth());
+        }
+        if (src.hasBackAzimuth()) {
+            out.addProperty(JSONLabels.BAZ, src.getBackAzimuth());
+        }
+        if (src.hasSource()) {
+            out.add(JSONLabels.SOURCE, locSerial.serialize(src.getSource(), Location.class, jsonSerializationContext));
+        }
+        if (src.hasReceiver()) {
+            out.add(JSONLabels.RECEIVER, locSerial.serialize(src.getReceiver(), Location.class, jsonSerializationContext));
+        }
+        if (src.hasFaultPlane()) {
+            out.add(JSONLabels.FAULT, jsonSerializationContext.serialize(src.getFaultPlane()));
+        }
         out.add("ray", ray);
         return out;
     }
