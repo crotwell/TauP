@@ -31,10 +31,10 @@ If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160,
 
 as well as the
-[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.XXXXXX)
+[Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.22050741)
 for the version you are using.
 
-Crotwell, H. P. (2025). The TauP Toolkit (3.2.0). Zenodo. https://doi.org/10.5281/zenodo.XXXXXXXX
+Crotwell, H. P. (2025). The TauP Toolkit (3.2.0). Zenodo. https://doi.org/10.5281/zenodo.22050741
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
