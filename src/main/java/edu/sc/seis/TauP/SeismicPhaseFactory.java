@@ -252,7 +252,7 @@ public class SeismicPhaseFactory {
                             scatterer,
                             TauPConfig.DEBUG);
                     newPhases.addAll(calcPhaseList);
-                    for (SeismicPhase seismicPhase : newPhases) {
+                    for (SeismicPhase seismicPhase : calcPhaseList) {
                         if (TauPConfig.VERBOSE) {
                             Alert.info(seismicPhase.toString());
                         }
@@ -262,12 +262,14 @@ public class SeismicPhaseFactory {
                     if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
                         e.printStackTrace();
                     }
+                    newPhases.add( FailedSeismicPhase.failForReason(phaseName.getName(),tMod, receiverDepth, e));
                 } catch (TauModelException e) {
                     Alert.warning("Error with phase '" + tempPhaseName+"', skipping this phase" ,
                             e.getMessage() );
                     if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
                         e.printStackTrace();
                     }
+                    newPhases.add( FailedSeismicPhase.failForReason(phaseName.getName(),tMod, receiverDepth, e));
                 } finally {
                     if (TauPConfig.VERBOSE) {
                         Alert.info("-----------------");

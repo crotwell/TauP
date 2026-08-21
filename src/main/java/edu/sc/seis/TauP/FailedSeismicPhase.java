@@ -23,6 +23,12 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
         this.proto.isFail = true;
     }
 
+    public static FailedSeismicPhase failForReason(String phaseName, TauModel tMod, double receiverDepth, Exception exception) {
+        FailedSeismicPhase f = failForReason(phaseName, tMod, receiverDepth, exception.getMessage());
+        f.exception = exception;
+        return f;
+    }
+
     public static FailedSeismicPhase failForReason(String phaseName, TauModel tMod, double receiverDepth, String failReason) {
         ProtoSeismicPhase proto = ProtoSeismicPhase.failNewPhase(tMod, true, LayerPropogationType.DOWN,
                 receiverDepth, phaseName, failReason);
@@ -109,4 +115,9 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
         return 0;
     }
 
+    public Exception getException() {
+        return exception;
+    }
+
+    Exception exception = null;
 }
