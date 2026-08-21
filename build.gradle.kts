@@ -69,12 +69,6 @@ jreleaser {
           active.set(Active.ALWAYS)
           postCommands.add("EXPOSE 7409")
     }
-    snap {
-          active.set(Active.ALWAYS)
-          grade.set("devel")
-          remoteBuild.set(true)
-
-    }
   }
   signing {
     setActive("ALWAYS")
