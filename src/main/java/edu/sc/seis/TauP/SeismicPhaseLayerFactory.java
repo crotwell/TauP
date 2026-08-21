@@ -121,7 +121,13 @@ public class SeismicPhaseLayerFactory {
         } else if (is(currLeg, p_leg) || is(currLeg, s_leg)) {
             /* Now deal with plain P and S case. */
             //special, need nextnextleg too
-            proto = currLegIsDownLeg(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            LayerPropogationType lpt = PhaseInteraction.layerPropogationTypeAfter(proto.getEndAction());
+            if (lpt == LayerPropogationType.UP) {
+                // upper case like S, but actually upgoing, like ScS
+                proto = currLegIsUpLeg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            } else {
+                proto = currLegIsDownLeg(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            }
         } else if (isDiffracted(currLeg) || isDiffractedDown(currLeg)) {
             proto = currLegIsDiffracted(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else if (isHead(currLeg)) {

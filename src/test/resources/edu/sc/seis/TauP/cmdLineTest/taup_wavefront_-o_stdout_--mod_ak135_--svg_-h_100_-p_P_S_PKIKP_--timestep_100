@@ -3471,7 +3471,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:PKIKP at   900.00</desc>
     <g>
-      <desc>seg 9/12 p of PKIKP at   900.00</desc>
+      <desc>seg 9/12 P of PKIKP at   900.00</desc>
       <polyline class="wavefront phase_PKIKP pwave time_900.00" points="
  3952.49   1363.37
  3708.98   1634.68
@@ -3632,7 +3632,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:PKIKP at  1000.00</desc>
     <g>
-      <desc>seg 10/12 p of PKIKP at  1000.00</desc>
+      <desc>seg 10/12 P of PKIKP at  1000.00</desc>
       <polyline class="wavefront phase_PKIKP pwave time_1000.00" points="
  4919.52   2120.71
  4608.71   2493.92
@@ -3781,7 +3781,7 @@ circle.discontinuity.iocb {
       <g>
         <desc>Phase:PKIKP at  1100.00</desc>
     <g>
-      <desc>seg 11/12 p of PKIKP at  1100.00</desc>
+      <desc>seg 11/12 P of PKIKP at  1100.00</desc>
       <polyline class="wavefront phase_PKIKP pwave time_1100.00" points="
  5710.15   2676.77
  5366.80   3150.87

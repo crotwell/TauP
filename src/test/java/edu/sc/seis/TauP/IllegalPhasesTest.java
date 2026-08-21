@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class IllegalPhasesTest {
 
 	static List<String> otherLegalPhases = Arrays.asList(
+			"ScS^660P",
 			"SKviKS",
 			"SKviKKviKS",
 			"SK^cKS",

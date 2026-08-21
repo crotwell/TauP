@@ -2156,7 +2156,7 @@
           "receiverdepth": 0.0,
           "segments": [
             {
-              "name": "p",
+              "name": "P",
               "wavetype": "pwave",
               "segment": [
                 [
