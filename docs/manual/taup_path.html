@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP Path &#8212; TauP 3.2.0-SNAPSHOT10 documentation</title>
+    <title>TauP Path &#8212; TauP 3.2.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=2699cfa9"></script>
+    <script src="_static/documentation_options.js?v=4f6ddb47"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT10</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0</p>
 
 
 
@@ -1224,7 +1224,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 2/2 s of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 2/2 S of ScS(Scs) at  1197.99 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    8.057 s/deg. in crust/mantle from 36.01 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_ScS swave" points="
  2047.05  -2816.72
  2091.21  -2800.18
@@ -2237,7 +2237,7 @@ circle.discontinuity.iocb {
 " />
     </g>
     <g>
-      <desc>seg 3/3 s of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
+      <desc>seg 3/3 S of sScS(sScs) at  1419.40 seconds at    74.00 degrees for a    550.0 km deep source in the iasp91 model with rayParam    7.945 s/deg. in crust/mantle from 37.98 deg, 2889.0 km to 74.00 deg, 0.0 km</desc>
       <polyline class="path phase_sScS swave" points="
  2142.61  -2744.73
  2199.94  -2723.86
@@ -2487,15 +2487,15 @@ circle.discontinuity.iocb {
                  [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                  [--color=&lt;coloring&gt;] [--equitorialradius=m]
                  [--equitorialradius=m] [--invflattening=f] [--invflattening=f]
-                 [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
-                 [--maxpathinc=&lt;maxPathInc&gt;] [-o=&lt;outFile&gt;] [--planet=&lt;planet&gt;]
-                 [--planet=&lt;planet&gt;] [--prop=&lt;toolPropsFilename&gt;]
-                 [--qml=&lt;quakemlFilename&gt;] [--staxml=&lt;stationxmlFilename&gt;]
-                 [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
-                 [--sid=sta[,sta...]]... [--degminmax=min max]...
-                 [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
-                 lon]... [--sta=lat lon]... [--sta=lat lon]...
-                 [--geodist=&lt;geoDistTypes&gt;...]...
+                 [--legendloc=&lt;legendLocation&gt;] [--mapwidth=&lt;mapwidth&gt;]
+                 [--mapwidthunit=&lt;mapWidthUnit&gt;] [--maxpathinc=&lt;maxPathInc&gt;]
+                 [-o=&lt;outFile&gt;] [--planet=&lt;planet&gt;] [--planet=&lt;planet&gt;]
+                 [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
+                 [--staxml=&lt;stationxmlFilename&gt;] [--xaxis=type] [--yaxis=type]
+                 [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
+                 [--degminmax=min max]... [--depthminmax=min max]... [--evt=lat
+                 lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
+                 lon]... [--geodist=&lt;geoDistTypes&gt;...]...
                  [--geodist=&lt;geoDistTypes&gt;...]... [[--mod=&lt;modelName&gt;] [-h=depth
                  [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
                  deg]...] [[-p=phase[,phase...]]...
@@ -2527,6 +2527,9 @@ Options:
       --help                 display this help message
       --label                label with phase name
       --legend               create a legend
+      --legendloc=&lt;legendLocation&gt;
+                             position legend, one of TOP_LEFT, TOP_RIGHT,
+                               BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=&lt;mapwidth&gt;  plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
                              plot width unit, i for inch, c for cm or p for px.

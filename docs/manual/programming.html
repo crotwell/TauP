@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Programmatic Access &#8212; TauP 3.2.0-SNAPSHOT10 documentation</title>
+    <title>Programmatic Access &#8212; TauP 3.2.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=2699cfa9"></script>
+    <script src="_static/documentation_options.js?v=4f6ddb47"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT10</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0</p>
 
 
 
@@ -222,25 +222,6 @@ TauP Toolkit is installed, it is close to seamless, just requiring a</p>
 </pre></div>
 </div>
 <p>and then</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">taup</span>
-
-
-<span class="n">TAUP_PATH</span><span class="o">=</span><span class="s2">&quot;/Users/crotwell/Code/seis/TauP/build/install/TauP/bin/taup&quot;</span>
-<span class="k">with</span> <span class="n">taup</span><span class="o">.</span><span class="n">TauPServer</span><span class="p">(</span><span class="n">TAUP_PATH</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">taupserver</span><span class="p">:</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">taup</span><span class="o">.</span><span class="n">TimeQuery</span><span class="p">()</span>
-    <span class="n">params</span><span class="o">.</span><span class="n">phase</span><span class="p">([</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">])</span>
-    <span class="n">params</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="mi">35</span><span class="p">)</span>
-    <span class="n">timeResult</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">calc</span><span class="p">(</span><span class="n">taupserver</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeResult</span><span class="o">.</span><span class="n">arrivals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No arrivals...&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase  Depth   Dist   Time&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">timeResult</span><span class="o">.</span><span class="n">arrivals</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s2">      </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">sourcedepth</span><span class="si">}</span><span class="s2">     </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">distdeg</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
 <p>More documentation for the python library is available at
 <a class="reference external" href="https://taup-python.readthedocs.io">readthedocs</a>.</p>
 </section>

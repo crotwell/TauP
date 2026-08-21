@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP VelocityPlot &#8212; TauP 3.2.0-SNAPSHOT10 documentation</title>
+    <title>TauP VelocityPlot &#8212; TauP 3.2.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=f6a572b4" />
-    <script src="_static/documentation_options.js?v=2699cfa9"></script>
+    <script src="_static/documentation_options.js?v=4f6ddb47"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -37,7 +37,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0-SNAPSHOT10</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.2.0</p>
 
 
 
@@ -228,6 +228,9 @@ y axis for <cite>ak135fcont</cite> and <cite>prem</cite>:</p>
         .legend .both_p_swave text {
           fill: green;
           stroke: transparent;
+        }
+        .legend text {
+          font-size: small;
         }
 
 text.title {
@@ -1023,6 +1026,9 @@ circle.discontinuity.iocb {
           fill: green;
           stroke: transparent;
         }
+        .legend text {
+          font-size: small;
+        }
 
 text.title {
     text-anchor: middle;
@@ -1365,11 +1371,12 @@ the velocity model file for the standard models. For example:</p>
 in the current directory.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
-                    [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
-                    [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [-x=type]
-                    [-y=type] [--xminmax=x x]... [--yminmax=y y]...
-                    [--mod=model [--mod=model]... | --nd=model [--nd=model]...
-                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --html |
+                    [--legendloc=&lt;legendLocation&gt;] [--mapwidth=&lt;mapwidth&gt;]
+                    [--mapwidthunit=&lt;mapWidthUnit&gt;] [-o=&lt;outFile&gt;]
+                    [--prop=&lt;toolPropsFilename&gt;] [-x=type] [-y=type]
+                    [--xminmax=x x]... [--yminmax=y y]... [--mod=model
+                    [--mod=model]... | --nd=model [--nd=model]... |
+                    --tvel=model [--tvel=model]...] [--csv | --gmt | --html |
                     --json | --nameddiscon | --svg | --text]
 Plot velocity vs depth for a model.
 
@@ -1378,6 +1385,9 @@ Options:
       --debug                enable debugging output
       --help                 display this help message
       --legend               create a legend
+      --legendloc=&lt;legendLocation&gt;
+                             position legend, one of TOP_LEFT, TOP_RIGHT,
+                               BOT_LEFT, BOT_RIGHT, default is TOP_LEFT
       --mapwidth=&lt;mapwidth&gt;  plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
                              plot width unit, i for inch, c for cm or p for px.

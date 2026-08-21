@@ -3,6 +3,8 @@
 conda activate sphinx
 # check requirements.in and if update run
 # pip-compile requirements.in
+# if ready to publish, get new DOI from zenodo and add to build.gradle.kts
+# as zenodo_rel_id
 # then
 ./gradlew sphinx
 
@@ -13,7 +15,7 @@ brew install enchant
 ./gradlew dependencyUpdates
 
 # wrapper
-./gradlew wrapper --gradle-version 9.5 --distribution-type bin
+./gradlew wrapper --gradle-version 9.7.1 --distribution-type bin
 
 # regen cmd line tests, check for any differences, use java17
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
@@ -21,6 +23,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
 ./gradlew cCLTF copyDocExampleFiles
 
 # python bindings (python example copied for sphinx)
+update version and doi in PythonBindings.java, about line 490
 ./gradlew genPythonBindings && cp build/python/* ../taup_python/src/taup/. && cp ../taup_python/examples/example_very_simple.py src/doc/sphinx/source/programming/.
 
 # sphinx
@@ -71,3 +74,4 @@ git commit and push from there
 
 update https://www.seis.sc.edu/taup
 file in Notes/www to update
+update pooh in /usc/src

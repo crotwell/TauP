@@ -482,14 +482,14 @@ public class PythonBindings {
             taupversion.println("# Use with other versions may not work.");
             taupversion.println("TAUP_VERSION = \""+BuildVersion.getVersion()+"\"");
             taupversion.println();
-            taupversion.println("TAUP_DOWNLOAD = \"https://doi.org/10.5281/zenodo.15426279\"");
+            taupversion.println("TAUP_DOWNLOAD = \"https://doi.org/10.5281/zenodo.10794857\"");
             taupversion.println();
             taupversion.close();
 
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
             out.println("# Note, version is set in Java PythonBinding class, update it there...");
-            out.println("__version__ = \"3.2.0-alpha10\"");
+            out.println("__version__ = \"3.2.0\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
