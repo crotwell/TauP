@@ -46,6 +46,7 @@ Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 Using [homebrew](https://brew.sh/):
 ```
 brew tap crotwell/crotwell
+brew trust --formula crotwell/crotwell/taup
 brew install taup
 taup --help
 ```
