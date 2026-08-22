@@ -3,8 +3,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>USC Seismology - TauP</title>
-  <link rel="stylesheet" type="text/css" href="../styles/seis_website.css"/>
-  <link rel="stylesheet" type="text/css" href="../styles/index.css"/>
+  <link rel="stylesheet" type="text/css" href="seis_website.css"/>
+  <link rel="stylesheet" type="text/css" href="index.css"/>
    <script type="text/javascript">
      function decode(domain, user){
        return("mail"+"to:"+user.replace("*rem*","")+"@"+domain);
@@ -12,8 +12,8 @@
    </script>
 </head>
 <body>
-	<a id="logo" href="../index.html">
-<img src="../images/seislogo.png"/>
+	<a id="logo" href="/index.html">
+<img src="seislogo.png"/>
 </a>
         <div id="content">
 
@@ -22,22 +22,22 @@
 
    <ul>
 
-<li><a  href="../index.html">Home</a></li>
+<li><a  href="/index.html">Home</a></li>
 
 
-<li><a  class="active"  href="../software.html">Software</a></li>
+<li><a  class="active"  href="/software.html">Software</a></li>
 
 
-<li><a  href="../projects/SCSN/index.html">SCSN</a></li>
+<li><a  href="/outreach/index.html">SCSN</a></li>
 
 
-<li><a  href="../contact.html">People</a></li>
+<li><a  href="/contact.html">People</a></li>
 
     </ul>
 
   </div>
 <div id="text">
-	<p id="breadcrumbs">You are here: <a href="../software.html">Software</a> > <b>TauP</b></p>
+	<p id="breadcrumbs">You are here: <a href="/software.html">Software</a> > <b>TauP</b></p>
 	<div id="paragraphs">
                <h1> TauP</h1>
                 <p>The TauP Toolkit is a seismic travel time calculator.  In addition to travel times, it can calculate derivative information
@@ -48,17 +48,19 @@
 				</p>
 <h3>Download</h3>
 <p>We have released the next version of TauP,
-<a href="https://zenodo.org/records/15426279"> TauP-3.1.0</a>. 
+<a href="https://zenodo.org/records/22050741"> TauP-3.2.0</a>. 
 It include many internal improvements as well
 as html output from each tool.</a></p>
-<p>Note TauP 3.0 requires Java 11 or later. </p>
+<p>Note TauP 3.2 requires Java 17 or later. </p>
 <h5><a href="https://brew.sh">Homebrew</a></h5>
-<p><code>
-	brew tap crotwell/crotwell &&  brew install taup
-</code><p>
+<pre><code>
+	brew tap crotwell/crotwell  
+	brew trust --formula crotwell/crotwell/taup
+	brew install taup
+</code></pre>
 	<h5>Manually</h5>
 	<p><code>
-	 wget <a href="https://zenodo.org/records/16884103/files/TauP-3.1.0.zip">https://zenodo.org/records/16884103/files/TauP-3.1.0.zip</a>
+	 wget <a href="https://zenodo.org/records/22050741/files/TauP-3.2.0.zip">https://zenodo.org/records/22050741/files/TauP-3.2.0.zip</a>
 
 	</code></p>
 
@@ -87,7 +89,7 @@ as html output from each tool.</a></p>
 <p>If you would like TauP and would like to cite it, please use the following:
    Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.</p>
   as well as the Zenodo DOI for the version you are using.
-  Crotwell, H. P. (2025). The TauP Toolkit (3.0.1). Zenodo. https://doi.org/10.5281/zenodo.15426279
+  Crotwell, H. P. (2026). The TauP Toolkit (3.2.0). Zenodo. https://doi.org/10.5281/zenodo.22050741
 <p>  If you have any comments, please
 <a 	href="../mail.html"
    onmouseover="javascript:this.href=decode('seis.sc.edu', '*rem*taup')"
