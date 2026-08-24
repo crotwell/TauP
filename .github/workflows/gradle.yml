@@ -31,3 +31,11 @@ jobs:
       run: ./gradlew installDist
     - name: Test with Gradle
       run: ./gradlew  check
+    - name: Store reports
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: reports
+        path: |
+          **/build/reports/
+          **/build/test-results/
