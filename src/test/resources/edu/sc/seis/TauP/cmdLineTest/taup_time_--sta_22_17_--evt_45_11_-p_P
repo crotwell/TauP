@@ -1,0 +1,9 @@
+
+Model: iasp91  Dist: spherical
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist  Description
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name               
+---------------------------------------------------------------------------------------------------------
+   23.52     0.0   P        311.83    10.500     33.21    33.21      0.0    23.52   = P       45.00/11.00 to 22.00/17.00
+   23.52     0.0   P        311.92     9.154     28.52    28.52      0.0    23.52   = P       45.00/11.00 to 22.00/17.00
+   23.52     0.0   P        313.67     9.694     30.37    30.37      0.0    23.52   = P       45.00/11.00 to 22.00/17.00
+

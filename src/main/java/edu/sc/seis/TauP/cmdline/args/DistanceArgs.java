@@ -572,8 +572,14 @@ public class DistanceArgs {
 
     public List<LatLonLocatable> getEventLatLon() throws TauPException {
         List<LatLonLocatable> eventLocs = new ArrayList<>();
+        // combine given lat,lon with given source depths, default to zero if no depths given
+        List<Double> givenSourceDepths = modelArgs.getSourceDepths();
+        if (givenSourceDepths.isEmpty()) {
+            // no depths given, default to zero
+            givenSourceDepths = List.of(0.0);
+        }
         for (LatLonSimple evt : geodeticArgs.getEventLocations()) {
-            for (Double depth : modelArgs.getSourceDepths()) {
+            for (Double depth : givenSourceDepths) {
                 LatLonSimple evtDepth = new LatLonSimple(evt.asLocation().getLatitude(), evt.asLocation().getLongitude(), depth*1000);
                 eventLocs.add(evtDepth);
             }
