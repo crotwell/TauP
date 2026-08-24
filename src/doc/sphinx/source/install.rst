@@ -12,6 +12,7 @@ Linux and Windows via Windows Subsystem for Linux.
 Using `homebrew <https://brew.sh/>`_::
 
   brew tap crotwell/crotwell
+  brew trust --formula crotwell/crotwell/taup
   brew install taup
   taup --help
 
