@@ -54,13 +54,13 @@ public class Ellipticipy {
         // Depth and density information of velocity layers
         VelocityModel v_mod = model.getVelocityModel();  // velocity_model
         for (VelocityLayer vLay : v_mod.getLayers()) {
-            double top_depth = v_mod.layers["top_depth"][::-1] *1e3  // in m
-            double top_density = v_mod.layers["top_density"][::-1] *1e3  // in kg m^-3
-            double bot_density = v_mod.layers["bot_density"][::-1] *1e3  // in kg m^-3
-            double top_radius = a - top_depth
+            double top_depth = vLay.getTopDepth() *1e3;  // in m
+            double top_density = vLay.getTopDensity() *1e3;  // in kg m^-3
+            double bot_density = vLay.getBotDensity() *1e3; // in kg m^-3
+            double top_radius = a - top_depth;
 
             // Mass within each spherical shell by trapezoidal rule
-            double top_volume = (4.0 / 3.0) * np.pi * top_radius * * 3
+            double top_volume = (4.0 / 3.0) * Math.PI * Math.pow(top_radius, 3);
             volume = np.zeros(len(top_depth) + 1)
             volume[1:] =top_volume
                     d_volume = volume[1:]-volume[:-1]
