@@ -15,7 +15,7 @@ authors:
     orcid: 'https://orcid.org/0000-0001-6231-4847'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.22286994
+    value: 10.5281/zenodo.22287948
     description: Version 3.2.1
 repository-code: 'https://github.com/crotwell/TauP'
 url: 'http://www.seis.sc.edu/TauP/'
