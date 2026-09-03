@@ -156,7 +156,7 @@ public class SphericalCoords {
 
     /**
      * rotates a point about a pole by an angle.
-     * 
+     *
      * @param pole
      *            is a 3 element double array with X, Y and Z components of the
      *            pole.
@@ -166,11 +166,48 @@ public class SphericalCoords {
                                   double lonA,
                                   double[] pole,
                                   double angleDeg) {
-        double[][] R = new double[3][3]; /* rotation matrix. */
+
         double[] point = new double[3];
+        point[0] = Math.cos(latA * dtor) * Math.cos(lonA * dtor);
+        point[1] = Math.cos(latA * dtor) * Math.sin(lonA * dtor);
+        point[2] = Math.sin(latA * dtor);
+        return rotate(point, pole, angleDeg);
+    }
+
+    /**
+     * rotates a point about a pole by an angle.
+     *
+     * @param pole
+     *            is a 3 element double array with X, Y and Z components of the
+     *            pole.
+     * @return [lat, lon] in array.
+     */
+    public static double[] rotate(double[] point,
+                                  double[] pole,
+                                  double angleDeg) {
+        double[] newPoint = rotateXYZ( point, pole, angleDeg);
+        double newLat = Math.asin(newPoint[2]) * 180.0 / Math.PI;
+        double newLon = Math.atan2(newPoint[1], newPoint[0]) * 180.0 / Math.PI;
+        newPoint = new double[2];
+        newPoint[0] = newLat;
+        newPoint[1] = newLon;
+        return newPoint;
+    }
+
+    /**
+     * rotates a point about a pole by an angle.
+     * 
+     * @param pole
+     *            is a 3 element double array with X, Y and Z components of the
+     *            pole.
+     * @return [lat, lon] in array.
+     */
+    public static double[] rotateXYZ(double[] point,
+                                     double[] pole,
+                                     double angleDeg) {
+        double[][] R = new double[3][3]; /* rotation matrix. */
         double[] newPoint = new double[3];
-        double rToDeg = 180.0 / Math.PI;
-        double angle = angleDeg / rToDeg;
+        double angle = angleDeg * dtor;
         R[0][0] = pole[0] * pole[0] * (1 - Math.cos(angle)) + Math.cos(angle);
         R[0][1] = pole[0] * pole[1] * (1 - Math.cos(angle)) - pole[2]
                 * Math.sin(angle);
@@ -186,21 +223,26 @@ public class SphericalCoords {
         R[2][1] = pole[2] * pole[1] * (1 - Math.cos(angle)) + pole[0]
                 * Math.sin(angle);
         R[2][2] = pole[2] * pole[2] * (1 - Math.cos(angle)) + Math.cos(angle);
-        point[0] = Math.cos(latA / rToDeg) * Math.cos(lonA / rToDeg);
-        point[1] = Math.cos(latA / rToDeg) * Math.sin(lonA / rToDeg);
-        point[2] = Math.sin(latA / rToDeg);
         newPoint[0] = R[0][0] * point[0] + R[0][1] * point[1] + R[0][2]
                 * point[2];
         newPoint[1] = R[1][0] * point[0] + R[1][1] * point[1] + R[1][2]
                 * point[2];
         newPoint[2] = R[2][0] * point[0] + R[2][1] * point[1] + R[2][2]
                 * point[2];
-        double newLat = Math.asin(newPoint[2]) * 180.0 / Math.PI;
-        double newLon = Math.atan2(newPoint[1], newPoint[0]) * 180.0 / Math.PI;
-        newPoint = new double[2];
-        newPoint[0] = newLat;
-        newPoint[1] = newLon;
         return newPoint;
+    }
+
+    public static double vectorLength(double[] xyz) {
+        return Math.sqrt(Math.pow(xyz[0], 2) + Math.pow(xyz[1], 2) + Math.pow(xyz[2], 2));
+    }
+
+    public static double[] setVectorLength(double[] xyz, double length) {
+        double[] p = new double[3];
+        double curLength = vectorLength(xyz);
+        p[0] = xyz[0] * length / curLength;
+        p[1] = xyz[1] * length / curLength;
+        p[2] = xyz[2] * length / curLength;
+        return p;
     }
 
     /**

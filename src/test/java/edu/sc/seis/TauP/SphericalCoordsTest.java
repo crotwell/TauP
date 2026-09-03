@@ -144,7 +144,7 @@ public class SphericalCoordsTest {
         double depthKm = 0;
         double lat = 35;
         double lon = -110;
-        double azimuth = 0;
+        double azimuth = 180;
         double distdeg = 30;
         double pointDepthKm = 0;
         DistanceCalcGeocentric distCalc = new DistanceCalcGeocentric(Geodesic.WGS84);
@@ -156,6 +156,13 @@ public class SphericalCoordsTest {
         double delta = 1.0;
         assertEquals(spLat, latlon[0], delta);
         assertEquals(spLon, latlon[1], delta);
+        double distazdist = new DistAz(lat, lon, latlon[0], latlon[1]).getDelta();
+        assertEquals(distdeg, distazdist, 0.033); // seems large, something still not right???
+
+        double recalcDist = distCalc.angleBetweenDeg(lat, lon, depthKm, latlon[0], latlon[1], pointDepthKm);
+        assertEquals(distdeg, recalcDist, 0.033);
+        double recalcAz = distCalc.azimuth(lat, lon, depthKm, latlon[0], latlon[1], pointDepthKm);
+        assertEquals(azimuth, recalcAz, 0.01);
     }
 
     @Test
