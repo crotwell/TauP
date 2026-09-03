@@ -24,11 +24,11 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.2.1-SNAPSHOT"
+version = "3.2.1"
 val ver_split = project.getVersion().toString().split(".")
 val short_version = ver_split[0]+"."+ver_split[1]
 val copyright = "2026"
-val zenodo_rel_id = "22050741" // latest version
+val zenodo_rel_id = "22286994" // latest version
 val zenodo_all_id = "10794857" // all versions
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
