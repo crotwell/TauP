@@ -392,6 +392,31 @@ public class VelocityLayer implements Cloneable, Serializable {
 
 
     /**
+     * Calculates the volume of the spherical shell for this layer.
+     * @param radiusOfEarth radius of model in km
+     * @return volume in km^3
+     */
+    public double calcVolumeKm(double radiusOfEarth) {
+        double top_volume = (4.0 / 3.0) * Math.PI * Math.pow(radiusOfEarth-getTopDepth(), 3);
+        double bot_volume = (4.0 / 3.0) * Math.PI * Math.pow(radiusOfEarth-getBotDepth(), 3);
+        double d_volume = top_volume - bot_volume;
+        return d_volume;
+    }
+
+
+    /**
+     * Calculates the mass of the spherical shell for this layer.
+     * @param radiusOfEarth radius of model in km
+     * @return mass in kg
+     */
+    public double calcMass(double radiusOfEarth) {
+        double d_volume = calcVolumeKm(radiusOfEarth);
+        // Mg/m3 * (km)3 => 1e3 Kg/m3 * 1e9 (m3) => 1e12 Kg
+        double d_mass = 0.5 * (getBotDensity() + getTopDensity()) * d_volume * 1e12;
+        return d_mass;
+    }
+
+    /**
      * Calculate Qp from Qs assuming Q_kappa is negligible, at top of layer.
      *
      */
