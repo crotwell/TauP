@@ -15,7 +15,7 @@ plugins {
   signing
   application
   id("io.github.ben-manes.versions") version "0.61.0"
-  id("org.jreleaser") version "1.25.0"
+  id("org.jreleaser") version "1.26.0"
 }
 
 application {
@@ -222,7 +222,7 @@ dependencies {
     implementation("org.slf4j:slf4j-reload4j:2.0.6")
 
 
-    implementation("io.undertow:undertow-core:2.4.2.Final")
+    implementation("io.undertow:undertow-core:2.4.3.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
