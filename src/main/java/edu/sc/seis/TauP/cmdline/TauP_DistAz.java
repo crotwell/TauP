@@ -171,7 +171,7 @@ public class TauP_DistAz extends TauP_Tool {
             throw new IllegalArgumentException("Cannot specify all three of Distance, Event, Station");
         }
         if (!distArgs.allEmpty() && ! (geodeticArgs.hasAzimuth() || geodeticArgs.hasBackAzimuth())) {
-            throw new IllegalArgumentException("Distance only used with event, azimuth or station, backazimuth");
+            throw new IllegalArgumentException("Distance requires event, azimuth or station, backazimuth");
         }
         if ((geodeticArgs.hasAzimuth() && geodeticArgs.hasBackAzimuth())) {
             throw new IllegalArgumentException("Cannot specify both azimuth and backazimuth");
