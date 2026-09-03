@@ -258,12 +258,13 @@ public class Geocentric {
   public double[] latLonForAzimuth(double lat, double lon, double hMeters, double azimuth, double distdeg, double pointDepthM) {
     double[] vA = listToArray(IntForward(lat, lon, hMeters, false));
     double[] spLatLon = SphericalCoords.latLonFromXYZ(vA);
-    double sphLat = SphericalCoords.latFor(spLatLon[0], spLatLon[1], azimuth, distdeg);
-    double sphLon = SphericalCoords.lonFor(spLatLon[0], spLatLon[1], azimuth, distdeg);
+    double sphLat = SphericalCoords.latFor(spLatLon[0], spLatLon[1], distdeg, azimuth);
+    double sphLon = SphericalCoords.lonFor(spLatLon[0], spLatLon[1], distdeg, azimuth);
     double radius = DistAzKarney.averageRadiusMeter(new Geodesic(_a, _f));
     double[] xyz = SphericalCoords.xyzFromLatLonRadius(sphLat, sphLon, radius-pointDepthM);
     List<Double> point = IntReverse(xyz[0], xyz[1], xyz[2], false);
-    return new double[] {point.get(0), point.get(1), pointDepthM};
+    // point is in radians, convert back to deg
+    return new double[] {point.get(0)*rtod, point.get(1)*rtod, pointDepthM};
   }
 
   public double length(double[] vec) {
