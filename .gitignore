@@ -3,6 +3,9 @@ build
 .gradle
 Notes/Models
 Notes/Papers
+Notes/Seismica2026
+Notes/EllipDist_Karney
+Notes/Ellipticipy
 *.aux
 taup.bbl
 taup.blg
