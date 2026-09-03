@@ -203,6 +203,9 @@ export function valid_format(tool) {
       format = "text";
     }
   }
+  if ((format === "gmt" || format === "text") && tool === "beachball") {
+    format = "svg";
+  }
   if (tool === "spikes") {
     format = "ms3";
   }
@@ -1014,16 +1017,11 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
-  } else if (tool === "refltrans") {
-    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+  } else if (tool === "beachball") {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
-    document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
     styleStr += `
       label[for="format_text"] {
-        color: lightgrey;
-      }
-      label[for="format_json"] {
         color: lightgrey;
       }
       label[for="format_gmt"] {
