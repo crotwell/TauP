@@ -15,8 +15,8 @@ authors:
     orcid: 'https://orcid.org/0000-0001-6231-4847'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.22050741
-    description: Version 3.2.0
+    value: 10.5281/zenodo.22287948
+    description: Version 3.2.1
 repository-code: 'https://github.com/crotwell/TauP'
 url: 'http://www.seis.sc.edu/TauP/'
 repository: 'https://doi.org/10.5281/zenodo.10794857'
@@ -34,9 +34,9 @@ keywords:
   - traveltime
   - seismograph
 license: LGPL-3.0
-commit: 1a53778dca93ef2dada6270b7f13273f6222ee84
-version: 3.2.0
-date-released: '2026-08-21'
+commit: 62f3e4d227ed594a0185cdd157b781a44c514d8a
+version: 3.2.1
+date-released: '2026-09-03'
 preferred-citation:
   authors:
     - family-names: Crotwell

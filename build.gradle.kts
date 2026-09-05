@@ -15,7 +15,7 @@ plugins {
   signing
   application
   id("io.github.ben-manes.versions") version "0.61.0"
-  id("org.jreleaser") version "1.25.0"
+  id("org.jreleaser") version "1.26.0"
 }
 
 application {
@@ -24,11 +24,11 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.2.0"
+version = "3.2.1"
 val ver_split = project.getVersion().toString().split(".")
 val short_version = ver_split[0]+"."+ver_split[1]
 val copyright = "2026"
-val zenodo_rel_id = "22050741" // latest version
+val zenodo_rel_id = "22287948" // latest version
 val zenodo_all_id = "10794857" // all versions
 val doifile = "src/doc/sphinx/source/zenodo_id_num.txt"
 
@@ -222,7 +222,7 @@ dependencies {
     implementation("org.slf4j:slf4j-reload4j:2.0.6")
 
 
-    implementation("io.undertow:undertow-core:2.4.2.Final")
+    implementation("io.undertow:undertow-core:2.4.3.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")

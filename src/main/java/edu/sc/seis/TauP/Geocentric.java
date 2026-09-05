@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static edu.sc.seis.TauP.SphericalCoords.dtor;
 import static edu.sc.seis.TauP.SphericalCoords.rtod;
 
 /**
@@ -258,12 +259,18 @@ public class Geocentric {
   public double[] latLonForAzimuth(double lat, double lon, double hMeters, double azimuth, double distdeg, double pointDepthM) {
     double[] vA = listToArray(IntForward(lat, lon, hMeters, false));
     double[] spLatLon = SphericalCoords.latLonFromXYZ(vA);
-    double sphLat = SphericalCoords.latFor(spLatLon[0], spLatLon[1], azimuth, distdeg);
-    double sphLon = SphericalCoords.lonFor(spLatLon[0], spLatLon[1], azimuth, distdeg);
-    double radius = DistAzKarney.averageRadiusMeter(new Geodesic(_a, _f));
-    double[] xyz = SphericalCoords.xyzFromLatLonRadius(sphLat, sphLon, radius-pointDepthM);
-    List<Double> point = IntReverse(xyz[0], xyz[1], xyz[2], false);
-    return new double[] {point.get(0), point.get(1), pointDepthM};
+    double[] pole = SphericalCoords.greatCircleRotationPole( spLatLon[0],  spLatLon[1],  azimuth);
+    double[] point = SphericalCoords.rotateXYZ(vA, pole, distdeg);
+    double[] spPoint = SphericalCoords.latLonFromXYZ(vA);
+    point = SphericalCoords.setVectorLength(point, radiusAtCentralAngle(spPoint[0])-pointDepthM);
+    List<Double> llPoint = IntReverse(point[0], point[1], point[2], false);
+    return new double[] {llPoint.get(0)*rtod, llPoint.get(1)*rtod, llPoint.get(2)};
+  }
+
+  public double radiusAtCentralAngle(double theta) {
+    double b = _a*(1-_f);
+    double e = Math.sqrt(_e2);
+    return b / Math.sqrt(1-Math.pow(e*Math.cos(theta*dtor), 2));
   }
 
   public double length(double[] vec) {

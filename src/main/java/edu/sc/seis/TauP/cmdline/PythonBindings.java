@@ -489,7 +489,8 @@ public class PythonBindings {
             File initFile = new File(dir, "__init__.py");
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
             out.println("# Note, version is set in Java PythonBinding class, update it there...");
-            out.println("__version__ = \"3.2.0\"");
+            // use same version for python as java
+            out.println("__version__ = \""+BuildVersion.getVersion()+"\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");

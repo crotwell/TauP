@@ -203,6 +203,9 @@ export function valid_format(tool) {
       format = "text";
     }
   }
+  if ((format === "gmt" || format === "text") && tool === "beachball") {
+    format = "svg";
+  }
   if (tool === "spikes") {
     format = "ms3";
   }
@@ -475,10 +478,12 @@ export function form_tool_url() {
   let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
   let istakeoffrange = document.querySelector('input[name="istakeoffrange"]').checked;
   let israyparamdist = document.querySelector('input[name="israyparamdist"]').checked;
+  let isEvent = isevtdist || isusgseid;
+  let isStation = isstadist || issid;
   let isSomeDistance = islistdegdist
       || isdegreerange
       || islistkmdist || iskilometerrange
-      || ((isevtdist || isusgseid) && (isstadist || issid))
+      || (isEvent && (isstadist || issid))
       || istakeoffdist || istakeoffrange
       || israyparamdist;
   if ( ! isSomeDistance ) {
@@ -621,7 +626,7 @@ export function form_tool_url() {
       } else if (rayparamunit === "israyparamrad") {
         distparam += `&rayparamrad=${rayparam}`;
       } else {
-        throw new Exception(`Unknown ray param unit: ${rayparamunit}`)
+        throw new Error(`Unknown ray param unit: ${rayparamunit}`)
       }
     }
     url += distparam;
@@ -631,9 +636,9 @@ export function form_tool_url() {
       && toolname !== "refltrans" && toolname !== "find") {
     let distazEnsureLatLon = false;
     if (toolname === "distaz"
-      && ! (isevtdist || isstadist || isazimuth || isbackazimuth)) {
-        distazEnsureLatLon = true;
-      }
+      && ! (isEvent || isstadist || isazimuth || isbackazimuth)) {
+        //distazEnsureLatLon = true;
+    }
     let distparam = "";
     if (isevtdist || distazEnsureLatLon) {
       let evla = document.querySelector('input[name="eventlat"]').value;
@@ -662,9 +667,16 @@ export function form_tool_url() {
       distparam += `&baz=${baz}`;
     }
     if (distazEnsureLatLon || isevtdist || isusgseid || isstadist || isazimuth || isbackazimuth) {
-      let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
-      if (isgeod) {
-        distparam += `&geodetic=true`;
+      let isspherical = document.querySelector('input[name="isspherical"]').checked;
+      let isgeocentric = document.querySelector('input[name="isgeocentric"]').checked;
+      let isgeodetic = document.querySelector('input[name="isgeodetic"]').checked;
+      if ( (isspherical || isgeocentric || isgeodetic)) {
+        // spherical is default if nothing
+        let geodistList = [];
+        if (isspherical) {geodistList.push("spherical");}
+        if (isgeocentric) {geodistList.push("geocentric");}
+        if (isgeodetic) {geodistList.push("geodetic");}
+        distparam += `&geodist=${geodistList.join(",")}`;
         let ellip = document.querySelector('input[name="geodeticflattening"]').value;
         if (ellip != "" && ellip !== "298.257223563") {
           distparam += `&geodeticflattening=${ellip}`;
@@ -1014,16 +1026,11 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
-  } else if (tool === "refltrans") {
-    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+  } else if (tool === "beachball") {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
-    document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
     styleStr += `
       label[for="format_text"] {
-        color: lightgrey;
-      }
-      label[for="format_json"] {
         color: lightgrey;
       }
       label[for="format_gmt"] {
