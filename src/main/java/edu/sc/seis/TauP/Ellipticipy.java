@@ -1,8 +1,8 @@
 package edu.sc.seis.TauP;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
+import static edu.sc.seis.TauP.SphericalCoords.dtor;
 
 /**
  *
@@ -15,28 +15,28 @@ Copied from https://github.com/StuartJRussell/EllipticiPy, 2026-08-24
 git commit 1bac64e158e0bc6300fc12793cea06dd385a93d3
 """
 
-
-        import numpy as np
-    from scipy.integrate import cumtrapz
-
-    from obspy.taup import TauPyModel
-    from obspy.taup.tau import TauModel
-    from obspy.taup.seismic_phase import SeismicPhase
-    from obspy.taup.helper_classes import Arrival
-    from obspy.taup.utils import parse_phase_list
-    from obspy.geodetics.base import gps2dist_azimuth*/
+*/
 
 public class Ellipticipy {
+    private final double lod;
+    private final TauModel model;
+    private HashMap<VelocityLayer, Double> top_epsilon = new HashMap<>();
+    private HashMap<VelocityLayer, Double> bot_epsilon = new HashMap<>();
+
+    public Ellipticipy(TauModel tMod) {
+        this(tMod, EARTH_LOD);
+    }
+    public Ellipticipy(TauModel tMod, double lod) {
+        this.lod = lod;
+        this.model = tMod;
+    }
 
 //# Constants
     public static final double EARTH_LOD = 86164.0905;  // s, length of day of Earth
     public static final double G = 6.67408e-11;  // m^3 kg^-1 s^-2, universal gravitational constant
 
 
-    public static Object model_epsilon(TauModel model) {
-        return model_epsilon(model, EARTH_LOD);
-    }
-    public static Object model_epsilon(TauModel model, double lod) {
+    public Object model_epsilon() {
             /*
     Calculates a profile of ellipticity of figure through a planetary model.
 
@@ -59,7 +59,11 @@ public class Ellipticipy {
         VelocityModel v_mod = model.getVelocityModel();  // velocity_model
         double[] volume = new double[v_mod.getLayers().length+1 ];
         double total_mass = 0;
-        for (VelocityLayer vLay : v_mod.getLayers()) {
+        List<VelocityLayer> botToTopLayers = Arrays.asList(v_mod.getLayers());
+        Collections.reverse(botToTopLayers);
+        double prev_j_top = 0;
+        double prev_moment_of_inertia = 0;
+        for (VelocityLayer vLay : botToTopLayers) {
             double top_depth = vLay.getTopDepth() *1e3;  // in m
             double bot_depth = vLay.getBotDepth() *1e3;  // in m
             double top_density = vLay.getTopDensity() *1e3;  // in kg m^-3
@@ -78,12 +82,11 @@ public class Ellipticipy {
 
             // Moment of inertia of each spherical shell by trapezoidal rule
             double j_top = (8.0 / 15.0) * Math.PI * Math.pow(top_radius, 5);
-            double[] j = np.zeros(len(top_depth) + 1);
-            j[1:] =j_top;
-            double[] d_j = j[1:]-j[:-1];
+            double d_j = j_top-prev_j_top;
+            prev_j_top = j_top;
             double d_inertia = 0.5 * (bot_density + top_density) * d_j;
 
-            double moment_of_inertia = np.cumsum(d_inertia);
+            double moment_of_inertia = d_inertia+prev_moment_of_inertia;
 
             // Calculate y (moment of inertia factor) for surfaces within the body
             double y = moment_of_inertia / (mass * Math.pow(top_radius, 2));
@@ -96,7 +99,7 @@ public class Ellipticipy {
             double ha = (Math.pow(a, 3) * Math.pow(omega, 2)) / (G * total_mass);
 
             // epsilon at surface
-            double epsilona = (5 * ha) / (2 * radau[-1] + 4);
+            double epsilona = (5 * ha) / (2 * radau + 4);
 
             // Solve the differential equation
             double epsilon = np.exp(cumtrapz(radau / top_radius, x = top_radius, initial = 0.0));
@@ -111,7 +114,7 @@ public class Ellipticipy {
         v_mod.lod = lod;
     }
 
-    public static Object get_epsilon(TauModel model, double[] depth) {
+    public Object get_epsilon(TauModel model, double depth) throws NoSuchLayerException {
             /*
         Gets ellipticity of figure for a model at a specified depth.
 
@@ -129,20 +132,32 @@ public class Ellipticipy {
         VelocityModel v_mod = model.getVelocityModel();
 
         // Closest index to depth
-        int top_layer_idx = v_mod.layer_number_below(0.0)[0];
-        int[] layer_idx = top_layer_idx * np.ones(len(depth), dtype = int);
-        boolean[] cond = depth > 0.0;
-        if cond.any():
-        layer_idx[cond] = v_mod.layer_number_above(depth[cond]);
+        int top_layer_idx = v_mod.layerNumberBelow(0.0);
+        int layer_idx = top_layer_idx;
+        boolean cond = depth > 0.0;
+        if (cond) {
+            layer_idx = v_mod.layerNumberAbove(depth);
+        }
 
         // Interpolate to get epsilon value
-        VelocityLayer layer = v_mod.layers[layer_idx];
-        double thick = layer["bot_depth"] - layer["top_depth"];
-        double bot_eps = v_mod.bot_epsilon[layer_idx];
-        double top_eps = v_mod.top_epsilon[layer_idx];
+        VelocityLayer layer = v_mod.getVelocityLayer(layer_idx);
+        double thick = layer.getThickness();
+        double bot_eps = bot_epsilon.get(layer);
+        double top_eps = top_epsilon.get(layer);
         double slope = (bot_eps - top_eps) / thick;
 
-        return slope * (depth - layer["top_depth"]) + top_eps;
+        return slope * (depth - layer.getTopDepth()) + top_eps;
+    }
+
+    public static int factorial(int m) {
+        if (m<0) {
+            throw new IllegalArgumentException("factorial <0 undef: "+m);
+        }
+        int ans = 1;
+        for (int i = 1; i <= m; i++) {
+            ans *= m;
+        }
+        return ans;
     }
 
     public static Object weighted_alp2(int m, double theta) {
@@ -163,27 +178,23 @@ public class Ellipticipy {
 
         // Pre-factor for polynomial - Schmidt semi-normalisation
         double norm = Math.sqrt(
-                (2 - kronecker_0m) * (np.math.factorial(2 - m) / np.math.factorial(2 + m))
+                (2 - kronecker_0m) * (factorial(2 - m) / factorial(2 + m))
         );
 
         // Return polynomial of degree 2 and order m
         switch(m) {
             case 0:
-                return norm * 0.5 * (3.0 * np.cos(theta) * * 2 - 1.0);
+                return norm * 0.5 * (3.0 * Math.cos(theta) * * 2 - 1.0);
             case 1:
-                return norm * 3.0 * np.cos(theta) * np.sin(theta);
+                return norm * 3.0 * Math.cos(theta) * Math.sin(theta);
             case 2:
-                return norm * 3.0 * np.sin(theta) * * 2;
+                return norm * 3.0 * Math.sin(theta) * * 2;
             default:
                 throw new IllegalArgumentException("Invalid value of m: "+m);
         }
     }
 
-    public static Object ellipticity_coefficients(List<Arrival> arrivals) {
-        return ellipticity_coefficients(arrivals, EARTH_LOD);
-    }
-
-    public static Object ellipticity_coefficients(List<Arrival> arrivals, double lod) {
+    public HashMap<Arrival, Double[]> ellipticity_coefficients(List<Arrival> arrivals) {
             /*
     Ellipticity coefficients for a set of arrivals.
 
@@ -205,12 +216,14 @@ public class Ellipticipy {
     >>> ellipticity_coefficients(arrivals)
     [[-0.9293229194820186, -0.6859308201378412, -0.8799047487163734]]
     */
-        if isinstance(arrivals, Arrival):
-        return individual_ellipticity_coefficients(arrivals, lod);
-        return [individual_ellipticity_coefficients(arr, lod) for arr in arrivals];
+        HashMap<Arrival, Double[]> out = new HashMap<>();
+        for (Arrival arrival : arrivals) {
+            out.put(arrival, individual_ellipticity_coefficients(arrival, lod));
+        }
+        return out;
     }
 
-    public static double[] individual_ellipticity_coefficients(Arrival arrival, double lod) {
+    public static Double[] individual_ellipticity_coefficients(Arrival arrival, double lod) {
             /*
     Ellipticity coefficients for a single ray path.
 
@@ -228,14 +241,17 @@ public class Ellipticipy {
         model_epsilon(model, lod);
 
         // Coefficients from continuous ray path
-        double ray_sigma = integral_coefficients(arrival);
+        double[] ray_sigma = integral_coefficients(arrival);
 
         // Coefficients from discontinuities
-        double disc_sigma = discontinuity_coefficients(arrival);
+        double[] disc_sigma = discontinuity_coefficients(arrival);
 
         // Sum the contribution from the ray path and the discontinuities
         // to get final coefficients
-        double sigma = [ray_sigma[m] + disc_sigma[m] for m in[ 0, 1, 2]];
+        Double[] sigma = new Double[3];
+        for (int m = 0; m < sigma.length; m++) {
+            sigma[m] = ray_sigma[m] + disc_sigma[m];
+        }
 
         return sigma;
     }
@@ -287,7 +303,7 @@ public class Ellipticipy {
         return (y>0)?Math.sqrt(y) : 0.0;  // in s
     }
 
-    public static Object integral_coefficients(Arrival arrival) {
+    public double[] integral_coefficients(Arrival arrival) {
             /*
     Ellipticity coefficients due to integral along ray path.
     */
@@ -329,7 +345,7 @@ public class Ellipticipy {
 
                 // Vertical slowness
                 y = eta * * 2 - arrival.ray_param * * 2;
-                vertical_slowness = np.sqrt(y * (y > 0));  // in s
+                vertical_slowness = Math.sqrt(y * (y > 0));  // in s
 
                 // Make velocities for bottoming rays consistent
                 min_idx = np.argmin(radius);
@@ -348,8 +364,8 @@ public class Ellipticipy {
 
                 with np.errstate(divide = "ignore", invalid = "ignore"):
                 // centre of planet log(0.0) will evaluate as -np.inf, which is ok, don't warn
-                dlogr = np.log(r_top) - np.log(r_bot);
-                dlogv = np.log(v_top) - np.log(v_bot);
+                dlogr = Math.log(r_top) - Math.log(r_bot);
+                dlogv = Math.log(v_top) - Math.log(v_bot);
                 dlogr_dlogeta = 1.0 / (1.0 - dlogv / dlogr);
 
                 // remove nans caused by a zero thickness layer
@@ -373,32 +389,32 @@ public class Ellipticipy {
         return np.sum(0.5 * (top + bot) * (dlogr_dlogeta - 1.0) * delta);
     }
 
-    public static double[] discontinuity_contribution(List<TimeDist> points, boolean phase, TauModel model) {
+    public static double[] discontinuity_contribution(List<TimeDist> points, VelocityModelMaterial phase, TauModel model) throws NoSuchLayerException {
             /*
     Ellipticity coefficients due to an individual discontinuity.
     */
 
         // Use closest points to the boundary
-        TimeDist disc_point = points[0];
-        TimeDist neighbour_point = points[1];
+        TimeDist disc_point = points.get(0);
+        TimeDist neighbour_point = points.get(1);
 
         // Ray parameter
-        double ray_param = disc_point["p"];
+        double ray_param = disc_point.getP();
 
         // Distance in radians
-        double distance = disc_point["dist"];
+        double distance = disc_point.getDistRadian();
 
         // Radius in km
-        double depth = disc_point["depth"];
-        double radius = model.radius_of_earth - depth;
-        double neighbour_depth = neighbour_point["depth"];
+        double depth = disc_point.getDepth();
+        double radius = model.radiusOfEarth - depth;
+        double neighbour_depth = neighbour_point.getDepth();
 
         // Get velocity on appropriate side of the boundary
         double v;
         if (neighbour_depth >= depth) {
-            v = model.s_mod.v_mod.evaluate_below(depth, phase)[0];
+            v = model.getVelocityModel().evaluateBelow(depth, phase);
         } else {
-            v = model.s_mod.v_mod.evaluate_above(depth, phase)[0];
+            v = model.getVelocityModel().evaluateAbove(depth, phase);
         }
         // Vertical slowness
         double eta = radius / v;
@@ -411,7 +427,7 @@ public class Ellipticipy {
         }
 
         // Above/below sign, positive if above
-        int sign = np.sign(depth - neighbour_depth);
+        int sign = (int) Math.signum(depth - neighbour_depth);
 
         // epsilon at this depth
         double epsilon = get_epsilon(model, depth);
@@ -425,7 +441,7 @@ public class Ellipticipy {
         return sigma;
     }
 
-    public static Object discontinuity_coefficients(Arrival arrival) {
+    public double[] discontinuity_coefficients(Arrival arrival) {
             /*
     Ellipticity coefficients due to all discontinuities.
     */
@@ -466,38 +482,21 @@ public class Ellipticipy {
             throw new IllegalArgumentException("Azimuth must be in range 0 to 360 degrees");
         }
         // Convert latitude to colatitude
-        double colatitude = np.radians(90 - source_latitude);
+        double colatitude = dtor*(90 - source_latitude);
 
         // Convert azimuth to radians
-        double azimuth = np.radians(azimuth);
+        double azimuthRad = dtor*(azimuth);
 
-        return sum(
-                coefficients[m] * weighted_alp2(m, colatitude) * np.cos(m * azimuth)
-        for m in[ 0, 1, 2]
-            )
-    }
-
-    public static Object azimuth_source_latitude_from_geo_arrival(Arrival arrival) {
-            /*
-    For an arrival with a taup.TimeDistGeo path calculate azimuth and source latitude.
-    */
-        if "lat" not in arrival.path.dtype.names:
-        raise ValueError ("Unable to determine source latitude and azimuth from Arrival")
-
-        source_latitude = arrival.path["lat"][0]
-        source_longitude = arrival.path["lon"][0]
-        receiver_latitude = arrival.path["lat"][-1]
-        receiver_longitude = arrival.path["lon"][-1]
-
-        azimuth = gps2dist_azimuth(
-                source_latitude, source_longitude, receiver_latitude, receiver_longitude
-        )[1]
-        return azimuth,source_latitude;
+        double ans = 1;
+        for (int m = 0; m <= 2; m++) {
+            ans += coefficients[m] * weighted_alp2(m, colatitude) * Math.cos(m * azimuthRad);
+        }
+        return ans;
     }
 
     public static Object table_ellipticity_coefficients(
             List<String> phase_list, TauModel model
-    ) {
+    ) throws TauModelException {
         return table_ellipticity_coefficients(phase_list, model, 0, 0, EARTH_LOD);
     }
 
@@ -542,7 +541,7 @@ public class Ellipticipy {
             }
             tables[phase_name] = {
                     "ray_param":ph.ray_param,
-                    "degrees":(180.0 / np.pi) * ph.dist,
+                    "degrees":(180.0 / Math.PI) * ph.dist,
                     "dist":ph.dist,
                     "time":ph.time,
                     "ellip_coeffs":ellip_coeffs,
