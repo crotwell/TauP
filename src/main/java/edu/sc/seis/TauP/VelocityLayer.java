@@ -403,6 +403,13 @@ public class VelocityLayer implements Cloneable, Serializable {
         return d_volume;
     }
 
+    public double getTopRadius(double radiusOfEarth) {
+        return radiusOfEarth-getTopDepth();
+    }
+
+    public double getBotRadius(double radiusOfEarth) {
+        return radiusOfEarth-getBotDepth();
+    }
 
     /**
      * Calculates the mass of the spherical shell for this layer.
@@ -414,6 +421,18 @@ public class VelocityLayer implements Cloneable, Serializable {
         // Mg/m3 * (km)3 => 1e3 Kg/m3 * 1e9 (m3) => 1e12 Kg
         double d_mass = 0.5 * (getBotDensity() + getTopDensity()) * d_volume * 1e12;
         return d_mass;
+    }
+
+    /**
+     * Calulates the moment of inertia due to this layer. Note this does not include the effect of
+     * deeper layers, and so is not the cummulative inertia.
+     * @param radiusOfEarth radius of model in km
+     * @return moment of inertia, Kg m2
+     */
+    public double calcMomentOfInertia(double radiusOfEarth) {
+        double avgDensity = (getBotDensity() + getTopDensity())/2;
+        avgDensity*= 1e3; // Mg/m3 to Kg/m3
+        return 8.0/15.0*Math.PI*avgDensity*(Math.pow(getTopRadius(radiusOfEarth), 5)-Math.pow(getBotRadius(radiusOfEarth), 5));
     }
 
     /**
