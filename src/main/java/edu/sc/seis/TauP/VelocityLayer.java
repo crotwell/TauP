@@ -397,8 +397,8 @@ public class VelocityLayer implements Cloneable, Serializable {
      * @return volume in km^3
      */
     public double calcVolumeKm(double radiusOfEarth) {
-        double top_volume = (4.0 / 3.0) * Math.PI * Math.pow(radiusOfEarth-getTopDepth(), 3);
-        double bot_volume = (4.0 / 3.0) * Math.PI * Math.pow(radiusOfEarth-getBotDepth(), 3);
+        double top_volume = (4.0 / 3.0) * Math.PI * Math.pow(getTopRadius(radiusOfEarth), 3);
+        double bot_volume = (4.0 / 3.0) * Math.PI * Math.pow(getBotRadius(radiusOfEarth), 3);
         double d_volume = top_volume - bot_volume;
         return d_volume;
     }
@@ -432,7 +432,9 @@ public class VelocityLayer implements Cloneable, Serializable {
     public double calcMomentOfInertia(double radiusOfEarth) {
         double avgDensity = (getBotDensity() + getTopDensity())/2;
         avgDensity*= 1e3; // Mg/m3 to Kg/m3
-        return 8.0/15.0*Math.PI*avgDensity*(Math.pow(getTopRadius(radiusOfEarth), 5)-Math.pow(getBotRadius(radiusOfEarth), 5));
+        double topRadiusMeter = getTopRadius(radiusOfEarth) * 1e3; //km -> m
+        double botRadiusMeter = getBotRadius(radiusOfEarth) * 1e3; //km -> m
+        return 8.0/15.0*Math.PI*avgDensity*(Math.pow(topRadiusMeter, 5)-Math.pow(botRadiusMeter, 5));
     }
 
     /**

@@ -12,8 +12,17 @@ public class Ellipticipy {
     private final double lod;
     private final TauModel model;
     VelocityModel vMod;
-    private HashMap<VelocityLayer, Double> top_epsilon = new HashMap<>();
-    private HashMap<VelocityLayer, Double> bot_epsilon = new HashMap<>();
+    HashMap<VelocityLayer, Double> top_epsilon = new HashMap<>();
+    HashMap<VelocityLayer, Double> bot_epsilon = new HashMap<>();
+
+    double totalMass;
+    double[] cumMass;
+    double[] cumMomInteria;
+    double ha;
+    double epsilona;
+    double[] epsilon_pre_a;
+    double[] radau;
+    double[] y;
 
     public Ellipticipy(TauModel tMod) {
         this(tMod, EARTH_LOD);
@@ -30,29 +39,43 @@ public class Ellipticipy {
         double a = model.radiusOfEarth * 1e3;
 
         double[] topRadiusMeter = new double[vMod.getNumLayers()];
-        double[] radau = new double[vMod.getNumLayers()];
+        cumMass = new double[vMod.getNumLayers()];
+        cumMomInteria = new double[vMod.getNumLayers()];
+        this.y = new double[vMod.getNumLayers()];
+        radau = new double[vMod.getNumLayers()];
         double cumulativeMass = 0.0;
         double cumulativeInertia = 0.0;
-        for (int i = vMod.getNumLayers(); i >= 0; i--) {
-            VelocityLayer vLayer = vMod.getVelocityLayer(i);
+        for (int i = 0; i < vMod.getNumLayers(); i++) {
+            VelocityLayer vLayer = vMod.getVelocityLayer(vMod.getNumLayers()-1-i);
             topRadiusMeter[i] = vLayer.getTopRadius(vMod.getRadiusOfEarth()) * 1e3;
             cumulativeMass += vLayer.calcMass(vMod.getRadiusOfEarth());
+            cumMass[i] = cumulativeMass;
             double shellInertia = vLayer.calcMomentOfInertia(vMod.getRadiusOfEarth());
             cumulativeInertia += shellInertia;
-            double y = cumulativeInertia / (cumulativeMass * Math.pow(vLayer.getTopRadius(vMod.getRadiusOfEarth()), 2));
+            cumMomInteria[i] = cumulativeInertia;
+            double y = cumulativeInertia / (cumulativeMass * Math.pow(topRadiusMeter[i], 2));
+            this.y[i] = y;
             radau[i] = 6.25 * Math.pow(1.0 - 3.0 * y / 2.0, 2) - 1.0;
         }
-        double totalMass = cumulativeMass;
+        totalMass = cumulativeMass;
 
         double ha = (Math.pow(a, 3) * Math.pow(omega, 2)) / (G * totalMass);
         double epsilona = (5.0 * ha) / (2.0 * radau[radau.length - 1] + 4.0);
 
+        this.ha = ha;
+        this.epsilona = epsilona;
+
         double[] integrand = new double[vMod.getNumLayers()];
-        for (int i = vMod.getNumLayers(); i >= 0; i--) {
+        for (int i = 0; i < vMod.getNumLayers(); i++) {
             integrand[i] = radau[i] / topRadiusMeter[i];
         }
 
         double[] epsilon = cumtrapz(integrand, topRadiusMeter);
+        epsilon_pre_a = new double[epsilon.length];
+        for (int i = 0; i < epsilon.length; i++) {
+            epsilon[i] = Math.exp(epsilon[i]);
+            epsilon_pre_a[i] = epsilon[i];
+        }
         for (int i = 0; i < epsilon.length; i++) {
             epsilon[i] = epsilona * epsilon[i] / epsilon[epsilon.length - 1];
         }
@@ -61,15 +84,15 @@ public class Ellipticipy {
         epsilonWithCenter[0] = epsilon[0];
         System.arraycopy(epsilon, 0, epsilonWithCenter, 1, epsilon.length);
 
-        for (int i = vMod.getNumLayers(); i >= 0; i--) {
-            VelocityLayer vLayer = vMod.getVelocityLayer(i);
+        for (int i = 0; i < vMod.getNumLayers(); i++) {
+            VelocityLayer vLayer = vMod.getVelocityLayer(vMod.getNumLayers()-1-i);
             this.bot_epsilon.put(vLayer, epsilonWithCenter[i]);
             this.top_epsilon.put(vLayer, epsilonWithCenter[i+1]);
         }
 
     }
 
-    public double[] getEpsilon(TauModel model, double[] depth) throws NoSuchLayerException {
+    public double[] getEpsilon(double[] depth) throws NoSuchLayerException {
         double[] result = new double[depth.length];
         for (int i = 0; i < depth.length; i++) {
             int layerIdx = 0;
@@ -85,8 +108,8 @@ public class Ellipticipy {
         return result;
     }
 
-    public double getEpsilon(TauModel model, double depth) throws NoSuchLayerException {
-        return getEpsilon(model, new double[] { depth })[0];
+    public double getEpsilon(double depth) throws NoSuchLayerException {
+        return getEpsilon(new double[] { depth })[0];
     }
 
     public static double weightedAlp2(int m, double theta) {
@@ -116,25 +139,13 @@ public class Ellipticipy {
         return result;
     }
 
-    public List<Double> ellipticityCoefficients(Arrival arrival, double lod) throws NoSuchLayerException {
-        return individualEllipticityCoefficients(arrival, lod);
-    }
-
-    public List<List<Double>> ellipticityCoefficients(List<Arrival> arrivals, double lod) throws NoSuchLayerException {
-        List<List<Double>> result = new ArrayList<>();
-        for (Arrival arr : arrivals) {
-            result.add(individualEllipticityCoefficients(arr, lod));
-        }
-        return result;
-    }
-
-    public List<Double> individualEllipticityCoefficients(Arrival arrival, double lod) throws NoSuchLayerException {
+    public double[] ellipticityCoefficients(Arrival arrival) throws NoSuchLayerException {
         double[] raySigma = integralCoefficients(arrival);
         double[] discSigma = discontinuityCoefficients(arrival);
 
-        List<Double> sigma = new ArrayList<>();
+        double[] sigma = new double[3];
         for (int m = 0; m < 3; m++) {
-            sigma.add(raySigma[m] + discSigma[m]);
+            sigma[m] = (raySigma[m] + discSigma[m]);
         }
         return sigma;
     }
@@ -176,42 +187,6 @@ public class Ellipticipy {
         return Math.sqrt(Math.max(y, 0.0));
     }
 
-    public String classifyPath(List<TimeDist> path, TauModel model) throws NoSuchLayerException {
-        TimeDist point0;
-        TimeDist point1;
-
-        if (path.get(0).getDepth() < path.get(path.size() - 1).getDepth()) {
-            point0 = path.get(0);
-            point1 = path.get(1);
-        } else {
-            point0 = path.get(path.size() - 2);
-            point1 = path.get(path.size() - 1);
-        }
-
-        double rayParam = point0.getP();
-        double depth0 = point0.getDepth();
-        double depth1 = point1.getDepth();
-
-        if (depth0 == depth1) {
-            return "diff";
-        }
-
-        double travelTime = point1.getTime() - point0.getTime();
-        double distance = Math.abs(point0.getDistRadian() - point1.getDistRadian());
-        double delayTime = travelTime - rayParam * distance;
-
-        double delayP = expectedDelayTime(rayParam, depth0, depth1, VelocityModelMaterial.P_VELOCITY);
-        double delayS = expectedDelayTime(rayParam, depth0, depth1, VelocityModelMaterial.S_VELOCITY);
-
-        double errorP = (delayP / delayTime) - 1.0;
-        double errorS = (delayS / delayTime) - 1.0;
-
-        if (Math.abs(errorP) < Math.abs(errorS)) {
-            return "p";
-        }
-        return "s";
-    }
-
     public double[] integralCoefficients(Arrival arrival) throws NoSuchLayerException {
         TauModel model = arrival.getTauModel();
 
@@ -246,7 +221,7 @@ public class Ellipticipy {
                 eta[i] = radius[i] / v[i];
             }
 
-            double[] epsilon = getEpsilon(model, depth);
+            double[] epsilon = getEpsilon(depth);
             double[] distArr = new double[path.size()];
             for (int i = 0; i < path.size(); i++) {
                 distArr[i] = path.get(i).getDistRadian();
@@ -369,7 +344,7 @@ public class Ellipticipy {
         }
 
         double sign = Math.signum(depth - neighbourDepth);
-        double epsilon = getEpsilon(model, depth);
+        double epsilon = getEpsilon(depth);
 
         double[] lam = new double[3];
         for (int m = 0; m < 3; m++) {
@@ -454,9 +429,9 @@ public class Ellipticipy {
                 time[idx] = arrival.getTime();
                 Ellipticipy ellipticipy2 = new Ellipticipy(model, lod);
 
-                List<Double> ellip = ellipticipy2.individualEllipticityCoefficients(arrival, lod);
+                double[] ellip = ellipticipy2.ellipticityCoefficients(arrival);
                 for (int j = 0; j < 3; j++) {
-                    ellipCoeffs[idx][j] = ellip.get(j);
+                    ellipCoeffs[idx][j] = ellip[j];
                 }
             }
 
