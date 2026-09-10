@@ -11,11 +11,12 @@ public class Ellipticipy {
 
     private final double lod;
     private final TauModel model;
-    VelocityModel vMod;
-    HashMap<VelocityLayer, Double> top_epsilon = new HashMap<>();
-    HashMap<VelocityLayer, Double> bot_epsilon = new HashMap<>();
+    private final VelocityModel vMod;
+    private final HashMap<VelocityLayer, Double> top_epsilon = new HashMap<>();
+    private final HashMap<VelocityLayer, Double> bot_epsilon = new HashMap<>();
+    private final HashMap<VelocityLayer, Double> radauParameter = new HashMap<>();
 
-    double totalMass;
+    private double totalMass;
     double[] cumMass;
     double[] cumMomInteria;
     double ha;
@@ -56,6 +57,7 @@ public class Ellipticipy {
             double y = cumulativeInertia / (cumulativeMass * Math.pow(topRadiusMeter[i], 2));
             this.y[i] = y;
             radau[i] = 6.25 * Math.pow(1.0 - 3.0 * y / 2.0, 2) - 1.0;
+            radauParameter.put(vLayer, radau[i]);
         }
         totalMass = cumulativeMass;
 
@@ -481,5 +483,33 @@ public class Ellipticipy {
         double dist;
         double time;
         double[] ellip_coeffs;
+    }
+
+    public double getLod() {
+        return lod;
+    }
+
+    public TauModel getTauModel() {
+        return model;
+    }
+
+    public VelocityModel getVelocityMod() {
+        return vMod;
+    }
+
+    public Double topEpsilon(VelocityLayer layer) {
+        return top_epsilon.get(layer);
+    }
+
+    public Double botEpsilon(VelocityLayer layer) {
+        return bot_epsilon.get(layer);
+    }
+
+    public double getTotalMass() {
+        return totalMass;
+    }
+
+    public double getRadauParameter(VelocityLayer layer) {
+        return radauParameter.get(layer);
     }
 }
