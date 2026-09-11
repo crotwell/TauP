@@ -69,6 +69,9 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             LatLonLocatable receiver = arr.getRayCalculateable().getReceiver();
             a.add(JSONLabels.RECEIVER_LOC, locSerial.serialize(receiver, Location.class, context));
         }
+        if (arr.isEllipticityCorrection()) {
+            a.addProperty(JSONLabels.ELLIPTICITY_CORRECTION, arr.getEllipticityCorrection());
+        }
         if (withAmplitude) {
             try {
                 a.add(JSONLabels.AMP, context.serialize(new ArrivalAmplitude(arr)));

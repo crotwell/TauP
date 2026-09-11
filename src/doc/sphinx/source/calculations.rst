@@ -72,6 +72,16 @@ can be seen for all three distance calculations by:
 .. literalinclude:: examples/taup_distaz_--sta_0_0_--evt_0_30_--evt_30_0__--geodist_spherical_geocentric_geodetic
   :language: text
 
+Actual ellipticity corrections can be applied with the :code:`--ellipticity`
+parameter. The calculation is a direct port of the
+`Python Ellipticipy package <https://github.com/StuartJRussell/EllipticiPy/>`__
+of
+:cite:t:`ellipticipy` `Russell et. al.`
+
+The example given in the Ellipticipy README is equivalent to:
+
+.. literalinclude:: examples/taup_time_-h_134_--deg_64_--az_15_--evt_23_0_--ph_P_PcP_PKiKP_--mod_ak135_--ellipticity
+  :language: text
 
 Oceans
 ------

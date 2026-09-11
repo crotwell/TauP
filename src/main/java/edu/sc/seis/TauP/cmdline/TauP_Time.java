@@ -257,7 +257,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs,
                 relativePhaseName, withDerivative,
-                getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                ellipticityArgs.isEllipticity());
     }
 
     public void printResultHtml(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
@@ -267,7 +268,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 isWithAmplitude(), sourceArgs,
                 relativePhaseName, "Time",
                 withDerivative,
-                getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                ellipticityArgs.isEllipticity());
     }
 
     public static List<String> createModelHeaderLine(String modelName,
@@ -292,7 +294,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                                        List<String> relativePhaseName,
                                                        String phaseFormat,
                                                        String phasePuristFormat,
-                                                       boolean withDerivative, List<GeoDistType> geoDistTypes) {
+                                                       boolean withDerivative, List<GeoDistType> geoDistTypes,
+                                                       boolean withEllipticity) {
         List<String> modelLine = createModelHeaderLine(modelName, scatterer, geoDistTypes);
 
         List<String> lineOne = new ArrayList<>(List.of("Distance   ", "Depth   ",
@@ -303,6 +306,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 String.format(phaseFormat, "Name ")+ "   ",
                 "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance ",
                 " ", String.format(phasePuristFormat, "Name   ")));
+        if (withEllipticity) {
+            modelLine.add("Ellipticity Time");
+            lineOne.add("Ellipticity");
+            lineTwo.add("Correction ");
+        }
         if (withAmplitude) {
             lineOne.addAll(List.of("    Amp     ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  ", "     ", "          "));
             lineTwo.addAll(List.of("  Factor PSv", "  Phase   ", " Sh  ", "     Phase"));
@@ -380,7 +388,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            boolean onlyPrintTime, boolean onlyPrintRayP,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName,
-                                           boolean withDerivative, List<GeoDistType> geoDistTypes) {
+                                           boolean withDerivative, List<GeoDistType> geoDistTypes,
+                                           boolean withEllipticity) {
         int maxNameLength = 5;
         int maxPuristNameLength = 7;
         for (Arrival arrival : arrivalList) {
@@ -400,7 +409,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
         if(!(onlyPrintRayP || onlyPrintTime)) {
             List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                     withAmplitude, sourceArgs, relativePhaseName,
-                    phaseFormat, phasePuristFormat, withDerivative, geoDistTypes);
+                    phaseFormat, phasePuristFormat, withDerivative, geoDistTypes,
+                    withEllipticity);
             if (withAmplitude) {
                 out.println(AmplitudeArgs.AMPLITUDE_WARNING);
             }
@@ -445,7 +455,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName, String toolname,
-                                           boolean withDerivative, List<GeoDistType> geoDistTypes) throws TauPException {
+                                           boolean withDerivative, List<GeoDistType> geoDistTypes,
+                                           boolean withEllipticity) throws TauPException {
 
 
         HTMLUtil.createHtmlStart(out, "TauP "+toolname, HTMLUtil.createTableCSS(), true);
@@ -455,7 +466,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         String modelLine = String.join(" ", createModelHeaderLine(modelName, scatterer, geoDistTypes));
         out.println("<h5>"+modelLine+"</h5>");
         printArrivalsAsHtmlTable(out, arrivalList, modelName, scatterer, withAmplitude, sourceArgs,
-                relativePhaseName, toolname, withDerivative, geoDistTypes);
+                relativePhaseName, toolname, withDerivative, geoDistTypes, withEllipticity);
         HTMLUtil.addSortTableJS(out);
         out.println(HTMLUtil.createHtmlEnding());
         out.flush();
@@ -468,11 +479,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName, String toolname,
                                                 boolean withDerivative,
-                                                List<GeoDistType> geoDistTypes) throws TauPException {
+                                                List<GeoDistType> geoDistTypes,
+                                                boolean withEllipticity) throws TauPException {
         String phaseFormat = "%s";
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
-                phaseFormat, phaseFormat, withDerivative, geoDistTypes);
+                phaseFormat, phaseFormat, withDerivative, geoDistTypes,
+                withEllipticity);
 
         List<String> mergedHeaders = combineHeadLines(headLines);
 
@@ -496,7 +509,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 getScatterer(),
                 isWithAmplitude(), sourceArgs,
                 relativePhaseName, "Time",
-                withDerivative, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                withDerivative, getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                ellipticityArgs.isEllipticity());
     }
 
     public static void printArrivalsAsCsv(PrintWriter out,
@@ -505,11 +519,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            Scatterer scatterer,
                                            boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName, String toolname,
-                                          boolean withDerivative, List<GeoDistType> geoDistTypes) throws TauPException {
+                                          boolean withDerivative, List<GeoDistType> geoDistTypes,
+                                          boolean withEllipticity) throws TauPException {
         String phaseFormat = "%s";
         List<List<String>> headLines = createHeaderLines(arrivalList, modelName, scatterer,
                 withAmplitude, sourceArgs, relativePhaseName,
-                phaseFormat, phaseFormat, withDerivative, geoDistTypes);
+                phaseFormat, phaseFormat, withDerivative, geoDistTypes,
+                withEllipticity);
         List<String> mergedHeaders = combineHeadLines(headLines);
 
         String comma = ",";
@@ -586,6 +602,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             List<Arrival> indexArrivalList = calcAllIndexRays(getSeismicPhases());
             arrivalList.addAll(indexArrivalList);
         }
+        applyEllipticity(arrivalList);
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
         writer.close();
@@ -599,10 +616,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public void validateArguments() throws TauPException {
         super.validateArguments();
+        distanceArgs.validateArguments();
         sourceArgs.validateArguments();
         if (isWithAmplitude()) {
             sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs));
         }
+
+        ellipticityArgs.validateArguments(spec, distanceArgs, sourceArgs);
     }
 
 }

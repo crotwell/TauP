@@ -1,7 +1,7 @@
-Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
-                      [--legend] [--phasecircles] [--verbose]
-                      [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                      [--az=<azimuth>] [--baz=<backAzimuth>]
+Usage: taup beachball [--arrows] [--debug] [--ellipticity] [--geodetic]
+                      [--geodetic] [--help] [--legend] [--phasecircles]
+                      [--verbose] [--attenuationfreq=<attenuationFreq>]
+                      [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
                       [--baz=<backAzimuth>] [--color=<coloring>]
                       [--equitorialradius=m] [--equitorialradius=m]
                       [--gridstep=<gridAngleStep>] [--hemi=type]
@@ -12,6 +12,7 @@ Usage: taup beachball [--arrows] [--debug] [--geodetic] [--geodetic] [--help]
                       [--numpoints=<numPoints>] [-o=<outFile>]
                       [--planet=<planet>] [--planet=<planet>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                      [--siderealDay=<siderealDay>]
                       [--staxml=<stationxmlFilename>] [-b=type]... [--eid=evt[,
                       evt...]]... [--sid=sta[,sta...]]... [--evt=lat lon]...
                       [--evt=lat lon]... [--sta=lat lon]... [--sta=lat lon]...
@@ -50,6 +51,8 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
+      --ellipticity          Apply ellipticity correction, as implemented
+                               ellipticipy
       --gridstep=<gridAngleStep>
                              Step in degrees for griding the background
                                radiation pattern for svg image
@@ -80,6 +83,9 @@ Options:
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
                                via fedcat web service. Creates a distance if
                                event is also given.
+      --siderealDay=<siderealDay>
+                             Sidereal length of day, in seconds, defaults to
+                               Earth value of 86164.0905
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
@@ -188,7 +194,7 @@ Lat,Lon influenced by:
       --planet=<planet>      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
-                               NEPTUNE.
+                               NEPTUNE, PLUTO.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.

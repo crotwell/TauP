@@ -148,6 +148,10 @@ public class Arrival {
 
     private final int rayParamIndex;
 
+    private Double ellipticityCorrection = null;
+
+    private Ellipticipy ellipticipy = null;
+
     public Arrival neighborArrival = null;
 
     /**
@@ -431,14 +435,45 @@ public class Arrival {
         return phase.getTauModel();
     }
 
-    /** @return travel time in seconds */
-    public double getTime() {
+    /**
+     * Travel time, without ellipticity correction added.
+     * @return travel time in seconds.
+     *
+     */
+    public double getTimeWithoutEllipticity() {
         return time;
+    }
+
+    /**
+     * Travel time, with ellipticity correction added if it was applied.
+     * @return travel time in seconds.
+     *
+     */
+    public double getTime() {
+        double ans = time;
+        if (ellipticityCorrection != null) {
+            ans += ellipticityCorrection;
+        }
+        return ans;
     }
     
     /**@return travel time as a Duration */
     public Duration getDuration() {
         return Duration.ofNanos(Math.round(getTime()*1000000000));
+    }
+
+    /**
+     * @return ellipticity calculation, if applied.
+     */
+    public double getEllipticityCorrection() {
+        if (ellipticityCorrection != null) {
+            return ellipticityCorrection;
+        }
+        return 0.0;
+    }
+
+    public boolean isEllipticityCorrection() {
+        return ellipticityCorrection != null;
     }
 
     /**
@@ -523,6 +558,36 @@ public class Arrival {
     public double getDRayParamDDeltaDeg() {
         // convert ray param to s/deg and dist to deg
         return getDRayParamDDelta()/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
+    }
+
+    /**
+     * Ellipticity correction for this arrival. Based on method in:
+     *
+     * Russell, S., Rudge, J., Irving, J. and Cottaar, S., 2022.
+     * A re-examination of ellipticity corrections for seismic phases.
+     * Geophysical Journal International, 231(3), pp.2095-2101. https://doi.org/10.1093/gji/ggac315
+     *
+     *
+     * @param ellipticipy ellipticity calculation for model
+     * @return correction in seconds to be added to arrival time
+     * @throws NoSuchLayerException should never happen
+     */
+    public double ellipticityCorrection(Ellipticipy ellipticipy) throws TauPException {
+        if (!isLatLonable()) {throw new TauPException("lat,lon required for ellipticity");}
+        double[] sigma = ellipticipy.ellipticityCoefficients(this);
+        Double arrAz = this.getRayCalculateable().getAzimuth();
+        if (arrAz==null) {return 0.0;}
+        if (isLongWayAround()) {
+            arrAz = (arrAz + 180) % 360;
+        }
+        double sourceLat = getLatLonable().calcLatLon(0, getDistDeg(), getSourceDepth())[0];
+        double correction = Ellipticipy.correctionFromCoefficients(sigma, arrAz, sourceLat);
+        return correction;
+    }
+
+    public void applyEllipticityCorrection(Ellipticipy ellipticipy) throws TauPException {
+        this.ellipticityCorrection = ellipticityCorrection(ellipticipy);
+        this.ellipticipy = ellipticipy;
     }
 
     public ArrivalAmplitude calcAmplitude() throws SlownessModelException, TauModelException {
@@ -1096,6 +1161,7 @@ public class Arrival {
                 takeoffAngleRadian,
                 incidentAngleRadian
         );
+        negArrival.ellipticityCorrection = ellipticityCorrection;
         return negArrival;
     }
 
@@ -1298,6 +1364,9 @@ public class Arrival {
             line.add(puristSame);
         }
         line.add(String.format(phasePuristFormat, getPuristName()));
+        if (isEllipticityCorrection()) {
+            line.add(Outputs.formatTime(getEllipticityCorrection()));
+        }
         if (withAmp) {
             try {
                 double ampFactorPSV = getAmplitudeFactorPSV();

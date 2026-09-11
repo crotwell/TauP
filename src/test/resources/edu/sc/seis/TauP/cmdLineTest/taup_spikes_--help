@@ -121,7 +121,7 @@ Lat,Lon influenced by:
       --planet=<planet>      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
-                               NEPTUNE.
+                               NEPTUNE, PLUTO.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.

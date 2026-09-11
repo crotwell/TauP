@@ -1,0 +1,9 @@
+
+Model: ak135  Dist: spherical Ellipticity Time
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist    Purist Ellipticity Description
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name   Correction             
+--------------------------------------------------------------------------------------------------------------------
+   64.00   134.0   P        618.61     6.535     29.05    19.93      0.0    64.00   = P         -0.45 23.00/0.00 134.00 km to az 15.00
+   64.00   134.0   PcP      652.83     4.110     17.78    12.38      0.0    64.00   * Pcp       -0.48 23.00/0.00 134.00 km to az 15.00
+   64.00   134.0   PKiKP   1019.80     1.307      5.57     3.91      0.0    64.00   * PKikp     -0.75 23.00/0.00 134.00 km to az 15.00
+

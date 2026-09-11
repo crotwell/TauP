@@ -150,6 +150,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 bballs.add(bb);
             }
         }
+        applyEllipticity(allArrivals);
         printResult(writer, uniqFaultPlaneList, distanceValues, allArrivals, bballs);
         writer.flush();
     }
@@ -174,6 +175,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
     @Override
     public void validateArguments() throws TauPException {
+        super.validateArguments();
+        distanceArgs.validateArguments(false);
         this.sourceArgs.validateArguments();
         boolean hasFault = sourceArgs.hasStrikeDipRake();
         for ( LatLonLocatable ll : distanceArgs.getQmlStaxmlArgs().getEventLocations()) {
@@ -207,6 +210,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         }
 
+        ellipticityArgs.validateArguments(spec, distanceArgs, sourceArgs);
     }
 
     @Override
@@ -664,7 +668,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 if (!bb.getArrivals().isEmpty()) {
                     TauP_Time.printArrivalsAsHtmlTable(writer, bb.getArrivals(), getTauModelName(), getScatterer(),
                             false, sourceArgs, new ArrayList<String>(), "beachball",
-                            false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                            false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                            ellipticityArgs.isEllipticity());
                 }
             }
             writer.println("<div class=\"beachball\">");

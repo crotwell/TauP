@@ -174,6 +174,7 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
             List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
             arrivalList.addAll(indexArrivalList);
         }
+        applyEllipticity(arrivalList);
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
         writer.close();
@@ -327,5 +328,16 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
         }
         return false;
     }
-    
+
+
+    @Override
+    public void validateArguments() throws TauPException {
+        super.validateArguments();
+        distanceArgs.validateArguments();
+        sourceArgs.validateArguments();
+        if (isWithAmplitude()) {
+            sourceArgs.validateArgumentsForAmplitude(modelArgs, getDistanceArgs().getRayCalculatables(sourceArgs));
+        }
+        ellipticityArgs.validateArguments(spec, distanceArgs, sourceArgs);
+    }
 }

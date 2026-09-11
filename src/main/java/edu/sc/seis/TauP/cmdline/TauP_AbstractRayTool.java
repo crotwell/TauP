@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
+import edu.sc.seis.TauP.cmdline.args.EllipticityArgs;
 import edu.sc.seis.seisFile.LatLonLocatable;
 import picocli.CommandLine;
 
@@ -17,6 +18,9 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     protected DistanceArgs distanceArgs = new DistanceArgs(super.modelArgs);
+
+    @CommandLine.Mixin
+    protected EllipticityArgs ellipticityArgs = new EllipticityArgs();
 
     public TauP_AbstractRayTool(AbstractOutputTypeArgs outputTypeArgs) {
         super(outputTypeArgs);
@@ -84,10 +88,25 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             throw new TauModelException("Scatterer depth of "+modelArgs.getScatterer().depth+" in '"+this.getTauModelName()
                     +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
-        distanceArgs.validateArguments();
-
     }
 
     public abstract List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException;
 
+    public void applyEllipticity(List<Arrival> arrivalList) throws TauPException {
+        applyEllipticity(arrivalList, ellipticityArgs, distanceArgs);
+    }
+    public static void applyEllipticity(List<Arrival> arrivalList, EllipticityArgs ellipticityArgs, DistanceArgs distanceArgs) throws TauPException {
+        if (ellipticityArgs.isEllipticity() && ! arrivalList.isEmpty()) {
+            TauModel tMod = arrivalList.get(0).getTauModel();
+            double siderealDay = ellipticityArgs.bestSiderealDay(distanceArgs);
+            Ellipticipy ellipticipy = new Ellipticipy(tMod, siderealDay);
+            for (Arrival arr : arrivalList) {
+                if (arr.getTauModel() != tMod) {
+                    tMod = arr.getTauModel();
+                    ellipticipy = new Ellipticipy(tMod, siderealDay);
+                }
+                arr.applyEllipticityCorrection(ellipticipy);
+            }
+        }
+    }
 }

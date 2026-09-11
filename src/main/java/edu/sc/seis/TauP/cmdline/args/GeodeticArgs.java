@@ -110,7 +110,14 @@ public class GeodeticArgs extends LatLonArgs {
     public void setPlanet(DistAzPlanet planet) {
         this.planet = planet;
     }
+    public boolean hasPlanet() {
+        return this.planet != null;
+    }
+    public DistAzPlanet getPlanet() {
+        return this.planet;
+    }
     protected DistAzPlanet planet = null;
+
 
     @Override
     public void validateArguments() {

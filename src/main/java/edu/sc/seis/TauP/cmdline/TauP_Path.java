@@ -417,6 +417,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@Override
 	public void validateArguments() throws TauPException {
 		super.validateArguments();
+		distanceArgs.validateArguments();
 		if (getGraphicOutputTypeArgs().isSVG() || getGraphicOutputTypeArgs().isGMT() ) {
 			if ((distDepthRange.distAxisType != null) || distDepthRange.depthAxisType != null) {
 				throw new CommandLine.ParameterException(spec.commandLine(),

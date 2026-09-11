@@ -37,6 +37,7 @@ public class CmdLineOutputTest {
             "taup time --sta 22 17 --evt 45 11 -p P",
             "taup time --deg 12 --sta 22 17 --baz -45 -p P",
             "taup time --deg 12 --evt 45 11 --az 45 -p P",
+            "taup time -h 134 --deg 64 --az 15 --evt 23 0 --ph P,PcP,PKiKP --mod ak135 --ellipticity"
                                             };
 
     String[] pierceTestCmds = new String[] {"taup pierce -h 10 -p P --deg 35 --mod prem",
@@ -167,6 +168,7 @@ public class CmdLineOutputTest {
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
             "taup time --geodist geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
+            "taup time -h 134 --deg 64 --az 15 --evt 23 0 --ph P,PcP,PKiKP --mod ak135 --ellipticity",
             "taup find --max 2 -h 100 --exclude 210",
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",

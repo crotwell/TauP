@@ -194,14 +194,17 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                         getScatterer(),
                         isWithAmplitude(), sourceArgs,
                         relativePhaseName, "Find", false,
-                        getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                        getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                        ellipticityArgs.isEllipticity()
+                        );
             } else {
                 TauP_Time.printArrivalsAsText(out, arrivalList,
                         modelArgs.getModelName(),
                         getScatterer(),
                         onlyPrintTime, onlyPrintRayP,
                         isWithAmplitude(), sourceArgs,
-                        relativePhaseName, false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes());
+                        relativePhaseName, false, getDistanceArgs().getGeodeticArgs().getGeoDistTypes(),
+                        ellipticityArgs.isEllipticity());
             }
         }
         out.flush();
@@ -429,6 +432,14 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Single value for --rayparamdeg or --rayparamkm not allowed when also giving --degree distance.");
         }
+        if (ellipticityArgs.isEllipticity()) {
+            for (RayCalculateable rc : distanceArgs.getRayCalculatables(sourceArgs)) {
+                if (!rc.isLatLonable()) {
+                    throw new CommandLine.ParameterException(spec.commandLine(),
+                            "Using --ellipticity requires source latiude and azimuth, use some combination of event, station, az, or baz to calculate.");
+                }
+            }
+        }
     }
 
     @CommandLine.Mixin
@@ -560,6 +571,9 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             defaultValue = "5.0",
             description = "find arrivals within the +- deltatime in seconds, --times must have single time. Default value is ${DEFAULT-VALUE}.")
     Double deltaTime = 5.0;
+
+    @CommandLine.Mixin
+    protected EllipticityArgs ellipticityArgs = new EllipticityArgs();
 
     /**
      * Used to limit times when only one ray param is given instead of range. Matches default precision from

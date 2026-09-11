@@ -55,7 +55,7 @@ Options:
       --planet=<planet>      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
-                               NEPTUNE.
+                               NEPTUNE, PLUTO.
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --qml, --quakeml=<quakemlFilename>

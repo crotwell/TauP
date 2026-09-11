@@ -39,6 +39,12 @@ public class ScatteredArrival extends Arrival {
         this.isBackscatter = isBackscatter;
     }
 
+    @Override
+    public void applyEllipticityCorrection(Ellipticipy ellipticipy) throws TauPException {
+        super.applyEllipticityCorrection(ellipticipy);
+        inboundArrival.applyEllipticityCorrection(ellipticipy);
+    }
+
     public ScatteredSeismicPhase getScatteredSeismicPhase() {
         return (ScatteredSeismicPhase)getPhase();
     }

@@ -1,6 +1,6 @@
-Usage: taup path [--debug] [--geodetic] [--geodetic] [--help] [--label]
-                 [--legend] [--onlynameddiscon] [--verbose] [--withlatlon]
-                 [--withtime] [--az=<azimuth>] [--az=<azimuth>]
+Usage: taup path [--debug] [--ellipticity] [--geodetic] [--geodetic] [--help]
+                 [--label] [--legend] [--onlynameddiscon] [--verbose]
+                 [--withlatlon] [--withtime] [--az=<azimuth>] [--az=<azimuth>]
                  [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                  [--color=<coloring>] [--equitorialradius=m]
                  [--equitorialradius=m] [--invflattening=f] [--invflattening=f]
@@ -8,11 +8,12 @@ Usage: taup path [--debug] [--geodetic] [--geodetic] [--help] [--label]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--planet=<planet>] [--planet=<planet>]
                  [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                 [--staxml=<stationxmlFilename>] [--xaxis=type] [--yaxis=type]
-                 [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
-                 [--degminmax=min max]... [--depthminmax=min max]... [--evt=lat
-                 lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
-                 lon]... [--geodist=<geoDistTypes>...]...
+                 [--siderealDay=<siderealDay>] [--staxml=<stationxmlFilename>]
+                 [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
+                 [--sid=sta[,sta...]]... [--degminmax=min max]...
+                 [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
+                 lon]... [--sta=lat lon]... [--sta=lat lon]...
+                 [--geodist=<geoDistTypes>...]...
                  [--geodist=<geoDistTypes>...]... [[--mod=<modelName>] [-h=depth
                  [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
                  deg]...] [[-p=phase[,phase...]]...
@@ -41,6 +42,8 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
+      --ellipticity          Apply ellipticity correction, as implemented
+                               ellipticipy
       --help                 display this help message
       --label                label with phase name
       --legend               create a legend
@@ -63,6 +66,9 @@ Options:
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
                                via fedcat web service. Creates a distance if
                                event is also given.
+      --siderealDay=<siderealDay>
+                             Sidereal length of day, in seconds, defaults to
+                               Earth value of 86164.0905
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
@@ -176,7 +182,7 @@ Lat,Lon influenced by:
       --planet=<planet>      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
-                               NEPTUNE.
+                               NEPTUNE, PLUTO.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.

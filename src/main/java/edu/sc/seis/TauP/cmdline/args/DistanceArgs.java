@@ -511,7 +511,10 @@ public class DistanceArgs {
     }
 
     public void validateArguments() {
-        if (distArgs.allEmpty()
+        validateArguments(true);
+    }
+    public void validateArguments(boolean requireDistance) {
+        if (requireDistance && distArgs.allEmpty()
                 && ( (! hasEventLatLon()) || (!hasStationLatLon() ) )
         ) {
             throw new ArgumentValidationException("Must specify at least one distance or station, event.");
