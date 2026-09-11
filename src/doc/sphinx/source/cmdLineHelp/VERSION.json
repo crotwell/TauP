@@ -1,8 +1,8 @@
 {
-  "version": "3.2.2-SNAPSHOT_2026-09-11T152017",
+  "version": "3.2.2-SNAPSHOT_2026-09-11T152203",
   "name": "TauP",
   "group": "edu.sc.seis",
-  "date": "2026-09-11T19:20:17Z",
+  "date": "2026-09-11T19:22:03Z",
   "git": {
     "revision": "2531",
     "shortsha": "d6009e0d",

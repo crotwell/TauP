@@ -51,8 +51,8 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
-      --ellipticity          Apply ellipticity correction, as implemented
-                               ellipticipy
+      --ellipticity          Apply ellipticity correction to time, as
+                               implemented by ellipticipy
       --gridstep=<gridAngleStep>
                              Step in degrees for griding the background
                                radiation pattern for svg image

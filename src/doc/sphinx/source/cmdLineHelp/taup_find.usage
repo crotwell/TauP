@@ -1,16 +1,16 @@
-Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
-                 [--showrayparam] [--swaveonly] [--verbose]
+Usage: taup find [--amp] [--debug] [--ellipticity] [--help] [--onlynameddiscon]
+                 [--pwaveonly] [--showrayparam] [--swaveonly] [--verbose]
                  [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                  [--deltatime=dt] --max=<maxActions> [--mw=<mw>]
                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
-                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
-                 [--time=t [t]]... [--strikediprake=strike dip rake]...
-                 [--exclude=depth[,depth...]...]... [[--mod=<modelName>]
-                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                 [--scat=depth deg]...] [[-p=phase[,phase...]]...
-                 [--phasefile=<phaseFiles>]...] [--csv | --html | --json |
-                 --text]
+                 [--prop=<toolPropsFilename>] [--siderealDay=<siderealDay>]
+                 [--deg=d[,d...]]... [--rayparamdeg=s/deg [s/deg]]...
+                 [--rayparamkm=s/km [s/km]]... [--time=t [t]]... [--evt=lat
+                 lon]... [--strikediprake=strike dip rake]... [--exclude=depth[,
+                 depth...]...]... [[--mod=<modelName>] [-h=depth[,depth...]]...
+                 [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                 [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                 [--csv | --html | --json | --text]
 Find seismic phases in an earth model.
 
 Options:
@@ -20,13 +20,19 @@ Options:
                            attenuation frequency for amplitude calculations,
                              default is 1.0
       --az, --azimuth=<azimuth>
-                           azimuth in degrees, for amp calculations
+                           azimuth in degrees, for ellipticity or amp
+                             calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
       --deltatime=dt       find arrivals within the +- deltatime in seconds,
                              --times must have single time. Default value is
                              5.0.
+      --ellipticity        Apply ellipticity correction to time, as implemented
+                             by ellipticipy
+      --evt, --event=lat lon
+                           event latitude and longitude.  Creates a distance if
+                             station is also given.
       --exclude=depth[,depth...]...
                            Exclude boundaries from phase conversion or
                              reflection interactions
@@ -52,6 +58,9 @@ Options:
                            only keep phases that overlap the given ray
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
+      --siderealDay=<siderealDay>
+                           Sidereal length of day, in seconds, defaults to
+                             Earth value of 86164.0905
       --strikediprake=strike dip rake
                            fault strike, dip and rake for amplitude
                              calculations. If not given radiation pattern is

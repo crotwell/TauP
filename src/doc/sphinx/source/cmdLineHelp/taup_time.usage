@@ -1,17 +1,17 @@
-Usage: taup time [--amp] [--debug] [--derivative] [--first] [--geodetic]
-                 [--geodetic] [--help] [--rayp] [--time] [--verbose]
-                 [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
-                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                 [--equitorialradius=m] [--equitorialradius=m]
-                 [--invflattening=f] [--invflattening=f] [--mw=<mw>]
-                 [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
-                 [--planet=<planet>] [--planet=<planet>]
+Usage: taup time [--amp] [--debug] [--derivative] [--ellipticity] [--first]
+                 [--geodetic] [--geodetic] [--help] [--rayp] [--time]
+                 [--verbose] [--attenuationfreq=<attenuationFreq>]
+                 [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
+                 [--baz=<backAzimuth>] [--equitorialradius=m]
+                 [--equitorialradius=m] [--invflattening=f] [--invflattening=f]
+                 [--mw=<mw>] [--numattenuationfreq=<numFrequencies>]
+                 [-o=<outFile>] [--planet=<planet>] [--planet=<planet>]
                  [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                 [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                 [--rel=phase[,phase...]]... [--sid=sta[,sta...]]... [--evt=lat
-                 lon]... [--evt=lat lon]... [--sta=lat lon]... [--sta=lat
-                 lon]... [--strikediprake=strike dip rake]...
-                 [--geodist=<geoDistTypes>...]...
+                 [--siderealDay=<siderealDay>] [--staxml=<stationxmlFilename>]
+                 [--eid=evt[,evt...]]... [--rel=phase[,phase...]]... [--sid=sta
+                 [,sta...]]... [--evt=lat lon]... [--evt=lat lon]... [--sta=lat
+                 lon]... [--sta=lat lon]... [--strikediprake=strike dip
+                 rake]... [--geodist=<geoDistTypes>...]...
                  [--geodist=<geoDistTypes>...]... [[--mod=<modelName>] [-h=depth
                  [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=depth
                  deg]...] [[-p=phase[,phase...]]...
@@ -41,6 +41,8 @@ Options:
       --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
                                station is also given.
+      --ellipticity          Apply ellipticity correction to time, as
+                               implemented by ellipticipy
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
@@ -59,6 +61,9 @@ Options:
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
                                via fedcat web service. Creates a distance if
                                event is also given.
+      --siderealDay=<siderealDay>
+                             Sidereal length of day, in seconds, defaults to
+                               Earth value of 86164.0905
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
@@ -168,7 +173,7 @@ Lat,Lon influenced by:
       --planet=<planet>      Geodesic for planets, for distance calculations
                                when --geodetic, one of: EARTH, MOON, MARS,
                                VENUS, MERCURY, CERES, JUPITER, SATURN, URANUS,
-                               NEPTUNE.
+                               NEPTUNE, PLUTO.
       --sta, --station=lat lon
                              station latitude and longitude. Creates a distance
                                if event is also given.
