@@ -103,6 +103,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 }
             }
         }
+        TauP_AbstractRayTool.applyEllipticity(arrivalList, ellipticityArgs, distanceArgs);
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if((!distanceValues.isEmpty())) {
             printResult(writer, arrivalList);
@@ -432,14 +433,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Single value for --rayparamdeg or --rayparamkm not allowed when also giving --degree distance.");
         }
-        if (ellipticityArgs.isEllipticity()) {
-            for (RayCalculateable rc : distanceArgs.getRayCalculatables(sourceArgs)) {
-                if (!rc.isLatLonable()) {
-                    throw new CommandLine.ParameterException(spec.commandLine(),
-                            "Using --ellipticity requires source latiude and azimuth, use some combination of event, station, az, or baz to calculate.");
-                }
-            }
-        }
+        ellipticityArgs.validateArguments(spec, distanceArgs, sourceArgs);
     }
 
     @CommandLine.Mixin
@@ -593,8 +587,15 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Option(names= {"--az", "--azimuth"},
-            description="azimuth in degrees, for amp calculations")
+            description="azimuth in degrees, for ellipticity or amp calculations")
     protected Double azimuth = null;
+
+    @CommandLine.Option(names = {"--evt", "--event"},
+            arity = "2",
+            paramLabel = "lat lon",
+            hideParamSyntax = true,
+            description = "event latitude and longitude.  Creates a distance if station is also given.")
+    protected List<Double> eventLatLonList = new ArrayList<>();
 
     @CommandLine.Option(names={"--deg", "--degree"},
             paramLabel="d",
