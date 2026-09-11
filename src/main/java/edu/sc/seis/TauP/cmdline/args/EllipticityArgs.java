@@ -20,7 +20,7 @@ public class EllipticityArgs {
 
     @CommandLine.Option(
             names = {"--siderealDay"},
-            description = "Sidereal length of day, in seconds, defaults to Earth value of "+ Ellipticipy.EARTH_LOD
+            description = "Sidereal length of day for ellipticity correction, in seconds, defaults to Earth value of "+ Ellipticipy.EARTH_LOD
     )
     Double siderealDay = null;
 
