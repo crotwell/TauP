@@ -16,6 +16,7 @@ plugins {
   application
   id("io.github.ben-manes.versions") version "0.61.0"
   id("org.jreleaser") version "1.26.0"
+  idea
 }
 
 application {
@@ -192,13 +193,31 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(arrayOf("-Aproject=${project.group}/${project.name}"))
 }
 
-
 sourceSets {
+    create("integration") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+        compileClasspath += sourceSets.test.get().output
+        runtimeClasspath += sourceSets.test.get().output
+    }
     create("example") {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
     }
 }
+
+idea {
+    module {
+        testSources.from(sourceSets["integration"].java.srcDirs)
+    }
+}
+
+// integration tests
+val integrationImplementation = configurations.getByName("integrationImplementation") {
+    extendsFrom(configurations.implementation.get())
+}
+val integrationRuntimeOnly = configurations.getByName("integrationRuntimeOnly")
+configurations["integrationRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 java {
     registerFeature("example") {
@@ -232,6 +251,9 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // integration testing
+    integrationImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    integrationRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 
@@ -258,6 +280,22 @@ tasks {
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
+
+val integrationTest = tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["integration"].output.classesDirs
+    classpath = sourceSets["integration"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed")
+    }
+}
+tasks.check { dependsOn(integrationTest) }
 
 tasks.named("sourcesJar") {
     dependsOn("makeVersionClass")
