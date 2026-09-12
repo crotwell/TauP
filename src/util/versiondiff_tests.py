@@ -7,7 +7,7 @@ from pathlib import Path
 def main():
     d = "cmdLineTest"
     newdir = Path(f"build/{d}")
-    olddir = Path(f"src/test/resources/edu/sc/seis/TauP/{d}")
+    olddir = Path(f"src/integration/resources/edu/sc/seis/TauP/{d}")
     checkDir(newdir, olddir)
 
     d = "cmdLineHelp"
