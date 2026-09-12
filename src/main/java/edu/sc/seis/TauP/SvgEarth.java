@@ -435,10 +435,11 @@ public class SvgEarth {
         String dxOffset = "";
         if (iconSize > 0) {
             float circleSize = calcIconSizeForZoom(iconSize, R, pixelWidth, scaleTrans);
-            writer.println("<circle class=\"arrival " + cssclass + "\" cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + circleSize + "\" />");
+            System.err.println("circle size: "+circleSize);
+            writer.println("<circle class=\"" + cssclass + "\" cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + circleSize + "\" />");
             dxOffset = " dx=\"1\" ";
         }
-        writer.println("<text class=\"arrival " + cssclass + "\" "+dxOffset+" x=\"" + x + "\" y=\"" + y + "\" >"+label+"</text>");
+        writer.println("<text class=\"" + cssclass + "\" "+dxOffset+" x=\"" + x + "\" y=\"" + y + "\" >"+label+"</text>");
         writer.println("</g>");
 
     }

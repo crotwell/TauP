@@ -284,7 +284,7 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         drawFaultsSVG(writer, beachBall.getFaultPlane(), R, earthScaling);
 
-        drawPTNAxes(writer, beachBall.getFaultPlane(), 0, R, pixelWidth, earthScaling);
+        drawPTNAxes(writer, beachBall.getFaultPlane(), 1, R, pixelWidth, earthScaling);
         drawArrivalsSVG(writer, beachBall.getArrivals(), 1, R, pixelWidth, earthScaling);
         if (! phaseArgs.isEmpty() && phasesCircles) {
             drawPhasesSVG(writer, getSeismicPhases(), beachBall.getBbType(), 1, R, pixelWidth, earthScaling);
@@ -340,6 +340,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraCSS.append("  stroke: goldenrod;\n");
         extraCSS.append("}\n");
 
+
+        extraCSS.append("g.eigen text {\n");
+        extraCSS.append("  font: italic 10px serif;\n");
+        extraCSS.append("}\n");
         extraCSS.append("g.eigen circle.compress {\n");
         extraCSS.append("  fill: darkcyan;\n");
         extraCSS.append("  stroke: darkcyan;\n");
@@ -354,6 +358,14 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
         extraCSS.append("g.eigen text.dilitate {\n");
         extraCSS.append("  fill: firebrick;\n");
         extraCSS.append("}\n");
+        extraCSS.append("g.eigen circle.nullaxis {\n");
+        extraCSS.append("  fill: black;\n");
+        extraCSS.append("  stroke: black;\n");
+        extraCSS.append("}\n");
+        extraCSS.append("g.eigen text.nullaxis {\n");
+        extraCSS.append("  fill: black;\n");
+        extraCSS.append("}\n");
+
         extraCSS.append("g.arrival circle.dilitate {\n");
         extraCSS.append("  fill: skyblue;\n");
         extraCSS.append("  stroke: skyblue;\n");
@@ -442,7 +454,8 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
                 SphericalCoordinate coord = SphericalCoordinate.fromAzTakeoffDegree(az, takeoff);
                 Vector v = coord.toCartesian();
                 String compression = (arr.getAmplitudeFactorPSV()>0)? "compress" : "dilitate";
-                SvgEarth.drawLabeledDot(writer, v.times(R), iconSize, R, pixelWidth, earthScaling, arr.getName(), compression, arr.toString());
+                SvgEarth.drawLabeledDot(writer, v.times(R), iconSize, R, pixelWidth, earthScaling,
+                        arr.getName(), "arrival "+compression, arr.toString());
             }
         }
         writer.println("</g>");
@@ -609,10 +622,10 @@ public class TauP_Beachball extends TauP_AbstractRayTool {
 
         SvgEarth.drawLabeledDot(writer, faultPlane.pAxis().times(R), iconSize, R, pixelWidth, earthScaling, " P", "compress", "P Axis");
         SvgEarth.drawLabeledDot(writer, faultPlane.tAxis().times(R), iconSize, R, pixelWidth, earthScaling, " T", "dilitate", "T Axis");
-        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().times(R), iconSize, R, pixelWidth, earthScaling, " N", "", "Null Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().times(R), iconSize, R, pixelWidth, earthScaling, " N", "nullaxis", "Null Axis");
         SvgEarth.drawLabeledDot(writer, faultPlane.pAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " P", "compress", "P Axis");
         SvgEarth.drawLabeledDot(writer, faultPlane.tAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " T", "dilitate", "T Axis");
-        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " N", "", "Null Axis");
+        SvgEarth.drawLabeledDot(writer, faultPlane.nullAxis().negate().times(R), iconSize, R, pixelWidth, earthScaling, " N", "nullaxis", "Null Axis");
 
         writer.println("</g>");
     }
