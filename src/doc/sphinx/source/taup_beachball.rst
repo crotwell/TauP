@@ -26,6 +26,15 @@ and results in
 .. raw:: html
     :file:  examples/taup_beachball_--bbtype_ampp_--phasecircles_--degree_210_--az_222_--evdepth_607_--model_prem_--phase_PKP_PKIKP_SKS_--strikediprake_17_7_-62_--svg
 
+The :code:`--arrows` draws the magnitude of the motion as an arrow on the plot.
+For the P wave beachball, the sense of the arrow is perpendicular to the sphere,
+so arrow towards the center represent dillitational P wave motion, while
+arrows away from the center represent compressional motion. For the three
+S wave plots, the sense of the arrow is tangential to the surface of the sphere.
+So for Sv motion, an arrow away from the center represents a tangential motion with
+both an upward component and a horizontal away from the source component.
+For Sh motion it is horizontal vector tangent to the sphere. And for S it is
+the vector sum of Sv and Sh.
 
 The usage is:
 
