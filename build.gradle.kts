@@ -425,7 +425,7 @@ tasks.register<JavaExec>("genCmdLineTestFiles") {
 }
 tasks.register<Sync>("fullCopyCmdLineTestFiles") {
   from(tasks.getByName("genCmdLineTestFiles").outputs)
-  into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
+  into("src/integration/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
 }
 tasks.register<Exec>("copyCmdLineTestFiles") {
@@ -442,9 +442,9 @@ tasks.get("distZip").mustRunAfter("copyCmdLineTestFiles")
 tasks.register<JavaExec>("genCmdLineHelpFiles") {
   inputs.files("build.gradle.kts") // for version.json
   description = "generate TauP cmd line help output files"
-  classpath = sourceSets.getByName("test").runtimeClasspath
+  classpath = sourceSets.getByName("integration").runtimeClasspath
   getMainClass().set("edu.sc.seis.TauP.cmdline.GenCmdLineUsage")
-  dependsOn += tasks.getByName("testClasses")
+  dependsOn += tasks.getByName("integrationClasses")
   outputs.files(fileTree("build/cmdLineHelp"))
 }
 tasks.register<Sync>("copyCmdLineHelpFiles") {
@@ -460,9 +460,9 @@ tasks.register<Copy>("copyDocExampleData") {
 tasks.register<JavaExec>("genDocExampleFiles") {
   inputs.files("build.gradle.kts") // for version.json
   description = "generate TauP doc example output files"
-  classpath = sourceSets.getByName("test").runtimeClasspath
+  classpath = sourceSets.getByName("integration").runtimeClasspath
   getMainClass().set("edu.sc.seis.TauP.cmdline.GenDocExamples")
-  dependsOn += tasks.getByName("testClasses")
+  dependsOn += tasks.getByName("integrationClasses")
   dependsOn += tasks.getByName("copyDocExampleData")
   outputs.files(fileTree("build/docExamples"))
 }
