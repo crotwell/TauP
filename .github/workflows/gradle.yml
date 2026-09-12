@@ -30,7 +30,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew installDist
     - name: Test with Gradle
-      run: ./gradlew  check
+      run: ./gradlew  test
     - name: Store reports
       if: failure()
       uses: actions/upload-artifact@v7
