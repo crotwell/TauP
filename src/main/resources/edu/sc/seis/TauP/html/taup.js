@@ -405,24 +405,26 @@ export function displayErrorMessage(title, the_url, exception) {
   } else {
     descEl.textContent = "unknown url";
   }
-  const exceptDiv = document.createElement("div");
-  msgDiv.appendChild(exceptDiv);
-  if (exception.message) {
-    if (exception.message.startsWith("<html>")) {
-      const exHTML = Document.parseHTMLUnsafe(exception.message);
-      const body = exHTML.body;
-      for (const exEl of body.children) {
-        exceptDiv.appendChild(exEl);
+  if (exception != null) {
+      const exceptDiv = document.createElement("div");
+      msgDiv.appendChild(exceptDiv);
+      if (exception.message) {
+        if (exception.message.startsWith("<html>")) {
+          const exHTML = Document.parseHTMLUnsafe(exception.message);
+          const body = exHTML.body;
+          for (const exEl of body.children) {
+            exceptDiv.appendChild(exEl);
+          }
+        } else {
+          const pre_el = document.createElement("pre");
+          pre_el.textContent = `${exception.message}`;
+          exceptDiv.appendChild(pre_el);
+        }
+      } else {
+        const pre_el = document.createElement("pre");
+        pre_el.textContent = `${exception}`;
+        exceptDiv.appendChild(pre_el);
       }
-    } else {
-      const pre_el = document.createElement("pre");
-      pre_el.textContent = `${exception.message}`;
-      exceptDiv.appendChild(pre_el);
-    }
-  } else {
-    const pre_el = document.createElement("pre");
-    pre_el.textContent = `${exception}`;
-    exceptDiv.appendChild(pre_el);
   }
 }
 
@@ -633,7 +635,7 @@ export function form_tool_url() {
   }
   if (toolname !== "velplot" && toolname !== "discon" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
-      && toolname !== "refltrans" && toolname !== "find") {
+      && toolname !== "refltrans" && toolname !== "find" && toolname !== "beachball") {
     let distazEnsureLatLon = false;
     if (toolname === "distaz"
       && ! (isEvent || isstadist || isazimuth || isbackazimuth)) {
@@ -681,6 +683,13 @@ export function form_tool_url() {
         if (ellip != "" && ellip !== "298.257223563") {
           distparam += `&geodeticflattening=${ellip}`;
         }
+      }
+    }
+    let ellipticity = document.querySelector('input[name="ellipticity"]').checked;
+    if (ellipticity) {
+      distparam += `&ellipticity=true`;
+      if ( ! (isEvent || isstadist || isazimuth || isbackazimuth)) {
+        displayErrorMessage(`Ellipticity corrections requires lat,lon via some combinaton of event, station, az, baz`);
       }
     }
     url += distparam;
