@@ -490,7 +490,11 @@ public class PythonBindings {
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(initFile)));
             out.println("# Note, version is set in Java PythonBinding class, update it there...");
             // use same version for python as java
-            out.println("__version__ = \""+BuildVersion.getVersion()+"\"");
+            String buildVersion = BuildVersion.getVersion();
+            if (buildVersion.contains("-SNAPSHOT")) {
+                buildVersion = buildVersion.substring(0, buildVersion.indexOf("-SNAPSHOT"))+"a";
+            }
+            out.println("__version__ = \""+buildVersion+"\"");
             out.println();
 
             out.println("from .taupversion import TAUP_VERSION");
