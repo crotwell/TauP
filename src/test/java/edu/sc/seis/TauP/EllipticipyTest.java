@@ -115,35 +115,34 @@ public class EllipticipyTest {
 
         TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
         Ellipticipy ellipticipy = new Ellipticipy(tMod);
-        checkPhase("P", -0.4504451727691149, degree, az, stalat, ellipticipy );
-        checkPhase("pP", -0.42355659924645206, degree, az, stalat, ellipticipy );
-        checkPhase("PcP", -0.4847177859875987, degree, az, stalat, ellipticipy );
-        checkPhase("sP", -0.40887826664374727, degree, az, stalat, ellipticipy );
-        checkPhase("PP", -0.7171868438194013, degree, az, stalat, ellipticipy );
-        checkPhase("PKiKP", -0.7507385723316926, degree, az, stalat, ellipticipy );
-        checkPhase("pPKiKP", -0.7210513497990565, degree, az, stalat, ellipticipy );
-        checkPhase("sPKiKP", -0.7071985171690618, degree, az, stalat, ellipticipy );
-        checkPhase("S", -0.8200430720497547, degree, az, stalat, ellipticipy );
-        checkPhase("SP", -1.0196256378595252, degree, az, stalat, ellipticipy );
-        checkPhase("pS", -0.8043832632171585, degree, az, stalat, ellipticipy );
-        checkPhase("PS", -0.86342686814241, degree, az, stalat, ellipticipy );
-        checkPhase("sS", -0.7739726029674616, degree, az, stalat, ellipticipy );
-        checkPhase("SKS", -0.8864941190638611, degree, az, stalat, ellipticipy );
-        checkPhase("SKKS", -0.8864930376526561, degree, az, stalat, ellipticipy );
-        checkPhase("ScS", -0.8863939692187917, degree, az, stalat, ellipticipy );
-        checkPhase("SKiKP", -0.5730308680739123, degree, az, stalat, ellipticipy );
-        checkPhase("pSKS", -0.859981818958282, degree, az, stalat, ellipticipy );
-        checkPhase("sSKS", -0.8401930343861883, degree, az, stalat, ellipticipy );
-        checkPhase("SS", -1.2969934778314678, degree, az, stalat, ellipticipy );
-        checkPhase("PKIKKIKP", 0.7998196363955341, degree, az, stalat, ellipticipy );
-        checkPhase("SKIKKIKP", 0.9733828812132919, degree, az, stalat, ellipticipy );
-        checkPhase("PKIKKIKS", 0.8018964385989917, degree, az, stalat, ellipticipy );
-        checkPhase("SKIKKIKS", 0.9742885537613952, degree, az, stalat, ellipticipy );
-        checkPhase("PKIKPPKIKP", 1.527785874061518, degree, az, stalat, ellipticipy );
+        checkPhase("P",  -0.4504, degree, az, stalat, ellipticipy );
+        checkPhase("pP",  -0.4236, degree, az, stalat, ellipticipy );
+        checkPhase("PcP",  -0.4847, degree, az, stalat, ellipticipy );
+        checkPhase("sP",  -0.4089, degree, az, stalat, ellipticipy );
+        checkPhase("PP",  -0.7172, degree, az, stalat, ellipticipy );
+        checkPhase("PKiKP",  -0.7507, degree, az, stalat, ellipticipy );
+        checkPhase("pPKiKP",  -0.7211, degree, az, stalat, ellipticipy );
+        checkPhase("sPKiKP",  -0.7072, degree, az, stalat, ellipticipy );
+        checkPhase("S",    -0.82, degree, az, stalat, ellipticipy );
+        checkPhase("SP",    -1.02, degree, az, stalat, ellipticipy );
+        checkPhase("pS",  -0.8044, degree, az, stalat, ellipticipy );
+        checkPhase("PS",  -0.8634, degree, az, stalat, ellipticipy );
+        checkPhase("sS",   -0.774, degree, az, stalat, ellipticipy );
+        checkPhase("SKS",  -0.8865, degree, az, stalat, ellipticipy );
+        checkPhase("SKKS",  -0.8865, degree, az, stalat, ellipticipy );
+        checkPhase("ScS",  -0.8864, degree, az, stalat, ellipticipy );
+        checkPhase("SKiKP",   -0.573, degree, az, stalat, ellipticipy );
+        checkPhase("pSKS",    -0.86, degree, az, stalat, ellipticipy );
+        checkPhase("sSKS",  -0.8402, degree, az, stalat, ellipticipy );
+        checkPhase("SS",   -1.297, degree, az, stalat, ellipticipy );
+        checkPhase("PKIKKIKP",   0.7998, degree, az, stalat, ellipticipy );
+        checkPhase("SKIKKIKP",   0.9734, degree, az, stalat, ellipticipy );
+        checkPhase("PKIKKIKS",   0.8019, degree, az, stalat, ellipticipy );
+        checkPhase("SKIKKIKS",   0.9743, degree, az, stalat, ellipticipy );
+        checkPhase("PKIKPPKIKP",    1.528, degree, az, stalat, ellipticipy );
         // PKPPKP has two arrivals
-        checkPhase("PKPPKP", List.of(1.4514066213030894, 1.1633106999349958), degree, az, stalat, ellipticipy );
-        //checkPhase("PKPPKP", 1.1633106999349958, degree, az, stalat, ellipticipy );
-        checkPhase("SKIKSSKIKS", 2.28032856826973, degree, az, stalat, ellipticipy );
+        checkPhase("PKPPKP",    List.of(1.451, 1.163), degree, az, stalat, ellipticipy );
+        checkPhase("SKIKSSKIKS",     2.28, degree, az, stalat, ellipticipy );
     }
 
     @Test
