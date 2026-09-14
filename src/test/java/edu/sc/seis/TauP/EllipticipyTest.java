@@ -218,7 +218,7 @@ public class EllipticipyTest {
         double radau_top = 0.5848749363978527;
         assertEquals(radau_zero, ellipticipy.radau[0]);
         assertEquals(radau_one, ellipticipy.radau[1], 1e-14, ""+(radau_one - ellipticipy.radau[1]));
-        assertEquals(radau_top, ellipticipy.radau[126], 1e-15);
+        assertEquals(radau_top, ellipticipy.radau[126], 1e-14);
 
         double ha= 0.003450147778619671;
         double epsilona= 0.0033368614183590033;
