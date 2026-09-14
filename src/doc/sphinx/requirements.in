@@ -1,4 +1,4 @@
-sphinx==8.2.3
-myst-parser==4.0.1
-sphinxcontrib-bibtex==2.6.5
-sphinxcontrib-spelling==7.7.0
+sphinx==9.1.0
+myst-parser==5.1.0
+sphinxcontrib-bibtex==2.7.0
+sphinxcontrib-spelling==8.0.2
