@@ -523,7 +523,6 @@ public class PythonBindings {
             out.println("]");
 
             out.close();
-            knownTools();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
