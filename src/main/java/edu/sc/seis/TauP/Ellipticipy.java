@@ -392,10 +392,16 @@ public class Ellipticipy {
 
     public static double correctionFromCoefficients(double[] coefficients, double azimuthDegrees, double sourceLatitude) {
         if (!(sourceLatitude >= -90.0 && sourceLatitude <= 90.0)) {
-            throw new IllegalArgumentException("Source latitude must be in range -90 to 90 degrees");
+            throw new IllegalArgumentException("Source latitude must be in range -90 to 90 degrees: "+sourceLatitude);
+        }
+        while (azimuthDegrees < 0 ) {
+            azimuthDegrees += 360.0;
+        }
+        if (azimuthDegrees > 360) {
+            azimuthDegrees = azimuthDegrees % 360.0;
         }
         if (!(azimuthDegrees >= 0.0 && azimuthDegrees <= 360.0)) {
-            throw new IllegalArgumentException("Azimuth must be in range 0 to 360 degrees");
+            throw new IllegalArgumentException("Azimuth must be in range 0 to 360 degrees: "+azimuthDegrees);
         }
 
         double colatitude = Math.toRadians(90.0 - sourceLatitude);
