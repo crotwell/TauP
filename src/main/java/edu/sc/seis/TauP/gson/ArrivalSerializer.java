@@ -70,7 +70,7 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             a.add(JSONLabels.RECEIVER_LOC, locSerial.serialize(receiver, Location.class, context));
         }
         if (arr.isEllipticityCorrection()) {
-            a.addProperty(JSONLabels.ELLIPTICITY_CORRECTION, arr.getEllipticityCorrection());
+            a.addProperty(JSONLabels.ELLIPTICITY_CORRECTION, (float)arr.getEllipticityCorrection());
         }
         if (withAmplitude) {
             try {

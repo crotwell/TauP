@@ -156,5 +156,5 @@ public interface JSONLabels {
     String DOWNGOING = "downgoing";
     String BEACHBALLS = "beachballs";
     String BBTYPE = "beachballtype";
-    String ELLIPTICITY_CORRECTION = "ellipticityCor";
+    String ELLIPTICITY_CORRECTION = "ellipticitycorrection";
 }
