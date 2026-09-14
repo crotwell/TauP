@@ -77,6 +77,11 @@ parameter. The calculation is a direct port of the
 `Python Ellipticipy package <https://github.com/StuartJRussell/EllipticiPy/>`__
 of
 :cite:t:`ellipticipy` `Russell et. al.`
+Note that for this calculation, the location of the path on the globe is required.
+TauP can calculate this if one of event location, distance and azimuth; or
+event and station location; or
+station location, distance and back azimuth
+is given.
 
 The example given in the Ellipticipy README is equivalent to:
 
