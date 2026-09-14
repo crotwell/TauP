@@ -205,12 +205,14 @@ places in order until it finds a model that matches the name.
 Notes on Standard Models
 ------------------------
 
-TauP attempts to follow published models exactly, even in cases where there
-appear to be issues. Possible discrepancies and issues are listed below, and
+TauP attempts to follow published models.
+Possible discrepancies and issues are listed below, and
 users are encouraged to understand the idiosyncrasies of the standard
-models and adjust accordingly.
+models and adjust accordingly. In some cases we have had to make a
+choice as to the most correct interpretation of the model, but opinions
+may differ.
 
-Also be aware that some models, including ak135favg and rem1d, include an
+Also be aware that some models, including ak135favg and rem1d, include a
 several kilometer thick ocean layer at the surface.
 This means that if the source depth is 0, which
 is the default, there will be no S waves generated, and if the receiver is
@@ -220,16 +222,17 @@ nor for earthquakes to happen in the water column, and
 so for these models it is probably more reasonable to put
 the source and receiver at
 the ocean-crust boundary instead of the surface, but this is not the default.
-It is often surprising in these cases to not get S phases, but that is the
-result of the model.
+It is often surprising in these cases to not get S phases, but that is
+a consequence of the model.
 
 * ak135
 
   There is a discontinuity in S velocity, but not for P or density at 210 km.
   The effect on travel times is small, but this discontinuity in S
   velocity at 210 creates odd reflection and transmission coefficients at
-  this depth. This discontinuity does not exist in the ak135f models for
-  velocity, but the 210 is a discontinuity in the Q model.
+  this depth. This discontinuity does not exist in the revised ak135favg
+  and ak135fcont models for velocity, but the 210 is still a discontinuity
+  in the Q model.
 
   .. code-block::
 
@@ -265,23 +268,23 @@ result of the model.
   The source web page for ak135f lists attenuation parameters as Qkappa and Qmu,
   but the reference paper, :cite:t:`kennett:ak135f` says:
 
-  :quote: We did not attempt to invert for Q K ,which is
+    "We did not attempt to invert for Q K ,which is
     known to be poorly resolved. To a first approximation, Q K-1
-    is very close to zero except in the core.
+    is very close to zero except in the core."
 
-  and so it seems reasonable that this column is actually Qp (or equivalently
-  Q_alpha) and is derived from the Qs =Q_mu parameter via equation 2.6 where
+  and so it seems reasonable that this column is actually :math:`Q_p` (or equivalently
+  :math:`Q_{\alpha}`) and is derived from the :math:`Q_s =Q_{\mu}` parameter via equation 2.6 where
 
-    1/Q_alpha = (4/3)(beta/alpha)^2 (1/Q_beta)
+    :math:`1/Q_{\alpha} = (4/3)(\beta/\alpha)^2 (1/Q_{\beta})`
 
-  Checking the given values shows that the Q_kappa column to actually be Q_p within
-  +-0.03 for all values except fluid layers, where Qp is set to a generic large
+  Checking the given values shows that the :math:`Q_{\kappa}` column to actually be :math:`Q_p` within
+  +-0.03 for all values except fluid layers, where :math:`Q_p` is set to a generic large
   value of 57822.0, which is the same default value used in PREM. For comparison,
   the PREM model here:
   https://ds.iris.edu/ds/products/emc-prem/
-  does in fact contain Q_kappa as the last column in PREM_1s.csv and the value is
+  does in fact contain :math:`Q_{\kappa}` as the last column in PREM_1s.csv and the value is
   constant at 57823 except in the inner core, where it is 1327.7. We therefore
-  are using this column as Q_alpha and not Q_kappa.
+  are using this column as :math:`Q_{\alpha}` and not :math:`Q_{\kappa}`.
 
   In the published travel times for AK135,
   available at
