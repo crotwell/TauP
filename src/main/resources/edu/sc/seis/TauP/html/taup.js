@@ -686,7 +686,7 @@ export function form_tool_url() {
       }
     }
     let ellipticity = document.querySelector('input[name="ellipticity"]').checked;
-    if (ellipticity) {
+    if (toolname !== "distaz" && ellipticity) {
       distparam += `&ellipticity=true`;
       if ( ! (isEvent || isstadist || isazimuth || isbackazimuth)) {
         displayErrorMessage(`Ellipticity corrections requires lat,lon via some combinaton of event, station, az, baz`);

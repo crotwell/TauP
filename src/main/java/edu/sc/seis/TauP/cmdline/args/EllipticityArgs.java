@@ -49,7 +49,7 @@ public class EllipticityArgs {
                 if (!rc.isLatLonable()) {
                     throw new CommandLine.ParameterException(spec.commandLine(),
                             "Using --ellipticity requires source latiude and azimuth, "
-                                    +rc.getDescription()+" does not include geographical location,"
+                                    +rc+" does not include geographical location,"
                                     +"use some combination of event, station, az, or baz to calculate.");
                 }
             }
