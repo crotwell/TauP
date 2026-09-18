@@ -1,5 +1,6 @@
 .. _calculations:
 
+
 ===================
 Calculations
 ===================
@@ -110,6 +111,11 @@ or  `ak135fsyngine <_static/StdModels/ak135fsyngine.nd>`_ is more appropriate.
 Amplitude
 ---------
 
+.. toctree::
+    :hidden:
+
+    amplitude_formula
+
 .. warning::
 
   Amplitudes are an experimental feature and may not generate correct
@@ -121,7 +127,7 @@ TauP can calculate an amplitude and complex phase factor estimate for some simpl
 as the phase path is simple turning or reflection, but not for head or diffracted
 phases. The amplitude factor, given for both the P-Sv and Sh systems is the
 product of multiple factors. For details, see :cite:t:`fmgs`
-`chapter 13 <https://doi.org/10.1016/C2017-0-03756-4>`_.
+`chapter 13 and 17 <https://doi.org/10.1016/C2017-0-03756-4>`_.
 
 The factors that contribute to this estimate are:
 
@@ -139,6 +145,9 @@ The factors that contribute to this estimate are:
 * Attenuation for regular sampled frequencies, up to a maximum.
 
 * The free surface receiver function value, if the receiver depth is less than 1 km.
+
+:ref:`Amplitude Formula <amplitude_formula>` - shows the equations used for
+each of these steps.
 
 Amplitudes for seismic waves are notoriously difficult to calculate without error,
 and so the values given should be taken with a healthy dose of skepticism. In
@@ -170,7 +179,7 @@ geometrical spreading factor has potential infinities. We limit the value
 for this calculation not to be within 1e-3 radian (~ 0.05 degrees) of this
 distance to prevent unrealistic very large values.
 
-Attenuation is often the largests amplitude reduction effect, but is also
+Attenuation is often the largest amplitude reduction effect, but is also
 frequency dependent. This makes it complicated as no other feature of TauP,
 being a ray theoretical calculation, makes use of the frequency. For
 attenuation, we calculate the value as an average over a range of frequencies,
@@ -252,8 +261,8 @@ Primary sources of time errors include:
   station distance and on the actual travel time calculation. TauP can
   calculate distances using an elliptical flattening value,
   via the :code:`--geodist` parameter, but does not try to
-  correct for the second effect. There are external routines to
-  calculate a correction to the travel time for this.
+  correct for the second effect. Using the :code:`--ellipticity` parameter
+  will apply a correction to the travel time for this.
 
 6. Other "unknown unknown" errors
 

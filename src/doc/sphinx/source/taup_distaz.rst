@@ -1,8 +1,8 @@
 .. _taup_distaz:
 
----------
+-----------
 TauP Distaz
----------
+-----------
 
 TauP Distaz calculates great circle path distances between lat/lon points.
 

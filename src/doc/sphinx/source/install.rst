@@ -22,7 +22,7 @@ Manually
 
 Download tarball from |zenodo_url|_. Then::
 
-unzip |dist_zip|
+  unzip |dist_zip|
 
 and add the bin directory to your PATH.
 
