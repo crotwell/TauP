@@ -193,7 +193,7 @@ where each term is calculated as follows:
   term :math:`(\eta_\beta^2-p^2)` and Eq. 13.67 is missing a a factor of 2 times
   for the ray parameter.
 
-S1. Solid-solid
+S1. **Solid-solid**
 
   Solid-solid displacement reflection and transmission coefficients.
 
@@ -292,14 +292,14 @@ S1. Solid-solid
   Similarly, the :math:`T_{SS}` expression contains :math:`2\rho_2\eta_{\beta1}`, which should instead be :math:`2\rho_1\eta_{\beta1}`.
 
 
-S2. Fluid-fluid displacement reflection and transmission coefficients.
+S2. **Fluid-fluid displacement reflection and transmission coefficients.**
 
   Incident P
 
     .. math::
 
       R_{PP}
-       =
+       &=
        {{
       [\rho_1\eta_{\alpha2}
       -
@@ -307,7 +307,7 @@ S2. Fluid-fluid displacement reflection and transmission coefficients.
       }]/{D_{ff}}}
 
       T_{PP}
-       =
+       &=
        {2\rho_1
       \left({\alpha_1}{\alpha_2^{-1}}\right)
       \eta_{\alpha1}
@@ -323,7 +323,7 @@ S2. Fluid-fluid displacement reflection and transmission coefficients.
       \rho_1\eta_{\alpha2}.
 
 
-S3. Solid-fluid and Fluid-solid displacement reflection and transmission coefficients.
+S3. **Solid-fluid and Fluid-solid displacement reflection and transmission coefficients.**
 
 Incident P--SV  From Solid (Medium 1)
 
@@ -331,7 +331,7 @@ Incident P--SV  From Solid (Medium 1)
   .. math::
 
     R_{PP}
-      =
+      &=
     {[\eta_{\alpha1}
     \left(
     4\beta_1^{4}p^{2}\rho_1\eta_{\alpha2}\eta_{\beta1}
@@ -342,7 +342,7 @@ Incident P--SV  From Solid (Medium 1)
     }]/{D_{sf}}
 
     R_{PS}
-      =
+      &=
     {-4\alpha_1\beta_1
     p\rho_1
     \eta_{\alpha1}\eta_{\alpha2}
@@ -350,7 +350,7 @@ Incident P--SV  From Solid (Medium 1)
     }/{D_{sf}}
 
     T_{PP}
-      =
+      &=
     {
     2\left({\alpha_1}/{\alpha_2}\right)
     \rho_1\eta_{\alpha1}
@@ -358,7 +358,7 @@ Incident P--SV  From Solid (Medium 1)
     }/{D_{sf}}
 
     R_{SS}
-     =
+     &=
     [{
     \rho_1\eta_{\alpha2}
     C_{sf}^{2}
@@ -374,7 +374,7 @@ Incident P--SV  From Solid (Medium 1)
     /{D_{sf}}
 
     R_{SP}
-     =
+     &=
     {4\alpha_1^{-1}\beta_1^{3}\rho_1
     p
     \eta_{\alpha2}\eta_{\beta1}
@@ -383,7 +383,7 @@ Incident P--SV  From Solid (Medium 1)
     /{D_{sf}}
 
     T_{SP}
-     =
+     &=
     {
     4\alpha_2^{-1}\beta_1^{3}\rho_1
     p
@@ -395,14 +395,14 @@ Incident SH  From Solid (Medium 1)
 
   .. math::
 
-    R_{ss}  =  1
+    R_{ss} = 1
 
 Incident P  From Fluid (Medium 1)
 
   .. math::
 
     R_{PP}
-      =
+      &=
     {{
     \left[
     -\rho_2\eta_{\alpha1}
@@ -417,7 +417,7 @@ Incident P  From Fluid (Medium 1)
     /{D_{fs}}}
 
     T_{PP}
-      =
+      &=
     {
     -2\alpha_1\alpha_2
     \eta_{\alpha1}
@@ -426,7 +426,7 @@ Incident P  From Fluid (Medium 1)
     }
     /{D_{fs}}
 
-    T_{PS}  =
+    T_{PS}  &=
     {4\alpha_1\alpha_2^{2}
     p
     \eta_{\alpha1}
@@ -437,15 +437,15 @@ Incident P  From Fluid (Medium 1)
 
   .. math::
 
-    D_{sf} = \rho_2\eta_{\alpha1}
+    D_{sf} &=  \rho_2\eta_{\alpha1}
     +\rho_1\eta_{\alpha2}
     [4\beta_1^{4}p^{2}
     \eta_{\alpha1}\eta_{\beta1}
     +(C_{sf})^{2}]
 
-    C_{sf} = 1-2\beta_1^{2}p^{2}
+    C_{sf} &=  1-2\beta_1^{2}p^{2}
 
-    D_{fs} =
+    D_{fs} &=
     -{\alpha_2^{2}}{(\beta_2\rho_1)^{-1}}
     \Big[
     4\rho_2\beta_2^{4}p^{2}
@@ -455,7 +455,7 @@ Incident P  From Fluid (Medium 1)
     +\rho_1C_{fs}\eta_{\alpha2}
     \Big]
 
-    C_{fs} = 1-2\beta_2^{2}p^{2}
+    C_{fs} &=  1-2\beta_2^{2}p^{2}
 
 
   The fluid-to-solid coefficients here are significantly different from
@@ -463,21 +463,21 @@ Incident P  From Fluid (Medium 1)
   Jupyter notebook refltrans.ipynb in the Zenodo repository
   \citep{crotwell_2026_22086196}.
 
-S4. Free-surface displacement reflection and transmission coefficients.
+S4. **Free-surface displacement reflection and transmission coefficients.**
 
 Incident P--SV  From Solid
 
   .. math::
 
     R_{PP}
-     =
+     &=
      {\Big[
     -\left({\beta^{-2}}-2p^2\right)^2
     +4p^2\eta_{\alpha}\eta_{\beta}
     }\Big]/{D_{sfree}}
 
     R_{PS}
-     =
+     &=
     {{
     4\left({\alpha}{\beta^{-1}}\right)
     p\,\eta_{\alpha1}
@@ -485,7 +485,7 @@ Incident P--SV  From Solid
     }/{D_{sfree}}}
 
     R_{SP}
-    =
+    &=
     {{
     4\left({\beta}{\alpha^{-1}}\right)
     p\,\eta_{\beta}
@@ -493,7 +493,7 @@ Incident P--SV  From Solid
     }/{D_{sfree}}}
 
     R_{SS}
-    =
+    &=
     {\Big[({\beta^{-2}}-2p^2)^2
     -
     4p^2\eta_{\alpha}\eta_{\beta}
