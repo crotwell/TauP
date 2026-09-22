@@ -86,7 +86,7 @@ where each term is calculated as follows:
     \qquad
     \lambda = \text{rake}.
 
-3. **Radiation term** ( :math:`\text{kgs}^{-3}` ), :math:`R_s` (Eq.~17.70):
+3. **Radiation term** ( :math:`\text{kg s}^{-3}` ), :math:`R_s` (Eq.~17.70):
 
   .. math::
 
@@ -114,10 +114,9 @@ where each term is calculated as follows:
   where :math:`E(\Delta)` is the seismic energy density (energy per unit area)
   at epicentral distance :math:`\Delta`, :math:`E_h=K/2\pi` is the source
   energy density on the initial hemispherical wavefront with total radiated
-  energy :math:`K`, :math:`r_h` and :math:`r_0` are the source and receiver
-  radii from the Earth's center, respectively, :math:`i_h` and :math:`i_0`
-  are the takeoff and incidence angles, :math:`p` is the ray parameter, and
-  :math:`c_h` is the P- or S-wave velocity at the source.
+  energy :math:`K`, :math:`r_0` is the receiver
+  radius from the Earth's center, and :math:`i_h` and :math:`i_0`
+  are the takeoff and incidence angles.
 
 5. **Reflection and transmission coefficients (dimensionless)**, :math:`C_k`.
 
@@ -128,7 +127,7 @@ where each term is calculated as follows:
 
         \prod_{k=1}^{n} C_k
 
-6. **Attenuation (dimensionless)** (Eq.~B13.2.2):\\
+6. **Attenuation (dimensionless)** (Eq.~B13.2.2):
 
   .. math::
 
@@ -148,8 +147,7 @@ where each term is calculated as follows:
   with :math:`Q_i` and :math:`t_i` denoting the quality factor and travel time
   through the :math:`i`-th layer, respectively.
 
-7. **Free-surface correction (dimensionless)**, :math:`FS` (Eqs.~13.66--13.68):\\
-
+7. **Free-surface correction (dimensionless)**, :math:`FS` (Eqs.~13.66--13.68):
 
   .. math::
 
@@ -325,7 +323,7 @@ S2. **Fluid-fluid displacement reflection and transmission coefficients.**
 
 S3. **Solid-fluid and Fluid-solid displacement reflection and transmission coefficients.**
 
-Incident P--SV  From Solid (Medium 1)
+  Incident P--SV  From Solid (Medium 1)
 
 
   .. math::
@@ -391,13 +389,13 @@ Incident P--SV  From Solid (Medium 1)
     }
     /{D_{sf}}
 
-Incident SH  From Solid (Medium 1)
+  Incident SH  From Solid (Medium 1)
 
   .. math::
 
     R_{ss} = 1
 
-Incident P  From Fluid (Medium 1)
+  Incident P  From Fluid (Medium 1)
 
   .. math::
 
@@ -465,7 +463,7 @@ Incident P  From Fluid (Medium 1)
 
 S4. **Free-surface displacement reflection and transmission coefficients.**
 
-Incident P--SV  From Solid
+  Incident P--SV  From Solid
 
   .. math::
 
@@ -500,19 +498,19 @@ Incident P--SV  From Solid
     }\Big]/ {D_{sfree}}
 
 
-Incident SH  From Solid
+  Incident SH  From Solid
 
   .. math::
 
     R_{ss} = 1
 
-Incident P  From Fluid
+  Incident P  From Fluid
 
   .. math::
 
     R_{pp} = 1
 
-where,
+  where,
 
   .. math::
 
@@ -522,5 +520,5 @@ where,
     4p^2\eta_{\alpha}\eta_{\beta}
 
 
-Corrections in Table 13.3 :cite:t:`fmgs`
-:math:`R_{ss}` is missing a multiplication factor of -1.
+  Corrections in Table 13.3 :cite:t:`fmgs`
+  :math:`R_{ss}` is missing a multiplication factor of -1.
