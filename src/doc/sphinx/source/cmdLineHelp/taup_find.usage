@@ -3,7 +3,7 @@ Usage: taup find [--amp] [--debug] [--ellipticity] [--help] [--onlynameddiscon]
                  [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                  [--deltatime=dt] --max=<maxActions> [--mw=<mw>]
                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--siderealDay=<siderealDay>]
+                 [--prop=<toolPropsFilename>] [--siderealday=<siderealDay>]
                  [--deg=d[,d...]]... [--rayparamdeg=s/deg [s/deg]]...
                  [--rayparamkm=s/km [s/km]]... [--time=t [t]]... [--evt=lat
                  lon]... [--strikediprake=strike dip rake]... [--exclude=depth[,
@@ -58,9 +58,9 @@ Options:
                            only keep phases that overlap the given ray
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
-      --siderealDay=<siderealDay>
-                           Sidereal length of day, in seconds, defaults to
-                             Earth value of 86164.0905
+      --siderealday=<siderealDay>
+                           Sidereal length of day for ellipticity correction,
+                             in seconds, defaults to Earth value of 86164.0905
       --strikediprake=strike dip rake
                            fault strike, dip and rake for amplitude
                              calculations. If not given radiation pattern is

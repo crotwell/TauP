@@ -8,7 +8,7 @@ Usage: taup path [--debug] [--ellipticity] [--geodetic] [--geodetic] [--help]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--planet=<planet>] [--planet=<planet>]
                  [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                 [--siderealDay=<siderealDay>] [--staxml=<stationxmlFilename>]
+                 [--siderealday=<siderealDay>] [--staxml=<stationxmlFilename>]
                  [--xaxis=type] [--yaxis=type] [--eid=evt[,evt...]]...
                  [--sid=sta[,sta...]]... [--degminmax=min max]...
                  [--depthminmax=min max]... [--evt=lat lon]... [--evt=lat
@@ -66,9 +66,9 @@ Options:
       --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
                                via fedcat web service. Creates a distance if
                                event is also given.
-      --siderealDay=<siderealDay>
-                             Sidereal length of day, in seconds, defaults to
-                               Earth value of 86164.0905
+      --siderealday=<siderealDay>
+                             Sidereal length of day for ellipticity correction,
+                               in seconds, defaults to Earth value of 86164.0905
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
