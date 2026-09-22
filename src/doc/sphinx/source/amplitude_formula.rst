@@ -259,7 +259,7 @@ S1. **Solid-solid**
     \mu_1 &= \rho_1\beta_1^2
 
     a &= \rho_2\left(1-2\beta_2^2p^2\right)
-         -\rho_1\left(1-2\beta_1^2p^2\right),
+         -\rho_1\left(1-2\beta_1^2p^2\right)
 
     b &= \rho_2\left(1-2\beta_2^2p^2\right)
          +2\rho_1\beta_1^2p^2,
@@ -273,13 +273,13 @@ S1. **Solid-solid**
 
     \mu_2 &= \rho_2\beta_2^2
 
-    E &= b\eta_{\alpha1}+c\eta_{\alpha2},
+    E &= b\eta_{\alpha1}+c\eta_{\alpha2}
 
-    F &= b\eta_{\beta1}+c\eta_{\beta2},
+    F &= b\eta_{\beta1}+c\eta_{\beta2}
 
-    G &= a-d\eta_{\alpha1}\eta_{\beta2},
+    G &= a-d\eta_{\alpha1}\eta_{\beta2}
 
-    H &= a-d\eta_{\alpha2}\eta_{\beta1},
+    H &= a-d\eta_{\alpha2}\eta_{\beta1}
 
     D &= EF+GHp2
 
