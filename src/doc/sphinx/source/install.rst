@@ -7,9 +7,10 @@ Homebrew
 ---------------------------------------------------
 
 Homebrew originally was just for Macintosh, but also supports
-Linux and Windows via Windows Subsystem for Linux.
+Linux and Windows via
+`Windows Subsystem for Linux <https://learn.microsoft.com/en-us/windows/wsl/>`__.
 
-Using `homebrew <https://brew.sh/>`_::
+Using `homebrew <https://brew.sh/>`__::
 
   brew tap crotwell/crotwell
   brew trust --formula crotwell/crotwell/taup
@@ -196,6 +197,6 @@ will occur for it.
 Submitting Issues
 -----------------
 
-Submit bug reports via `GitHub Issues <https://github.com/crotwell/TauP/issues>`_::.
+Submit bug reports via `GitHub Issues <https://github.com/crotwell/TauP/issues>`__.
 Please make sure to include the current version and enough information so that
 I can reproduce the problem locally.
