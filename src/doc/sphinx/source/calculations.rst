@@ -57,7 +57,7 @@ the :code:`--geodist` parameter, which can take any combination of
 Geodetic calculations use the
 geographiclib package of :cite:t:`Karney2013` `Karney` where the geocentric
 angle is determined from the surface distance (km) and the average radius
-of the geodesic, (2*equatorial+polar)/3.
+of the geodesic, :math:`(2 \times \text{equatorial}+\text{polar})/3`.
 And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`
 parameter or the  :code:`--planet` for well know flattening values of the
@@ -82,7 +82,13 @@ Note that for this calculation, the location of the path on the globe is require
 TauP can calculate this if one of event location, distance and azimuth; or
 event and station location; or
 station location, distance and back azimuth
-is given.
+is given. While it is allowed, it is probably better to not mix the ellipticity
+correction with geocentric or geodetic distance calculations.
+
+Note that the ellipticity calculation requires density from the model and
+the length of the sidereal day. The sidereal day defaults to the Earth value
+of 86164.0905 seconds, but can be overridden with either :code:`--siderealday`
+or by choosing a :code:`--planet`.
 
 The example given in the Ellipticipy README is equivalent to:
 
