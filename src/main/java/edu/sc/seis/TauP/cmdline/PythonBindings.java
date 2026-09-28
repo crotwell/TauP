@@ -9,6 +9,11 @@ import java.util.*;
 
 public class PythonBindings {
 
+    /**
+     * Indent, 4 spaces.
+     */
+    static String I = "    ";
+
     public static String createPython(TauP_Tool tool) {
         StringWriter swConstructor = new StringWriter();
         PrintWriter writer = new PrintWriter(swConstructor);
@@ -55,23 +60,23 @@ public class PythonBindings {
         if (dataclassType != null) {
             writer.println("from .dataclass import "+dataclassType);
             writer.println();
+            writer.println();
         }
 
         String capToolname = capitalize(toolname);
-        String IN = "    ";
         writer.println("class "+capToolname+"Query:");
-        writer.println("  def __init__(self):");
-        writer.println("    self.toolname= \""+toolname+"\"");
+        writer.println(I+"def __init__(self):");
+        writer.println(I+I+"self.toolname = \""+toolname+"\"");
         writer.println();
 
         paramsWriter.println();
-        paramsWriter.println("  def create_params(self):");
-        paramsWriter.println("    \"\"\"");
-        paramsWriter.println("    Create dict of params suitible for passing to requests query call.");
-        paramsWriter.println("    \"\"\"");
-        paramsWriter.println("    params = {");
-        paramsWriter.println("      \"format\": \"json\",");
-        paramsWriter.println("    }");
+        paramsWriter.println(I+"def create_params(self):");
+        paramsWriter.println(I+I+"\"\"\"");
+        paramsWriter.println(I+I+"Create dict of params suitible for passing to requests query call.");
+        paramsWriter.println(I+I+"\"\"\"");
+        paramsWriter.println(I+I+"params = {");
+        paramsWriter.println(I+I+I+"\"format\": \"json\",");
+        paramsWriter.println(I+I+"}");
 
         Set<String> knownSimpleTypes = new HashSet<>();
 
@@ -139,43 +144,43 @@ public class PythonBindings {
             if (simpleType.equals("List")) {
                 defVal = "[]";
             }
-            writer.println(IN+"self._"+name+"="+defVal);
+            writer.println(I+I+"self._"+name+" = "+defVal);
             // body, methods
             createGetSet(bodyWriter, op);
 
             if (simpleType.equals("List")) {
-                paramsWriter.println("    if len(self._" + name + ") > 0:");
+                paramsWriter.println(I+I+"if len(self._" + name + ") > 0:");
             } else {
-                paramsWriter.println("    if self._" + name + " is not None:");
+                paramsWriter.println(I+I+"if self._" + name + " is not None:");
             }
-            paramsWriter.println("      params[\""+name+"\"] = self._"+name);
+            paramsWriter.println(I+I+I+"params[\""+name+"\"] = self._"+name);
 
         }
         if (dataclassType != null) {
             writer.println();
-            writer.println("  def calc(self, taupServer) -> "+dataclassType+":");
-            writer.println("    \"\"\"");
-            writer.println("    Sends all params to the server, returns the result parsed from JSON into dataclasses.");
-            writer.println("    \"\"\"");
-            writer.println("    return "+dataclassType+".from_json(self.calcJson(taupServer))");
+            writer.println(I+"def calc(self, taupServer) -> "+dataclassType+":");
+            writer.println(I+I+"\"\"\"");
+            writer.println(I+I+"Sends all params to the server, returns the result parsed from JSON into dataclasses.");
+            writer.println(I+I+"\"\"\"");
+            writer.println(I+I+"return "+dataclassType+".from_json(self.calcJson(taupServer))");
         }
 
         writer.println();
-        writer.println("  def asCommandLine(self, taupServer) -> str:");
-        writer.println("    \"\"\"");
-        writer.println("    Sends all params to the server, returns the equivalent command line.");
-        writer.println("    \"\"\"");
-        writer.println("    params = self.create_params()");
-        writer.println("    return taupServer.asCommandLine(params, self.toolname)");
+        writer.println(I+"def asCommandLine(self, taupServer) -> str:");
+        writer.println(I+I+"\"\"\"");
+        writer.println(I+I+"Sends all params to the server, returns the equivalent command line.");
+        writer.println(I+I+"\"\"\"");
+        writer.println(I+I+"params = self.create_params()");
+        writer.println(I+I+"return taupServer.asCommandLine(params, self.toolname)");
         writer.println();
 
         writer.println();
-        writer.println("  def calcJson(self, taupServer):");
-        writer.println("    \"\"\"");
-        writer.println("    Sends all params to the server, returns the result parsed from JSON.");
-        writer.println("    \"\"\"");
-        writer.println("    params = self.create_params()");
-        writer.println("    return taupServer.queryJson(params, self.toolname)");
+        writer.println(I+"def calcJson(self, taupServer):");
+        writer.println(I+I+"\"\"\"");
+        writer.println(I+I+"Sends all params to the server, returns the result parsed from JSON.");
+        writer.println(I+I+"\"\"\"");
+        writer.println(I+I+"params = self.create_params()");
+        writer.println(I+I+"return taupServer.queryJson(params, self.toolname)");
         writer.println();
 
         List<String> doneFormats = new ArrayList<>();
@@ -191,19 +196,19 @@ public class PythonBindings {
                         doneFormats.add(format);
                         System.err.println("Found format: "+format+" for "+op.longestName()+" name: "+opname );
                         writer.println();
-                        writer.println("  def calc" + capitalize(format) + "(self, taupServer):");
-                        writer.println("    \"\"\"");
-                        writer.println("    Sends all params to the server, returns the result as a text version of " + format + ".");
-                        writer.println("    \"\"\"");
-                        writer.println("    params = self.create_params()");
-                        writer.println("    return taupServer.query" + capitalize(format) + "(params, self.toolname)");
+                        writer.println(I+"def calc" + capitalize(format) + "(self, taupServer):");
+                        writer.println(I+I+"\"\"\"");
+                        writer.println(I+I+"Sends all params to the server, returns the result as a text version of " + format + ".");
+                        writer.println(I+I+"\"\"\"");
+                        writer.println(I+I+"params = self.create_params()");
+                        writer.println(I+I+"return taupServer.query" + capitalize(format) + "(params, self.toolname)");
                         writer.println();
                     }
                 }
             }
         }
 
-        paramsWriter.println("    return params");
+        paramsWriter.println(I+I+"return params");
 
         paramsWriter.close();
 
@@ -220,7 +225,6 @@ public class PythonBindings {
     }
 
     public static void autoCodeGenComment(PrintWriter writer) {
-        writer.println();
         writer.println("# autogenerated from picocli command line arguments in TauP");
         writer.println("# For The TauP Toolkit, version: "+BuildVersion.getVersion());
         writer.println();
@@ -231,11 +235,11 @@ public class PythonBindings {
         String simpleType = typeFromJavaType(op);
         for (String opname : op.names()) {
             opname = dashlessArgName(opname);
-            bodyWriter.println("  def get_" + opname + "(self):");
-            bodyWriter.println("    \"\"\"");
-            bodyWriter.println("    returns current value of "+varname+" as a " + simpleType);
-            bodyWriter.println("    \"\"\"");
-            bodyWriter.println("    return self._" + varname);
+            bodyWriter.println(I+"def get_" + opname + "(self):");
+            bodyWriter.println(I+I+"\"\"\"");
+            bodyWriter.println(I+I+"returns current value of "+varname+" as a " + simpleType);
+            bodyWriter.println(I+I+"\"\"\"");
+            bodyWriter.println(I+I+"return self._" + varname);
             bodyWriter.println();
             if ( ! specialSetter(bodyWriter, op, opname)) {
                 // normal setter
@@ -243,28 +247,28 @@ public class PythonBindings {
                 if (simpleType.equals("Boolean")) {
                     defValStr = "=True";
                 }
-                bodyWriter.println("  def " + opname + "(self, val"+defValStr+"):");
+                bodyWriter.println(I+"def " + opname + "(self, val"+defValStr+"):");
                 desc(bodyWriter, op, opname);
 
                 if (simpleType.equals("List")) {
-                    bodyWriter.println("    if not hasattr(val, \"__getitem__\"):");
+                    bodyWriter.println(I+I+"if not hasattr(val, \"__getitem__\"):");
                     if (op.arity().max() == 1) {
-                        bodyWriter.println("      val = [ val ]");
+                        bodyWriter.println(I+I+I+"val = [ val ]");
                     } else {
-                        bodyWriter.println("      raise Exception(f\"" + opname + "() requires a list, not {val}\")");
+                        bodyWriter.println(I+I+I+"raise Exception(f\"" + opname + "() requires a list, not {val}\")");
                     }
                 }
-                bodyWriter.println("    self._" + varname + " = val");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + varname + " = val");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
                 if (simpleType.equals("List")) {
 
                     bodyWriter.println();
-                    bodyWriter.println("  def and" + capitalize(opname) + "(self, val):");
+                    bodyWriter.println(I+"def and" + capitalize(opname) + "(self, val):");
                     desc(bodyWriter, op, opname, true);
 
-                    bodyWriter.println("    self._" + varname + ".append(val)");
-                    bodyWriter.println("    return self");
+                    bodyWriter.println(I+I+"self._" + varname + ".append(val)");
+                    bodyWriter.println(I+I+"return self");
                     bodyWriter.println();
                 }
             }
@@ -279,17 +283,17 @@ public class PythonBindings {
         String varname =dashlessArgName( op.longestName());
         String simpleType = typeFromJavaType(op);
 
-        bodyWriter.println("    \"\"\"");
+        bodyWriter.println(I+I+"\"\"\"");
         if (isAppend) {
-            bodyWriter.print("    Append a value to the " + varname + " parameter, ");
+            bodyWriter.print(I+I+"Append a value to the " + varname + " parameter, ");
         } else {
-            bodyWriter.print("    Sets the " + varname + " parameter, ");
+            bodyWriter.print(I+I+"Sets the " + varname + " parameter, ");
         }
 
         if (op.typeInfo().isEnum()) {
             List<String> enums = op.typeInfo().getEnumConstantNames();
             bodyWriter.println("a choice of one of:");
-            bodyWriter.print("     " + String.join(", ", enums));
+            bodyWriter.print(I+I + String.join(", ", enums));
         } else if (isAppend) {
             bodyWriter.print(" of type " + subtypeFromJavaType(op));
         } else {
@@ -302,36 +306,36 @@ public class PythonBindings {
 
         if (simpleType.equals("Boolean")) {
             bodyWriter.println("");
-            bodyWriter.println("    Without arguments sets the value to True.");
+            bodyWriter.println(I+I+"Without arguments sets the value to True.");
         } else if (simpleType.equals("List") && !isAppend) {
             if (op.arity().max() == 1) {
-                bodyWriter.println("    If a single " + subtypeFromJavaType(op)
+                bodyWriter.println(I+I+"If a single " + subtypeFromJavaType(op)
                         + " is passed in, it is automatically wrapped in a list. So");
-                bodyWriter.println("    params." + opname + "( value )");
-                bodyWriter.println("    and");
-                bodyWriter.println("    params." + opname + "( [ value ] )");
-                bodyWriter.println("    are equivalent.");
+                bodyWriter.println(I+I+"params." + opname + "( value )");
+                bodyWriter.println(I+I+"and");
+                bodyWriter.println(I+I+"params." + opname + "( [ value ] )");
+                bodyWriter.println(I+I+"are equivalent.");
             } else if (varname.endsWith("range") && op.arity().max() == 3) {
-                bodyWriter.println("    step or min,max or min,max,step");
+                bodyWriter.println(I+I+"step or min,max or min,max,step");
 
             }
         }
         bodyWriter.println();
         for (String descStr : op.description()) {
-            bodyWriter.println("    " + descStr.trim());
+            bodyWriter.println(I+I+ descStr.trim());
         }
         bodyWriter.println();
         for (String n : op.names()) {
             if ( opname.equals( dashlessArgName(n))) {
-                bodyWriter.println("    Known as ``" + n + "`` in command line.");
+                bodyWriter.println(I+I+"Known as ``" + n + "`` in command line.");
             }
         }
         if (!opname.equals(varname)) {
-            bodyWriter.println("    Also known as ``" + op.longestName() + "`` in command line.");
+            bodyWriter.println(I+I+"Also known as ``" + op.longestName() + "`` in command line.");
         }
         bodyWriter.println();
-        bodyWriter.println("    :param val: value to set " + varname + " to");
-        bodyWriter.println("    \"\"\"");
+        bodyWriter.println(I+I+":param val: value to set " + varname + " to");
+        bodyWriter.println(I+I+"\"\"\"");
     }
 
     public static boolean specialSetter(PrintWriter bodyWriter, CommandLine.Model.OptionSpec op, String opname) {
@@ -339,38 +343,38 @@ public class PythonBindings {
         switch (varname) {
             case "scatter" -> {
 
-                bodyWriter.println("  def " + opname + "(self, depth, degree):");
+                bodyWriter.println(I+"def " + opname + "(self, depth, degree):");
                 desc(bodyWriter, op, opname);
 
-                bodyWriter.println("    self._" + varname + " = [depth, degree]");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + varname + " = [depth, degree]");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
             }
             case "strikediprake" -> {
 
-                bodyWriter.println("  def " + opname + "(self, strike, dip, rake):");
+                bodyWriter.println(I+"def " + opname + "(self, strike, dip, rake):");
                 desc(bodyWriter, op, opname);
 
-                bodyWriter.println("    self._" + varname + " = [strike, dip, rake]");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + varname + " = [strike, dip, rake]");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
             }
             case "station", "event" -> {
-                bodyWriter.println("  def " + opname + "(self, lat, lon):");
+                bodyWriter.println(I+"def " + opname + "(self, lat, lon):");
                 desc(bodyWriter, op, opname);
 
-                bodyWriter.println("    self._" + varname + " = [lat, lon]");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + varname + " = [lat, lon]");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
-                bodyWriter.println("  def and" + capitalize(opname) + "(self, lat, lon):");
+                bodyWriter.println(I+"def and" + capitalize(opname) + "(self, lat, lon):");
                 desc(bodyWriter, op, opname);
 
-                bodyWriter.println("    self._" + varname + " += [lat, lon]");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + varname + " += [lat, lon]");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
             }
             case "stationxmltext", "staxmltext", "qmltext", "quakemltext", "velocitymodeltext" -> {
-                bodyWriter.println("  def " + opname + "(self, val):");
+                bodyWriter.println(I+"def " + opname + "(self, val):");
                 desc(bodyWriter, op, opname);
                 String paramName;
                 if (varname.equals("velocitymodeltext")) {
@@ -382,8 +386,8 @@ public class PythonBindings {
                     paramName = "quakemltext";
                 }
 
-                bodyWriter.println("    self._" + paramName + " = val");
-                bodyWriter.println("    return self");
+                bodyWriter.println(I+I+"self._" + paramName + " = val");
+                bodyWriter.println(I+I+"return self");
                 bodyWriter.println();
             }
             default -> {
