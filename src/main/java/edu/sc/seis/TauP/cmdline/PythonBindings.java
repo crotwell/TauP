@@ -153,7 +153,7 @@ public class PythonBindings {
         }
         if (dataclassType != null) {
             writer.println();
-            writer.println("  def calc(self, taupServer):");
+            writer.println("  def calc(self, taupServer) -> "+dataclassType+":");
             writer.println("    \"\"\"");
             writer.println("    Sends all params to the server, returns the result parsed from JSON into dataclasses.");
             writer.println("    \"\"\"");
@@ -161,7 +161,7 @@ public class PythonBindings {
         }
 
         writer.println();
-        writer.println("  def asCommandLine(self, taupServer):");
+        writer.println("  def asCommandLine(self, taupServer) -> str:");
         writer.println("    \"\"\"");
         writer.println("    Sends all params to the server, returns the equivalent command line.");
         writer.println("    \"\"\"");
@@ -204,7 +204,6 @@ public class PythonBindings {
         }
 
         paramsWriter.println("    return params");
-        paramsWriter.println();
 
         paramsWriter.close();
 
