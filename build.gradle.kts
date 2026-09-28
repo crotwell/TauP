@@ -415,7 +415,7 @@ tasks.register<Sync>("copyReflTranCompareFiles") {
 }
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
-    classpath = sourceSets.getByName("test").runtimeClasspath
+    classpath = sourceSets.getByName("integration").runtimeClasspath
     getMainClass().set("edu.sc.seis.TauP.cmdline.CmdLineOutputTest")
     dependsOn += tasks.getByName("classes")
     dependsOn += tasks.getByName("testClasses")
