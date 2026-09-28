@@ -60,14 +60,13 @@ public class PythonBindings {
         if (dataclassType != null) {
             writer.println("from .dataclass import "+dataclassType);
             writer.println();
-            writer.println();
         }
 
         String capToolname = capitalize(toolname);
+        writer.println();
         writer.println("class "+capToolname+"Query:");
         writer.println(I+"def __init__(self):");
         writer.println(I+I+"self.toolname = \""+toolname+"\"");
-        writer.println();
 
         paramsWriter.println();
         paramsWriter.println(I+"def create_params(self):");
@@ -172,7 +171,6 @@ public class PythonBindings {
         writer.println(I+I+"\"\"\"");
         writer.println(I+I+"params = self.create_params()");
         writer.println(I+I+"return taupServer.asCommandLine(params, self.toolname)");
-        writer.println();
 
         writer.println();
         writer.println(I+"def calcJson(self, taupServer):");
@@ -181,7 +179,6 @@ public class PythonBindings {
         writer.println(I+I+"\"\"\"");
         writer.println(I+I+"params = self.create_params()");
         writer.println(I+I+"return taupServer.queryJson(params, self.toolname)");
-        writer.println();
 
         List<String> doneFormats = new ArrayList<>();
         for (String format : outputFormatOptions) {
@@ -202,7 +199,6 @@ public class PythonBindings {
                         writer.println(I+I+"\"\"\"");
                         writer.println(I+I+"params = self.create_params()");
                         writer.println(I+I+"return taupServer.query" + capitalize(format) + "(params, self.toolname)");
-                        writer.println();
                     }
                 }
             }
@@ -212,10 +208,8 @@ public class PythonBindings {
 
         paramsWriter.close();
 
-        writer.println();
         writer.close();
         bodyWriter.close();
-        bodyWriter.println();
 
         System.err.println("Known Simple Types:");
         for (String s : knownSimpleTypes) {
@@ -235,32 +229,32 @@ public class PythonBindings {
         String simpleType = typeFromJavaType(op);
         for (String opname : op.names()) {
             opname = dashlessArgName(opname);
+            bodyWriter.println();
             bodyWriter.println(I+"def get_" + opname + "(self):");
             bodyWriter.println(I+I+"\"\"\"");
             bodyWriter.println(I+I+"returns current value of "+varname+" as a " + simpleType);
             bodyWriter.println(I+I+"\"\"\"");
             bodyWriter.println(I+I+"return self._" + varname);
-            bodyWriter.println();
             if ( ! specialSetter(bodyWriter, op, opname)) {
                 // normal setter
                 String defValStr = "";
                 if (simpleType.equals("Boolean")) {
                     defValStr = "=True";
                 }
+                bodyWriter.println();
                 bodyWriter.println(I+"def " + opname + "(self, val"+defValStr+"):");
                 desc(bodyWriter, op, opname);
 
                 if (simpleType.equals("List")) {
                     bodyWriter.println(I+I+"if not hasattr(val, \"__getitem__\"):");
                     if (op.arity().max() == 1) {
-                        bodyWriter.println(I+I+I+"val = [ val ]");
+                        bodyWriter.println(I+I+I+"val = [val]");
                     } else {
                         bodyWriter.println(I+I+I+"raise Exception(f\"" + opname + "() requires a list, not {val}\")");
                     }
                 }
                 bodyWriter.println(I+I+"self._" + varname + " = val");
                 bodyWriter.println(I+I+"return self");
-                bodyWriter.println();
                 if (simpleType.equals("List")) {
 
                     bodyWriter.println();
@@ -269,7 +263,6 @@ public class PythonBindings {
 
                     bodyWriter.println(I+I+"self._" + varname + ".append(val)");
                     bodyWriter.println(I+I+"return self");
-                    bodyWriter.println();
                 }
             }
         }
@@ -343,23 +336,24 @@ public class PythonBindings {
         switch (varname) {
             case "scatter" -> {
 
+                bodyWriter.println();
                 bodyWriter.println(I+"def " + opname + "(self, depth, degree):");
                 desc(bodyWriter, op, opname);
 
                 bodyWriter.println(I+I+"self._" + varname + " = [depth, degree]");
                 bodyWriter.println(I+I+"return self");
-                bodyWriter.println();
             }
             case "strikediprake" -> {
 
+                bodyWriter.println();
                 bodyWriter.println(I+"def " + opname + "(self, strike, dip, rake):");
                 desc(bodyWriter, op, opname);
 
                 bodyWriter.println(I+I+"self._" + varname + " = [strike, dip, rake]");
                 bodyWriter.println(I+I+"return self");
-                bodyWriter.println();
             }
             case "station", "event" -> {
+                bodyWriter.println();
                 bodyWriter.println(I+"def " + opname + "(self, lat, lon):");
                 desc(bodyWriter, op, opname);
 
@@ -371,9 +365,9 @@ public class PythonBindings {
 
                 bodyWriter.println(I+I+"self._" + varname + " += [lat, lon]");
                 bodyWriter.println(I+I+"return self");
-                bodyWriter.println();
             }
             case "stationxmltext", "staxmltext", "qmltext", "quakemltext", "velocitymodeltext" -> {
+                bodyWriter.println();
                 bodyWriter.println(I+"def " + opname + "(self, val):");
                 desc(bodyWriter, op, opname);
                 String paramName;
@@ -388,7 +382,6 @@ public class PythonBindings {
 
                 bodyWriter.println(I+I+"self._" + paramName + " = val");
                 bodyWriter.println(I+I+"return self");
-                bodyWriter.println();
             }
             default -> {
                 return false;
@@ -480,13 +473,11 @@ public class PythonBindings {
 
             File taupversionFile = new File(dir, "taupversion.py");
             PrintWriter taupversion = new PrintWriter(new BufferedWriter(new FileWriter(taupversionFile)));
-            taupversion.println();
-            taupversion.println("# Version of TauP the python code corresponds to. ");
+            taupversion.println("# Version of TauP the python code corresponds to.");
             taupversion.println("# Use with other versions may not work.");
             taupversion.println("TAUP_VERSION = \""+BuildVersion.getVersion()+"\"");
             taupversion.println();
             taupversion.println("TAUP_DOWNLOAD = \"https://doi.org/10.5281/zenodo.10794857\"");
-            taupversion.println();
             taupversion.close();
 
             File initFile = new File(dir, "__init__.py");
