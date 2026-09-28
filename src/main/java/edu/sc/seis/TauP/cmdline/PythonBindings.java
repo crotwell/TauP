@@ -303,7 +303,7 @@ public class PythonBindings {
 
         if (simpleType.equals("Boolean")) {
             bodyWriter.println("");
-            bodyWriter.println("    Without arguments sets the value to True. ");
+            bodyWriter.println("    Without arguments sets the value to True.");
         } else if (simpleType.equals("List") && !isAppend) {
             if (op.arity().max() == 1) {
                 bodyWriter.println("    If a single " + subtypeFromJavaType(op)
