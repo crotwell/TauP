@@ -21,7 +21,7 @@ Using `homebrew <https://brew.sh/>`__::
 Manually
 --------
 
-Download tarball from |zenodo_url|_. Then::
+Download zipfile from |zenodo_url|_. Then:
 
   unzip |dist_zip|
 
