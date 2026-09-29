@@ -95,5 +95,28 @@ public class MarsTest {
 
     }
 
+    /**
+     * Mars has weird reversal in S slowness gradient at 150.
+     *<br>
+     * 12.8801  145.006<br>
+     * 12.8822  150.000<br>
+     * 12.8818  152.504<br>
+     * that implies a break in  the tau branches but should not be a discontinuity for phases.
+     */
+    @Test
+    public void mars2025discon150() throws TauModelException, IOException, SlownessModelException {
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsKahnMay2025.nd");
+        TauModel tMod = TauModelLoader.createTauModel(marsVMod);
+        int startBranchNum=5;
+        boolean isPWave = true;
+        assertFalse(tMod.isDiscontinuityBranch(startBranchNum, isPWave));
+        int endDisconAfterTurn = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.UP);
+        TauBranch tauBranch = tMod.getTauBranch(endDisconAfterTurn, isPWave);
+        assertNotEquals(150, tauBranch.getTopDepth(), 1.0);
+        assertNotEquals(5, endDisconAfterTurn);
+        assertTrue(tMod.isDiscontinuityBranch(endDisconAfterTurn, isPWave));
+
+    }
+
     public static final String marsCustomDiscon = "liquid-silicate";
 }
