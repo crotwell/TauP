@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.SeismicPhase.PWAVE;
@@ -457,7 +456,6 @@ public class SeismicPhaseWalk {
         prev = out;
         while (out != null && out.endSegment().endBranch > 0) {
             prev = out;
-            out = null;
             // see if we can just do it
             out = nextLegWithAction(tMod, prev, isPWave, action);
             if (out != null && out.getEndAction()==action && out.endSegment().endBranch == 0) {
@@ -541,10 +539,6 @@ public class SeismicPhaseWalk {
             // no s wave in fluid layer
             return outTree;
         }
-
-        int endDisconBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave,
-                layerPropogationTypeAfter(prevEndSeg.endAction));
-
 
         switch (prevEndSeg.endAction) {
             case END:
@@ -810,14 +804,6 @@ public class SeismicPhaseWalk {
                 if (!excludeBranch.contains(transPhase.endSegment().endBranch+1)) {
                     out.add(prevTransPhase.nextSegment(isPWave, REFLECT_TOPSIDE));
                 }
-            }
-        }
-        for (ProtoSeismicPhase p : out) {
-            for (SeismicPhaseSegment seg : p.segmentList) {
-                String start = seismicNamingLayers.legNameForTauBranch(seg.startBranch, seg.isPWave, seg.layerPropogationType, seg.endAction);
-                String end = seismicNamingLayers.legNameForTauBranch(seg.endBranch, seg.isPWave, seg.layerPropogationType, seg.endAction);
-                assert start.equals(end)
-                        : p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks()+" but "+start+" == "+end;
             }
         }
         return out;
