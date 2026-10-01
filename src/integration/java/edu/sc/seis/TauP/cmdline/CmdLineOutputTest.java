@@ -6,6 +6,9 @@ import edu.sc.seis.seisFile.sac.*;
 import edu.sc.seis.seisFile.mseed3.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -22,7 +25,7 @@ public class CmdLineOutputTest {
         loadTestVelocityModels(testVelModels);
     }
 
-    String[] timeTestCmds = new String[] {"taup time -h 10 -p P --deg 35 --mod prem",
+    static String[] timeTestCmds = new String[] {"taup time -h 10 -p P --deg 35 --mod prem",
                                           "taup time -h 10 -p P --deg 35",
                                           "taup time -h 10 -p P --deg 35 --mod ak135",
                                           "taup time -h 10 -p ttall --deg 35 --mod prem",
@@ -40,7 +43,7 @@ public class CmdLineOutputTest {
             "taup time -h 134 --deg 64 --az 15 --evt 23 0 --ph P,PcP,PKiKP --mod ak135 --ellipticity"
                                             };
 
-    String[] pierceTestCmds = new String[] {"taup pierce -h 10 -p P --deg 35 --mod prem",
+    static String[] pierceTestCmds = new String[] {"taup pierce -h 10 -p P --deg 35 --mod prem",
                                             "taup pierce -h 10 -p P --deg 35",
                                             "taup pierce -h 10 -p P --deg 35 --mod ak135",
                                             "taup pierce --mod prem -h 600 --deg 45 -p PKiKP --pierce 5049.5",
@@ -49,7 +52,7 @@ public class CmdLineOutputTest {
             "taup pierce -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200",
                                           };
 
-    String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -p P --deg 35 --mod prem",
+    static String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -p P --deg 35 --mod prem",
                                           "taup path -o stdout -h 10 -p P --deg 35",
             "taup path -o stdout -h 10 -p Pdiff --deg 135",
             "taup path -o stdout -h 10 -p 2kmps --deg 35",
@@ -68,7 +71,7 @@ public class CmdLineOutputTest {
             "taup path -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40"
     };
 
-    String[] phaseDescribeTestCmds = new String[] {
+    static String[] phaseDescribeTestCmds = new String[] {
             "taup phase -p Pdiff",
             "taup phase -p P410diff",
             "taup phase -p Pv410p,PV410p",
@@ -81,7 +84,7 @@ public class CmdLineOutputTest {
             "taup phase -p PKP410S",
     };
 
-    String[] curveTestCmds = new String[] {
+    static String[] curveTestCmds = new String[] {
             "taup curve -o stdout -h 10 -p P --mod prem",
             "taup curve -o stdout -h 10 -p P",
             "taup curve -o stdout -h 10 -p P --mod ak135",
@@ -92,16 +95,16 @@ public class CmdLineOutputTest {
             "taup curve -o stdout -h 10 -p P,2kmps --mod prem --svg",
     };
 
-    String[] beachballTestCmds = new String[] {
+    static String[] beachballTestCmds = new String[] {
             "taup beachball -o stdout --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
     };
 
-    String[] wavefrontTestCmds = new String[] {
+    static String[] wavefrontTestCmds = new String[] {
             "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP --timestep 100",
             "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype"
     };
 
-    String[] velplotTestCmds = new String[] {
+    static String[] velplotTestCmds = new String[] {
             "taup velplot -o stdout --mod ak135 --svg",
             "taup velplot -o stdout --mod ak135 --mod ak135favg --mod ak135fcont --mod prem --svg",
             "taup velplot -o stdout --mod ak135 --svg -x velocity_density",
@@ -114,23 +117,23 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --svg -x poisson",
     };
 
-    String[] disconTestCmds = new String[] {
+    static String[] disconTestCmds = new String[] {
             "taup discon --mod ak135fcont",
 
     };
-    String[] reflTransPlotTestCmds = new String[] {
+    static String[] reflTransPlotTestCmds = new String[] {
             "taup refltrans -o stdout --mod ak135 --depth 35 --svg",
             "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135fcont --pwave --swave -x rayparam",
             "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135favg --pwave --swave -x rayparam"
     };
 
-    String[] findTestCmds = new String[] {
+    static String[] findTestCmds = new String[] {
             "taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 3 --pwaveonly --exclude 20,moho,iocb",
             "taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 2 --exclude 20,moho,iocb --deg 35 --time 475",
     };
 
 
-    String[] distazTestCmds = new String[] {
+    static String[] distazTestCmds = new String[] {
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101",
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --geodist geodetic spherical geocentric",
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --baz 135 --deg 35",
@@ -142,7 +145,7 @@ public class CmdLineOutputTest {
     };
 
 
-    String[] helpTestCmds = new String[] {"taup --help",
+    static String[] helpTestCmds = new String[] {"taup --help",
                                           "taup time --help",
                                           "taup pierce --help",
                                           "taup path --help",
@@ -165,7 +168,7 @@ public class CmdLineOutputTest {
 
     String versionCmd = "taup --version";
 
-    String[] docCmds = new String[] {
+    static String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
             "taup time --geodist geodetic --sid CO_HAW --eid us7000pn9s -p SKS",
             "taup time -h 134 --deg 64 --az 15 --evt 23 0 --ph P,PcP,PKiKP --mod ak135 --ellipticity",
@@ -195,7 +198,7 @@ public class CmdLineOutputTest {
             "taup beachball --bbtype ampp --phasecircles --degree 210 --az 222 --evdepth 607 --model prem --phase PKP,PKIKP,SKS --strikediprake 17 7 -62 --svg"
     };
 
-    String[] setInFileCmds = new String[] {
+    static String[] setInFileCmds = new String[] {
 
             "taup setsac -p P,S my_earthquake.sac",
             "taup setms3 -p P,S my_earthquake.ms3",
@@ -621,71 +624,84 @@ public class CmdLineOutputTest {
         assertTrue(currentLine.contains(BuildVersion.getVersion()));
     }
 
-    @Test
+    @ParameterizedTest
+    @FieldSource("helpTestCmds")
     @Disabled
-    public void testTauPHelp() throws Exception {
-        runTests(helpTestCmds);
+    public void testTauPHelp(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPTime() throws Exception {
-        runTests(timeTestCmds);
+    @ParameterizedTest
+    @FieldSource("timeTestCmds")
+    public void testTauPTime(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPPierce() throws Exception {
-        runTests(pierceTestCmds);
+    @ParameterizedTest
+    @FieldSource("pierceTestCmds")
+    public void testTauPPierce(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPPath() throws Exception {
-        runTests(pathTestCmds);
+    @ParameterizedTest
+    @FieldSource("pathTestCmds")
+    public void testTauPPath(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPPhaseDescribe() throws Exception {
-        runTests(phaseDescribeTestCmds);
+    @ParameterizedTest
+    @FieldSource("phaseDescribeTestCmds")
+    public void testTauPPhaseDescribe(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPCurve() throws Exception {
-        runTests(curveTestCmds);
+    @ParameterizedTest
+    @FieldSource("curveTestCmds")
+    public void testTauPCurve(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPBeachball() throws Exception {
-        runTests(beachballTestCmds);
+    @ParameterizedTest
+    @FieldSource("beachballTestCmds")
+    public void testTauPBeachball(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPWavefront() throws Exception {
-        runTests(wavefrontTestCmds);
+    @ParameterizedTest
+    @FieldSource("wavefrontTestCmds")
+    public void testTauPWavefront(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPVelplot() throws Exception {
-        runTests(velplotTestCmds);
+    @ParameterizedTest
+    @FieldSource("velplotTestCmds")
+    public void testTauPVelplot(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPDiscon() throws Exception {
-        runTests(disconTestCmds);
+    @ParameterizedTest
+    @FieldSource("disconTestCmds")
+    public void testTauPDiscon(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
 
-    @Test
-    public void testTauPReflTransplot() throws Exception {
-        runTests(reflTransPlotTestCmds);
+    @ParameterizedTest
+    @FieldSource("reflTransPlotTestCmds")
+    public void testTauPReflTransplot(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPFind() throws Exception {
-        runTests(findTestCmds);
+    @ParameterizedTest
+    @FieldSource("findTestCmds")
+    public void testTauPFind(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
-    @Test
-    public void testTauPDiataz() throws Exception {
-        runTests(distazTestCmds);
+    @ParameterizedTest
+    @FieldSource("distazTestCmds")
+    public void testTauPDiataz(String cmd) throws Exception {
+        testCmd(cmd);
     }
 
     @Test
@@ -743,13 +759,13 @@ public class CmdLineOutputTest {
         assertTrue( current.ready() , "Current output is empty for "+cmd);
         while (prior.ready() && current.ready()) {
             priorLine = prior.readLine();
-            currentLine = current.readLine();
+            currentLine = current.readLine().trim();
             String priorTrimmed = priorLine.trim();
             if ((priorTrimmed.startsWith("# version") || priorTrimmed.startsWith("<version>"))) {
                 // don't check version lines as those different even if no actual change
                 continue;
             }
-            assertEquals(priorLine, currentLine, cmd + " line " + lineNum);
+            assertEquals(priorTrimmed, currentLine, cmd + " line " + lineNum);
             lineNum++;
         }
         while (prior.ready()) {
