@@ -47,7 +47,9 @@ public class SeismicPhaseSegment {
 							   String legName,
 							   double minRayParam,
 							   double maxRayParam) {
-
+		if (endAction!=FAIL && legName.isEmpty()) {
+			throw new IllegalArgumentException("Legname cannot be empty");
+		}
 		this.tMod = tMod;
 		this.startBranch = startBranch;
 		this.endBranch = endBranch;

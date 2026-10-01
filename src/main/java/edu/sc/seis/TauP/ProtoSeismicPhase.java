@@ -276,8 +276,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         TauModel tMod = endSeg != null ? endSeg.getTauModel() : null;
         int priorEndBranchNum = endSeg != null ? endSeg.endBranch : -1;
         if (endAction == FAIL) {
+            String nextLegName = tMod.getNamingLayers().legNameForTauBranch(priorEndBranchNum, isPWave, LayerPropogationType.UP, endAction);
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
-                    isPWave, LayerPropogationType.DOWN, "");
+                    isPWave, LayerPropogationType.DOWN, nextLegName);
             out.add(nextSeg);
             if (endSeg != null) {
                 nextSeg.prevEndAction = endSeg.endAction;
@@ -308,8 +309,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 && endSeg != null
                 && (endSeg.endBranch == 0 && (endSeg.endAction != TURN))) {
             // upgoing at surface not possible
+            String nextLegName = tMod.getNamingLayers().legNameForTauBranch(0, isPWave, propTypeBeforeEndAction, endAction);
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum,
-                    isPWave, propTypeBeforeEndAction, "");
+                    isPWave, propTypeBeforeEndAction, nextLegName);
             out.add(nextSeg);
             nextSeg.prevEndAction = endSeg.endAction;
             ProtoSeismicPhase outProto =  new ProtoSeismicPhase(out, receiverDepth);
@@ -318,9 +320,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             return outProto;
         }
         int startBranchNum = nextStartBranch();
+        String nextLegName = tMod.getNamingLayers().legNameForTauBranch(startBranchNum, isPWave, propTypeBeforeEndAction, endAction);
+        if (nextLegName.isEmpty()) {
+            throw new TauModelException("next legName empty: "+startBranchNum+", "+isPWave+", "+propTypeBeforeEndAction+", "+endAction);
+        }
         if (endDisconBranchNum == 0 && (endAction == TRANSUP || endAction == HEADTURN)) {
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endDisconBranchNum,
-                    isPWave, propTypeBeforeEndAction, "");
+                    isPWave, propTypeBeforeEndAction, nextLegName);
             out.add(nextSeg);
             nextSeg.prevEndAction = endSeg.endAction;
             ProtoSeismicPhase outProto = new ProtoSeismicPhase(out, receiverDepth);
@@ -331,7 +337,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if ((propTypeBeforeEndAction==LayerPropogationType.DOWN&& endDisconBranchNum<startBranchNum)
             || propTypeBeforeEndAction==LayerPropogationType.UP&& endDisconBranchNum>startBranchNum) {
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endDisconBranchNum,
-                    isPWave, propTypeBeforeEndAction, "");
+                    isPWave, propTypeBeforeEndAction, nextLegName);
             out.add(nextSeg);
             nextSeg.prevEndAction = endSeg.endAction;
             ProtoSeismicPhase outProto = new ProtoSeismicPhase(out, receiverDepth);
@@ -346,7 +352,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
         };
 
-        String nextLegName = tMod.getNamingLayers().legNameForTauBranch(startBranchNum, isPWave, propTypeBeforeEndAction, endAction);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         TauBranch endBranch = tMod.getTauBranch(endBranchNum, isPWave);
 
