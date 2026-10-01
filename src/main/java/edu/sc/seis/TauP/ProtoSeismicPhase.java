@@ -477,14 +477,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     public static int findEndDiscon(TauModel tMod, int startBranchNum, boolean isPWave, LayerPropogationType layerPropogationType) {
         int endBranchNum = startBranchNum;
         if (layerPropogationType == LayerPropogationType.DOWN) {
-            while (endBranchNum < tMod.getNumBranches()-1
-                    && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getBotDepth())) {
+            while (endBranchNum < tMod.getNumBranches()-1 && ! tMod.isDiscontinuityBranch(endBranchNum+1, isPWave)) {
                 endBranchNum += 1;
             }
             endBranchNum+=1; // discon is labeled by branch below discon depth
-        } if (layerPropogationType == LayerPropogationType.UP) {
+        }
+        if (layerPropogationType == LayerPropogationType.UP) {
             // upgoing
-            while (endBranchNum > 0 && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getTopDepth())) {
+            while (endBranchNum > 0 && ( ! tMod.isDiscontinuityBranch(endBranchNum, isPWave) )) {
                 endBranchNum -= 1;
             }
         }

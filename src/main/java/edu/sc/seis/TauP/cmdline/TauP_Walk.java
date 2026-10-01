@@ -4,6 +4,7 @@ import edu.sc.seis.TauP.*;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -44,7 +45,16 @@ public class TauP_Walk extends TauP_Find {
         List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
 
         SeismicPhaseWalk walker = createWalker(tModRecDepth, recDepth, actualExcludeDepths);
-        List<ProtoSeismicPhase> protoList = walker.createSourceSegments(tModRecDepth, true, recDepth);
+        List<ProtoSeismicPhase> protoList = new ArrayList();
+        boolean allowConversions = ! (onlyPWave || onlySWave);
+        boolean allowPWave = ! onlySWave;
+        boolean allowSWave = ! onlyPWave;
+        if ( allowPWave ) {
+            protoList.addAll(walker.createSourceSegments(tModRecDepth, true, recDepth));
+        }
+        if ( allowSWave) {
+            protoList.addAll(walker.createSourceSegments(tModRecDepth, false, recDepth));
+        }
 
         Scanner scanner = new Scanner(System.in);
         ProtoSeismicPhase prevProto = null;
@@ -64,7 +74,12 @@ public class TauP_Walk extends TauP_Find {
                 if (p.endSegment().getEndAction()==PhaseInteraction.TURN) {
                     article = " above ";
                 }
-                System.out.println(i+" -> "+p.getEndAction()+" at "+p.endSegment().getEndDepth()+"   "+p.getPuristName()+" "+p.branchNumSeqStrWithSegBreaks()+"   rp: "+p.endSegment().getMinRayParamDeg()+" "+p.endSegment().getMaxRayParamDeg());
+                String pOrS = p.endSegment().getIsPWave()?"P":"S";
+                System.out.println(i+" -> "+pOrS+" "+p.getEndAction()+" at "+p.endSegment().getEndDepth()
+                        +"   "+p.getPuristName()
+                        +" "+p.branchNumSeqStrWithSegBreaks()
+                        +"   rp: "+Outputs.formatRayParam(p.endSegment().getMinRayParamDeg())
+                        +" "+Outputs.formatRayParam(p.endSegment().getMaxRayParamDeg()));
             }
             String nextCmd = scanner.next();
             System.out.println(nextCmd);
@@ -80,7 +95,7 @@ public class TauP_Walk extends TauP_Find {
                 int choice = Integer.parseInt(nextCmd.trim());
                 prevProto = protoList.get(choice);
                 if (prevProto.isSuccessful() && (prevProto.getEndAction() != PhaseInteraction.END && prevProto.getEndAction() != PhaseInteraction.END_DOWN)) {
-                    protoList = walker.nextLegs(tModRecDepth, prevProto, true);
+                    protoList = walker.nextLegs(tModRecDepth, prevProto, allowPWave, allowSWave);
                 } else {
                     System.out.println(prevProto.getPuristName());
                     ProtoSeismicPhase cons = walker.consolidateSegment(prevProto);

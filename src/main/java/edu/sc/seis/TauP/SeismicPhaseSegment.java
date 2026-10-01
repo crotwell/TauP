@@ -376,6 +376,10 @@ public class SeismicPhaseSegment {
 		return tMod;
 	}
 
+	public LayerPropogationType getLayerPropogationType() {
+		return layerPropogationType;
+	}
+
 	public PhaseInteraction getEndAction() {
 		return endAction;
 	}

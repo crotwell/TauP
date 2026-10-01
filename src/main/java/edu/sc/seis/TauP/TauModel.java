@@ -257,7 +257,7 @@ public class TauModel implements Serializable {
             // free surface is always a discon
             return true;
         }
-        if (branchNum > getNumBranches()) {
+        if (branchNum >= getNumBranches()) {
             // center of earth is never a discon
             return false;
         }

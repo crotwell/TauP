@@ -80,6 +80,9 @@ public class TauP_FindTest {
         find.excludeDepthNames.addAll(List.of("20", "210", "410", "660")); // moho 35, iocb 5153.9
         double receiverDepth = 0;
         SeismicPhaseWalk allwalker = find.createWalker(tMod, receiverDepth, find.getExcludedDepths(tMod));
+        assertTrue(allwalker.isAllowPWave());
+        assertTrue(allwalker.isAllowSWave());
+        assertTrue(allwalker.isAllowConversions());
         List<ProtoSeismicPhase> allwalk = allwalker.findEndingPaths(maxActions);
 
         List<String> zeroActionNames = List.of("P", "S", "PKp", "PKIkp");
@@ -98,6 +101,16 @@ public class TauP_FindTest {
         oneAction.addAll(oneActionConvertNames);
         oneAction.addAll(diffHeadNames);
 
+        SeismicNamingLayers seismicNamingLayers = new SeismicNamingLayers(tMod);
+        for (ProtoSeismicPhase proto : allwalk) {
+            System.err.println(proto.getPuristName()+"    "+proto.branchNumSeqStrWithSegBreaks());
+            for (SeismicPhaseSegment seg : proto.getSegmentList()) {
+                String start = seismicNamingLayers.legNameForTauBranch(seg.getStartBranch(), seg.getIsPWave(), seg.getLayerPropogationType(), seg.getEndAction());
+                String end = seismicNamingLayers.legNameForTauBranch(seg.getEndBranch(), seg.getIsPWave(), seg.getLayerPropogationType(), seg.getEndAction());
+                assertEquals(start, end,
+                        proto.getPuristName() + " " + proto.branchNumSeqStrWithSegBreaks() + " but " + start + " == " + end);
+            }
+        }
         for (String phase : oneAction) {
             boolean notFound = true;
             for (ProtoSeismicPhase proto : allwalk) {

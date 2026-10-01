@@ -645,10 +645,14 @@ public class WalkPhaseTest {
             assertNotEquals(branchNum210, pPedv210.endSegment().endBranch);
             pPedv210 = pPedv210.nextSegment(true, TRANSDOWN);
         }
+        assertNotEquals(branchNum210, pPedv210.endSegment().endBranch);
         List<ProtoSeismicPhase> nextLegs = walker.nextLegs(tModDepth, pPedv210, isPWave);
         for (ProtoSeismicPhase p : nextLegs) {
-            assertNotEquals(branchNum210, pPedv210.endSegment().endBranch);
-            assertNotEquals(REFLECT_TOPSIDE, p.endSegment().endAction, p.getPuristName()+" "+p.branchNumSeqStr()+" "+ Arrays.toString(p.endSegment().getDepthRange()));
+            if (p.endSegment().layerPropogationType==LayerPropogationType.DOWN) {
+                assertNotEquals(branchNum210, p.endSegment().endBranch+1, p.branchNumSeqStrWithSegBreaks());
+            } else if (p.endSegment().layerPropogationType== LayerPropogationType.UP) {
+                assertNotEquals(branchNum210, p.endSegment().endBranch, p.branchNumSeqStrWithSegBreaks());
+            }
         }
     }
 
@@ -678,8 +682,12 @@ public class WalkPhaseTest {
             assertFalse(phaseName.contains("410"), phaseName);
             assertFalse(phaseName.contains("660"), phaseName);
             if (segList.isSuccessful()) {
-                SeismicPhase sp = SeismicPhaseFactory.createPhase(segList.getPuristName(), tMod);
-                assertTrue(sp.phasesExistsInModel(), sp.getPuristName() + " " + sp.branchNumSeqStrWithSegBreaks()+" proto: "+segList.branchNumSeqStrWithSegBreaks());
+                try {
+                    SeismicPhase sp = SeismicPhaseFactory.createPhase(segList.getPuristName(), tMod);
+                    assertTrue(sp.phasesExistsInModel(), sp.getPuristName() + " " + sp.branchNumSeqStrWithSegBreaks()+" proto: "+segList.branchNumSeqStrWithSegBreaks());
+                } catch (PhaseParseException e) {
+                    assertTrue(false, segList.getPuristName()+"  "+segList.branchNumSeqStrWithSegBreaks());
+                }
             }
         }
     }

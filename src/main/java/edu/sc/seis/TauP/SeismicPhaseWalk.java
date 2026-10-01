@@ -399,13 +399,7 @@ public class SeismicPhaseWalk {
                 int interactionNum = segList.calcInteractionNumber();
                 if (interactionNum <= maxInteractions) {
                     segList.validateSegList();
-                    List<ProtoSeismicPhase> calcedNext = new ArrayList<>();
-                    if (allowPWave) {
-                        calcedNext.addAll(nextLegs(tMod, segList, PWAVE));
-                    }
-                    if (allowSWave) {
-                        calcedNext.addAll(nextLegs(tMod, segList, SWAVE));
-                    }
+                    List<ProtoSeismicPhase> calcedNext = nextLegs(tMod, segList, allowPWave, allowSWave);
                     for (ProtoSeismicPhase calcSegList : calcedNext) {
                         SeismicPhaseSegment calcendSeg = calcSegList.get(calcSegList.size()-1);
                         if (calcSegList.calcInteractionNumber() <= maxInteractions && ! calcSegList.isFail) {
@@ -502,7 +496,7 @@ public class SeismicPhaseWalk {
      * @throws TauModelException
      */
     public ProtoSeismicPhase nextLegWithAction(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave, PhaseInteraction action) throws TauModelException {
-        List<ProtoSeismicPhase> nextLegs = nextLegs(tMod, proto, isPWave);
+        List<ProtoSeismicPhase> nextLegs = internal_nextLegs(tMod, proto, isPWave, true);
         for (ProtoSeismicPhase p : nextLegs) {
             if (p.endSegment().endAction == action) {
                 return p;
@@ -510,8 +504,21 @@ public class SeismicPhaseWalk {
         }
         return null;
     }
-
+    public List<ProtoSeismicPhase> nextLegs(TauModel tMod, ProtoSeismicPhase proto, boolean withPWave, boolean withSWave) throws TauModelException {
+        List<ProtoSeismicPhase> legs = new ArrayList<>();
+        boolean allowConv = withPWave && withSWave;
+        if (withPWave) {
+            legs.addAll(internal_nextLegs(tMod, proto, true, allowConv));
+        }
+        if (withSWave) {
+            legs.addAll(internal_nextLegs(tMod, proto, false, allowConv));
+        }
+        return legs;
+    }
     public List<ProtoSeismicPhase> nextLegs(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave) throws TauModelException {
+        return internal_nextLegs(tMod, proto, isPWave, false);
+    }
+    private List<ProtoSeismicPhase> internal_nextLegs(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave, boolean allowConversion) throws TauModelException {
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
         if (proto.getEndAction() == FAIL) {
             return outTree;
@@ -563,6 +570,11 @@ public class SeismicPhaseWalk {
                     int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, LayerPropogationType.DOWN);
                     if (!excludeBranch.contains(endDiscon) && tMod.isDiscontinuityBranch(endDiscon, isPWave)) {
                         outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, REFLECT_TOPSIDE));
+                        if (allowConversion
+                                && proto.endSegment().endBranch < tMod.getNumBranches()-1
+                                && (isPWave || !tMod.isFluidBranch(proto.nextStartBranch()))) {
+                            outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, TRANSDOWN));
+                        }
                         if (tMod.isDiffractionBranch(endDiscon, isPWave)) {
                             outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, DIFFRACT));
                         }
@@ -613,6 +625,11 @@ public class SeismicPhaseWalk {
                 }
                 if ( ! excludeBranch.contains(endDiscon) && tMod.isDiscontinuityBranch(endDiscon, isPWave)) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, REFLECT_UNDERSIDE));
+                    if (allowConversion
+                            && proto.endSegment().endBranch > 0
+                            && (isPWave || !tMod.isFluidBranch(proto.nextStartBranch()))) {
+                        outTreeAdd(outTree, proto.nextSegment(isPWave, endDiscon, TRANSUP));
+                    }
                     /*
                     if (tMod.isDiffractionBranch(endDiscon, isPWave)) {
                         // should allow up to diffract???
@@ -689,7 +706,10 @@ public class SeismicPhaseWalk {
         return outTree;
     }
 
-    public List<ProtoSeismicPhase> transAcrossExcludedBoundaries(TauModel tMod, ProtoSeismicPhase proto, boolean isPWave, PhaseInteraction transAction)
+    public List<ProtoSeismicPhase> transAcrossExcludedBoundaries(TauModel tMod,
+                                                                 ProtoSeismicPhase proto,
+                                                                 boolean isPWave,
+                                                                 PhaseInteraction transAction)
             throws TauModelException {
         if (!(transAction == TRANSUP || transAction == TRANSDOWN)) {
             throw new IllegalArgumentException("End action must be TRANSUP or TRANSDOWN, but was "+transAction);
@@ -887,6 +907,10 @@ public class SeismicPhaseWalk {
 
     public void setAllowPWave(boolean allowPWave) {
         this.allowPWave = allowPWave;
+    }
+
+    public boolean isAllowConversions() {
+        return allowPWave && allowSWave;
     }
 
     public TauModel gettMod() {
