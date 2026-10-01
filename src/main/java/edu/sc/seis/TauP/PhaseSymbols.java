@@ -14,12 +14,14 @@ public class PhaseSymbols {
     public static final char P = 'P';
     public static final char S = 'S';
     public static final char K = 'K';
+    public static final char Z = 'Z'; // outer core S, only if solid
     public static final char I = 'I';
     public static final char J = 'J';
     // exclusively upgoing legs
     public static final char p = 'p';
     public static final char s = 's';
     public static final char k = 'k';
+    public static final char z = 'z'; // outer core S, only if solid
     public static final char y = 'y'; // note cannot use 'i' due to PKiKP
     public static final char j = 'j';
     // common discontinuities
@@ -62,7 +64,7 @@ public class PhaseSymbols {
     }
     public static boolean isTransverseWaveSymbol(String name, int offset) {
         char c = name.charAt(offset);
-        return c == S || c == s || c == J || c == j;
+        return c == S || c == s || c == J || c == j || c == Z || c == z;
     }
 
     public static boolean isDowngoingSymbol(String name) {
@@ -86,7 +88,7 @@ public class PhaseSymbols {
     }
     public static boolean isUpgoingSymbol(String name, int offset) {
         char c = name.charAt(offset);
-        return c == p || c == s || c == k || c == y || c == j;
+        return c == p || c == s || c == k || c == y || c == j || c == z;
     }
 
     public static boolean isReflectSymbol(String name) {
@@ -128,7 +130,7 @@ public class PhaseSymbols {
     }
     public static boolean isOuterCoreLeg(String name, int offset) {
         char c = name.charAt(offset);
-        return c == K || c == k  ;
+        return c == K || c == k || c == Z || c == z ;
     }
     public static boolean isInnerCoreLeg(String name) {
         return isInnerCoreLeg(name, 0);

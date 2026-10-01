@@ -11,15 +11,27 @@ public class SeismicNamingLayers {
         this.tMod = tMod;
         if (tMod.getIocbBranch() != tMod.getNumBranches()) {
             // inner core
-            layersToLegNames.put(List.of(tMod.getIocbBranch(), tMod.getNumBranches()-1), List.of("I", "y", "J", "j"));
+            layersToLegNames.put(List.of(tMod.getIocbBranch(), tMod.getNumBranches()-1),
+                    List.of(String.valueOf(PhaseSymbols.I),
+                            String.valueOf(PhaseSymbols.y),
+                            String.valueOf(PhaseSymbols.J),
+                            String.valueOf(PhaseSymbols.j)));
         }
         if (tMod.getCmbBranch() != tMod.getNumBranches() && tMod.getCmbBranch() != tMod.getIocbBranch()) {
             // liquid outer core
-            layersToLegNames.put(List.of(tMod.getCmbBranch(), tMod.getIocbBranch()-1), List.of("K", "k", "", ""));
+            layersToLegNames.put(List.of(tMod.getCmbBranch(), tMod.getIocbBranch()-1),
+                    List.of(String.valueOf(PhaseSymbols.K),
+                            String.valueOf(PhaseSymbols.k),
+                            String.valueOf(PhaseSymbols.Z),
+                            String.valueOf(PhaseSymbols.z)));
         }
         if (tMod.getCmbBranch() != 0) {
             // crust/mantle
-            layersToLegNames.put(List.of(0, tMod.getCmbBranch()-1), List.of("P", "p", "S", "s"));
+            layersToLegNames.put(List.of(0, tMod.getCmbBranch()-1),
+                    List.of(String.valueOf(PhaseSymbols.P),
+                            String.valueOf(PhaseSymbols.p),
+                            String.valueOf(PhaseSymbols.S),
+                            String.valueOf(PhaseSymbols.s)));
         }
     }
 
@@ -58,7 +70,7 @@ public class SeismicNamingLayers {
         }
         String legName = legCharForBranch(branchNum, isPWave, isDowngoing);
         if (layerPropogationType == LayerPropogationType.DOWN && endAction != TURN) {
-            return legName+"ed";
+            return legName+PhaseSymbols.EX_DOWN_CODE;
         } else {
             // UP
             return legName;
