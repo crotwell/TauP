@@ -1656,15 +1656,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public String zapEDIfPossible(SeismicPhaseSegment seg, SeismicPhaseSegment next, String legName) {
         String nextLegName = next.getLegName();
-        if ((seg.endAction == DIFFRACT || seg.endAction == HEAD) && seg.isPWave == next.isPWave) {
+        if (nextLegName.isEmpty()) {
+            // no zap
+        } else if ((seg.endAction == DIFFRACT || seg.endAction == HEAD) && seg.isPWave == next.isPWave) {
             legName = legName.substring(0, 1);
         } else if ((seg.endAction == TRANSDOWN)
-                && (legName.startsWith("P") || legName.startsWith("S")) && !(nextLegName.startsWith("P") || nextLegName.startsWith("S"))
-                && (legName.startsWith("K")) && !(nextLegName.startsWith("K"))
-                && (legName.startsWith("I") || legName.startsWith("J")) && !(nextLegName.startsWith("I") || nextLegName.startsWith("J"))
-            //&& seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
-            //&& !legName.startsWith(nextLegName.substring(0, 1))
-        ) {
+                && ((PhaseSymbols.isCrustMantleLeg(legName) && ! PhaseSymbols.isCrustMantleLeg(nextLegName))
+                    || (PhaseSymbols.isOuterCoreLeg(legName) && ! PhaseSymbols.isOuterCoreLeg(nextLegName))
+                    || (PhaseSymbols.isInnerCoreLeg(legName) && ! PhaseSymbols.isInnerCoreLeg(nextLegName))
+                )) {
             legName = legName.substring(0, 1);
         } else if ((seg.endAction == REFLECT_TOPSIDE || seg.endAction == REFLECT_TOPSIDE_CRITICAL ||
                 (seg.endAction == TRANSDOWN && (seg.getEndDepth() == tMod.cmbDepth || seg.getEndDepth() == tMod.iocbDepth)))) {
@@ -1706,9 +1706,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             double botDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getBotDepth();
             double topDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getTopDepth();
             //name += " "+seg.startBranch+","+seg.endBranch+" "
-            String legName = legNameForSegment(tMod, seg);;
+            String legName = legNameForSegment(tMod, seg);
             legName = zapED ? zapEDIfPossible(seg, next, legName) : legName;
-
             if (prev == null
                     || prevAddedDepthToName
                     || prev.isPWave != seg.isPWave
