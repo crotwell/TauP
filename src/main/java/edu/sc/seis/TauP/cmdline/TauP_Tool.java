@@ -145,9 +145,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
         String className = toolClass.getName();
         className = className.substring(className.lastIndexOf('.') + 1);
         String toolName = className;
-        if (toolName.startsWith("TauP_")) {
-            toolName = toolName.replace('_', ' ');
-        }
+
         if (toolClass.equals(TauP_VelocityPlot.class) ) {
             toolName = "taup velplot";
         } else if (toolClass.equals(TauP_VelocityMerge.class) ) {
@@ -158,7 +156,11 @@ public abstract class TauP_Tool implements Callable<Integer> {
             toolName = "taup discon";
         } else if (toolClass.equals(TauP_ReflTransPlot.class) ) {
             toolName = "taup refltrans";
-        } 
+        } else if (toolName.startsWith("TauP_")) {
+            toolName = toolName.replace('_', ' ');
+        } else {
+            throw new IllegalArgumentException("TauP tool class "+className+" not known");
+        }
         
         return toolName.toLowerCase();
     }
