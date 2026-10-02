@@ -45,14 +45,33 @@ public class OceanModelTest {
     }
 
     @Test
+    public void PcSOcean() throws TauModelException, SlownessModelException {
+        String modelName = "ak135favg.nd";
+        TauModel tMod = TauModelLoader.load(modelName);
+        assertTrue(tMod.isFluidBranch(0));
+        double sourceDepth = 0;
+        TauModel sourceDepthTMod = tMod.depthCorrect(sourceDepth);
+        assertTrue(sourceDepthTMod.isFluidBranch(0));
+        sourceDepth = 1;
+        sourceDepthTMod = tMod.depthCorrect(sourceDepth);
+        assertTrue(sourceDepthTMod.isFluidBranch(0));
+        assertTrue(sourceDepthTMod.isFluidBranch(1));
+        SeismicPhase PcS = SeismicPhaseFactory.createPhase("PcS", tMod, tMod.sourceDepth);
+        assertFalse(PcS.phasesExistsInModel());
+    }
+
+    @Test
     public void ttallOcean() throws TauModelException, SlownessModelException {
         String modelName = "ak135favg.nd";
         TauModel tMod = TauModelLoader.load(modelName);
+        assertTrue(tMod.isFluidBranch(0));
         List<String> phaseNameList = PhaseArgs.extractPhaseNames("ttall");
         List<SeismicPhase> phaseList = new ArrayList<>();
         for (String pn : phaseNameList) {
             SeismicPhase sp = SeismicPhaseFactory.createPhase(pn, tMod, tMod.sourceDepth);
-            phaseList.add(sp);
+            if ( ! sp.isFail()) {
+                phaseList.add(sp);
+            }
         }
         SeismicSource sourceArgs = new SeismicSource();
         double dist = 5;
@@ -65,7 +84,6 @@ public class OceanModelTest {
             for (Arrival aa : arrivals) {
                 assertNotNull(aa);
                 assertNotNull(aa.getAmplitudeFactorPSV(), sp.getName());
-
             }
         }
     }

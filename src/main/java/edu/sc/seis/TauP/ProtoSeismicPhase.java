@@ -1456,16 +1456,12 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch,
                 isPWave, endAction, layerPropogationType, currLeg, minRayParam, maxRayParam, prevEndAction);
-        if ( ! isPWave &&  ! (currLeg.startsWith("K") || currLeg.equals("k"))) {
-            // outer core K is treated as S wave as special case
-            for(int i = Math.min(startBranch, endBranch); i <= Math.max(startBranch,endBranch); i++) {
-                TauBranch tb = tMod.getTauBranch(i, isPWave);
-                for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
-                    if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
-                            || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
-                        return failNext("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
-                                +" is in fluid: "+tb+" "+fluidDR+" "+startBranch+" "+endBranch+" "+layerPropogationType, currLeg);
-                    }
+        if ( ! isPWave) {
+            for (int bnum = Math.min(startBranch, endBranch); bnum <= Math.max(startBranch, endBranch); bnum++) {
+                if (tMod.isFluidBranch(bnum)) {
+                    return failNext("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
+                                    +" is in fluid: "+tMod.getTauBranch(bnum, isPWave)+" "+startBranch+" "+endBranch+" "+layerPropogationType,
+                            currLeg);
                 }
             }
         }
