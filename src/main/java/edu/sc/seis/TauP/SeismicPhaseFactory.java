@@ -538,7 +538,7 @@ public class SeismicPhaseFactory {
             } else if (isBoundary(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
                 // depth interaction leg, no action
             } else {
-                return failWithMessage(proto,"Unknown leg: "+currLeg);
+                return failWithMessage(proto,"Unknown leg: "+currLeg, currLeg);
             }
 
             if (proto.isFail ) {
@@ -553,7 +553,9 @@ public class SeismicPhaseFactory {
                 || ((proto.endSegment().layerPropogationType==LayerPropogationType.UP
                     || proto.endSegment().layerPropogationType==LayerPropogationType.HEAD)
                     && proto.endSegment().endBranch != upgoingRecBranch)) {
-                return failWithMessage(proto," Phase does not end at the receiver branch, last: "+proto.endSegment());
+                return failWithMessage(proto,
+                        " Phase does not end at the receiver branch, last: "+proto.endSegment(),
+                        currLeg);
             }
 
             if (DEBUG) {
@@ -576,11 +578,11 @@ public class SeismicPhaseFactory {
         return proto;
     }
 
-    ProtoSeismicPhase failWithMessage(ProtoSeismicPhase proto, String reason) {
+    ProtoSeismicPhase failWithMessage(ProtoSeismicPhase proto, String reason, String currLeg) {
         if (DEBUG) {
             Alert.debug("FAIL: "+name+" "+reason);
         }
-        proto.failNext(reason);
+        proto.failNext(reason, currLeg);
         return proto;
     }
 

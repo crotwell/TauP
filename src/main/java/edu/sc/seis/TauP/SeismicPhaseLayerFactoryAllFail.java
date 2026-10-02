@@ -29,7 +29,7 @@ public class SeismicPhaseLayerFactoryAllFail extends SeismicPhaseLayerFactory {
             return aboveLayerFactory.parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
 
         }
-        proto.failNext(reason);
+        proto.failNext(reason, currLeg);
         return proto;
     }
 

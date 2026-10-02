@@ -84,9 +84,9 @@ public class SeismicPhaseSegment {
 		};
 	}
 
-	public static SeismicPhaseSegment failSegment(TauModel tMod) {
+	public static SeismicPhaseSegment failSegment(TauModel tMod, String legName) {
 		return new SeismicPhaseSegment(tMod, -1, -1, true,
-				FAIL, LayerPropogationType.DOWN, "", -1, -1 );
+				FAIL, LayerPropogationType.DOWN, legName, -1, -1 );
 	}
 
 	public static SeismicPhaseSegment failSegment(TauModel tMod,

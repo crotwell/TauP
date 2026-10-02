@@ -137,7 +137,7 @@ public class SeismicPhaseLayerFactory {
             proto = currLegIs_Pg_Sg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else {
             String reason = "parse() failed, Unknown phase in "+layerName+": "+currLeg;
-            return baseFactory.failWithMessage(proto, reason);
+            return baseFactory.failWithMessage(proto, reason, currLeg);
         }
         if (proto.isSuccessful()) {
             switch (proto.endSegment().endAction) {
@@ -151,7 +151,7 @@ public class SeismicPhaseLayerFactory {
                         if (below == null || !below.isLayerLeg(nextLeg)) {
                             proto.failNext("Leg " + nextLeg + " cannot exist after " + currLeg
                                     + " as " + nextLeg + " does not exist after transmit down"
-                                    + (below == null ? " to center of earth" : (" into " + below.layerName)));
+                                    + (below == null ? " to center of earth" : (" into " + below.layerName)), currLeg);
                         }
                     }
                     break;
@@ -167,7 +167,7 @@ public class SeismicPhaseLayerFactory {
                             return baseFactory.failWithMessage(proto,
                                     "Leg " + nextLeg + " cannot exist after " + currLeg
                                     + " as " + nextLeg + " does not exist after transmit up"
-                                    + (above == null ? " at surface." : (" into " + above.layerName + ".")));
+                                    + (above == null ? " at surface." : (" into " + above.layerName + ".")), currLeg);
                         }
                     }
                     break;
@@ -176,12 +176,12 @@ public class SeismicPhaseLayerFactory {
                     if (is(nextLeg, END_CODE) && (proto.receiverDepth < topDepth || proto.receiverDepth > botDepth)) {
                         String reason = "Receiver depth cannot be reached by ending phase leg of "+currLeg
                                 + " as it is not in the "+layerName;
-                        return baseFactory.failWithMessage(proto, reason);
+                        return baseFactory.failWithMessage(proto, reason, currLeg);
                     }
                     if (proto.receiverDepth < topDepth || proto.receiverDepth > botDepth) {
                         return baseFactory.failWithMessage(proto,
                                 "Phase cannot end in "+layerName+" after "+currLeg+" as receiver depth "
-                                        +proto.receiverDepth+" is not in "+layerName);
+                                        +proto.receiverDepth+" is not in "+layerName, currLeg);
                     }
                     break;
                 case REFLECT_TOPSIDE:
@@ -193,7 +193,7 @@ public class SeismicPhaseLayerFactory {
                     if (!(isLayerLeg(nextLeg) || isLayerLeg(nextNextLeg))) {
                         return baseFactory.failWithMessage(proto,
                                 "Leg "+reflectLeg+" cannot exist after "+currLeg+" "+reflectSymbol+" after "+
-                                proto.endSegment().endAction+" as "+reflectLeg+" does not exist in "+layerName);
+                                proto.endSegment().endAction+" as "+reflectLeg+" does not exist in "+layerName, currLeg);
                     }
                     break;
             }
@@ -213,7 +213,7 @@ public class SeismicPhaseLayerFactory {
                 proto.addToBranch(baseFactory.downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
             } else {
                 String reason = "impossible except for 0 dist 0 source depth which can be called p or P";
-                return baseFactory.failWithMessage(proto, reason);
+                return baseFactory.failWithMessage(proto, reason, currLeg);
             }
 
 
@@ -235,7 +235,7 @@ public class SeismicPhaseLayerFactory {
             }
             if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                        + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                        + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.", currLeg);
             }
 
             endAction = HEAD;
@@ -322,11 +322,11 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized in "+layerName+": "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
-                        + " < disconBranch=" + disconBranch);
+                        + " < disconBranch=" + disconBranch, currLeg);
             }
         } else {
             return baseFactory.failWithMessage(proto," Phase not recognized (1): "
-                    + currLeg + " followed by " + nextLeg);
+                    + currLeg + " followed by " + nextLeg, currLeg);
         }
         return proto;
     }
@@ -341,7 +341,7 @@ public class SeismicPhaseLayerFactory {
         if(PhaseSymbols.isTopsideReflectSymbol(nextLeg, 0)) {
             return baseFactory.failWithMessage(proto," p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
-                    + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
+                    + " currLeg=" + currLeg + " nextLeg=" + nextLeg, currLeg);
         } else if (isUpDiffracted(currLeg, 0)){
             String depthString = extractBoundaryId(currLeg, 1, false);
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
@@ -379,7 +379,7 @@ public class SeismicPhaseLayerFactory {
                 if (reflectDisconBranch >= disconBranch ) {
                     String reason = "Attempt to underside reflect " + currLeg
                             + " from deeper layer: " + nextLeg;
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
                 proto.addToBranch(
                         reflectDisconBranch,
@@ -400,7 +400,7 @@ public class SeismicPhaseLayerFactory {
             } else {
                 return baseFactory.failWithMessage(proto, " Phase not recognized (p12): "
                         + currLeg + " followed by " + nextLeg
-                        + " when currBranch=" + currBranch);
+                        + " when currBranch=" + currBranch, currLeg);
             }
         } else if(startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
             String depthString;
@@ -421,7 +421,7 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
-                        + " > disconBranch=" + disconBranch);
+                        + " > disconBranch=" + disconBranch, currLeg);
             }
         } else if(is (nextLeg, m)
                 && currBranch >= tMod.getMohoBranch()) {
@@ -443,7 +443,7 @@ public class SeismicPhaseLayerFactory {
                             + ", so there cannot be a upgoing "
                             + currLeg
                             + " phase for this sourceDepth, receiverDepth and/or path.";
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
             } else {
                 disconBranch = topBranchNum;
@@ -463,10 +463,10 @@ public class SeismicPhaseLayerFactory {
 
         } else if(is(nextLeg, up_p_leg) || is(nextLeg, up_s_leg)) {
             return baseFactory.failWithMessage(proto, " Phase not recognized (2): "
-                    + currLeg + " followed by " + nextLeg);
+                    + currLeg + " followed by " + nextLeg, currLeg);
         } else if(belowLayerFactory.isLayerLeg(nextLeg)) {
             return baseFactory.failWithMessage(proto," Phase not recognized (3): "
-                    + currLeg + " followed by " + nextLeg+", must be upgoing and so cannot hit lower layers.");
+                    + currLeg + " followed by " + nextLeg+", must be upgoing and so cannot hit lower layers.", currLeg);
         } else if(isBoundary(nextLeg)) {
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
             if (!validateDisconWithinLayers(proto, disconBranch, nextLeg)) {
@@ -489,7 +489,7 @@ public class SeismicPhaseLayerFactory {
                     currLeg);
         } else {
             return baseFactory.failWithMessage(proto," Phase not recognized (3 else): "+legNum+" "
-                    + currLeg + " followed by " + nextLeg);
+                    + currLeg + " followed by " + nextLeg, currLeg);
         }
         return proto;
     }
@@ -559,7 +559,7 @@ public class SeismicPhaseLayerFactory {
             } else {
                 // can't topside reflect if already below, setting maxRayParam forces no arrivals
                 String reason = "can't topside reflect if already below";
-                return baseFactory.failWithMessage(proto, reason);
+                return baseFactory.failWithMessage(proto, reason, currLeg);
             }
         } else if( isUndersideReflectSymbol(nextLeg, 0)) {
             String depthString;
@@ -571,7 +571,7 @@ public class SeismicPhaseLayerFactory {
             }
             if (disconBranch == tMod.getNumBranches()) {
                 String reason = "Attempt to underside reflect from center of earth: "+nextLeg;
-                return baseFactory.failWithMessage(proto, reason);
+                return baseFactory.failWithMessage(proto, reason, currLeg);
             }
             if(getBelowFactory()!= null && getBelowFactory().isLayerLeg(prevLeg)) {
                 proto.addToBranch(
@@ -603,7 +603,7 @@ public class SeismicPhaseLayerFactory {
                     || (is(prevLeg, "c") && disconBranch < tMod.getCmbBranch())) {
                 if (disconBranch == tMod.getNumBranches()) {
                     String reason = "Attempt to reflect from center of earth: "+nextLeg;
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
                 proto.addToBranch(
                         disconBranch,
@@ -615,12 +615,12 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized (5): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
-                        + " > disconBranch=" + disconBranch+" , prev="+prevLeg);
+                        + " > disconBranch=" + disconBranch+" , prev="+prevLeg, currLeg);
             }
         } else if(is(nextLeg, "c")) {
             if (tMod.getCmbBranch() == tMod.getNumBranches()) {
                 String reason = "Attempt to reflect from center of earth: "+nextLeg;
-                return baseFactory.failWithMessage(proto, reason);
+                return baseFactory.failWithMessage(proto, reason,currLeg);
             }
             endAction = REFLECT_TOPSIDE;
             proto.addToBranch(
@@ -634,7 +634,8 @@ public class SeismicPhaseLayerFactory {
             return baseFactory.failWithMessage(proto," Phase not recognized (5.5): "
                     + currLeg + " followed by " + nextLeg
                     + " and preceeded by "+prevLeg
-                    + " when currBranch=" + currBranch
+                    + " when currBranch=" + currBranch,
+                    currLeg
             );
         } else if(getBelowFactory()!= null && getBelowFactory().isLayerLeg(nextLeg)) {
             endAction = TRANSDOWN;
@@ -692,7 +693,7 @@ public class SeismicPhaseLayerFactory {
                             + nextLeg
                             + " when currBranch="
                             + currBranch
-                            + " > disconBranch=" + disconBranch);
+                            + " > disconBranch=" + disconBranch, currLeg);
                 }
                 endAction = TRANSUP;
                 proto.addToBranch(
@@ -745,14 +746,14 @@ public class SeismicPhaseLayerFactory {
                                 + currLeg+ " "+ nextLeg+ " "+ nextNextLeg
                                 + ", so this phase, "+ baseFactory.getName()
                                 + " is illegal for this sourceDepth.";
-                        return baseFactory.failWithMessage(proto, reason);
+                        return baseFactory.failWithMessage(proto, reason, currLeg);
                     }
                 } else {
                     return baseFactory.failWithMessage(proto," Phase not recognized (7): "
                             + currLeg
                             + " followed by "
                             + nextLeg
-                            + " followed by " + nextNextLeg);
+                            + " followed by " + nextNextLeg, currLeg);
                 }
             }
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
@@ -764,7 +765,7 @@ public class SeismicPhaseLayerFactory {
                 }
                 if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                     return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                            + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
+                            + disconBranch +", "+numString+ " is not positive velocity discontinuity.", currLeg);
                 }
                 endAction = HEAD;
                 proto.addToBranch(
@@ -783,7 +784,7 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized (7): "
                         + currLeg
                         + " followed by "
-                        + nextLeg + " expected number but was `" + numString + "`");
+                        + nextLeg + " expected number but was `" + numString + "`", currLeg);
             }
 
         } else if (isDiffracted(nextLeg) || isDiffractedDown(nextLeg)) {
@@ -812,11 +813,11 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized (7): "
                         + currLeg
                         + " followed by "
-                        + nextLeg+" expected number but was `"+numString+"`");
+                        + nextLeg+" expected number but was `"+numString+"`",currLeg);
             }
         } else {
             return baseFactory.failWithMessage(proto," Phase not recognized (8): "
-                    + currLeg + " followed by " + nextLeg);
+                    + currLeg + " followed by " + nextLeg, currLeg);
         }
         return proto;
     }
@@ -846,12 +847,13 @@ public class SeismicPhaseLayerFactory {
             disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
         }
         if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+            // failed
             return proto;
         }
         SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
         if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
             return baseFactory.failWithMessage(proto,"Unable to diffract, not diffraction depth " + currLeg + ", "+disconBranch+" at "+
-                    tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
+                    tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.", currLeg);
         }
 
         endAction = DIFFRACT;
@@ -871,8 +873,11 @@ public class SeismicPhaseLayerFactory {
             // already at correct depth ?
         } else {
             // we are below at the right branch to diffract???
-            return baseFactory.failWithMessage(proto,"Unable to diffract, below the right branch to diffract " + currBranch +" of "+proto.phaseName
-                    +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction) + " " + prevSegment+" "+(prevSegment!=null?prevSegment.endsAtTop():""));
+            return baseFactory.failWithMessage(proto,"Unable to diffract, below the right branch to diffract "
+                    + currBranch +" of "+proto.phaseName
+                    +" "+ (disconBranch - 1) + " " + SeismicPhaseFactory.endActionString(prevEndAction)
+                    + " " + prevSegment+" "+(prevSegment!=null?prevSegment.endsAtTop():""),
+                    currLeg);
         }
 
         // is possible to diffract downward? maybe if low velocity zone??
@@ -905,7 +910,7 @@ public class SeismicPhaseLayerFactory {
                 if (reflectDisconBranch >= disconBranch ) {
                     String reason = "Attempt to underside reflect " + currLeg
                             + " from deeper layer: " + nextLeg;
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
                 if (!validateDisconWithinLayers(proto, reflectDisconBranch, nextLeg)) {
                     return proto;
@@ -938,7 +943,7 @@ public class SeismicPhaseLayerFactory {
             } else {
                 return baseFactory.failWithMessage(proto, " Phase not recognized (12): "
                         + currLeg + " followed by " + nextLeg
-                        + " when currBranch=" + currBranch);
+                        + " when currBranch=" + currBranch, currLeg);
             }
         }
         return proto;
@@ -965,7 +970,7 @@ public class SeismicPhaseLayerFactory {
                         + " so there cannot be a "
                         + currLeg
                         + " phase for this sourceDepth and/or path.";
-                return baseFactory.failWithMessage(proto, reason);
+                return baseFactory.failWithMessage(proto, reason, currLeg);
             }
             endAction = TURN;
             proto.addToBranch(
@@ -987,7 +992,7 @@ public class SeismicPhaseLayerFactory {
                 int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
                 if (disconBranch >= tMod.getMohoBranch()) {
                     String reason = "Attempt to underside reflect "+currLeg+" from deeper layer: "+nextLeg;
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
                 if (!validateDisconWithinLayers(proto, disconBranch, nextLeg)) {
                     return proto;
@@ -1001,12 +1006,12 @@ public class SeismicPhaseLayerFactory {
 
             } else {
                 return baseFactory.failWithMessage(proto, " Phase not recognized (12): "
-                        + currLeg + " followed by " + nextLeg);
+                        + currLeg + " followed by " + nextLeg, currLeg);
             }
 
         } else {
             return baseFactory.failWithMessage(proto, " Phase not recognized for P,S: "
-                    + currLeg + " followed by " + nextLeg);
+                    + currLeg + " followed by " + nextLeg, currLeg);
         }
         return proto;
     }
@@ -1039,7 +1044,7 @@ public class SeismicPhaseLayerFactory {
             }
             if ( ! tMod.isHeadWaveBranch(disconBranch, prevIsPWave, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                        + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
+                        + disconBranch +", "+numString+ " is not positive velocity discontinuity.", currLeg);
             }
             // head must be downgoing, so start at source branch if phase beginning
             int startBranch = proto.isEmpty() ? tMod.sourceBranch : proto.nextStartBranch();
@@ -1051,13 +1056,16 @@ public class SeismicPhaseLayerFactory {
                 proto.addToBranch(disconBranch-1, isPWave, isPWave, HEAD, currLeg);
             } else if (startBranch > disconBranch) {
                 return baseFactory.failWithMessage(proto,
-                        "Unable to head wave, "+currLeg+", start branch "+startBranch+" > "+disconBranch+" discon");
+                        "Unable to head wave, "+currLeg+", start branch "+startBranch+" > "+disconBranch+" discon",
+                        currLeg);
             }
             if (startsWith(nextLeg, getBelowPLegSymbol()) || startsWith(nextLeg, getBelowSLegSymbol()) ) {
                 // down into  below layers, like core
                 // should this be allowed???
                 //proto.addFlatBranch(isPWave, proto.getEndAction(), TRANSDOWN, currLeg);
-                return baseFactory.failWithMessage(proto, "Unable to go down after head wave, "+currLeg+" "+nextLeg);
+                return baseFactory.failWithMessage(proto,
+                        "Unable to go down after head wave, "+currLeg+" "+nextLeg,
+                        currLeg);
             } else {
                 // normal case
                 proto.addFlatBranch(isPWave, proto.getEndAction(), HEADTURN, currLeg);
@@ -1080,7 +1088,7 @@ public class SeismicPhaseLayerFactory {
                 if (reflectDisconBranch >= disconBranch ) {
                     String reason = "Attempt to underside reflect " + currLeg
                             + " from deeper layer: " + nextLeg;
-                    return baseFactory.failWithMessage(proto, reason);
+                    return baseFactory.failWithMessage(proto, reason, currLeg);
                 }
                 if (!validateDisconWithinLayers(proto, reflectDisconBranch, nextLeg)) {
                     return proto;
@@ -1107,12 +1115,16 @@ public class SeismicPhaseLayerFactory {
                         currLeg);
 
             } else {
-                return baseFactory.failWithMessage(proto, " Phase not recognized for non-standard head wave: "
-                        + currLeg + " followed by " + nextLeg);
+                return baseFactory.failWithMessage(proto,
+                        " Phase not recognized for non-standard head wave: "
+                        + currLeg + " followed by " + nextLeg,
+                        currLeg);
             }
         } else {
-            return baseFactory.failWithMessage(proto,  " Phase not recognized for non-standard head wave (2): "
-                    + currLeg + " followed by " + nextLeg);
+            return baseFactory.failWithMessage(proto,
+                    " Phase not recognized for non-standard head wave (2): "
+                    + currLeg + " followed by " + nextLeg,
+                    currLeg);
         }
         return proto;
     }
@@ -1207,16 +1219,17 @@ public class SeismicPhaseLayerFactory {
 
     public boolean validateDisconWithinLayers(ProtoSeismicPhase proto, int disconNum, String currLeg) {
         if (disconNum <= -1) {
-            baseFactory.failWithMessage(proto, "No boundary in model within "+depthTolerance+" km of "+disconNum+" "+currLeg);
+            proto.failNext("No boundary in model within "+depthTolerance+" km of "+disconNum+" for "+currLeg, currLeg);
             return false;
         }
         if (topBranchNum <= disconNum && disconNum <= botBranchNum) {
             return true;
         }
-        baseFactory.failWithMessage(proto, "Illegal phase, cannot reach discontinuity "+disconNum
+        proto.failNext("Illegal phase, cannot reach discontinuity "+disconNum
                 +" at depth "+tMod.getTauBranch(disconNum,true).getTopDepth()
                 +" for phase symbol "+currLeg+", "+layerName
-                +"  "+proto.branchNumSeqStrWithSegBreaks()+"  "+topBranchNum +"<= "+disconNum+" && "+disconNum+" <= "+botBranchNum
+                +"  "+proto.branchNumSeqStrWithSegBreaks()+"  "+topBranchNum +"<= "+disconNum+" && "+disconNum+" <= "+botBranchNum,
+                currLeg
         );
         return false;
     }
