@@ -94,24 +94,16 @@ public class Ellipticipy {
 
     }
 
-    public double[] getEpsilon(double[] depth) throws NoSuchLayerException {
-        double[] result = new double[depth.length];
-        for (int i = 0; i < depth.length; i++) {
-            int layerIdx = 0;
-            if (depth[i] > 0.0) {
-                layerIdx = vMod.layerNumberAbove(depth[i]);
-            }
-            VelocityLayer vLayer = vMod.getVelocityLayer(layerIdx);
-            double botEps = bot_epsilon.get(vLayer);
-            double topEps = top_epsilon.get(vLayer);
-            double slope = (botEps - topEps) / vLayer.getThickness();
-            result[i] = slope * (depth[i] - vLayer.getTopDepth()) + topEps;
-        }
-        return result;
-    }
-
     public double getEpsilon(double depth) throws NoSuchLayerException {
-        return getEpsilon(new double[] { depth })[0];
+        int layerIdx = 0;
+        if (depth > 0.0) {
+            layerIdx = vMod.layerNumberAbove(depth);
+        }
+        VelocityLayer vLayer = vMod.getVelocityLayer(layerIdx);
+        double botEps = bot_epsilon.get(vLayer);
+        double topEps = top_epsilon.get(vLayer);
+        double slope = (botEps - topEps) / vLayer.getThickness();
+        return slope * (depth - vLayer.getTopDepth()) + topEps;
     }
 
     public static double weightedAlp2(int m, double theta) {
@@ -194,126 +186,79 @@ public class Ellipticipy {
 
         double[] total = new double[3];
         for (ArrivalPathSegment seg : arrival.getPathSegments()) {
+            LayerPropogationType layerPropogationType = seg.getPhaseSegment().getLayerPropogationType();
+            if (seg.getPhaseSegment().getIsFlat()) {
+                continue;
+            }
+            boolean downgoing = layerPropogationType == LayerPropogationType.DOWN;
             List<TimeDist> path = seg.getPath();
-            double[] depth = new double[path.size()];
-            for (int i = 0; i < path.size(); i++) {
-                depth[i] = path.get(i).getDepth();
-            }
 
-            double maxDepth = max(depth);
-            double[] radius = new double[depth.length];
-            for (int i = 0; i < depth.length; i++) {
-                radius[i] = model.radiusOfEarth - depth[i];
-            }
 
             VelocityModel vMod = model.getVelocityModel();
-            double[] v = new double[depth.length];
             VelocityModelMaterial wave = seg.isPWave() ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY;
+            double[][] lam = new double[3][path.size()];
+            double[] verticalSlowness = new double[path.size()];
+            double[] epsilon = new double[path.size()];
 
-            for (int i = 0; i < depth.length; i++) {
-                if (depth[i] != maxDepth) {
-                    v[i] = vMod.evaluateBelow(depth[i], wave);
-                } else {
-                    v[i] = vMod.evaluateAbove(maxDepth, wave);
-                }
-            }
-
-            double[] eta = new double[depth.length];
-            for (int i = 0; i < depth.length; i++) {
-                eta[i] = radius[i] / v[i];
-            }
-
-            double[] epsilon = getEpsilon(depth);
-            double[] distArr = new double[path.size()];
+            TimeDist prevTd = null;
+            double vel;
+            double prevVel = 0;
+            double eta;
             for (int i = 0; i < path.size(); i++) {
-                distArr[i] = path.get(i).getDistRadian();
-            }
-
-            double[][] lam = new double[3][depth.length];
-            for (int m = 0; m < 3; m++) {
-                for (int i = 0; i < depth.length; i++) {
-                    lam[m][i] = -(2.0 / 3.0) * weightedAlp2(m, distArr[i]);
-                }
-            }
-
-            double[] y = new double[eta.length];
-            for (int i = 0; i < eta.length; i++) {
-                y[i] = Math.pow(eta[i], 2) - Math.pow(arrival.getRayParam(), 2);
-            }
-
-            double[] verticalSlowness = new double[depth.length];
-            for (int i = 0; i < depth.length; i++) {
-                verticalSlowness[i] = Math.sqrt(Math.max(y[i], 0.0));
-            }
-
-            int minIdx = indexOfMin(radius);
-            if (arrival.getRayParam() > 0.0 && minIdx != 0 && minIdx != (radius.length - 1)) {
-                eta[minIdx] = arrival.getRayParam();
-                v[minIdx] = radius[minIdx] / eta[minIdx];
-                verticalSlowness[minIdx] = 0.0;
-            }
-
-            double[] rTop = new double[radius.length - 1];
-            double[] rBot = new double[radius.length - 1];
-            double[] vTop = new double[v.length - 1];
-            double[] vBot = new double[v.length - 1];
-
-            for (int i = 1; i < radius.length; i++) {
-                rTop[i - 1] = radius[i];
-                rBot[i - 1] = radius[i - 1];
-                vTop[i - 1] = v[i];
-                vBot[i - 1] = v[i - 1];
-            }
-
-            double[] dlogr = new double[rTop.length];
-            double[] dlogv = new double[rTop.length];
-            double[] dlogrDlogeta = new double[rTop.length];
-
-            for (int i = 0; i < rTop.length; i++) {
-                dlogr[i] = Math.log(rTop[i]) - Math.log(rBot[i]);
-                dlogv[i] = Math.log(vTop[i]) - Math.log(vBot[i]);
-
-                if (Math.abs(rTop[i] - rBot[i]) < 1e-12) {
-                    dlogrDlogeta[i] = 1.0;
+                TimeDist td = path.get(i);
+                if ((i==0 && downgoing) || (!downgoing && i==path.size()-1)) {
+                    vel = vMod.evaluateBelow(td.getDepth(), wave);
                 } else {
-                    dlogrDlogeta[i] = 1.0 / (1.0 - dlogv[i] / dlogr[i]);
+                    vel = vMod.evaluateAbove(td.getDepth(), wave);
                 }
+                eta = (model.radiusOfEarth - td.getDepth()) / vel;
+                epsilon[i] = getEpsilon(td.getDepth());
+
+                for (int m = 0; m < 3; m++) {
+                    lam[m][i] = -(2.0 / 3.0) * weightedAlp2(m, td.getDistRadian());
+                }
+                double y = Math.pow(eta, 2) - Math.pow(arrival.getRayParam(), 2);
+                verticalSlowness[i] = Math.sqrt(Math.max(y, 0.0));
+                // Make velocities for bottoming rays consistent
+                if (arrival.getRayParam() != 0.0
+                        && ((seg.getPhaseSegment().getPrevEndAction()==PhaseInteraction.TURN && i == 0)
+                        || (seg.getPhaseSegment().getEndAction()==PhaseInteraction.TURN && i == path.size() - 1)) ) {
+                    eta = arrival.getRayParam();
+                    vel = (model.radiusOfEarth - td.getDepth()) / eta;
+                    verticalSlowness[i] = 0.0;
+
+                }
+
+                if (prevTd!= null) {
+                    // i > 0
+
+                    double dlogr = Math.log(model.radiusOfEarth - td.getDepth()) - Math.log(model.radiusOfEarth - prevTd.getDepth());
+                    double dlogv = Math.log(vel) - Math.log(prevVel);
+
+                    double dlogrDlogeta;
+                    if (Math.abs(td.getDepth()-prevTd.getDepth()) < 1e-12) {
+                        dlogrDlogeta = 1.0;
+                    } else {
+                        dlogrDlogeta = 1.0 / (1.0 - dlogv / dlogr);
+                    }
+
+                    for (int m = 0; m < 3; m++) {
+                        double sum = 0.0;
+                        double top = epsilon[i] * lam[m][i ];
+                        double bot = epsilon[i-1] * lam[m][i-1];
+                        double delta = Math.abs(verticalSlowness[i ] - verticalSlowness[i-1]);
+
+                        sum += 0.5 * (top + bot) * (dlogrDlogeta - 1.0) * delta;
+                        total[m] += sum;
+                    }
+                }
+                prevVel = vel;
+                prevTd = td;
             }
 
-            for (int m = 0; m < 3; m++) {
-                double sum = 0.0;
-                for (int i = 0; i < rTop.length; i++) {
-                    double top = epsilon[i + 1] * lam[m][i + 1];
-                    double bot = epsilon[i] * lam[m][i];
-                    double delta = Math.abs(verticalSlowness[i + 1] - verticalSlowness[i]);
-
-                    sum += 0.5 * (top + bot) * (dlogrDlogeta[i] - 1.0) * delta;
-                }
-                total[m] += sum;
-            }
 
         }
         return total;
-    }
-
-    private static int indexOfMin(double[] arr) {
-        int minIndex = 0;
-        double minValue = arr[0];
-        for (int i = 1; i < arr.length; i++) {
-            if (arr[i] < minValue) {
-                minValue = arr[i];
-                minIndex = i;
-            }
-        }
-        return minIndex;
-    }
-
-    private static double max(double[] values) {
-        double max = values[0];
-        for (int i = 1; i < values.length; i++) {
-            max = Math.max(max, values[i]);
-        }
-        return max;
     }
 
     public double[] discontinuityContribution(List<TimeDist> points, VelocityModelMaterial wavetype) throws NoSuchLayerException {
