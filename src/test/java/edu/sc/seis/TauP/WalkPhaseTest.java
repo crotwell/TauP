@@ -805,4 +805,33 @@ public class WalkPhaseTest {
         assertEquals(tMod.getAboveCmbTauBranch(true).getBotRayParam(), SKp.endSegment().maxRayParam);
     }
 
+    @Test
+    public void hasP410diff()  throws TauModelException {
+        TauModel tMod = TauModelLoader.load("iasp91");
+        double sourceDepth = 100.0;
+        double receiverDepth = 0.0;
+        tMod = tMod.depthCorrect(sourceDepth);
+        int maxLegs = 2;
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        walker.allowSWave=false;
+        Double d = 20.0;
+        Double d35 = 35.0;
+        Double d210 = 210.0;
+        Double d410 = 410.0;
+        double d660 = 660.0;
+        walker.excludeBoundaries(List.of(d, d35, d210, d660));
+        List<ProtoSeismicPhase> segmentTree = new ArrayList<>();
+        segmentTree.addAll( walker.createSourceSegments(tMod, SeismicPhase.PWAVE, receiverDepth));
+        boolean foundP410diff = false;
+        for (ProtoSeismicPhase p : segmentTree) {
+            System.err.println(p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            if (p.endSegment().endAction == DIFFRACT && p.endSegment().endBranch == 4) {
+                foundP410diff=true;
+                break;
+            }
+        }
+        assertTrue(foundP410diff);
+
+    }
+
 }
