@@ -1451,4 +1451,8 @@ public class Arrival {
             return null;
         }
     }
+
+    public void setPierce(TimeDist[] filtered) {
+        this.pierce = filtered;
+    }
 }

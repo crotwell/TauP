@@ -174,6 +174,9 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
             List<Arrival> indexArrivalList = TauP_Time.calcAllIndexRays(getSeismicPhases());
             arrivalList.addAll(indexArrivalList);
         }
+        for (Arrival arr : arrivalList) {
+            filterPiercePoints(arr);
+        }
         applyEllipticity(arrivalList);
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
@@ -202,44 +205,20 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
     }
 
     public void printPierceAsText(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
-        double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
             out.println("> " + arrival.getCommentLine());
-
             TimeDist[] pierce = arrival.getPierce();
-            prevDepth = pierce[0].getDepth();
             for (int j = 0; j < pierce.length; j++) {
                 double calcDist = pierce[j].getDistDeg();
-                if (j < pierce.length - 1) {
-                    nextDepth = pierce[j + 1].getDepth();
-                } else {
-                    nextDepth = pierce[j].getDepth();
+                out.write(Outputs.formatDistance(calcDist));
+                out.write(Outputs.formatDepth(pierce[j].getDepth()));
+                out.write(Outputs.formatTime(pierce[j].getTime()));
+                if (arrival.isLatLonable()) {
+                    double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
+                    out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
+                            + Outputs.formatLatLon(latlon[1]));
                 }
-                if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
-                        || (onlyRevPoints
-                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees())
-                )
-                        || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
-                        || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
-                        * (pierce[j].getDepth() - nextDepth) < 0))
-                        || (onlyTurnPoints && j != 0
-                        && ((prevDepth - pierce[j].getDepth()) <= 0
-                        && (pierce[j].getDepth() - nextDepth) >= 0))
-                        || (onlyUnderPoints && j != 0 && j != pierce.length-1
-                        && ((prevDepth - pierce[j].getDepth()) >= 0
-                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
-                    out.write(Outputs.formatDistance(calcDist));
-                    out.write(Outputs.formatDepth(pierce[j].getDepth()));
-                    out.write(Outputs.formatTime(pierce[j].getTime()));
-                    if (arrival.isLatLonable()) {
-                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
-                        out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
-                                + Outputs.formatLatLon(latlon[1]));
-                    }
-                    out.write("\n");
-                }
-                prevDepth = pierce[j].getDepth();
+                out.write("\n");
             }
         }
     }
@@ -269,44 +248,21 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
             headers.addAll(List.of("Lat", "Lon"));
         }
 
-        double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
 
             TimeDist[] pierce = arrival.getPierce();
-            prevDepth = pierce[0].getDepth();
             List<List<String>> values = new ArrayList<>();
             for (int j = 0; j < pierce.length; j++) {
                 List<String> row = new ArrayList<>();
                 double calcDist = pierce[j].getDistDeg();
-                if (j < pierce.length - 1) {
-                    nextDepth = pierce[j + 1].getDepth();
-                } else {
-                    nextDepth = pierce[j].getDepth();
+                row.add(Outputs.formatDistance(calcDist));
+                row.add(Outputs.formatDepth(pierce[j].getDepth()));
+                row.add(Outputs.formatTime(pierce[j].getTime()));
+                if (arrival.isLatLonable()) {
+                    double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
+                    row.add( Outputs.formatLatLon(latlon[0]));
+                    row.add(Outputs.formatLatLon(latlon[1]));
                 }
-                if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
-                        || (onlyRevPoints
-                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees())
-                )
-                        || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
-                        || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
-                        * (pierce[j].getDepth() - nextDepth) < 0))
-                        || (onlyTurnPoints && j != 0
-                        && ((prevDepth - pierce[j].getDepth()) <= 0
-                        && (pierce[j].getDepth() - nextDepth) >= 0))
-                        || (onlyUnderPoints && j != 0 && j != pierce.length-1
-                        && ((prevDepth - pierce[j].getDepth()) >= 0
-                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
-                    row.add(Outputs.formatDistance(calcDist));
-                    row.add(Outputs.formatDepth(pierce[j].getDepth()));
-                    row.add(Outputs.formatTime(pierce[j].getTime()));
-                    if (arrival.isLatLonable()) {
-                        double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg(), pierce[j].getDepth());
-                        row.add( Outputs.formatLatLon(latlon[0]));
-                        row.add(Outputs.formatLatLon(latlon[1]));
-                    }
-                }
-                prevDepth = pierce[j].getDepth();
                 values.add(row);
             }
 
@@ -327,6 +283,39 @@ public class TauP_Pierce extends TauP_AbstractRayTool {
             }
         }
         return false;
+    }
+
+    public void filterPiercePoints(Arrival arrival) throws TauModelException {
+        TimeDist[] pierce = arrival.getPierce();
+        List<TimeDist> filtered = new ArrayList<>();
+        double prevDepth = pierce[0].getDepth();
+        double nextDepth;
+        List<List<String>> values = new ArrayList<>();
+        for (int j = 0; j < pierce.length; j++) {
+            if (j < pierce.length - 1) {
+                nextDepth = pierce[j + 1].getDepth();
+            } else {
+                nextDepth = pierce[j].getDepth();
+            }
+            if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
+                    || (onlyRevPoints
+                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees())
+                    )
+                    || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
+                    || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
+                        * (pierce[j].getDepth() - nextDepth) < 0))
+                    || (onlyTurnPoints && j != 0
+                        && ((prevDepth - pierce[j].getDepth()) <= 0
+                        && (pierce[j].getDepth() - nextDepth) >= 0))
+                    || (onlyUnderPoints && j != 0 && j != pierce.length-1
+                        && ((prevDepth - pierce[j].getDepth()) >= 0
+                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
+                filtered.add(pierce[j]);
+            }
+            prevDepth = pierce[j].getDepth();
+        }
+        arrival.setPierce(filtered.toArray(new TimeDist[0]));
     }
 
 
