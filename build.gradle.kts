@@ -14,7 +14,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("io.github.ben-manes.versions") version "0.64.0"
+  id("io.github.ben-manes.versions") version "0.65.0"
   id("org.jreleaser") version "1.26.0"
   idea
 }
@@ -238,10 +238,10 @@ dependencies {
     //implementation("info.picocli:picocli:4.7.6")
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
 
-    implementation("org.slf4j:slf4j-reload4j:2.0.6")
+    implementation("org.slf4j:slf4j-reload4j:2.0.20")
 
 
-    implementation("io.undertow:undertow-core:2.4.3.Final")
+    implementation("io.undertow:undertow-core:2.4.4.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
