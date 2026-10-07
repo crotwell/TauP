@@ -2,9 +2,17 @@ package edu.sc.seis.TauP;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import edu.sc.seis.seisFile.LatLonSimple;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EllipticipyTest {
 
@@ -250,5 +258,182 @@ public class EllipticipyTest {
         assertEquals(topMofI, vMod.getVelocityLayer(0).calcMomentOfInertia(vMod.getRadiusOfEarth()), 1e29);
 
 
+    }
+
+    /**
+     * Modified from https://github.com/StuartJRussell/EllipticiPy/blob/master/src/test/test_epsilon.py
+     */
+    @Test
+    public void test_epsilon() throws TauModelException {
+        //"""Test the numerical integration for ellipticity (epsilon)"""
+        TauModel model = TauModelLoader.load("prem");
+
+        Ellipticipy ellipticipy = new Ellipticipy(model);
+
+        //Calculate ellipticity at the core mantle boundary(CMB)
+        double cmb_depth = 2891.0;  //km
+        double calculated_epsilon = ellipticipy.getEpsilon(cmb_depth);
+
+        //Expected ellipticity for PREM at the CMB, see e.g.Huang et al GJI (2001) 146 p130
+        double expected_epsilon = 0.002547;
+
+        System.err.println("epsilon_CMB"+ expected_epsilon+" "+ calculated_epsilon);
+        assertEquals(expected_epsilon, calculated_epsilon, 2e-6);
+    }
+
+    /**
+     * Modified from https://github.com/StuartJRussell/EllipticiPy/blob/master/src/test/test_ellipticity_coefficients.py
+     * @throws TauModelException
+     */
+    @Test
+    public void test_ellipticity_coefficients() throws TauModelException {
+        TauModel model = TauModelLoader.load("ak135");
+
+        // Expected values from ak135 reference tables (or for phases where these are wrong from our prior calculations)
+        // list is: source_depth_in_km, distance_in_degree, expected_sigma
+        HashMap<String, List<Double>> test_data = new HashMap<>();
+        test_data.put("Pdiff", List.of(100.0, 140.0, -1.42, 0.94, -0.29));
+        test_data.put("Sdiff", List.of(200.0, 110.0, -1.16, 1.34, -1.32));
+        test_data.put("PcP", List.of(700.0, 10.0, -1.19, -0.24, -0.03));
+        test_data.put("ScP", List.of(0.0, 45.0, -1.49, -0.53, -0.45));
+        test_data.put("PP", List.of(300.0, 70.0, -0.69, -0.96, -0.72));
+        test_data.put("SS", List.of(0.0, 130.0, -1.11, -0.40, -2.59));
+        test_data.put("SKiKP", List.of(500.0, 0.0, -2.60, 0.00, 0.00));
+        test_data.put("PKIKP", List.of(0.0, 180.0, -2.70, 0.00, 0.00));
+        test_data.put("p", List.of(200.0, 0.0, -0.09, 0.00, 0.00));
+        test_data.put("s", List.of(500.0, 5.0, -0.41, -0.33, -0.02));
+
+        //Allow a tolerence of 2e-2
+        double tol = 3e-2;
+        for (String phaseName : test_data.keySet()) {
+            List<Double> values = test_data.get(phaseName);
+            double source_depth_in_km = values.get(0);
+            double distance_in_degree = values.get(1);
+            TauModel tModDepth = model.depthCorrect(source_depth_in_km);
+            Ellipticipy ellipticipy = new Ellipticipy(model);
+
+            SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tModDepth);
+            DistanceRay dr = DistanceAngleRay.ofDegrees(distance_in_degree);
+            List<Arrival> arrivalList = dr.calculate(phase);
+            Arrival arr = arrivalList.get(0);
+            List<Double> sigma_expected = values.subList(2,5);
+            double[] calculated_sigma = ellipticipy.ellipticityCoefficients(arr);
+            assertEquals(sigma_expected.get(0), calculated_sigma[0], tol, phaseName);
+            assertEquals(sigma_expected.get(1), calculated_sigma[1], tol, phaseName);
+            assertEquals(sigma_expected.get(2), calculated_sigma[2], tol, phaseName);
+        }
+    }
+
+    /**
+     * Modified from https://github.com/StuartJRussell/EllipticiPy/blob/master/src/test/test_ellipticity_coefficients.py
+     * @throws TauModelException
+     */
+    @Test
+    public void test_table_ellipticity_coefficients() throws TauModelException {
+        TauModel model = TauModelLoader.load("ak135");
+        Ellipticipy ellipticipy = new Ellipticipy(model);
+        double source_depth_in_km = 200.0;
+        double receiverDepthInKm = 0.0;
+        String phaseName = "SKKS";
+        Map<String, Ellipticipy.Table> table = Ellipticipy.tableEllipticityCoefficients(List.of(phaseName),
+                model,
+                source_depth_in_km,
+                receiverDepthInKm,
+                Ellipticipy.EARTH_LOD);
+        double[] test_coeff = table.get(phaseName).ellipCoeffs[table.get(phaseName).ellipCoeffs.length-1];
+        double[] expected_coeff = new double[] {-1.26, 1.57, -2.08};
+        double atol = 2e-2;
+        for (int i = 0; i < expected_coeff.length; i++) {
+            assertEquals(expected_coeff[i], test_coeff[i], atol);
+        }
+    }
+
+    /**
+     * Modified from https://github.com/StuartJRussell/EllipticiPy/blob/master/src/test/test_ellipticity_coefficients.py
+     * @throws TauModelException
+     */
+    @Test
+    public void test_correction() throws TauPException {
+
+        // Expected corrections are from prior calculation
+        HashMap<String, HashMap<String, List<Double>>> test_data = new HashMap<>();
+        HashMap<String, List<Double>> test_data_ak135 = new HashMap<>();
+        test_data.put("ak135", test_data_ak135);
+        test_data_ak135.put("P", List.of(124.0, 65.0, 45.0, 39.0, -0.37));
+        test_data_ak135.put("S", List.of(124.0, 65.0, 45.0, 39.0, -0.70));
+        test_data_ak135.put("ScS", List.of(240.0, 76.0, 30.0, 15.0, -0.83));
+
+        HashMap<String, List<Double>> test_data_prem = new HashMap<>();
+        test_data.put("prem", test_data_prem);
+        test_data_prem.put("PKKP", List.of(320.0, 90.0, 10.0, 15.0, -0.55));
+        test_data_prem.put("PcS", List.of(10.0, 40.0, -50.0, 260.0, -0.41));
+
+        HashMap<String, List<Double>> test_data_iasp91 = new HashMap<>();
+        test_data.put("iasp91", test_data_iasp91);
+        test_data_iasp91.put("sPKiKP", List.of(540.0, 75.0, -80.0, 210.0, -1.16));
+        test_data_iasp91.put("SKSSKS", List.of(400.0, 260.0, 0.0, 80.0, 3.48));
+        double tol = 1e-2;
+        double source_longitude = 0; // doesn't matter
+        for (String modelName : test_data.keySet()) {
+            for (String phaseName : test_data.get(modelName).keySet()) {
+
+                List<Double> values = test_data.get(modelName).get(phaseName);
+                double source_depth_in_km = values.get(0);
+                double distance_in_degree = values.get(1);
+                double source_latitude = values.get(2);
+                double azimuth = values.get(3);
+                double expected_correction = values.get(4);
+                TauModel model = TauModelLoader.load(modelName);
+                TauModel tModDepth = model.depthCorrect(source_depth_in_km);
+                Ellipticipy ellipticipy = new Ellipticipy(tModDepth);
+
+                SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, ellipticipy.getTauModel());
+                DistanceRay dr = DistanceAngleRay.ofDegrees(distance_in_degree);
+                dr.evtLatLon = new LatLonSimple(source_latitude, source_longitude, source_depth_in_km);
+                dr.azimuth = azimuth;
+                List<Arrival> arrivalList = dr.calculate(phase);
+                Arrival arr = arrivalList.get(0);
+                arr.applyEllipticityCorrection(ellipticipy);
+                assertEquals(expected_correction, arr.getEllipticityCorrection(), tol);
+            }
+        }
+    }
+
+    @Test
+    public void testVsEllipticipyData() throws TauPException {
+        /*
+         * data for test generated by:  <br>
+             python generateElliptipyTestData.py<br>
+           in src/test/resources/edu/sc/seis/TauP.
+         */
+        String filename = "elliptipy_data.json";
+        BufferedReader in = new BufferedReader(new InputStreamReader(this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("edu/sc/seis/TauP/" + filename)));
+        JSONTokener inJson = new JSONTokener(in);
+        JSONObject ellipObj = new JSONObject(inJson);
+        double source_depth_in_km = ellipObj.getDouble("source_depth_in_km");
+        double source_longitude = 0;
+        TauModel model = TauModelLoader.load(ellipObj.getString("model_name"));
+        TauModel tModDepth = model.depthCorrect(source_depth_in_km);
+        Ellipticipy ellipticipy = new Ellipticipy(tModDepth);
+        HashMap<String, SeismicPhase> phases = new HashMap<>();
+        double tol = 1e-2;
+        for (int i = 0; i < ellipObj.getJSONArray("phaseList").length(); i++) {
+            String phaseName = ellipObj.getJSONArray("phaseList").getString(i);
+            phases.put(phaseName, SeismicPhaseFactory.createPhase(phaseName, ellipticipy.getTauModel()));
+        }
+        for (int i = 0; i < ellipObj.getJSONArray("data").length(); i++) {
+            JSONObject dataObj = ellipObj.getJSONArray("data").getJSONObject(i);
+            SeismicPhase sp = phases.get(dataObj.getString("phase"));
+            DistanceRay dr = DistanceAngleRay.ofDegrees(dataObj.getDouble("deg"));
+            dr.evtLatLon = new LatLonSimple(dataObj.getDouble("lat"), source_longitude, source_depth_in_km);
+            dr.azimuth = dataObj.getDouble("az");
+
+            List<Arrival> arrivalList = dr.calculate(sp);
+            Arrival arr = arrivalList.get(0);
+            arr.applyEllipticityCorrection(ellipticipy);
+            assertEquals(dataObj.getDouble("ellip"), arr.getEllipticityCorrection(), tol, sp.getName()+" deg: "+dr.getDegrees()+" az: "+dr.azimuth+" lat: "+dr.evtLatLon.asLocation().getLatitude());
+        }
     }
 }
