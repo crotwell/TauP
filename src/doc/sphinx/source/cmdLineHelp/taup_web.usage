@@ -1,11 +1,13 @@
-Usage: taup web [--debug] [--nodefaultmodels] [--open] [--verbose]
-                [--expire=<expireSeconds>] [--host=<host>]
+Usage: taup web [--[no-]cors] [--debug] [--nodefaultmodels] [--open]
+                [--verbose] [--expire=<expireSeconds>] [--host=<host>]
                 [--namespace=<base_path>] [-p=<port>]
                 [--models=<extraModelNames>...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
+      --[no-]cors         Set CORS http headers to allow cross site use, true
+                            by default.
       --debug             enable debugging output
       --expire=<expireSeconds>
                           quit if no requests received in n seconds, defaults

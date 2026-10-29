@@ -17,6 +17,7 @@ import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.*;
+import java.net.http.HttpHeaders;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -60,10 +62,13 @@ public class TauP_WebServe extends TauP_Tool {
     public void printWelcomeMessage() {
         System.out.println();
         System.out.println("   TauP Web is available at:");
-        System.out.println("   http://localhost:"+port);
+        System.out.println("   http://"+host+":"+port);
         System.out.println("or");
-        System.out.println("   http://localhost:"+port+"/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion);
+        System.out.println("   http://"+host+":"+port+"/"+wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion);
         System.out.println();
+        if (allowCORS) {
+            System.out.println("CORS enabled.");
+        }
     }
 
     @Override
@@ -140,6 +145,9 @@ public class TauP_WebServe extends TauP_Tool {
                 }
                 if (wsNamespace.equals(namespace) && wsServiceName.equals(service)) {
                     if (wsServiceVersion.equals(version)) {
+                        if (allowCORS) {
+                            exchange.getResponseHeaders().put(new HttpString("Access-Control-Allow-Origin"), "*");
+                        }
                         if (toolname.equals(MODEL_NAMES)) {
                             handleKnownModels(exchange);
                         } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
@@ -832,6 +840,8 @@ public class TauP_WebServe extends TauP_Tool {
     public String wsNamespace = DEFAULT_SERVICE_NAMESPACE;
     public String wsServiceName = DEFAULT_SERVICE;
     public String wsServiceVersion = DEFAULT_SERVICE_VERSION;
+
+    boolean allowCORS = true;
 
     public static final String PARAM_HELP = "paramhelp";
     public static final String CMD_LINE = "cmdline";

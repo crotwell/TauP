@@ -114,6 +114,12 @@ public class TauP_Web implements Callable<Integer> {
     @CommandLine.Option(names="--open", defaultValue="false", description = "autoopen web page")
     Boolean autoopen = false;
 
+    @CommandLine.Option(names = "--cors",
+            defaultValue = "true", fallbackValue = "true",
+            negatable = true,
+            description = "Set CORS http headers to allow cross site use, true by default."
+    )
+    Boolean allowCORS = true;
 
     /**
      * Turns on debugging output.
