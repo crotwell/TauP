@@ -452,10 +452,6 @@ public class Ellipticipy {
         return top_epsilon.get(layer);
     }
 
-    public Double botEpsilon(VelocityLayer layer) {
-        return bot_epsilon.get(layer);
-    }
-
     public double getTotalMass() {
         return totalMass;
     }
