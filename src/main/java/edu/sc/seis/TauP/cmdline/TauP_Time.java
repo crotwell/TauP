@@ -298,22 +298,22 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                                        boolean withEllipticity) {
         List<String> modelLine = createModelHeaderLine(modelName, scatterer, geoDistTypes);
 
-        List<String> lineOne = new ArrayList<>(List.of("Distance   ", "Depth   ",
-                String.format(phaseFormat, "Phase")+ "   ",
-                "Travel    ", "Ray Param  ", "Takeoff  ", "Incident ", "Station   ", "Purist   ",
-                " ", String.format(phasePuristFormat, "Purist ")));
-        List<String> lineTwo = new ArrayList<>(List.of("  (deg)    ", " (km)   ",
-                String.format(phaseFormat, "Name ")+ "   ",
-                "Time (s)  ", "p (s/deg)  ", " (deg)   ", " (deg)   ", " (km)     ", "Distance ",
-                " ", String.format(phasePuristFormat, "Name   ")));
+        List<String> lineOne = new ArrayList<>(List.of("Distance", "Depth",
+                "Phase",
+                "Travel", "Ray Param", "Takeoff", "Incident", "Station", "Purist",
+                " ", "Purist"));
+        List<String> lineTwo = new ArrayList<>(List.of("(deg)", "(km)",
+                "Name ",
+                "Time (s)", "p (s/deg)", "(deg)", "(deg)", "(km)", "Distance",
+                "", "Name"));
         if (withEllipticity) {
             modelLine.add("Ellipticity Time");
             lineOne.add("Ellipticity");
-            lineTwo.add("Correction ");
+            lineTwo.add("Correction");
         }
         if (withAmplitude) {
-            lineOne.addAll(List.of("    Amp     ", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw  ", "     ", "          "));
-            lineTwo.addAll(List.of("  Factor PSv", "  Phase   ", " Sh  ", "     Phase"));
+            lineOne.addAll(List.of("Amp", "~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw", "", ""));
+            lineTwo.addAll(List.of("Factor PSv", "Phase", "H", "Sh", "Phase", "H"));
         }
         if (!relativePhaseName.isEmpty()) {
             String allRelPhase = "";
@@ -322,43 +322,37 @@ public class TauP_Time extends TauP_AbstractRayTool {
             }
             allRelPhase = allRelPhase.substring(0, allRelPhase.length()-1);
             lineOne.add(" Relative");
-            String space = " ";
-            lineTwo.add(space.repeat((11-allRelPhase.length())/2)+"  "+String.format(phaseFormat, allRelPhase));
-            lineOne.add(" to");
+            lineTwo.add(String.format(phaseFormat, allRelPhase));
+            lineOne.add("to");
             lineTwo.add("");
         }
         if (withDerivative) {
-            lineOne.add("Source ");
-            lineTwo.add("Vel    ");
-            lineOne.add("Radial ");
-            lineTwo.add("Slow   ");
-            lineOne.add("Source ");
-            lineTwo.add("Radius ");
-            lineOne.add("Station ");
-            lineTwo.add("Vel     ");
-            lineOne.add("Radial ");
-            lineTwo.add("Slow   ");
-            lineOne.add("Station ");
-            lineTwo.add("Radius  ");
-            lineOne.add("dp/   ");
-            lineTwo.add("ddeg  ");
+            lineOne.add("Source");
+            lineTwo.add("Vel");
+            lineOne.add("Radial");
+            lineTwo.add("Slow");
+            lineOne.add("Source");
+            lineTwo.add("Radius");
+            lineOne.add("Station");
+            lineTwo.add("Vel");
+            lineOne.add("Radial");
+            lineTwo.add("Slow");
+            lineOne.add("Station");
+            lineTwo.add("Radius");
+            lineOne.add("dp/");
+            lineTwo.add("ddeg");
         }
         if (geoDistTypes.size()>1) {
             lineOne.add("GeoDist");
-            lineTwo.add("       ");
+            lineTwo.add("");
         }
         for (Arrival arrival : arrivalList) {
             if (arrival.getRayCalculateable().hasDescription()
                     || arrival.getRayCalculateable().hasSource()
                     || arrival.getRayCalculateable().hasReceiver()) {
-                lineOne.add(" Description");
-                lineTwo.add("            ");
+                lineOne.add("Description");
+                lineTwo.add("");
                 break;
-            }
-        }
-        for (int i = 0; i < lineOne.size(); i++) {
-            if (lineOne.get(i).length() != lineTwo.get(i).length()) {
-                System.err.println("now same length: "+i+" '"+lineOne.get(i)+"' '"+lineTwo.get(i)+"'"+" "+lineOne.get(i).length()+" != "+lineTwo.get(i).length());
             }
         }
         return List.of(modelLine, lineOne, lineTwo);
@@ -414,15 +408,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             if (withAmplitude) {
                 out.println(AmplitudeArgs.AMPLITUDE_WARNING);
             }
-            String modelLine = String.join(" ", headLines.get(0));
-            out.println("\n"+modelLine);
-            String lineOne = String.join("", headLines.get(1));
-            out.println(lineOne);
-            String lineTwo = String.join("", headLines.get(2));
-            out.println(lineTwo);
-            StringBuilder dashes = new StringBuilder();
-            dashes.append("-".repeat(Math.max(lineOne.length(), lineTwo.length())));
-            out.write(dashes.append("\n").toString());
+            List<List<String>> allLines = new ArrayList<>();
             for (Arrival arrival : arrivalList) {
                 List<String> lineItems = arrival.asStringList(false,
                         phaseFormat, phasePuristFormat, withAmplitude, !relativePhaseName.isEmpty(), withDerivative);
@@ -430,17 +416,35 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 if (geoDistTypes.size()>1) {
                     lineItems.add(arrival.getRayCalculateable().getDistCalc().getCalcType());
                 }
-                out.println(String.join("", lineItems));
+                allLines.add(lineItems);
+                //out.println(String.join("", lineItems));
+            }
+            // add header at end to help size, remove below
+            allLines.addAll(headLines.subList(1, headLines.size()));
+            Outputs.alignColumns(allLines);
+            String colDelim = " ";
+            allLines = allLines.subList(0, allLines.size()-(headLines.size()-1));
+            String modelLine = String.join(colDelim, headLines.get(0));
+            out.println("\n"+modelLine);
+            String lineOne = String.join(colDelim, headLines.get(1));
+            out.println(lineOne);
+            String lineTwo = String.join(colDelim, headLines.get(2));
+            out.println(lineTwo);
+            StringBuilder dashes = new StringBuilder();
+            dashes.append("-".repeat(Math.max(lineOne.length(), lineTwo.length())));
+            out.write(dashes.append("\n").toString());
+            for (List<String> line : allLines) {
+                out.println(String.join(colDelim, line));
             }
         } else if(onlyPrintTime) {
             for (Arrival arrival : arrivalList) {
-                out.print((float) (arrival.getTime()) + " ");
+                out.print( Outputs.formatTime(arrival.getTime()) + " ");
             }
             out.println();
         } else {
             // onlyPrintRayP must be true
             for (Arrival arrival : arrivalList) {
-                out.write((float) (Math.PI / 180.0 * arrival.getRayParam())
+                out.write(Outputs.formatRayParam(Math.PI / 180.0 * arrival.getRayParam())
                         + " ");
             }
             out.println();

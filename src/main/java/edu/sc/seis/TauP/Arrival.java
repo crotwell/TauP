@@ -687,9 +687,10 @@ public class Arrival {
     }
 
     /**
-     * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
-     * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
-     * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+     * Calculates the product of amplitude factor, 1/sqrt(density*vel), reflection/tranmission coefficient,
+     * geometric spreading, Q attenuation, and source radiation pattern, for the
+     * arrival. Note this is only an approximation of amplitude and this may not give
+     * accurate results for certain wave types, such as head or diffracted waves.
      * <p>
      * See FMGS eq 17.74
      */
@@ -757,9 +758,10 @@ public class Arrival {
     }
 
         /**
-         * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
-         * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
-         * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+         * Calculates the product of amplitude factor, 1/sqrt(density*vel), reflection/tranmission coefficient,
+         * geometric spreading, Q attenuation, and source radiation pattern, for the
+         * arrival. Note this is only an approximation of amplitude and this may not give
+         * accurate results for certain wave types, such as head or diffracted waves.
          * @return
          * @throws TauModelException
          * @throws VelocityModelException
@@ -1352,15 +1354,15 @@ public class Arrival {
         line.addAll(List.of(
                 Outputs.formatDistance(tableStyle ? getModuloDistDeg() : getSearchDistDeg()),
                 Outputs.formatDepth(getSourceDepth()) ,
-                "   "+String.format(phaseFormat, getName()),
-                "  "+Outputs.formatTime(getTime()),
-                "  "+Outputs.formatRayParam(getRayParamDeg()),
-                "  "+Outputs.formatDistance(getTakeoffAngleDegree()),
-                " "+Outputs.formatDistance(getIncidentAngleDegree()),
-                " "+Outputs.formatDepth(getReceiverDepth()),
-                " "+Outputs.formatDistance(getDistDeg())));
+                String.format(phaseFormat, getName()),
+                Outputs.formatTime(getTime()),
+                Outputs.formatRayParam(getRayParamDeg()),
+                Outputs.formatDistance(getTakeoffAngleDegree()),
+                Outputs.formatDistance(getIncidentAngleDegree()),
+                Outputs.formatDepth(getReceiverDepth()),
+                Outputs.formatDistance(getDistDeg())));
         if (! tableStyle) {
-            String puristSame = (getName().equals(getPuristName())?"   = " : "   * ");
+            String puristSame = (getName().equals(getPuristName())?"=" : "*");
             line.add(puristSame);
         }
         line.add(String.format(phasePuristFormat, getPuristName()));
@@ -1368,25 +1370,37 @@ public class Arrival {
             line.add(Outputs.formatTime(getEllipticityCorrection()));
         }
         if (withAmp) {
-            try {
-                double ampFactorPSV = getAmplitudeFactorPSV();
-                double phaseFactorPSV = getReflTransPSV().getPhaseDeg();
-                double ampFactorSH = getAmplitudeFactorSH();
-                double phaseFactorSH = getReflTransSH().getPhaseDeg();
-                line.addAll(List.of(" " + Outputs.formatAmpFactor(ampFactorPSV),
-                        " "+Outputs.formatDistance(phaseFactorPSV),
-                        " " + Outputs.formatAmpFactor(ampFactorSH),
-                        " "+Outputs.formatDistance(phaseFactorSH)));
-            } catch (SlownessModelException | TauModelException e) {
-                throw new RuntimeException("Should not happen", e);
+            String naStr = "-";
+            if (phase.countFlatLegs() > 0) {
+                // no amp for diff or head waves
+                line.addAll(List.of(naStr, naStr, naStr)); // P
+                line.addAll(List.of(naStr, naStr, naStr)); // S
+            } else {
+                try {
+                    ArrivalAmplitude arrAmp = new ArrivalAmplitude(this);
+                    line.addAll(List.of(
+                            Outputs.formatAmpFactor(arrAmp.factorpsv),
+                            Outputs.formatDistance(arrAmp.getPhasePSvDeg()),
+                            arrAmp.hilbertpsv));
+                    if (phase.isAllSWave()) {
+                        line.addAll(List.of(
+                                Outputs.formatAmpFactor(arrAmp.factorsh),
+                                Outputs.formatDistance(arrAmp.getPhaseShDeg()),
+                                arrAmp.hilbertsh));
+                    } else {
+                        line.addAll(List.of(naStr, naStr, naStr));
+                    }
+                } catch (SlownessModelException | TauModelException e) {
+                    throw new RuntimeException("Should not happen", e);
+                }
             }
         }
         if (withRelPhase) {
             if (isRelativeToArrival()) {
-                line.add(" " + Outputs.formatTime(getTime() - getRelativeToArrival().getTime()));
-                line.add(" +" + String.format(phaseFormat, getRelativeToArrival().getName()));
+                line.add(Outputs.formatTime(getTime() - getRelativeToArrival().getTime()));
+                line.add("+" + String.format(phaseFormat, getRelativeToArrival().getName()));
             } else {
-                line.add(String.format(phaseFormat, " no arrival"));
+                line.add(String.format(phaseFormat, "no arrival"));
                 line.add("");
             }
         }
@@ -1403,10 +1417,10 @@ public class Arrival {
         if (ray.hasDescription()) {
             line.add(" "+ray.getDescription());
         } else {
-            String sourceDesc = describeLatLon(ray.getSource());
-            String receiverDesc = describeLatLon(ray.getReceiver());
+            String sourceDesc = describeLatLon(ray.getSource()).trim();
+            String receiverDesc = describeLatLon(ray.getReceiver()).trim();
             if (!sourceDesc.isEmpty() && !receiverDesc.isEmpty()) {
-                line.add(" " + sourceDesc + " to " + receiverDesc);
+                line.add(sourceDesc + " to " + receiverDesc);
             }
         }
         return line;

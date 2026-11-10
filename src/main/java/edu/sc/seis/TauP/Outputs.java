@@ -27,6 +27,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.TauP_ReflTransPlot;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -256,15 +257,51 @@ public class Outputs {
         return space+String.format(locale, ampFactorFormat, ampFactor);
     }
 
+    public static String padCenter(String s, int n) {
+        if (n==0) {return s;}
+        int half = (n+s.length()+1)/2;
+        return padRight(padLeft(s, half), n);
+    }
+
+    public static String padRight(String s, int n) {
+        if (n==0) {return s;}
+        return String.format("%-" + n + "s", s);
+    }
+
+    public static String padLeft(String s, int n) {
+        if (n==0) {return s;}
+        return String.format("%" + n + "s", s);
+    }
+
+    public static void alignColumns(List<List<String>> allLines) {
+        int numCols = 0;
+        for (List<String> lineItems : allLines) {
+            numCols = Math.max(numCols, lineItems.size());
+        }
+        for (int col = 0; col < numCols; col++) {
+            int len = 0;
+            for (List<String> lineItems : allLines) {
+                if (col < lineItems.size()) {
+                    len = Math.max(len, lineItems.get(col).length());
+                }
+            }
+            for (List<String> lineItems : allLines) {
+                if (col < lineItems.size()) {
+                    lineItems.set(col, padCenter(lineItems.get(col), len));
+                }
+            }
+        }
+    }
+
     public static Locale locale = Locale.ROOT;
 
-    public static String depthFormat = "%8.1f";
+    public static String depthFormat = "%6.1f";
 
     public static String depthFormatNoPad = "%.1f";
 
-    public static String distanceFormat = "%8.2f";
+    public static String distanceFormat = "%6.2f";
 
-    public static String timeFormat = "%8.2f";
+    public static String timeFormat = "%6.2f";
 
     public static String distanceFormatNoPad = "%.2f";
 
@@ -272,11 +309,11 @@ public class Outputs {
 
     public static String timeFormatNoPad = "%.2f";
 
-    public static String rayParamFormat = "%8.3f";
+    public static String rayParamFormat = "%6.3f";
 
-    public static String dpddegFormat = "%9.5f";
+    public static String dpddegFormat = "%8.5f";
 
-    public static String latLonFormat = "%8.2f";
+    public static String latLonFormat = "%6.2f";
 
     public static String ampFactorFormat = "%.1e";
 
