@@ -21,4 +21,22 @@ public class TauP_TimeTest {
         List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), rays);
         assertEquals(arrivals.size(), rays.size());
     }
+
+    @Test
+    public void hilbertSymbol() {
+        assertEquals(Math.PI/4, SeismicPhaseReflTransHolder.normPhaseRadian(Math.PI/4), 0.0001);
+        assertEquals("1", ArrivalAmplitude.getHilbertSymbol(-1*Math.PI/8+0.001));
+        assertEquals("-h", ArrivalAmplitude.getHilbertSymbol(-1*Math.PI/8-0.001));
+        assertEquals("1", ArrivalAmplitude.getHilbertSymbol(0));
+        assertEquals("1", ArrivalAmplitude.getHilbertSymbol(Math.PI/8-0.001));
+        assertEquals("h", ArrivalAmplitude.getHilbertSymbol(Math.PI/8));
+        assertEquals("h", ArrivalAmplitude.getHilbertSymbol(Math.PI/4));
+        assertEquals("H", ArrivalAmplitude.getHilbertSymbol(Math.PI/2-0.00001));
+        assertEquals("h", ArrivalAmplitude.getHilbertSymbol(3*Math.PI/4-0.00001));
+        assertEquals("h", ArrivalAmplitude.getHilbertSymbol(3*Math.PI/4+0.00001));
+        assertEquals("-1", ArrivalAmplitude.getHilbertSymbol(Math.PI-0.00001));
+        assertEquals("-1", ArrivalAmplitude.getHilbertSymbol(Math.PI+0.00001));
+        assertEquals("-h", ArrivalAmplitude.getHilbertSymbol(-3*Math.PI/4-0.00001));
+        assertEquals("-H", ArrivalAmplitude.getHilbertSymbol(-1*Math.PI/2));
+    }
 }

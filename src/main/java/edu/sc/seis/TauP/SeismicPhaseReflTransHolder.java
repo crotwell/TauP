@@ -37,18 +37,30 @@ public class SeismicPhaseReflTransHolder {
                 this.internalCaustics+x.internalCaustics);
     }
 
+    public SeismicPhaseReflTransHolder negative() {
+        return new SeismicPhaseReflTransHolder(
+                this.complexReflTran.times(-1),
+                this.energyFlux,
+                this.turns,
+                this.internalCaustics);
+    }
+
     public double getPhase() {
         // each internal caustic is 90 shift (pi/2)
         // should each turn is like a 180 (down becomes up)?
-        Complex intCaustic = Complex.pow(new Complex(0, 1), internalCaustics); // +2*turns
+        Complex intCaustic = Complex.pow(new Complex(0, 1), internalCaustics);
         double phaseRadians = (Complex.argument(complexReflTran.times(intCaustic)));
-        while(phaseRadians > PI) {
-            phaseRadians -= TWOPI;
+        return normPhaseRadian(phaseRadians);
+    }
+
+    public static double normPhaseRadian(double radians) {
+        while(radians > PI) {
+            radians -= TWOPI;
         }
-        while (phaseRadians <= -1*PI) {
-            phaseRadians+= TWOPI;
+        while (radians <= -1*PI) {
+            radians+= TWOPI;
         }
-        return phaseRadians;
+        return radians;
     }
 
     public double getPhaseDeg() {

@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
+
 public class ArrivalAmplitude {
 
     public static final float DEFAULT_ATTENUATION_FREQUENCY = 1.0f;
@@ -17,7 +19,9 @@ public class ArrivalAmplitude {
     float refltranpsv;
     float refltransh;
     float phaseFactorpsv;
+    String hilbertpsv;
     float phaseFactorsh;
+    String hilbertsh;
     int internalCaustic = 0;
     SeismicSource source;
 
@@ -39,7 +43,56 @@ public class ArrivalAmplitude {
         refltranpsv = (float) arr.getEnergyFluxFactorReflTransPSV();
         refltransh = (float) arr.getEnergyFluxFactorReflTransSH();
         internalCaustic = arr.getInternalCausticCount();
-        phaseFactorpsv = (float) arr.getReflTransPSV().getPhase();
-        phaseFactorsh = (float) arr.getReflTransSH().getPhase();
+        SeismicPhaseReflTransHolder psvRT = arr.getReflTransPSV();
+        if (factorpsv < 0) {
+            factorpsv *= -1;
+            psvRT = psvRT.negative();
+        }
+        phaseFactorpsv = (float) psvRT.getPhase();
+        hilbertpsv = getHilbertSymbolPSv();
+        SeismicPhaseReflTransHolder shRT = arr.getReflTransPSV();
+        if (factorsh < 0) {
+            factorsh *= -1;
+            shRT = shRT.negative();
+        }
+        phaseFactorsh = (float) shRT.getPhase();
+        hilbertsh = getHilbertSymbolSh();
+    }
+
+    public double getPhasePSvDeg() {
+        return phaseFactorpsv*RtoD;
+    }
+    public double getPhaseShDeg() {
+        return phaseFactorsh*RtoD;
+    }
+    public String getHilbertSymbolPSv() {
+        return getHilbertSymbol(phaseFactorpsv);
+    }
+    public String getHilbertSymbolSh() {
+        return getHilbertSymbol(phaseFactorsh);
+    }
+    public static String getHilbertSymbol(double phaseFactor) {
+        int rotatePhaseNum = (int) Math.round(phaseFactor/(Math.PI/4));
+        switch (rotatePhaseNum) {
+            case -4:
+            case 4:
+                return "-1";
+            case -3:
+                return "-h";
+            case -2:
+                return "-H";
+            case -1:
+                return "-h";
+            case 0:
+                return "1";
+            case 1:
+                return "h";
+            case 2:
+                return "H";
+            case 3:
+                return "h";
+            default:
+                return "oops "+rotatePhaseNum;
+        }
     }
 }
