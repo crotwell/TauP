@@ -716,12 +716,6 @@ public class WalkPhaseTest {
                 break;
             }
         }
-        assertEquals(0, PKp.endSegment().endBranch);
-        segmentTree = walker.transAcrossExcludedBoundaries(tMod, PKp, PWAVE, TRANSDOWN);
-
-        for (ProtoSeismicPhase psp : segmentTree) {
-            if (psp.getEndAction()==TRANSDOWN) { PKp = psp;}
-        }
         assertNotNull(PKp);
         assertTrue(PKp.isSuccessful());
         assertEquals(tMod.getCmbBranch()-1, PKp.endSegment().endBranch);
@@ -832,6 +826,86 @@ public class WalkPhaseTest {
         }
         assertTrue(foundP410diff);
 
+    }
+
+    @Test
+    public void walkSdiff660p() throws TauModelException {
+
+        TauModel tMod = TauModelLoader.load("iasp91");
+        double sourceDepth = 0.0;
+        double receiverDepth = 0.0;
+        tMod = tMod.depthCorrect(sourceDepth);
+
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        Double d = 20.0;
+        Double d35 = 35.0;
+        Double d210 = 210.0;
+        Double d410 = 410.0;
+        Double d660 = 660.0;
+        int branch660 = tMod.findBranch(d660);
+        assertEquals(5, branch660);
+        walker.excludeBoundaries(List.of(d, d35, d210, d410));
+        List<ProtoSeismicPhase> segmentTree = new ArrayList<>();
+        segmentTree.addAll( walker.createSourceSegments(tMod, SeismicPhase.SWAVE, receiverDepth));
+        System.err.println("Source:");
+        for (ProtoSeismicPhase p : segmentTree) {
+            System.err.println(p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            assertNotEquals(tMod.findBranch(d), p.endSegment().endBranch);
+            assertNotEquals(tMod.findBranch(d35), p.endSegment().endBranch);
+            assertNotEquals(tMod.findBranch(d210), p.endSegment().endBranch);
+            // 410 branch might be if reflect off of 660
+        }
+        System.err.println("End Source:");
+        List<ProtoSeismicPhase> transdownList = new ArrayList<>();
+        for (ProtoSeismicPhase p : segmentTree) {
+            System.err.println("phases from "+p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            List<ProtoSeismicPhase> walked = walker.nextLegs(tMod, p, false, true);
+            for (ProtoSeismicPhase wp : walked) {
+                System.err.println("  "+wp.getPuristName()+"  "+wp.branchNumSeqStrWithSegBreaks());
+            }
+            System.err.println("End walk: "+p.getPuristName());
+            transdownList.addAll(walked);
+        }
+        ProtoSeismicPhase Sdiff = null;
+        for (ProtoSeismicPhase p : transdownList) {
+            System.err.println(p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            if (p.endSegment().endAction == DIFFRACT && p.endSegment().endBranch == tMod.getCmbBranch()-1) {
+                Sdiff = p;
+                break;
+            }
+        }
+        assertNotNull(Sdiff);
+        List<ProtoSeismicPhase> afterSDiff =walker.nextLegs(tMod, Sdiff, false, true);
+        ProtoSeismicPhase SdiffTurn = null;
+        for (ProtoSeismicPhase p : afterSDiff) {
+            System.err.println("  "+p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            if (p.endSegment().endAction == DIFFRACTTURN) {
+                SdiffTurn = p;
+                break;
+            }
+        }
+        assertNotNull(SdiffTurn);
+        ProtoSeismicPhase SdiffTo660 = null;
+        System.err.println("Look for Sdiff up to 660 after "+SdiffTurn.getPuristName()+" "+SdiffTurn.branchNumSeqStrWithSegBreaks());
+        List<ProtoSeismicPhase> afterSDiffTurn =walker.nextLegs(tMod, SdiffTurn, false, true);
+        for (ProtoSeismicPhase p : afterSDiffTurn) {
+            System.err.println("  "+p.getPuristName()+"  "+p.branchNumSeqStrWithSegBreaks());
+            if (p.endSegment().endAction == TRANSUP && p.endSegment().endBranch == branch660) {
+                SdiffTo660 = p;
+                break;
+            }
+        }
+        assertNotNull(SdiffTo660);
+        List<ProtoSeismicPhase> afterSDiff660 =walker.nextLegs(tMod, SdiffTo660, true, false);
+        ProtoSeismicPhase end = null;
+        for (ProtoSeismicPhase p : afterSDiff660) {
+            if (p.endSegment().endAction == END) {
+                end = p;
+            }
+        }
+        assertNotNull(end);
+        end = walker.consolidateSegment(end);
+        assertEquals("Sdiff660p", end.getPuristName());
     }
 
 }

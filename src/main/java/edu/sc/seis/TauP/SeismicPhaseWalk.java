@@ -171,11 +171,15 @@ public class SeismicPhaseWalk {
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
         int endDisconBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch(), isPWave,
                 LayerPropogationType.DOWN);
-        int endDownBranchNum = endDisconBranchNum-1;
 
         // downgoing options are END, TURN, HEAD, REFLECT_TOPSIDE or TRANSDOWN
 
         int legNameChangeDiscon = seismicNamingLayers.disconBranchBelow(endDisconBranchNum);
+        while (endDisconBranchNum < legNameChangeDiscon && getExcludeBranch().contains(endDisconBranchNum)) {
+            endDisconBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, endDisconBranchNum, isPWave,
+                    LayerPropogationType.DOWN);
+        }
+        int endDownBranchNum = endDisconBranchNum-1;
         int endTurnBranchNum = legNameChangeDiscon-1; // end above discon
 
         double minTurnInSegRayParam = sourceBranchP.getMinTurnRayParam();
