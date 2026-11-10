@@ -15,7 +15,7 @@ brew install enchant
 ./gradlew dependencyUpdates
 
 # wrapper
-./gradlew wrapper --gradle-version 9.7.1 --distribution-type bin
+./gradlew wrapper --gradle-version 9.8.1 --distribution-type bin
 
 # regen cmd line tests, check for any differences, use java17
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
