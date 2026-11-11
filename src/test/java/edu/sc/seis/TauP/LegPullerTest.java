@@ -11,7 +11,7 @@ public class LegPullerTest {
 
     @Test
     public void testLegalPhases() throws Exception {
-        for (String name : IllegalPhasesTest.otherLegalPhases) {
+        for (String name : IllegalPhasesTest.createLegalPhases()) {
             ArrayList<String> legs = LegPuller.legPuller(name);
             assertNotEquals(0, legs.size(), name);
         }

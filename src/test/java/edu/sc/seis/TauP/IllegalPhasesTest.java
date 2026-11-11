@@ -7,13 +7,16 @@ import java.util.List;
 
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 class IllegalPhasesTest {
 
-	static List<String> otherLegalPhases = Arrays.asList(
+	static List<String> otherExistPhases = Arrays.asList(
+			"Sdiff660p",
 			"ScS^660P",
 			"SKviKS",
 			"SKviKKviKS",
@@ -28,15 +31,13 @@ class IllegalPhasesTest {
 			"Pedcp",
 			"PKp",
 			"PKs",
-			"Pcp^20P",
-			"Pn^20P",
+			"Pn^15P",
 			"Pdiff^410P",
 			"PK^cKP",
 			"PKI^iIKP",
 			"Pvmp",
 			"PVmp",
 			"Pvcp",
-			"PVcp",
 			"PKviKP",
 			"PKViKP",
 			"2kmps", "2.5kmps", ".5kmps", "10kmps",
@@ -46,11 +47,11 @@ class IllegalPhasesTest {
 			"SedPdiffKS", // literature uses "SPdiffKS", but need better name as confused with S turn in mantle, surface P to cmb then diff
 			"SKdiffKiKP",
 			"PPPdiff", // legal? degenerate and same as PdiffPdiffPdiff
-			"PdiffKP",
-			"PedPdiffKP",
+			"PdiffdnKP",
+			"PedPdiffdnKP",
 			"PKdiffP",
-			"PK3000diffP",// assuming discon in outer core at 3000
-			"SedK3000diffp",
+			"SK3000diffs",// assuming discon in outer core at 3000
+			"SedK3000diffs",
 			"PKv3000kP",
 			"PK^3000KP",
 			"PKI5500diffkp", // assuming discon in inner core at 5500
@@ -63,6 +64,10 @@ class IllegalPhasesTest {
 			"Pvmp",
 			"Pv_moho_p",
 			"SdiffP", "PSdiff"
+	);
+
+	static List<String> otherLegalPhases = Arrays.asList(
+			"PVcp"
 	);
 
 	static List<String> scatterLegalPhases = Arrays.asList(
@@ -105,17 +110,30 @@ class IllegalPhasesTest {
 	// can generate arrivals
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
+	static TauModel outerCoreDisonTMod = null;
+	public TauModel loadOuterCoreDisconModel() throws TauModelException, IOException, SlownessModelException {
+		if (outerCoreDisonTMod==null) {
+			String modelName = "outerCoreDiscon.nd";
+			VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+			outerCoreDisonTMod = TauModelLoader.createTauModel(vMod);
+		}
+		return outerCoreDisonTMod;
+	}
+	public static List<String> createExistsPhases() {
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
+		legalPhases.addAll(otherExistPhases);
+		return legalPhases;
+	}
 
 	public static List<String> createLegalPhases() {
-		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
+		List<String> legalPhases = createExistsPhases();
 		legalPhases.addAll(otherLegalPhases);
 		return legalPhases;
 	}
 
 	ArrayList<String> createIllegalPhases() {
-		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
+		List<String> legalPhases = createLegalPhases();
 		ArrayList<String> illegalEndPhases = new ArrayList<>();
-		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			for (String illEnd : illegalStartEndings) {
 				illegalEndPhases.add(phaseName+illEnd);
@@ -178,17 +196,26 @@ class IllegalPhasesTest {
 
 	}
 
+
+	@ParameterizedTest
+	@MethodSource("createExistsPhases")
+	void phaseNotFail(String phaseName) throws TauModelException, SlownessModelException, IOException {
+		TauModel tMod = loadOuterCoreDisconModel();
+		if (! (phaseName.startsWith("p") || phaseName.startsWith("s"))) {
+			SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, 0, 0);
+			assertNotNull(phase);
+			assertTrue(phase.phasesExistsInModel());
+		}
+	}
+
 	@Test
 	void checkLegalPhasesTest() throws TauModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 
-		String modelName = "outerCoreDiscon.nd";
-		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-		TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
+		TauModel tMod_OCD = loadOuterCoreDisconModel();
 
 		float receiverDepth = 100;
-		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
-		legalPhases.addAll(otherLegalPhases);
+		List<String> legalPhases = createLegalPhases();
 		for (String phaseName : legalPhases) {
 			try {
 				if (! (phaseName.startsWith("p") || phaseName.startsWith("s"))) {
@@ -207,14 +234,11 @@ class IllegalPhasesTest {
 	void checkLegalPhasesAtDepthTest() throws TauModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 
-		String modelName = "outerCoreDiscon.nd";
-		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-		TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
+		TauModel tMod_OCD = loadOuterCoreDisconModel();
 
 		TauModel tModDepth = tMod_OCD.depthCorrect(10);
 		float receiverDepth = 100;
-		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
-		legalPhases.addAll(otherLegalPhases);
+		List<String> legalPhases = createLegalPhases();
 		for (String phaseName : legalPhases) {
 			try {
 				if (! (phaseName.startsWith("p") || phaseName.startsWith("s"))) {

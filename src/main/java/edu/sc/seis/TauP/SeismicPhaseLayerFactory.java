@@ -938,6 +938,15 @@ public class SeismicPhaseLayerFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
+            } else if (isBoundary(nextLeg)) {
+                endAction = TRANSUP;
+                int legDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
+                proto.addToBranch(
+                        legDisconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
             } else if (nextLeg.charAt(0) == up_p_leg || nextLeg.charAt(0) == up_s_leg) {
                 // upgoing
             } else {
@@ -1005,7 +1014,7 @@ public class SeismicPhaseLayerFactory {
                         currLeg);
 
             } else {
-                return baseFactory.failWithMessage(proto, " Phase not recognized (12): "
+                return baseFactory.failWithMessage(proto, " Phase not recognized (13): "
                         + currLeg + " followed by " + nextLeg, currLeg);
             }
 
