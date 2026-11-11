@@ -14,7 +14,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("io.github.ben-manes.versions") version "0.65.0"
+  id("io.github.ben-manes.versions") version "0.67.0"
   id("org.jreleaser") version "1.26.0"
   idea
 }
@@ -228,7 +228,7 @@ java {
 dependencies {
     implementation("net.sf.geographiclib:GeographicLib-Java:2.1")
     implementation("org.json:json:20260814")
-    implementation("com.google.code.gson:gson:2.14.0")
+    implementation("com.google.code.gson:gson:2.15.0")
     implementation("edu.sc.seis:seisFile:2.4.1")
     //implementation("edu.sc.seis:seisFile:2.4.1-SNAPSHOT")
     implementation("edu.sc.seis:seedCodec:1.2.0")
