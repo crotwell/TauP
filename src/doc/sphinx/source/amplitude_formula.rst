@@ -458,8 +458,8 @@ S3. **Solid-fluid and Fluid-solid displacement reflection and transmission coeff
 
   The fluid-to-solid coefficients here are significantly different from
   Table 13.2 in :cite:t:`fmgs`. We show our calculations in the
-  Jupyter notebook refltrans.ipynb in the Zenodo repository
-  \citep{crotwell_2026_22086196}.
+  Jupyter notebook refltrans.ipynb in this
+  `Zenodo repository <https://zenodo.org/records/22086196>`__.
 
 S4. **Free-surface displacement reflection and transmission coefficients.**
 
